@@ -2,6 +2,7 @@
 import React from "react";
 import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const ScanButton: React.FC = () => {
   return (
@@ -17,8 +18,11 @@ const ScanButton: React.FC = () => {
       <Button 
         variant="outline" 
         className="bg-transparent border-skin-teal text-skin-teal hover:bg-skin-teal/5 w-full max-w-xs"
+        asChild
       >
-        Log Today's Skin Condition
+        <Link to="/log-skin-condition">
+          Log Today's Skin Condition
+        </Link>
       </Button>
     </div>
   );

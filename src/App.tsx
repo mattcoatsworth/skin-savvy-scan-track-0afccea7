@@ -14,6 +14,7 @@ import RecentLogs from "./pages/RecentLogs";
 import InsightsTrendsPage from "./pages/InsightsTrendsPage";
 import SuggestedActionsPage from "./pages/SuggestedActionsPage";
 import ExplorePage from "./pages/ExplorePage";
+import LogSkinCondition from "./pages/LogSkinCondition";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/insights-trends" element={<InsightsTrendsPage />} />
           <Route path="/suggested-actions" element={<SuggestedActionsPage />} />
           <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/log-skin-condition" element={<LogSkinCondition />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
