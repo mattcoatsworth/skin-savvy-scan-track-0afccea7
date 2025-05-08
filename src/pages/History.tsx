@@ -4,6 +4,16 @@ import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { format, subDays } from "date-fns";
+import SkinHistory from "@/components/SkinHistory";
+
+// Mock data for skin ratings
+const skinRatings = [
+  { day: "Mon", rating: 85, date: "5/1" },
+  { day: "Tue", rating: 70, date: "5/2" },
+  { day: "Wed", rating: 60, date: "5/3" },
+  { day: "Thu", rating: 45, date: "5/4" },
+  { day: "Fri", rating: 75, date: "5/5" },
+];
 
 // Define the type for a day log
 type DayLogType = {
@@ -73,8 +83,11 @@ const History = () => {
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold text-center">Skin History</h1>
+          <h1 className="text-2xl font-bold text-center">Skin</h1>
         </header>
+        
+        {/* Add SkinHistory at the top */}
+        <SkinHistory ratings={skinRatings} className="mb-6" />
         
         <div className="space-y-4">
           {dayLogs.map((log) => (
