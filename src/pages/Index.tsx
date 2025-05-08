@@ -109,16 +109,9 @@ const Index = () => {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
-        {/* Updated header in Cal AI style */}
-        <header className="mb-6 flex items-center">
-          <div className="flex items-center">
-            <span className="bg-black text-white p-1 rounded-md text-lg mr-2">✨</span>
-            <h1 className="text-2xl font-bold">Skin Savvy</h1>
-          </div>
-          <div className="ml-auto bg-white rounded-full px-4 py-1 flex items-center shadow-sm">
-            <span className="text-skin-flame text-lg mr-1">🔥</span>
-            <span className="font-bold">0</span>
-          </div>
+        {/* Simplified header with smaller Skin Savvy text */}
+        <header className="mb-6">
+          <h1 className="text-xl font-bold">Skin Savvy</h1>
         </header>
         
         <main className="space-y-8">
