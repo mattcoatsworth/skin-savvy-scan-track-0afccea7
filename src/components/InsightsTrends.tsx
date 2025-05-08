@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 type InsightType = {
   title: string;
@@ -18,8 +19,15 @@ type InsightsTrendsProps = {
 const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) => {
   return (
     <div className={cn("ios-section", className)}>
-      <h2 className="text-xl font-semibold mb-3">Insights & Trends</h2>
-      <h3 className="text-base mb-3 text-muted-foreground">What's Been Helping Your Skin</h3>
+      <div className="flex justify-between items-center mb-3">
+        <div>
+          <h2 className="text-xl font-semibold">Insights & Trends</h2>
+          <h3 className="text-base text-muted-foreground">What's Been Helping Your Skin</h3>
+        </div>
+        <Link to="/insights-trends" className="text-sm text-skin-teal">
+          View all
+        </Link>
+      </div>
       
       <ScrollArea className="w-full whitespace-nowrap pb-4">
         <div className="flex space-x-4 px-1">

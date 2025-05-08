@@ -9,6 +9,11 @@ import Search from "./pages/Search";
 import Insights from "./pages/Insights";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import SkinAnalysis from "./pages/SkinAnalysis";
+import RecentLogs from "./pages/RecentLogs";
+import InsightsTrendsPage from "./pages/InsightsTrendsPage";
+import SuggestedActionsPage from "./pages/SuggestedActionsPage";
+import ExplorePage from "./pages/ExplorePage";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +28,11 @@ const App = () => (
           <Route path="/search" element={<Search />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/skin-analysis" element={<SkinAnalysis />} />
+          <Route path="/recent-logs" element={<RecentLogs />} />
+          <Route path="/insights-trends" element={<InsightsTrendsPage />} />
+          <Route path="/suggested-actions" element={<SuggestedActionsPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

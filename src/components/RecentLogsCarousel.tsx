@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 type RecentLogType = {
   title: string;
@@ -29,7 +30,12 @@ const getStatusIndicator = (status: RecentLogType['status']) => {
 const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className }) => {
   return (
     <div className={cn("ios-section", className)}>
-      <h2 className="text-xl font-semibold mb-3">Recent Logs & Scans</h2>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-xl font-semibold">Recent Logs & Scans</h2>
+        <Link to="/recent-logs" className="text-sm text-skin-teal">
+          View all
+        </Link>
+      </div>
       
       <ScrollArea className="w-full whitespace-nowrap pb-4">
         <div className="flex space-x-4 px-1">
@@ -40,9 +46,9 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
                 <p className="text-sm text-muted-foreground">
                   {getStatusIndicator(log.status)} {log.description}
                 </p>
-                <button className="text-xs text-skin-teal font-medium mt-3">
+                <Link to="/recent-logs" className="text-xs text-skin-teal font-medium mt-3 inline-block">
                   View Details
-                </button>
+                </Link>
               </CardContent>
             </Card>
           ))}

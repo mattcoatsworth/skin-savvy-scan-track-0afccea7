@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -65,9 +66,9 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
         </div>
         
         <div className="text-center mt-4">
-          <button className="text-sm text-skin-teal font-medium">
+          <Link to="/skin-analysis" className="text-sm text-skin-teal font-medium">
             View Full Analysis →
-          </button>
+          </Link>
         </div>
       </CardContent>
     </Card>
