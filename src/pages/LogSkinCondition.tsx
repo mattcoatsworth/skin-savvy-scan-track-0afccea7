@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import AppNavigation from "@/components/AppNavigation";
 
 const LogSkinCondition = () => {
@@ -21,6 +23,13 @@ const LogSkinCondition = () => {
     food: "",
     supplements: "",
     makeup: ""
+  });
+  
+  // Add state for search popover visibility
+  const [searchOpen, setSearchOpen] = useState({
+    food: false,
+    supplements: false,
+    makeup: false
   });
 
   const moodOptions = [
@@ -64,7 +73,107 @@ const LogSkinCondition = () => {
         ...prev,
         [category]: ""
       }));
+      // Close the popover
+      setSearchOpen(prev => ({
+        ...prev,
+        [category]: false
+      }));
     }
+  };
+  
+  const getDefaultOptions = (category: string) => {
+    switch(category) {
+      case 'food':
+        return ["Hydrating", "Dehydrating", "High Sugar", "Dairy"];
+      case 'supplements':
+        return ["New", "Regular", "Skipped"];
+      case 'makeup':
+        return ["None", "Light", "Full", "Same as usual"];
+      default:
+        return [];
+    }
+  };
+
+  // Render a category section with search box
+  const renderCategoryWithSearch = (category: string, emoji: string, title: string) => {
+    const categoryKey = category as keyof typeof searchInputs;
+    const defaultOptions = getDefaultOptions(category);
+    
+    return (
+      <Card className="ios-card">
+        <CardContent className="p-4">
+          <h3 className="font-medium mb-2 text-skin-black">{emoji} {title}</h3>
+          
+          {/* Search Input with Popover */}
+          <div className="relative mb-2">
+            <Popover 
+              open={searchOpen[categoryKey]} 
+              onOpenChange={(open) => setSearchOpen(prev => ({ ...prev, [category]: open }))}
+            >
+              <PopoverTrigger asChild>
+                <div className="relative flex-grow">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={`Search or add ${category} items`}
+                    value={searchInputs[categoryKey]}
+                    onChange={(e) => handleSearchChange(category, e.target.value)}
+                    className="pl-8 py-2 text-sm h-9 w-full pr-4"
+                    onFocus={() => setSearchOpen(prev => ({ ...prev, [category]: true }))}
+                  />
+                </div>
+              </PopoverTrigger>
+              
+              <PopoverContent className="p-0 w-[300px]" align="start">
+                <Command>
+                  <CommandList>
+                    <CommandEmpty>
+                      {searchInputs[categoryKey] && (
+                        <CommandItem 
+                          onSelect={() => handleAddCustomFactor(category)} 
+                          className="cursor-pointer flex items-center gap-2"
+                        >
+                          <span>Add "{searchInputs[categoryKey]}"</span>
+                        </CommandItem>
+                      )}
+                    </CommandEmpty>
+                    <CommandGroup>
+                      {defaultOptions.filter(option => 
+                        option.toLowerCase().includes(searchInputs[categoryKey].toLowerCase())
+                      ).map(option => (
+                        <CommandItem 
+                          key={option} 
+                          onSelect={() => {
+                            handleFactorSelect(category, option);
+                            setSearchOpen(prev => ({ ...prev, [category]: false }));
+                            setSearchInputs(prev => ({ ...prev, [category]: "" }));
+                          }}
+                        >
+                          {option}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            {selectedFactors[category].map(factor => (
+              <Button 
+                key={factor}
+                variant="default" 
+                size="sm" 
+                className="rounded-full bg-skin-black text-white"
+                onClick={() => handleFactorSelect(category, factor)}
+              >
+                {factor}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
@@ -110,179 +219,10 @@ const LogSkinCondition = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
-              {/* Food Card with Search */}
-              <Card className="ios-card">
-                <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black">🥗 Food</h3>
-                  
-                  {/* Search Input for Food */}
-                  <div className="relative mb-2">
-                    <div className="flex">
-                      <div className="relative flex-grow">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search or add food items"
-                          value={searchInputs.food}
-                          onChange={(e) => handleSearchChange("food", e.target.value)}
-                          className="pl-8 pr-16 py-2 text-sm h-9"
-                        />
-                      </div>
-                      <Button 
-                        size="sm"
-                        onClick={() => handleAddCustomFactor("food")}
-                        className="ml-1"
-                        disabled={!searchInputs.food}
-                      >
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {["Hydrating", "Dehydrating", "High Sugar", "Dairy"].map(factor => (
-                      <Button 
-                        key={factor}
-                        variant={selectedFactors.food.includes(factor) ? "default" : "outline"} 
-                        size="sm" 
-                        className={`rounded-full ${selectedFactors.food.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
-                        onClick={() => handleFactorSelect('food', factor)}
-                      >
-                        {factor}
-                      </Button>
-                    ))}
-                    {selectedFactors.food
-                      .filter(factor => !["Hydrating", "Dehydrating", "High Sugar", "Dairy"].includes(factor))
-                      .map(factor => (
-                        <Button 
-                          key={factor}
-                          variant="default" 
-                          size="sm" 
-                          className="rounded-full bg-skin-black text-white"
-                          onClick={() => handleFactorSelect('food', factor)}
-                        >
-                          {factor}
-                        </Button>
-                      ))
-                    }
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Supplements Card with Search */}
-              <Card className="ios-card">
-                <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black">💊 Supplements</h3>
-                  
-                  {/* Search Input for Supplements */}
-                  <div className="relative mb-2">
-                    <div className="flex">
-                      <div className="relative flex-grow">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search or add supplements"
-                          value={searchInputs.supplements}
-                          onChange={(e) => handleSearchChange("supplements", e.target.value)}
-                          className="pl-8 pr-16 py-2 text-sm h-9"
-                        />
-                      </div>
-                      <Button 
-                        size="sm"
-                        onClick={() => handleAddCustomFactor("supplements")}
-                        className="ml-1"
-                        disabled={!searchInputs.supplements}
-                      >
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {["New", "Regular", "Skipped"].map(factor => (
-                      <Button 
-                        key={factor}
-                        variant={selectedFactors.supplements.includes(factor) ? "default" : "outline"} 
-                        size="sm" 
-                        className={`rounded-full ${selectedFactors.supplements.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
-                        onClick={() => handleFactorSelect('supplements', factor)}
-                      >
-                        {factor}
-                      </Button>
-                    ))}
-                    {selectedFactors.supplements
-                      .filter(factor => !["New", "Regular", "Skipped"].includes(factor))
-                      .map(factor => (
-                        <Button 
-                          key={factor}
-                          variant="default" 
-                          size="sm" 
-                          className="rounded-full bg-skin-black text-white"
-                          onClick={() => handleFactorSelect('supplements', factor)}
-                        >
-                          {factor}
-                        </Button>
-                      ))
-                    }
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Makeup Card with Search */}
-              <Card className="ios-card">
-                <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black">💄 Makeup</h3>
-                  
-                  {/* Search Input for Makeup */}
-                  <div className="relative mb-2">
-                    <div className="flex">
-                      <div className="relative flex-grow">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search or add makeup products"
-                          value={searchInputs.makeup}
-                          onChange={(e) => handleSearchChange("makeup", e.target.value)}
-                          className="pl-8 pr-16 py-2 text-sm h-9"
-                        />
-                      </div>
-                      <Button 
-                        size="sm"
-                        onClick={() => handleAddCustomFactor("makeup")}
-                        className="ml-1"
-                        disabled={!searchInputs.makeup}
-                      >
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {["None", "Light", "Full", "Same as usual"].map(factor => (
-                      <Button 
-                        key={factor}
-                        variant={selectedFactors.makeup.includes(factor) ? "default" : "outline"} 
-                        size="sm" 
-                        className={`rounded-full ${selectedFactors.makeup.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
-                        onClick={() => handleFactorSelect('makeup', factor)}
-                      >
-                        {factor}
-                      </Button>
-                    ))}
-                    {selectedFactors.makeup
-                      .filter(factor => !["None", "Light", "Full", "Same as usual"].includes(factor))
-                      .map(factor => (
-                        <Button 
-                          key={factor}
-                          variant="default" 
-                          size="sm" 
-                          className="rounded-full bg-skin-black text-white"
-                          onClick={() => handleFactorSelect('makeup', factor)}
-                        >
-                          {factor}
-                        </Button>
-                      ))
-                    }
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Render sections with search */}
+              {renderCategoryWithSearch('food', '🥗', 'Food')}
+              {renderCategoryWithSearch('supplements', '💊', 'Supplements')}
+              {renderCategoryWithSearch('makeup', '💄', 'Makeup')}
               
               {/* Weather Card - Keeping original */}
               <Card className="ios-card">
@@ -304,7 +244,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* New Menstrual Cycle Card */}
+              {/* Menstrual Cycle Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">🔴 Menstrual Cycle</h3>
