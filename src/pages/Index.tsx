@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -120,11 +119,11 @@ const Index = () => {
             factors={skinFactors} 
           />
           
-          <SkinHistory ratings={skinHistory} />
-          
-          <div className="my-8">
+          <div className="my-4">
             <ScanButton />
           </div>
+          
+          <SkinHistory ratings={skinHistory} />
           
           <RecentLogsCarousel logs={recentLogs} />
           
