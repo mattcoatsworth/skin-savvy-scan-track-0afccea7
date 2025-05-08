@@ -32,17 +32,19 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
       <ScrollArea className="w-full whitespace-nowrap pb-4">
         <div className="flex space-x-4 px-1">
           {insights.map((insight, index) => (
-            <Card key={index} className="ios-card min-w-[280px] bg-skin-light border-0">
-              <CardContent className="p-4">
-                <div className="flex items-start">
-                  {insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>}
-                  <div>
-                    <h3 className="font-medium">{insight.title}</h3>
-                    <p className="text-sm text-muted-foreground">{insight.description}</p>
+            <Link key={index} to="/insights-trends" className="min-w-[280px]">
+              <Card className="ios-card bg-skin-light border-0 hover:shadow-md transition-all">
+                <CardContent className="p-4">
+                  <div className="flex items-start">
+                    {insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>}
+                    <div>
+                      <h3 className="font-medium">{insight.title}</h3>
+                      <p className="text-sm text-muted-foreground">{insight.description}</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </ScrollArea>
