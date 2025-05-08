@@ -9,6 +9,7 @@ type RecentLogType = {
   title: string;
   status: "positive" | "negative" | "neutral";
   description: string;
+  rating?: number; // Add optional rating field
 };
 
 type RecentLogsCarouselProps = {
@@ -27,12 +28,20 @@ const getStatusIndicator = (status: RecentLogType['status']) => {
   }
 };
 
+const getRatingColor = (rating: number) => {
+  if (rating >= 80) return "bg-green-500";
+  if (rating >= 60) return "bg-green-300";
+  if (rating >= 40) return "bg-yellow-300";
+  if (rating >= 20) return "bg-orange-300";
+  return "bg-red-400";
+};
+
 const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className }) => {
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Recent Logs & Scans</h2>
-        <Link to="/recent-logs" className="text-sm text-skin-teal">
+        <Link to="/recent-logs" className="text-sm text-skin-black">
           View all
         </Link>
       </div>
@@ -42,11 +51,20 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
           {logs.map((log, index) => (
             <Card key={index} className="ios-card min-w-[260px] animate-fade-in">
               <CardContent className="p-4">
-                <h3 className="font-medium mb-1">{log.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {getStatusIndicator(log.status)} {log.description}
-                </p>
-                <Link to="/recent-logs" className="text-xs text-skin-teal font-medium mt-3 inline-block">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium mb-1">{log.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {getStatusIndicator(log.status)} {log.description}
+                    </p>
+                  </div>
+                  {log.rating !== undefined && (
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getRatingColor(log.rating)} text-white font-medium`}>
+                      {log.rating}
+                    </div>
+                  )}
+                </div>
+                <Link to="/recent-logs" className="text-xs text-skin-black font-medium mt-3 inline-block">
                   View Details
                 </Link>
               </CardContent>

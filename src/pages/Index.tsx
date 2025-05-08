@@ -7,6 +7,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import AppNavigation from "@/components/AppNavigation";
+import SkinHistory from "@/components/SkinHistory";
 
 const Index = () => {
   // Sample data
@@ -21,24 +22,50 @@ const Index = () => {
     { 
       title: "Retinol Cream", 
       status: "positive" as const, 
-      description: "No reaction after 3 days" 
+      description: "No reaction after 3 days",
+      rating: 85
     },
     { 
       title: "Whey Protein", 
       status: "negative" as const, 
-      description: "Possible acne trigger" 
+      description: "Possible acne trigger",
+      rating: 30
     },
     { 
       title: "Avocado", 
       status: "positive" as const, 
-      description: "Skin hydration improved" 
+      description: "Skin hydration improved",
+      rating: 92
     },
     { 
       title: "New Foundation", 
       status: "neutral" as const, 
-      description: "No noticeable change" 
+      description: "No noticeable change",
+      rating: 65
     },
   ];
+
+  // Get current date and the past 7 days
+  const getDayName = (date: Date) => {
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  };
+
+  const getDateString = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const today = new Date();
+  const skinHistory = Array(7).fill(null).map((_, i) => {
+    const date = new Date();
+    date.setDate(today.getDate() - (6 - i));
+    // Generate a random rating between 50 and 95 for demo purposes
+    const rating = Math.floor(Math.random() * (95 - 50 + 1)) + 50;
+    return {
+      day: getDayName(date),
+      date: getDateString(date),
+      rating: rating
+    };
+  });
 
   const insights = [
     {
@@ -92,6 +119,8 @@ const Index = () => {
             status="Balanced" 
             factors={skinFactors} 
           />
+          
+          <SkinHistory ratings={skinHistory} />
           
           <div className="my-8">
             <ScanButton />
