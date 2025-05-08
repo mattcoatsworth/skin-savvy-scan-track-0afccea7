@@ -2,6 +2,8 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { CircleCheck } from "lucide-react";
 
 type DayRating = {
   day: string;
@@ -14,12 +16,12 @@ type SkinHistoryProps = {
   className?: string;
 };
 
-const getRatingColor = (rating: number) => {
-  if (rating >= 80) return "bg-green-500";
-  if (rating >= 60) return "bg-green-300";
-  if (rating >= 40) return "bg-yellow-300";
-  if (rating >= 20) return "bg-orange-300";
-  return "bg-red-400";
+const getRatingLabel = (rating: number) => {
+  if (rating >= 80) return "Great";
+  if (rating >= 60) return "Good";
+  if (rating >= 40) return "OK";
+  if (rating >= 20) return "Fair";
+  return "Poor";
 };
 
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
@@ -37,11 +39,37 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                 <span className="text-sm font-medium">{item.day}</span>
                 <span className="text-xs text-muted-foreground">{item.date}</span>
                 <div className="mt-2 flex flex-col items-center justify-center">
-                  <div 
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${getRatingColor(item.rating)} text-white font-medium text-sm`}
-                  >
-                    {item.rating}
+                  <div className="relative w-10 h-10 flex items-center justify-center">
+                    {/* Background circle */}
+                    <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#E6F8EA"
+                        strokeWidth="3"
+                        strokeDasharray="100, 100"
+                      />
+                    </svg>
+                    
+                    {/* Foreground circle - the actual progress */}
+                    <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke={item.rating >= 60 ? "#4ADE80" : item.rating >= 40 ? "#FACC15" : "#F87171"}
+                        strokeWidth="3"
+                        strokeDasharray={`${item.rating}, 100`}
+                      />
+                    </svg>
+                    
+                    {/* Rating number in the center */}
+                    <div className="text-sm font-semibold">
+                      {item.rating}
+                    </div>
                   </div>
+                  <span className="text-xs mt-1 text-muted-foreground">
+                    {getRatingLabel(item.rating)}
+                  </span>
                 </div>
               </div>
             ))}
