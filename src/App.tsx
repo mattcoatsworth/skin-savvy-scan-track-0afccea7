@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Search from "./pages/Search";
+import History from "./pages/History";
 import Insights from "./pages/Insights";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -16,6 +16,7 @@ import SuggestedActionsPage from "./pages/SuggestedActionsPage";
 import ExplorePage from "./pages/ExplorePage";
 import LogSkinCondition from "./pages/LogSkinCondition";
 import ProductDetail from "./pages/ProductDetail";
+import DayLogDetail from "./pages/DayLogDetail";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/history" element={<History />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/skin-analysis" element={<SkinAnalysis />} />
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/log-skin-condition" element={<LogSkinCondition />} />
           <Route path="/product/:type/:id" element={<ProductDetail />} />
+          <Route path="/day-log/:id" element={<DayLogDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

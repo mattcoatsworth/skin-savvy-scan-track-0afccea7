@@ -100,7 +100,7 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
                         </svg>
                         
                         {/* Rating number in the center */}
-                        <div className="text-base font-semibold">
+                        <div className="text-sm font-semibold">
                           {log.rating}
                         </div>
                       </div>
