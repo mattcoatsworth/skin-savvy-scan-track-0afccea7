@@ -26,8 +26,8 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
       
       <div className="space-y-3">
         {actions.map((action, index) => (
-          <Link to="/suggested-actions" key={index}>
-            <Card className="ios-card border-l-4 border-l-skin-teal">
+          <Link to="/suggested-actions" key={index} className="block">
+            <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">
                   <p className="font-medium">{action.text}</p>

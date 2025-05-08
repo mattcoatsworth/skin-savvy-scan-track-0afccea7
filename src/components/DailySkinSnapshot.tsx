@@ -41,37 +41,37 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   className,
 }) => {
   return (
-    <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
-      <CardContent className="p-4">
-        <div className="flex items-center mb-4">
-          <span className="text-4xl mr-3">{emoji}</span>
-          <div>
-            <h2 className="font-medium text-lg">Today's Skin</h2>
-            <p className="text-xl font-semibold">{status}</p>
+    <Link to="/skin-analysis">
+      <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
+        <CardContent className="p-4">
+          <div className="flex items-center mb-4">
+            <span className="text-4xl mr-3">{emoji}</span>
+            <div>
+              <h2 className="font-medium text-lg">Today's Skin</h2>
+              <p className="text-xl font-semibold">{status}</p>
+            </div>
           </div>
-        </div>
-        
-        <div className="mb-3">
-          <p className="text-sm text-muted-foreground mb-2">Contributing Factors:</p>
-          <div className="flex flex-wrap">
-            {factors.map((factor, index) => (
-              <span 
-                key={index} 
-                className={`factor-tag ${getFactorColor(factor.type)}`}
-              >
-                {factor.icon} {factor.type}: {factor.status}
-              </span>
-            ))}
+          
+          <div className="mb-3">
+            <p className="text-sm text-muted-foreground mb-2">Contributing Factors:</p>
+            <div className="flex flex-wrap">
+              {factors.map((factor, index) => (
+                <span 
+                  key={index} 
+                  className={`factor-tag ${getFactorColor(factor.type)}`}
+                >
+                  {factor.icon} {factor.type}: {factor.status}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-        
-        <div className="text-center mt-4">
-          <Link to="/skin-analysis" className="text-sm text-skin-teal font-medium">
+          
+          <div className="text-center mt-4">
             View Full Analysis →
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 

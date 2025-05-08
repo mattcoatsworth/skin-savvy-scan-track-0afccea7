@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,7 +8,7 @@ type RecentLogType = {
   title: string;
   status: "positive" | "negative" | "neutral";
   description: string;
-  rating?: number; // Add optional rating field
+  rating?: number;
 };
 
 type RecentLogsCarouselProps = {
@@ -64,57 +63,56 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
       <ScrollArea className="w-full whitespace-nowrap pb-4">
         <div className="flex space-x-4 px-1">
           {logs.map((log, index) => (
-            <Card key={index} className="ios-card min-w-[260px] animate-fade-in">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium mb-1">{log.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {getStatusIndicator(log.status)} {log.description}
-                    </p>
-                  </div>
-                  {log.rating !== undefined && (
-                    <div className="flex flex-col items-center">
-                      <div className="relative w-12 h-12 flex items-center justify-center">
-                        {/* Background circle */}
-                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            fill="none"
-                            stroke={getBackgroundColor(log.rating)}
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        
-                        {/* Foreground circle - the actual progress */}
-                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            fill="none"
-                            stroke={getProgressColor(log.rating)}
-                            strokeWidth="4"
-                            strokeDasharray={`${log.rating}, 100`}
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        
-                        {/* Rating number in the center */}
-                        <div className="text-sm font-semibold">
-                          {log.rating}
-                        </div>
-                      </div>
-                      <span className="text-xs mt-1 text-muted-foreground">
-                        {getRatingLabel(log.rating)}
-                      </span>
+            <Link key={index} to="/recent-logs" className="min-w-[260px]">
+              <Card className="ios-card animate-fade-in hover:shadow-md transition-all">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium mb-1">{log.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {getStatusIndicator(log.status)} {log.description}
+                      </p>
                     </div>
-                  )}
-                </div>
-                <Link to="/recent-logs" className="text-xs text-skin-black font-medium mt-3 inline-block">
-                  View Details
-                </Link>
-              </CardContent>
-            </Card>
+                    {log.rating !== undefined && (
+                      <div className="flex flex-col items-center">
+                        <div className="relative w-12 h-12 flex items-center justify-center">
+                          {/* Background circle */}
+                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getBackgroundColor(log.rating)}
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          
+                          {/* Foreground circle - the actual progress */}
+                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getProgressColor(log.rating)}
+                              strokeWidth="4"
+                              strokeDasharray={`${log.rating}, 100`}
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          
+                          {/* Rating number in the center */}
+                          <div className="text-sm font-semibold">
+                            {log.rating}
+                          </div>
+                        </div>
+                        <span className="text-xs mt-1 text-muted-foreground">
+                          {getRatingLabel(log.rating)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </ScrollArea>
