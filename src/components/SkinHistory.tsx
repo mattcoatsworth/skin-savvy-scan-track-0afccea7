@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { CircleCheck } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type DayRating = {
   day: string;
@@ -38,12 +39,12 @@ const getBackgroundColor = (rating: number) => {
 
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
   return (
-    <div className={cn("ios-section", className)}>
+    <Link to="/history" className={cn("ios-section block", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Skin History</h2>
       </div>
       
-      <Card className="ios-card p-2">
+      <Card className="ios-card p-2 hover:shadow-md transition-all">
         <CardContent className="p-2">
           <div className="flex justify-between items-center">
             {ratings.map((item, index) => (
@@ -89,7 +90,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </Link>
   );
 };
 
