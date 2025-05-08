@@ -89,7 +89,8 @@ const History = () => {
         {/* Add SkinHistory at the top */}
         <SkinHistory ratings={skinRatings} className="mb-8" />
         
-        <div className="space-y-8">
+        {/* Increase space between cards from space-y-8 to space-y-10 to match Food Impacts section */}
+        <div className="space-y-10">
           {dayLogs.map((log) => (
             <Link key={log.id} to={`/day-log/${log.id}`}>
               <Card className="ios-card hover:shadow-md transition-all">
