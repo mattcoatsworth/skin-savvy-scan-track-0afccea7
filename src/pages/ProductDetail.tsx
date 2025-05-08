@@ -43,8 +43,10 @@ const ProductDetail = () => {
 
   // Determine rating label and color
   const getRatingLabel = (rating: number) => {
-    if (rating >= 70) return "Good";
-    if (rating >= 40) return "Neutral";
+    if (rating >= 80) return "Great";
+    if (rating >= 60) return "Good";
+    if (rating >= 40) return "OK";
+    if (rating >= 20) return "Fair";
     return "Poor";
   };
   
@@ -85,33 +87,35 @@ const ProductDetail = () => {
                 <p className="text-muted-foreground">{product.brand}</p>
               </div>
 
-              <div className="relative h-20 w-20">
-                <svg viewBox="0 0 36 36" className="h-20 w-20">
-                  {/* Light colored background circle */}
-                  <path
-                    className="stroke-current"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    stroke={getBackgroundColor(product.rating)}
-                  />
-                  {/* Foreground progress circle */}
-                  <path
-                    className="stroke-current"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeDasharray={`${product.rating}, 100`}
-                    stroke={getRatingColor(product.rating)}
-                  />
-                </svg>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <div className="font-semibold text-xl">{product.rating}</div>
-                  <div className={`text-sm ${getTextColor(product.rating)}`}>
-                    {getRatingLabel(product.rating)}
+              <div className="flex flex-col items-center">
+                <div className="relative h-14 w-14">
+                  <svg viewBox="0 0 36 36" className="h-14 w-14">
+                    {/* Light colored background circle */}
+                    <path
+                      className="stroke-current"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      stroke={getBackgroundColor(product.rating)}
+                    />
+                    {/* Foreground progress circle */}
+                    <path
+                      className="stroke-current"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray={`${product.rating}, 100`}
+                      stroke={getRatingColor(product.rating)}
+                    />
+                  </svg>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                    <div className="font-semibold text-base">{product.rating}</div>
                   </div>
+                </div>
+                <div className={`text-xs mt-1 ${getTextColor(product.rating)}`}>
+                  {getRatingLabel(product.rating)}
                 </div>
               </div>
             </div>

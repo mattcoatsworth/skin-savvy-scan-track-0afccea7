@@ -23,8 +23,10 @@ interface ProductCardProps {
 const ProductCard = ({ product, type }: ProductCardProps) => {
   // Determine label based on rating
   const getRatingLabel = (rating: number) => {
-    if (rating >= 70) return "Good";
-    if (rating >= 40) return "Neutral";
+    if (rating >= 80) return "Great";
+    if (rating >= 60) return "Good";
+    if (rating >= 40) return "OK";
+    if (rating >= 20) return "Fair";
     return "Poor";
   };
   
@@ -64,9 +66,9 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="relative h-14 w-14">
-              <svg className="w-14 h-14" viewBox="0 0 36 36">
-                {/* Light colored background circle */}
+            <div className="relative w-10 h-10 flex items-center justify-center">
+              {/* Background circle */}
+              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
@@ -74,8 +76,10 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
                   strokeWidth="4"
                   strokeLinecap="round"
                 />
-                
-                {/* Foreground progress circle */}
+              </svg>
+              
+              {/* Foreground circle - the actual progress */}
+              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
@@ -85,11 +89,15 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
                   strokeLinecap="round"
                 />
               </svg>
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                <div className="font-semibold text-base">{product.rating}</div>
-                <div className="text-xs text-muted-foreground">{getRatingLabel(product.rating)}</div>
+              
+              {/* Rating number in the center */}
+              <div className="text-xs font-semibold">
+                {product.rating}
               </div>
             </div>
+            <span className="text-xs mt-1 text-muted-foreground">
+              {getRatingLabel(product.rating)}
+            </span>
           </div>
         </CardContent>
       </Card>
