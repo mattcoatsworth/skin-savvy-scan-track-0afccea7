@@ -35,10 +35,6 @@ const AppNavigation: React.FC = () => {
       <div className="flex justify-evenly items-center relative">
         {navItems.map((item, index) => {
           const isActive = currentPath === item.path;
-          const className = cn(
-            "flex flex-col items-center py-2 flex-1",
-            isActive ? "text-skin-teal" : "text-gray-500 hover:text-skin-teal"
-          );
           
           // Insert the plus button after the second item
           if (index === 2) {
@@ -81,7 +77,7 @@ const AppNavigation: React.FC = () => {
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={className}
+                  className={`flex flex-col items-center py-2 flex-1 ${isActive ? "text-skin-teal" : "text-gray-500 hover:text-skin-teal"}`}
                 >
                   <item.icon className="h-6 w-6" />
                   <span className="text-xs mt-1">{item.label}</span>
@@ -94,7 +90,7 @@ const AppNavigation: React.FC = () => {
             <Link
               key={item.label}
               to={item.path}
-              className={className}
+              className={`flex flex-col items-center py-2 flex-1 ${isActive ? "text-skin-teal" : "text-gray-500 hover:text-skin-teal"}`}
             >
               <item.icon className="h-6 w-6" />
               <span className="text-xs mt-1">{item.label}</span>
