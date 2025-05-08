@@ -89,7 +89,7 @@ const History = () => {
         {/* Add SkinHistory at the top */}
         <SkinHistory ratings={skinRatings} className="mb-6" />
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           {dayLogs.map((log) => (
             <Link key={log.id} to={`/day-log/${log.id}`}>
               <Card className="ios-card hover:shadow-md transition-all">
