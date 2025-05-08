@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +27,17 @@ const LogSkinCondition = () => {
         </header>
         
         <main className="space-y-8">
+          {/* Upload Selfie Button */}
+          <div className="flex justify-center">
+            <Button 
+              className="bg-skin-teal text-white flex items-center gap-2 px-6 py-5 h-auto"
+              onClick={() => console.log("Upload selfie initiated")}
+            >
+              <Upload className="h-5 w-5" />
+              Get Started by Uploading Selfie
+            </Button>
+          </div>
+          
           <div>
             <h2 className="text-xl font-semibold mb-4">How does your skin feel today?</h2>
             <div className="grid grid-cols-2 gap-3">
