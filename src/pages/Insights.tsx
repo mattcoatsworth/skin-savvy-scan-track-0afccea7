@@ -58,9 +58,11 @@ const Insights = () => {
             </Link>
           </div>
           
-          {foodItems.map((food) => (
-            <ProductCard key={food.id} product={food} type="food" />
-          ))}
+          <div className="space-y-3">
+            {foodItems.slice(0, 3).map((food) => (
+              <ProductCard key={food.id} product={food} type="food" />
+            ))}
+          </div>
         </div>
         
         {/* Products impact section */}
@@ -72,9 +74,11 @@ const Insights = () => {
             </Link>
           </div>
           
-          {productItems.map((product) => (
-            <ProductCard key={product.id} product={product} type="skincare" />
-          ))}
+          <div className="space-y-3">
+            {productItems.slice(0, 3).map((product) => (
+              <ProductCard key={product.id} product={product} type="skincare" />
+            ))}
+          </div>
         </div>
       </div>
       

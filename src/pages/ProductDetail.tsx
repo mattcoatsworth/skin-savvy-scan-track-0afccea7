@@ -49,6 +49,18 @@ const ProductDetail = () => {
   };
   
   const getRatingColor = (rating: number) => {
+    if (rating >= 70) return "#4ADE80"; // Good - Green
+    if (rating >= 40) return "#FACC15"; // OK - Yellow
+    return "#F87171"; // Poor - Red
+  };
+  
+  const getBackgroundColor = (rating: number) => {
+    if (rating >= 70) return "#E6F8EA"; // Light green
+    if (rating >= 40) return "#FEF7CD"; // Light yellow
+    return "#FFDEE2"; // Light red
+  };
+  
+  const getTextColor = (rating: number) => {
     if (rating >= 70) return "text-green-600";
     if (rating >= 40) return "text-amber-600";
     return "text-red-600";
@@ -74,27 +86,30 @@ const ProductDetail = () => {
               </div>
 
               <div className="relative h-20 w-20">
-                <svg viewBox="0 0 36 36" className="h-20 w-20 -rotate-90">
+                <svg viewBox="0 0 36 36" className="h-20 w-20">
+                  {/* Light colored background circle */}
                   <path
                     className="stroke-current"
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
-                    strokeWidth="3"
-                    strokeDasharray="100, 100"
-                    stroke="#E6F8EA"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    stroke={getBackgroundColor(product.rating)}
                   />
+                  {/* Foreground progress circle */}
                   <path
                     className="stroke-current"
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
-                    strokeWidth="3"
+                    strokeWidth="4"
+                    strokeLinecap="round"
                     strokeDasharray={`${product.rating}, 100`}
-                    stroke={product.rating >= 70 ? "#4ADE80" : product.rating >= 40 ? "#FACC15" : "#F87171"}
+                    stroke={getRatingColor(product.rating)}
                   />
                 </svg>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
                   <div className="font-semibold text-xl">{product.rating}</div>
-                  <div className={`text-sm ${getRatingColor(product.rating)}`}>
+                  <div className={`text-sm ${getTextColor(product.rating)}`}>
                     {getRatingLabel(product.rating)}
                   </div>
                 </div>

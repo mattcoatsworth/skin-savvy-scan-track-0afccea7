@@ -24,6 +24,18 @@ const getRatingLabel = (rating: number) => {
   return "Poor";
 };
 
+const getRatingColor = (rating: number) => {
+  if (rating >= 70) return "#4ADE80"; // Good - Green
+  if (rating >= 40) return "#FACC15"; // OK - Yellow
+  return "#F87171"; // Poor - Red
+};
+
+const getBackgroundColor = (rating: number) => {
+  if (rating >= 70) return "#E6F8EA"; // Light green
+  if (rating >= 40) return "#FEF7CD"; // Light yellow
+  return "#FFDEE2"; // Light red
+};
+
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
   return (
     <div className={cn("ios-section", className)}>
@@ -45,9 +57,9 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="#E6F8EA"
-                        strokeWidth="3"
-                        strokeDasharray="100, 100"
+                        stroke={getBackgroundColor(item.rating)}
+                        strokeWidth="4"
+                        strokeLinecap="round"
                       />
                     </svg>
                     
@@ -56,14 +68,15 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke={item.rating >= 60 ? "#4ADE80" : item.rating >= 40 ? "#FACC15" : "#F87171"}
-                        strokeWidth="3"
+                        stroke={getRatingColor(item.rating)}
+                        strokeWidth="4"
                         strokeDasharray={`${item.rating}, 100`}
+                        strokeLinecap="round"
                       />
                     </svg>
                     
                     {/* Rating number in the center */}
-                    <div className="text-sm font-semibold">
+                    <div className="text-xs font-semibold">
                       {item.rating}
                     </div>
                   </div>

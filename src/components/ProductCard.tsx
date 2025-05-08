@@ -35,6 +35,13 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
     return "#F87171";
   };
 
+  // Get the lighter background color for the circle
+  const getBackgroundColor = (rating: number) => {
+    if (rating >= 70) return "#E6F8EA";
+    if (rating >= 40) return "#FEF7CD";
+    return "#FFDEE2";
+  };
+
   return (
     <Link to={`/product/${type}/${product.id}`} className="block">
       <Card className="mb-4 hover:shadow-md transition-shadow ios-card">
@@ -57,27 +64,29 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="relative h-16 w-16">
-              <svg viewBox="0 0 36 36" className="h-16 w-16 -rotate-90">
+            <div className="relative h-14 w-14">
+              <svg className="w-14 h-14" viewBox="0 0 36 36">
+                {/* Light colored background circle */}
                 <path
-                  className="stroke-current"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  strokeWidth="3"
-                  strokeDasharray="100, 100"
-                  stroke="#E6F8EA"
+                  stroke={getBackgroundColor(product.rating)}
+                  strokeWidth="4"
+                  strokeLinecap="round"
                 />
+                
+                {/* Foreground progress circle */}
                 <path
-                  className="stroke-current"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  strokeWidth="3"
-                  strokeDasharray={`${product.rating}, 100`}
                   stroke={getProgressColor(product.rating)}
+                  strokeWidth="4"
+                  strokeDasharray={`${product.rating}, 100`}
+                  strokeLinecap="round"
                 />
               </svg>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                <div className="font-semibold text-lg">{product.rating}</div>
+                <div className="font-semibold text-base">{product.rating}</div>
                 <div className="text-xs text-muted-foreground">{getRatingLabel(product.rating)}</div>
               </div>
             </div>
