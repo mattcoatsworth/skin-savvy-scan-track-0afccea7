@@ -51,7 +51,7 @@ const AppNavigation: React.FC = () => {
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button 
-                className="rounded-full h-14 w-14 bg-skin-teal text-white shadow-lg flex items-center justify-center"
+                className="rounded-full h-14 w-14 bg-skin-black text-white shadow-lg flex items-center justify-center"
                 onClick={() => setOpen(true)}
               >
                 <Plus className="h-7 w-7" />
