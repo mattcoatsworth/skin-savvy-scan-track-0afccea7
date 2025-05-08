@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Home, BarChart2, User, Plus, Camera, Image } from "lucide-react";
+import { Home, BarChart2, User, Plus, Camera, Image, Scan, Face } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { 
@@ -22,8 +22,8 @@ const AppNavigation: React.FC = () => {
   
   const navItems: NavItem[] = [
     { icon: Home, label: "Home", path: "/", active: true },
-    { icon: Camera, label: "Skin", path: "/history" },
-    { icon: BarChart2, label: "Insights", path: "/insights" },
+    { icon: Face, label: "Skin", path: "/history" },
+    { icon: Scan, label: "Scans", path: "/insights" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
