@@ -12,6 +12,7 @@ type LogType = {
   description: string;
   date: string;
   details?: string;
+  rating?: number;
 };
 
 const getStatusIndicator = (status: LogType['status']) => {
@@ -25,6 +26,29 @@ const getStatusIndicator = (status: LogType['status']) => {
   }
 };
 
+// Determine progress color based on rating
+const getProgressColor = (rating: number) => {
+  if (rating >= 70) return "#4ADE80"; // Green for good ratings
+  if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
+  return "#F87171"; // Red for poor ratings
+};
+
+// Get the lighter background color for the circle
+const getBackgroundColor = (rating: number) => {
+  if (rating >= 70) return "#E6F8EA"; // Light green
+  if (rating >= 40) return "#FEF7CD"; // Light yellow
+  return "#FFDEE2"; // Light red
+};
+
+// Determine label based on rating
+const getRatingLabel = (rating: number) => {
+  if (rating >= 80) return "Great";
+  if (rating >= 60) return "Good";
+  if (rating >= 40) return "OK";
+  if (rating >= 20) return "Fair";
+  return "Poor";
+};
+
 const RecentLogs = () => {
   // Sample data
   const recentLogs: LogType[] = [
@@ -33,42 +57,48 @@ const RecentLogs = () => {
       status: "positive", 
       description: "No reaction after 3 days",
       date: "Today",
-      details: "Applied a pea-sized amount before bed. Skin feels smoother in the morning with no irritation."
+      details: "Applied a pea-sized amount before bed. Skin feels smoother in the morning with no irritation.",
+      rating: 85
     },
     { 
       title: "Whey Protein", 
       status: "negative", 
       description: "Possible acne trigger",
       date: "Yesterday",
-      details: "Noticed small breakouts along jawline 24 hours after consuming whey protein shake."
+      details: "Noticed small breakouts along jawline 24 hours after consuming whey protein shake.",
+      rating: 30
     },
     { 
       title: "Avocado", 
       status: "positive", 
       description: "Skin hydration improved",
       date: "2 days ago",
-      details: "Ate half an avocado with lunch. Noticed skin felt more hydrated by evening."
+      details: "Ate half an avocado with lunch. Noticed skin felt more hydrated by evening.",
+      rating: 92
     },
     { 
       title: "New Foundation", 
       status: "neutral", 
       description: "No noticeable change",
       date: "3 days ago",
-      details: "Tried new mineral foundation. Coverage is good, no reaction but no improvement either."
+      details: "Tried new mineral foundation. Coverage is good, no reaction but no improvement either.",
+      rating: 65
     },
     { 
       title: "Vitamin C Serum", 
       status: "positive", 
       description: "Brightening effect",
       date: "4 days ago",
-      details: "Morning application of vitamin C serum. Noticed skin looks brighter after consistent use."
+      details: "Morning application of vitamin C serum. Noticed skin looks brighter after consistent use.",
+      rating: 78
     },
     { 
       title: "Late Night", 
       status: "negative", 
       description: "Skin looks tired",
       date: "5 days ago",
-      details: "Only got 5 hours of sleep. Under-eye circles more prominent and skin looks dull."
+      details: "Only got 5 hours of sleep. Under-eye circles more prominent and skin looks dull.",
+      rating: 40
     },
   ];
 
@@ -102,6 +132,43 @@ const RecentLogs = () => {
                     </p>
                     <p className="text-xs text-muted-foreground">{log.date}</p>
                   </div>
+                  
+                  {log.rating !== undefined && (
+                    <div className="flex flex-col items-center">
+                      <div className="relative w-12 h-12 flex items-center justify-center">
+                        {/* Background circle */}
+                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getBackgroundColor(log.rating)}
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        
+                        {/* Foreground circle - the actual progress */}
+                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getProgressColor(log.rating)}
+                            strokeWidth="4"
+                            strokeDasharray={`${log.rating}, 100`}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        
+                        {/* Rating number in the center */}
+                        <div className="text-base font-semibold">
+                          {log.rating}
+                        </div>
+                      </div>
+                      <span className="text-xs mt-1 text-muted-foreground">
+                        {getRatingLabel(log.rating)}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 {log.details && (
