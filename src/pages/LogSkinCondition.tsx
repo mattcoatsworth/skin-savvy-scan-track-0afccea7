@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
-import { ArrowLeft, Camera } from "lucide-react";
+import { ArrowLeft, Camera, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import AppNavigation from "@/components/AppNavigation";
 
 const LogSkinCondition = () => {
@@ -12,7 +12,15 @@ const LogSkinCondition = () => {
     food: [],
     supplements: [],
     makeup: [],
-    weather: []
+    weather: [],
+    menstrualCycle: []
+  });
+  
+  // Add state for search inputs
+  const [searchInputs, setSearchInputs] = useState({
+    food: "",
+    supplements: "",
+    makeup: ""
   });
 
   const moodOptions = [
@@ -38,6 +46,25 @@ const LogSkinCondition = () => {
       }
       return updatedFactors;
     });
+  };
+  
+  const handleSearchChange = (category: string, value: string) => {
+    setSearchInputs(prev => ({
+      ...prev,
+      [category]: value
+    }));
+  };
+  
+  const handleAddCustomFactor = (category: string) => {
+    const value = searchInputs[category as keyof typeof searchInputs];
+    if (value && !selectedFactors[category].includes(value)) {
+      handleFactorSelect(category, value);
+      // Clear the search input after adding
+      setSearchInputs(prev => ({
+        ...prev,
+        [category]: ""
+      }));
+    }
   };
 
   return (
@@ -83,9 +110,34 @@ const LogSkinCondition = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
+              {/* Food Card with Search */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">🥗 Food</h3>
+                  
+                  {/* Search Input for Food */}
+                  <div className="relative mb-2">
+                    <div className="flex">
+                      <div className="relative flex-grow">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search or add food items"
+                          value={searchInputs.food}
+                          onChange={(e) => handleSearchChange("food", e.target.value)}
+                          className="pl-8 pr-16 py-2 text-sm h-9"
+                        />
+                      </div>
+                      <Button 
+                        size="sm"
+                        onClick={() => handleAddCustomFactor("food")}
+                        className="ml-1"
+                        disabled={!searchInputs.food}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                  
                   <div className="flex flex-wrap gap-2">
                     {["Hydrating", "Dehydrating", "High Sugar", "Dairy"].map(factor => (
                       <Button 
@@ -98,13 +150,52 @@ const LogSkinCondition = () => {
                         {factor}
                       </Button>
                     ))}
+                    {selectedFactors.food
+                      .filter(factor => !["Hydrating", "Dehydrating", "High Sugar", "Dairy"].includes(factor))
+                      .map(factor => (
+                        <Button 
+                          key={factor}
+                          variant="default" 
+                          size="sm" 
+                          className="rounded-full bg-skin-black text-white"
+                          onClick={() => handleFactorSelect('food', factor)}
+                        >
+                          {factor}
+                        </Button>
+                      ))
+                    }
                   </div>
                 </CardContent>
               </Card>
               
+              {/* Supplements Card with Search */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">💊 Supplements</h3>
+                  
+                  {/* Search Input for Supplements */}
+                  <div className="relative mb-2">
+                    <div className="flex">
+                      <div className="relative flex-grow">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search or add supplements"
+                          value={searchInputs.supplements}
+                          onChange={(e) => handleSearchChange("supplements", e.target.value)}
+                          className="pl-8 pr-16 py-2 text-sm h-9"
+                        />
+                      </div>
+                      <Button 
+                        size="sm"
+                        onClick={() => handleAddCustomFactor("supplements")}
+                        className="ml-1"
+                        disabled={!searchInputs.supplements}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                  
                   <div className="flex flex-wrap gap-2">
                     {["New", "Regular", "Skipped"].map(factor => (
                       <Button 
@@ -117,13 +208,52 @@ const LogSkinCondition = () => {
                         {factor}
                       </Button>
                     ))}
+                    {selectedFactors.supplements
+                      .filter(factor => !["New", "Regular", "Skipped"].includes(factor))
+                      .map(factor => (
+                        <Button 
+                          key={factor}
+                          variant="default" 
+                          size="sm" 
+                          className="rounded-full bg-skin-black text-white"
+                          onClick={() => handleFactorSelect('supplements', factor)}
+                        >
+                          {factor}
+                        </Button>
+                      ))
+                    }
                   </div>
                 </CardContent>
               </Card>
               
+              {/* Makeup Card with Search */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">💄 Makeup</h3>
+                  
+                  {/* Search Input for Makeup */}
+                  <div className="relative mb-2">
+                    <div className="flex">
+                      <div className="relative flex-grow">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search or add makeup products"
+                          value={searchInputs.makeup}
+                          onChange={(e) => handleSearchChange("makeup", e.target.value)}
+                          className="pl-8 pr-16 py-2 text-sm h-9"
+                        />
+                      </div>
+                      <Button 
+                        size="sm"
+                        onClick={() => handleAddCustomFactor("makeup")}
+                        className="ml-1"
+                        disabled={!searchInputs.makeup}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                  
                   <div className="flex flex-wrap gap-2">
                     {["None", "Light", "Full", "Same as usual"].map(factor => (
                       <Button 
@@ -136,10 +266,25 @@ const LogSkinCondition = () => {
                         {factor}
                       </Button>
                     ))}
+                    {selectedFactors.makeup
+                      .filter(factor => !["None", "Light", "Full", "Same as usual"].includes(factor))
+                      .map(factor => (
+                        <Button 
+                          key={factor}
+                          variant="default" 
+                          size="sm" 
+                          className="rounded-full bg-skin-black text-white"
+                          onClick={() => handleFactorSelect('makeup', factor)}
+                        >
+                          {factor}
+                        </Button>
+                      ))
+                    }
                   </div>
                 </CardContent>
               </Card>
               
+              {/* Weather Card - Keeping original */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">🌡️ Weather</h3>
@@ -151,6 +296,26 @@ const LogSkinCondition = () => {
                         size="sm" 
                         className={`rounded-full ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('weather', factor)}
+                      >
+                        {factor}
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* New Menstrual Cycle Card */}
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-2 text-skin-black">🔴 Menstrual Cycle</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {["Not Menstruating", "Menstruating", "PMS", "Ovulation", "Spotting"].map(factor => (
+                      <Button 
+                        key={factor}
+                        variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
+                        size="sm" 
+                        className={`rounded-full ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        onClick={() => handleFactorSelect('menstrualCycle', factor)}
                       >
                         {factor}
                       </Button>
