@@ -64,10 +64,14 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				skin: {
-					teal: '#68B2A0',
-					lavender: '#E2D1F9',
-					gray: '#8E9196',
-					light: '#F1F0FB'
+					black: '#1E1E1E',
+					gray: '#F8F8FA',
+					lightgray: '#F2F2F7',
+					white: '#FFFFFF',
+					flame: '#FF6B01',
+					red: '#FF4559',
+					blue: '#6BB9FF',
+					amber: '#FFC170'
 				}
 			},
 			borderRadius: {
