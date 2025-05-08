@@ -86,11 +86,11 @@ const History = () => {
           <h1 className="text-2xl font-bold text-center">Skin</h1>
         </header>
         
-        {/* Add SkinHistory at the top */}
-        <SkinHistory ratings={skinRatings} className="mb-8" />
+        {/* Add SkinHistory at the top with more margin */}
+        <SkinHistory ratings={skinRatings} className="mb-10" />
         
-        {/* Increase space between cards from space-y-8 to space-y-10 to match Food Impacts section */}
-        <div className="space-y-10">
+        {/* Use gap-y-14 for significantly more space between cards */}
+        <div className="flex flex-col gap-y-14">
           {dayLogs.map((log) => (
             <Link key={log.id} to={`/day-log/${log.id}`}>
               <Card className="ios-card hover:shadow-md transition-all">
