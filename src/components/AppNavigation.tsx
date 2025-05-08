@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Home, BarChart2, User, Plus, Camera, Image, Scan, Smile } from "lucide-react";
+import { Home, User, Plus, Camera, Image, Scan, Smile } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { 
@@ -20,8 +20,11 @@ type NavItem = {
 const AppNavigation: React.FC = () => {
   const [open, setOpen] = useState(false);
   
+  // Using window.location.pathname to determine the active route
+  const currentPath = window.location.pathname;
+  
   const navItems: NavItem[] = [
-    { icon: Home, label: "Home", path: "/", active: true },
+    { icon: Home, label: "Home", path: "/" },
     { icon: Smile, label: "Skin", path: "/history" },
     { icon: Scan, label: "Products", path: "/insights" },
     { icon: User, label: "Profile", path: "/profile" },
@@ -29,14 +32,14 @@ const AppNavigation: React.FC = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
-      <div className="flex justify-around items-center relative">
+      <div className="flex justify-evenly items-center relative">
         {navItems.slice(0, 2).map((item) => (
           <Link
             key={item.label}
             to={item.path}
             className={cn(
-              "flex flex-col items-center py-2 px-4",
-              item.active
+              "flex flex-col items-center py-2 flex-1",
+              currentPath === item.path
                 ? "text-skin-teal"
                 : "text-gray-500 hover:text-skin-teal"
             )}
@@ -47,7 +50,7 @@ const AppNavigation: React.FC = () => {
         ))}
 
         {/* Center Plus Button with Popover */}
-        <div className="relative -top-5">
+        <div className="relative -top-5 flex-1 flex justify-center">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button 
@@ -85,8 +88,8 @@ const AppNavigation: React.FC = () => {
             key={item.label}
             to={item.path}
             className={cn(
-              "flex flex-col items-center py-2 px-4",
-              item.active
+              "flex flex-col items-center py-2 flex-1",
+              currentPath === item.path
                 ? "text-skin-teal"
                 : "text-gray-500 hover:text-skin-teal"
             )}
