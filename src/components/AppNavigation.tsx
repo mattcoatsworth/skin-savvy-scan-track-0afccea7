@@ -40,8 +40,8 @@ const AppNavigation: React.FC = () => {
             isActive ? "text-skin-teal" : "text-gray-500 hover:text-skin-teal"
           );
           
+          // Insert the plus button after the second item
           if (index === 2) {
-            // Insert the plus button after the second item
             return (
               <React.Fragment key={`fragment-${item.label}`}>
                 {/* Center Plus Button with Popover */}
