@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useNavigate } from "react-router-dom";
 import { Send, Paperclip, File, Camera, Image, MessageCircle } from "lucide-react";
+import { spacing } from "@/design";
 
 const ChatInput = () => {
   const navigate = useNavigate();

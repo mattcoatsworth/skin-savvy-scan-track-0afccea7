@@ -71,6 +71,13 @@ All components follow iOS-inspired design principles with a focus on accessibili
 - Consistent spacing between sections
 - Clear headings
 
+### Chat Input Section
+- Class: `px-4 pb-16 pt-6 bg-slate-50 mt-[-4rem]`
+- Negative top margin to reduce space with section above
+- Extra bottom padding to prevent overlap with navigation bar
+- Consistent across all pages
+- Contains quick suggestions and input field
+
 ## Typography
 
 ### Headings
@@ -92,3 +99,4 @@ All components follow iOS-inspired design principles with a focus on accessibili
 - Standard size: `h-5 w-5`
 - Consistent placement within components
 - Match color with surrounding text unless highlighting
+

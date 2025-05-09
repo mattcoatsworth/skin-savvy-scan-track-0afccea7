@@ -70,6 +70,13 @@ export const spacing = {
     },
     modal: {
       padding: '1.5rem' // 24px
+    },
+    chatInput: {
+      paddingX: '1rem', // 16px
+      paddingTop: '1.5rem', // 24px
+      paddingBottom: '4rem', // 64px
+      marginTop: '-4rem', // Negative margin to reduce space with section above
+      background: 'bg-slate-50'
     }
   }
 };
