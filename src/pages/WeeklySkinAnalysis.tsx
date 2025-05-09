@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -24,6 +23,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import BackButton from "@/components/BackButton";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 // Types for the analysis data
 type AnalysisData = {
@@ -495,6 +495,9 @@ const WeeklySkinAnalysis = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Add View Scoring Method component at the bottom */}
+        <ViewScoringMethod />
       </div>
     </div>
   );

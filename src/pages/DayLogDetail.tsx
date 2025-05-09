@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
@@ -9,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Slider } from "@/components/ui/slider";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 // Define types for the page
 type Factor = {
@@ -581,6 +581,9 @@ const DayLogDetail = () => {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Add View Scoring Method component at the bottom */}
+        <ViewScoringMethod />
       </div>
       
       <AppNavigation />

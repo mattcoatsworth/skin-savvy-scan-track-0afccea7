@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 type DayRating = {
@@ -41,7 +41,10 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
   return (
     <div className={cn("ios-section block", className)}>
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-xl font-semibold">Skin History</h2>
+        <h2 className="text-xl font-semibold">Weekly Skin Report</h2>
+        <Link to="/weekly-skin-analysis" className="text-skin-teal text-sm font-medium flex items-center">
+          View Report <ArrowRight className="h-4 w-4 ml-1" />
+        </Link>
       </div>
       
       <Link to="/weekly-skin-analysis">
@@ -92,6 +95,9 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
           </CardContent>
         </Card>
       </Link>
+      
+      {/* Add Skin History title below the weekly block */}
+      <h2 className="text-xl font-semibold mt-6 mb-3">Skin History</h2>
     </div>
   );
 };
