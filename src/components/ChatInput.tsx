@@ -57,10 +57,10 @@ const ChatInput = () => {
   ];
 
   return (
-    <div className="bg-slate-50 pt-2 pb-3 px-4">
+    <div className="bg-slate-50 pt-1 pb-3 px-4">
       <div className="max-w-md mx-auto">
         {/* Quick suggestions */}
-        <div className="flex overflow-x-auto gap-2 pb-3 no-scrollbar">
+        <div className="flex overflow-x-auto gap-2 pb-1.5 no-scrollbar">
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
