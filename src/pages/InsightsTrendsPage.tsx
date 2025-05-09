@@ -397,9 +397,6 @@ const InsightsTrendsPage = () => {
           </>
         )}
       </div>
-      
-      {/* Keep the AppNavigation component */}
-      <AppNavigation />
     </div>
   );
 };
