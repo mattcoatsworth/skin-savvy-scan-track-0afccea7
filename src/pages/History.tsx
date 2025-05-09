@@ -1,3 +1,4 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,14 +7,28 @@ import { format, subDays } from "date-fns";
 import SkinHistory from "@/components/SkinHistory";
 import BackButton from "@/components/BackButton";
 
-// Mock data for skin ratings
-const skinRatings = [
-  { day: "Mon", rating: 85, date: "5/1" },
-  { day: "Tue", rating: 70, date: "5/2" },
-  { day: "Wed", rating: 60, date: "5/3" },
-  { day: "Thu", rating: 45, date: "5/4" },
-  { day: "Fri", rating: 75, date: "5/5" },
-];
+// Generate data for the past 7 days for skin history chart
+const generatePastWeekData = () => {
+  const today = new Date();
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  return Array(7).fill(null).map((_, index) => {
+    const date = subDays(today, 6 - index);
+    const dayName = days[date.getDay()];
+    const dateStr = format(date, "M/d");
+    // Generate a random rating between 40 and 95 for demo purposes
+    const rating = Math.floor(Math.random() * (95 - 40 + 1)) + 40;
+    
+    return {
+      day: dayName,
+      date: dateStr,
+      rating
+    };
+  });
+};
+
+// Data for skin history chart
+const skinRatings = generatePastWeekData();
 
 // Define the type for a day log
 type DayLogType = {
