@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -57,7 +56,7 @@ const ChatInput = () => {
   ];
 
   return (
-    <div className="bg-slate-50 pt-1 pb-3 px-4">
+    <div className="bg-slate-50 px-4">
       <div className="max-w-md mx-auto">
         {/* Quick suggestions */}
         <div className="flex overflow-x-auto gap-2 pb-1.5 no-scrollbar">
@@ -73,7 +72,7 @@ const ChatInput = () => {
           ))}
         </div>
 
-        <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
+        <form onSubmit={handleChatSubmit} className="max-w-md mx-auto mb-3">
           <div className="relative flex items-center">
             <Input
               type="text"
