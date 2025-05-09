@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -6,8 +5,8 @@ import {
   ArrowLeft, 
   Calendar, 
   Droplet, 
-  Food, 
-  Medicine, 
+  Apple, 
+  Pill, 
   Moon, 
   Sun, 
   Activity,
@@ -81,9 +80,9 @@ const getRatingLabel = (rating: number) => {
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
     case "food":
-      return <Food className="h-5 w-5" />;
+      return <Apple className="h-5 w-5" />;
     case "products":
-      return <Medicine className="h-5 w-5" />;
+      return <Pill className="h-5 w-5" />;
     case "sleep":
       return <Moon className="h-5 w-5" />;
     case "stress":
