@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,11 +27,11 @@ const queryClient = new QueryClient();
 // Layout component that includes the ChatInput and AppNavigation
 const AppLayout = () => (
   <>
-    <div className="bg-slate-50 min-h-screen pb-24">
-      <div className="max-w-md mx-auto px-4 py-6">
+    <div className="bg-slate-50 min-h-screen">
+      <div className="max-w-md mx-auto px-4 py-6 pb-24">
         <Outlet />
+        <ChatInput />
       </div>
-      <ChatInput />
       <AppNavigation />
     </div>
   </>
