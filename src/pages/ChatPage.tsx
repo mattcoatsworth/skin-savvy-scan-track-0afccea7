@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Send, Menu, PlusCircle } from "lucide-react";
+import { MessageSquare, Send, Menu, PlusCircle, Paperclip, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -325,27 +325,57 @@ const ChatPage: React.FC = () => {
         </ScrollArea>
       </div>
       
-      <div className="p-4 pb-6">
-        <div className="relative w-full">
-          <div className="relative flex items-center w-full rounded-full border border-gray-300 bg-white px-4 py-2 shadow-sm">
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder="Type your question..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pl-0"
-            />
+      {/* Updated chat input area to match the design in the image */}
+      <div className="p-4 pb-6 bg-white border-t border-gray-200">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative flex items-center w-full px-4">
+            {/* Main input field */}
+            <div className="relative flex items-center w-full bg-gray-100 rounded-full px-4 py-2">
+              {/* Attachment button */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full p-2 h-auto w-auto flex items-center justify-center bg-transparent hover:bg-gray-200"
+              >
+                <Paperclip className="h-5 w-5 text-gray-500" />
+              </Button>
+              
+              {/* Text input */}
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Ask anything"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pl-2 text-base"
+              />
+            </div>
+
+            {/* Mic button */}
             <Button 
-              type="button"
-              onClick={handleSend}
-              className="p-1 h-auto bg-transparent hover:bg-transparent"
-              disabled={!input.trim()}
+              variant="ghost" 
+              size="icon" 
+              className="ml-2 rounded-full p-0 h-12 w-12 bg-black text-white flex items-center justify-center hover:bg-gray-800"
             >
-              <Send className="h-5 w-5 text-gray-400" />
+              <Mic className="h-6 w-6" />
             </Button>
           </div>
+
+          {/* Example suggestions */}
+          <div className="flex overflow-x-auto space-x-3 mt-4 pb-2 px-4">
+            <div className="flex-shrink-0 bg-gray-100 rounded-2xl p-4 cursor-pointer">
+              <p className="font-medium text-black text-sm">Creative product naming</p>
+              <p className="text-gray-500 text-xs mt-1">for a new brand</p>
+            </div>
+            <div className="flex-shrink-0 bg-gray-100 rounded-2xl p-4 cursor-pointer">
+              <p className="font-medium text-black text-sm">Optimize email</p>
+              <p className="text-gray-500 text-xs mt-1">marketing strategies</p>
+            </div>
+          </div>
+
+          {/* Bottom line indicator */}
+          <div className="w-1/3 h-1 bg-gray-900 mx-auto mt-3 rounded-full"></div>
         </div>
       </div>
     </div>
