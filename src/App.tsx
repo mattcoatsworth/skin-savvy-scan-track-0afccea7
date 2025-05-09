@@ -24,6 +24,7 @@ import ChatInput from "./components/ChatInput";
 import ExploreItemDetail from "./pages/ExploreItemDetail";
 import RecentLogDetail from "./pages/RecentLogDetail";
 import SuggestedActionDetail from "./pages/SuggestedActionDetail";
+import MonthlyAnalysisDetail from "./pages/MonthlyAnalysisDetail";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/recent-logs/:logId" element={<RecentLogDetail />} />
             <Route path="/insights-trends" element={<InsightsTrendsPage />} />
             <Route path="/insights-trends/:insightId" element={<InsightsTrendsPage />} />
+            <Route path="/monthly-analysis" element={<MonthlyAnalysisDetail />} />
             <Route path="/suggested-actions" element={<SuggestedActionsPage />} />
             <Route path="/suggested-actions/:actionId" element={<SuggestedActionDetail />} />
             <Route path="/explore" element={<ExplorePage />} />

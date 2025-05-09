@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
@@ -376,23 +377,28 @@ const InsightsTrendsPage = () => {
             
             <div>
               <h2 className="text-xl font-semibold mb-3">Monthly Analysis</h2>
-              <Card className="ios-card">
-                <CardContent className="p-4">
-                  <p className="font-medium mb-2">Top Positive Factors</p>
-                  <ul className="list-disc pl-5 mb-4 text-sm">
-                    <li>Regular hydration (8+ glasses daily)</li>
-                    <li>Consistent SPF usage</li>
-                    <li>Vitamin C serum application</li>
-                  </ul>
-                  
-                  <p className="font-medium mb-2">Top Negative Factors</p>
-                  <ul className="list-disc pl-5 text-sm">
-                    <li>Processed sugar consumption</li>
-                    <li>Less than 6 hours of sleep</li>
-                    <li>Forgetting evening cleansing routine</li>
-                  </ul>
-                </CardContent>
-              </Card>
+              <Link to="/monthly-analysis" className="block">
+                <Card className="ios-card hover:shadow-md transition-all cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="font-medium">Top Positive Factors</p>
+                      <ChevronRight className="text-muted-foreground h-5 w-5" />
+                    </div>
+                    <ul className="list-disc pl-5 mb-4 text-sm">
+                      <li>Regular hydration (8+ glasses daily)</li>
+                      <li>Consistent SPF usage</li>
+                      <li>Vitamin C serum application</li>
+                    </ul>
+                    
+                    <p className="font-medium mb-2">Top Negative Factors</p>
+                    <ul className="list-disc pl-5 text-sm">
+                      <li>Processed sugar consumption</li>
+                      <li>Less than 6 hours of sleep</li>
+                      <li>Forgetting evening cleansing routine</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </>
         )}
