@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerClose
 } from "@/components/ui/drawer";
+import { Separator } from "@/components/ui/separator";
 
 type Message = {
   id: string;
@@ -300,7 +301,7 @@ const ChatPage: React.FC = () => {
         </Drawer>
       </div>
       
-      <div className="flex-1 overflow-hidden bg-gray-50 flex flex-col">
+      <div className="flex-1 overflow-hidden bg-white flex flex-col">
         <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
           <div className="flex flex-col space-y-4">
             {activeChat.messages.map((msg) => (
@@ -327,11 +328,11 @@ const ChatPage: React.FC = () => {
         {/* Suggestion chips now appear at the bottom of the chat area */}
         <div className="p-4 pb-5">
           <div className="flex gap-3 overflow-x-auto">
-            <div className="flex-shrink-0 bg-white rounded-2xl p-4 cursor-pointer shadow-sm">
+            <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
               <p className="font-medium text-black text-sm">Creative product naming</p>
               <p className="text-gray-500 text-xs mt-1">for a new brand</p>
             </div>
-            <div className="flex-shrink-0 bg-white rounded-2xl p-4 cursor-pointer shadow-sm">
+            <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
               <p className="font-medium text-black text-sm">Optimize email</p>
               <p className="text-gray-500 text-xs mt-1">marketing strategies</p>
             </div>
@@ -339,20 +340,11 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Chat input area now at the bottom, after suggestions */}
+      {/* Updated chat input area to match the reference image */}
       <div className="p-4 bg-white border-t border-gray-200">
-        <div className="max-w-4xl mx-auto flex gap-2 items-center">
-          {/* Attachment button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="rounded-full bg-gray-50 h-12 w-12 flex-shrink-0"
-          >
-            <Paperclip className="h-5 w-5 text-gray-500" />
-          </Button>
-          
+        <div className="max-w-4xl mx-auto flex flex-col">
           {/* Text input */}
-          <div className="flex-1 relative">
+          <div className="mb-4">
             <Input
               ref={inputRef}
               type="text"
@@ -360,18 +352,59 @@ const ChatPage: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              className="w-full bg-gray-50 border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
+              className="w-full bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
             />
           </div>
           
-          {/* Mic button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="rounded-full bg-black text-white h-12 w-12 flex-shrink-0"
-          >
-            <Mic className="h-5 w-5" />
-          </Button>
+          {/* Smaller buttons below the input */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full bg-gray-50 h-10 w-10"
+              >
+                <Paperclip className="h-4 w-4 text-gray-500" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full bg-gray-50 h-10 w-10"
+              >
+                <svg 
+                  width="18" 
+                  height="18" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  className="text-gray-500"
+                >
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+              </Button>
+            </div>
+            
+            {/* Rounded line indicator at the bottom */}
+            <div className="flex-1 flex justify-center">
+              <div className="w-16 h-1 bg-gray-900 rounded-full"></div>
+            </div>
+            
+            <div className="flex items-center">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full bg-black text-white h-10 w-10"
+              >
+                <Mic className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
