@@ -24,6 +24,7 @@ const LogSkinCondition = () => {
   const [sleepHours, setSleepHours] = useState<number>(7);
   const [stressLevel, setStressLevel] = useState<number>(3);
   const [notes, setNotes] = useState("");
+  const [waterIntake, setWaterIntake] = useState<number>(4);
   
   // Add state for search inputs
   const [searchInputs, setSearchInputs] = useState({
@@ -46,6 +47,12 @@ const LogSkinCondition = () => {
     if (savedNotes) {
       setNotes(savedNotes);
     }
+    
+    // Load water intake if saved
+    const savedWaterIntake = localStorage.getItem(`water-intake-${currentDate}`);
+    if (savedWaterIntake) {
+      setWaterIntake(Number(savedWaterIntake));
+    }
   }, []);
 
   // Save notes to localStorage
@@ -58,6 +65,29 @@ const LogSkinCondition = () => {
       duration: 3000
     });
   };
+  
+  // Save water intake to localStorage
+  const handleWaterIntakeChange = (value: number[]) => {
+    const intake = value[0];
+    setWaterIntake(intake);
+    const currentDate = new Date().toISOString().split('T')[0];
+    localStorage.setItem(`water-intake-${currentDate}`, intake.toString());
+  };
+  
+  // Get water intake rating feedback
+  const getWaterIntakeRating = (cups: number): {label: string; color: string} => {
+    if (cups >= 8) {
+      return { label: "Excellent", color: "#4ADE80" }; // Green
+    } else if (cups >= 6) {
+      return { label: "Good", color: "#FACC15" }; // Yellow
+    } else if (cups >= 4) {
+      return { label: "Adequate", color: "#FFA500" }; // Orange
+    } else {
+      return { label: "Low", color: "#F87171" }; // Red
+    }
+  };
+  
+  const waterRating = getWaterIntakeRating(waterIntake);
 
   const moodOptions = [
     { icon: <Smile className="h-10 w-10" />, label: "Balanced" },
@@ -271,6 +301,38 @@ const LogSkinCondition = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
+              {/* Water Intake Card - NEW */}
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <Droplet className="h-5 w-5 mr-2 text-skin-black" /> Water Intake
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-skin-black">How many cups of water did you drink today?</span>
+                      <span className="text-sm font-medium text-skin-black flex items-center">
+                        {waterIntake} cups
+                        <span className="ml-2 px-2 py-0.5 text-xs rounded" style={{ backgroundColor: `${waterRating.color}20`, color: waterRating.color }}>
+                          {waterRating.label}
+                        </span>
+                      </span>
+                    </div>
+                    <Slider 
+                      value={[waterIntake]} 
+                      min={0} 
+                      max={12} 
+                      step={1} 
+                      onValueChange={handleWaterIntakeChange}
+                      className="cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>12 cups</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
               {/* Sleep Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">

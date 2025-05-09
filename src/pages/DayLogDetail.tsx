@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, Droplet } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,12 +51,26 @@ const getImpactIndicator = (impact: Factor['impact']) => {
   }
 };
 
+// Get water intake rating feedback
+const getWaterIntakeRating = (cups: number): {label: string; color: string} => {
+  if (cups >= 8) {
+    return { label: "Excellent", color: "#4ADE80" }; // Green
+  } else if (cups >= 6) {
+    return { label: "Good", color: "#FACC15" }; // Yellow
+  } else if (cups >= 4) {
+    return { label: "Adequate", color: "#FFA500" }; // Orange
+  } else {
+    return { label: "Low", color: "#F87171" }; // Red
+  }
+};
+
 const DayLogDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   
-  // State for notes
+  // State for notes and water intake
   const [notes, setNotes] = useState("");
+  const [waterIntake, setWaterIntake] = useState<number>(4);
   
   // In a real app, this would fetch data from an API based on the ID
   // For this demo, we'll generate mock data
@@ -64,12 +78,17 @@ const DayLogDetail = () => {
   const date = subDays(new Date(), dayIndex);
   const rating = Math.floor(Math.random() * 100) + 1;
   
-  // Load notes from localStorage on component mount
+  // Load notes and water intake from localStorage on component mount
   useEffect(() => {
     if (id) {
       const savedNotes = localStorage.getItem(`skin-notes-${id}`);
       if (savedNotes) {
         setNotes(savedNotes);
+      }
+      
+      const savedWaterIntake = localStorage.getItem(`water-intake-${id}`);
+      if (savedWaterIntake) {
+        setWaterIntake(Number(savedWaterIntake));
       }
     }
   }, [id]);
@@ -85,6 +104,8 @@ const DayLogDetail = () => {
       });
     }
   };
+  
+  const waterRating = getWaterIntakeRating(waterIntake);
   
   // Mock data for the day details
   const foodFactors: Factor[] = [
@@ -135,6 +156,12 @@ const DayLogDetail = () => {
       impact: "positive", 
       description: "8+ hours improved skin",
       rating: 95
+    },
+    { 
+      name: "Water Intake", 
+      impact: waterIntake >= 6 ? "positive" : (waterIntake >= 4 ? "neutral" : "negative"), 
+      description: `${waterIntake} cups - ${waterRating.label} hydration`,
+      rating: waterIntake * 8.3 // Convert to a rating out of 100
     }
   ];
   
@@ -202,6 +229,39 @@ const DayLogDetail = () => {
                 <span className="text-xs mt-1 text-muted-foreground">
                   {getRatingLabel(rating)}
                 </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Water Intake Card - New Addition */}
+        <Card className="ios-card mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Droplet className="h-5 w-5 mr-2" />
+                <h3 className="font-medium">Water Intake</h3>
+              </div>
+              <span className="text-sm px-2 py-0.5 rounded" style={{ backgroundColor: `${waterRating.color}20`, color: waterRating.color }}>
+                {waterRating.label}
+              </span>
+            </div>
+            <div className="mt-2 flex items-center">
+              <div className="flex-1">
+                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full" 
+                    style={{ 
+                      width: `${Math.min(waterIntake * 100 / 12, 100)}%`, 
+                      backgroundColor: waterRating.color 
+                    }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-xs mt-1">
+                  <span>0 cups</span>
+                  <span className="font-medium">{waterIntake} cups</span>
+                  <span>12 cups</span>
+                </div>
               </div>
             </div>
           </CardContent>
