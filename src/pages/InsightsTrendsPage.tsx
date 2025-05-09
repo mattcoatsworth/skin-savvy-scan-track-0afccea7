@@ -28,6 +28,10 @@ type InsightType = {
     date: string;
     value: number;
   }[];
+  alternatives?: {
+    name: string;
+    description: string;
+  }[];
 };
 
 const InsightsTrendsPage = () => {
@@ -35,7 +39,7 @@ const InsightsTrendsPage = () => {
   const location = useLocation();
   const [selectedInsight, setSelectedInsight] = useState<InsightType | null>(null);
   const [activeTab, setActiveTab] = useState("all");
-
+  
   // Sample data
   const insights: InsightType[] = [
     {
@@ -134,6 +138,27 @@ const InsightsTrendsPage = () => {
         { date: "Week 3", value: 88 }
       ]
     },
+    {
+      id: "supplement-irritation",
+      title: "Supplement Irritation Analysis",
+      description: "Your skin may be reacting to a current supplement",
+      iconName: "pill",
+      category: "negative",
+      timeframe: "Last 2 weeks",
+      detailedAnalysis: "We've detected a pattern where your skin irritation has increased by 35% since you started taking the new supplement two weeks ago. The correlation is particularly strong with redness and small bumps appearing within 6 hours of consumption.",
+      relatedFactors: ["Biotin content", "Artificial coloring", "Dosage timing"],
+      impactScore: 68,
+      historicalData: [
+        { date: "Week 1", value: 75 },
+        { date: "Week 2", value: 58 },
+        { date: "Week 3", value: 42 }
+      ],
+      alternatives: [
+        { name: "Plant-based supplement alternative", description: "Contains similar nutrients without the artificial additives" },
+        { name: "Whole food sources", description: "Foods like leafy greens, nuts, and seeds can provide similar benefits" },
+        { name: "Lower dosage", description: "Consider reducing your current supplement dosage by half" }
+      ]
+    }
   ];
 
   // Function to get icon component based on iconName
@@ -187,8 +212,14 @@ const InsightsTrendsPage = () => {
   };
 
   useEffect(() => {
-    // Check if we have an insight from the state
-    if (location.state && location.state.insight) {
+    // Check if we have an insightId from location state
+    if (location.state && location.state.insightId) {
+      const stateInsightId = location.state.insightId;
+      const foundInsight = insights.find(i => i.id === stateInsightId);
+      setSelectedInsight(foundInsight || null);
+    } 
+    // Check if we have an insight from regular state
+    else if (location.state && location.state.insight) {
       const stateInsight = location.state.insight;
       // Find the full insight data with all details
       const fullInsight = insights.find(i => 
@@ -253,6 +284,23 @@ const InsightsTrendsPage = () => {
                         <li key={index}>{factor}</li>
                       ))}
                     </ul>
+                  </>
+                )}
+                
+                {/* Add alternatives section for supplement insight */}
+                {selectedInsight.id === "supplement-irritation" && selectedInsight.alternatives && (
+                  <>
+                    <h3 className="font-semibold text-lg mb-2">Recommended Alternatives</h3>
+                    <div className="space-y-3 mb-4">
+                      {selectedInsight.alternatives.map((alternative, index) => (
+                        <Card key={index} className="bg-gray-50 border-gray-200">
+                          <CardContent className="p-3">
+                            <h4 className="font-medium">{alternative.name}</h4>
+                            <p className="text-sm text-muted-foreground">{alternative.description}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
                   </>
                 )}
                 

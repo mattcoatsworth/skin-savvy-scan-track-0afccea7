@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 
 type ActionType = {
   text: string;
+  linkTo?: string; // Add optional linkTo property for custom navigation
+  id?: string; // Add optional id for specific item identification
 };
 
 type SuggestedActionsProps = {
@@ -15,6 +17,17 @@ type SuggestedActionsProps = {
 };
 
 const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className }) => {
+  // Function to determine where each action should link to
+  const getActionLink = (action: ActionType) => {
+    // If a custom link is provided, use it
+    if (action.linkTo) {
+      return action.linkTo;
+    }
+    
+    // Default to the suggested actions page
+    return "/suggested-actions";
+  };
+  
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
@@ -26,7 +39,12 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
       
       <div className="space-y-3">
         {actions.map((action, index) => (
-          <Link to="/suggested-actions" key={index} className="block">
+          <Link 
+            to={getActionLink(action)} 
+            key={index} 
+            state={action.id ? { insightId: action.id } : undefined}
+            className="block"
+          >
             <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">

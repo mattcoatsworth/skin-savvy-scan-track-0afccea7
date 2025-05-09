@@ -86,9 +86,18 @@ const Index = () => {
   ];
 
   const suggestedActions = [
-    { text: "Try logging your water intake today" },
-    { text: "Consider pausing this supplement to see if irritation decreases" },
-    { text: "Use SPF more consistently this week" },
+    { 
+      text: "Try logging your water intake today",
+      linkTo: "/day-log/today" // Link directly to today's log
+    },
+    { 
+      text: "Consider pausing this supplement to see if irritation decreases",
+      linkTo: "/insights-trends/supplement-irritation", // Link to specific insight
+      id: "supplement-irritation" // ID to pass to the insights page
+    },
+    { 
+      text: "Use SPF more consistently this week" 
+    },
   ];
 
   const exploreItems = [
