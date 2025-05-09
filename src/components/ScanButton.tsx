@@ -14,7 +14,7 @@ const ScanButton: React.FC = () => {
       >
         <Link to="/log-skin-condition" className="flex items-center justify-center gap-2">
           <ScanBarcode className="h-4 w-4" />
-          Scan
+          Log Today's Skin Condition
         </Link>
       </Button>
     </div>
