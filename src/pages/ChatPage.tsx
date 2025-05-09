@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Menu, PlusCircle, Paperclip, Mic } from "lucide-react";
+import { MessageSquare, Menu, PlusCircle, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -325,7 +325,7 @@ const ChatPage: React.FC = () => {
           </div>
         </ScrollArea>
         
-        {/* Suggestion chips now appear at the bottom of the chat area */}
+        {/* Suggestion chips */}
         <div className="p-4 pb-5">
           <div className="flex gap-3 overflow-x-auto">
             <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
@@ -340,8 +340,8 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Updated chat input area to match the reference image */}
-      <div className="p-4 bg-white border-t border-gray-200">
+      {/* Updated chat input area with design changes */}
+      <div className="p-4 bg-white">
         <div className="max-w-4xl mx-auto flex flex-col">
           {/* Text input */}
           <div className="mb-4">
@@ -356,54 +356,24 @@ const ChatPage: React.FC = () => {
             />
           </div>
           
-          {/* Smaller buttons below the input */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full bg-gray-50 h-10 w-10"
-              >
-                <Paperclip className="h-4 w-4 text-gray-500" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full bg-gray-50 h-10 w-10"
-              >
-                <svg 
-                  width="18" 
-                  height="18" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className="text-gray-500"
-                >
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                  <line x1="12" y1="19" x2="12" y2="23"></line>
-                  <line x1="8" y1="23" x2="16" y2="23"></line>
-                </svg>
-              </Button>
+          {/* Bottom row with paperclip and horizontal line with rounded ends */}
+          <div className="flex items-center justify-between">
+            {/* Paperclip button only (no mic button) */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full bg-gray-50 h-10 w-10"
+            >
+              <Paperclip className="h-4 w-4 text-gray-500" />
+            </Button>
+            
+            {/* Rounded line indicator with rounded caps */}
+            <div className="flex-1 flex justify-center mx-4">
+              <div className="w-16 h-1 bg-gray-400 rounded-full"></div>
             </div>
             
-            {/* Rounded line indicator at the bottom */}
-            <div className="flex-1 flex justify-center">
-              <div className="w-16 h-1 bg-gray-900 rounded-full"></div>
-            </div>
-            
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full bg-black text-white h-10 w-10"
-              >
-                <Mic className="h-4 w-4" />
-              </Button>
-            </div>
+            {/* Empty space where the mic button was */}
+            <div className="w-10 h-10"></div>
           </div>
         </div>
       </div>
