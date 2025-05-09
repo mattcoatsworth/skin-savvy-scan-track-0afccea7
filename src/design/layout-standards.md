@@ -38,33 +38,58 @@ All product and food detail pages follow a consistent layout pattern derived fro
    - Benefits (for positive impact items)
      - CheckCircle2 icon in green (text-green-500)
      - flex items-start layout with mr-2 spacing
+     - Each benefit listed with descriptive text
    - Concerns (for negative impact items)
      - XCircle icon in red (text-red-500)
      - flex items-start layout with mr-2 spacing
+     - Each concern listed with descriptive text and potential impact
    - Application methods (where relevant)
      - Standard card with p-6 padding
      - Title: text-lg font-semibold mb-3
+     - Step-by-step instructions with numbering
+     - Optional tips or warnings in highlighted boxes
    - Timeline observations (where relevant)
      - Day number in circle: bg-slate-100 rounded-full h-7 w-7
      - Observation text: text-sm with text-gray-600 for description
+     - Progressive observations showing changes over time
 
 4. **Science Section**
    - Data analysis explanation
      - Title: text-lg font-semibold mb-3
      - Explanatory text: text-sm text-gray-600 mb-3
      - List items: list-disc pl-5 text-sm text-gray-600 space-y-1
+     - Methodology description: how data was collected and analyzed
    - Related factors
      - Each factor: border-b border-gray-100 last:border-0 pb-3 last:pb-0
      - Impact indicator emoji: mr-2
      - Title: font-medium
      - Description: text-sm text-gray-600 ml-6
+     - Correlation strength indicator where applicable
    - Scientific references (where available)
      - Reference title: font-medium text-blue-600
      - Publication details: text-sm text-gray-600
      - Link: text-sm text-blue-500 with ArrowRight icon (h-3 w-3 ml-1)
+     - Brief summary of key findings from each reference
 
 5. **Scoring Method Link** (footer)
    - Positioned at bottom with consistent styling
+   - Card with subtle background and arrow icon
+   - Text explaining that users can learn about the scoring methodology
+   - Links to detailed page about calculation methods
+
+6. **Suggested Actions & Chat Text Box**
+   - Suggested Actions
+     - Title: text-xl font-semibold mb-3
+     - List of recommended actions based on product/food analysis
+     - Each action in a separate card with border-l-4 accent color
+     - Arrow icon indicating it's clickable for more details
+   - Chat Text Box
+     - Fixed at bottom of screen with paddingX: 1rem, paddingTop: 1.5rem, paddingBottom: 4rem
+     - Negative top margin (-6rem) to reduce space
+     - Background: bg-slate-50
+     - Input field with rounded corners and placeholder
+     - Send button with appropriate icon
+     - Optional quick-select suggestion buttons above input field
 
 ### Visual Consistency
 - Cards have consistent padding (`p-6`)
@@ -110,11 +135,13 @@ Any future product or log detail pages should follow this same pattern for consi
 ### Example Implementation
 
 For a new product/food detail page:
-1. Import standard components: Card, CardContent, Progress, BackButton
+1. Import standard components: Card, CardContent, Progress, BackButton, SuggestedActions, ChatInput
 2. Create header with back button and title
 3. Implement overview section with impact indicator, basic info, rating
 4. Add appropriate detail sections based on product type
 5. Include science section with data analysis
 6. Add scoring method link at bottom
+7. Include suggested actions section with relevant recommendations
+8. Add chat input component at bottom of page for user interaction
 
 Follow the exact spacing, typography, and color guidelines above to maintain visual consistency.
