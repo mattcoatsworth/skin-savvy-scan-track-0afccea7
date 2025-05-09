@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -201,7 +200,7 @@ const LogSkinCondition = () => {
           {/* Upload Selfie Button */}
           <div className="flex justify-center">
             <Button 
-              className="bg-skin-black text-white flex items-center gap-2 px-6 py-5 h-auto"
+              className="bg-skin-black text-white flex items-center gap-2 px-6 py-5 h-auto rounded-xl"
               onClick={() => console.log("Upload selfie initiated")}
             >
               <Camera className="h-5 w-5" />
@@ -247,7 +246,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.weather.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-xl ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('weather', factor)}
                       >
                         {factor}
@@ -269,7 +268,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-xl ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('menstrualCycle', factor)}
                       >
                         {factor}
@@ -282,7 +281,7 @@ const LogSkinCondition = () => {
           </div>
           
           <div className="pt-4">
-            <Button className="w-full bg-skin-black text-white h-12">
+            <Button className="w-full bg-skin-black text-white h-12 rounded-xl">
               Save Today's Log
             </Button>
           </div>

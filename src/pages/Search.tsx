@@ -16,7 +16,7 @@ const Search = () => {
           <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search products, ingredients..."
-            className="pl-10 h-12"
+            className="pl-10 h-12 rounded-xl"
           />
         </div>
         
