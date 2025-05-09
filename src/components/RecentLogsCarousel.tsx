@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -9,6 +10,8 @@ type RecentLogType = {
   status: "positive" | "negative" | "neutral";
   description: string;
   rating?: number;
+  id?: string; // Add optional id for specific log identification
+  linkTo?: string; // Add optional linkTo for custom navigation
 };
 
 type RecentLogsCarouselProps = {
@@ -51,6 +54,22 @@ const getRatingLabel = (rating: number) => {
 };
 
 const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className }) => {
+  // Function to determine where each log should link to
+  const getLogLink = (log: RecentLogType) => {
+    // If a custom link is provided, use it
+    if (log.linkTo) {
+      return log.linkTo;
+    }
+    
+    // If an ID is provided, link to a specific log detail page
+    if (log.id) {
+      return `/recent-logs/${log.id}`;
+    }
+    
+    // Default to the recent logs page
+    return "/recent-logs";
+  };
+
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
@@ -64,7 +83,12 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
         <ScrollArea className="w-full pb-4">
           <div className="flex space-x-4 px-1">
             {logs.map((log, index) => (
-              <Link key={index} to="/recent-logs" className="min-w-[260px] flex-shrink-0">
+              <Link 
+                key={index} 
+                to={getLogLink(log)} 
+                state={{ log }}
+                className="min-w-[260px] flex-shrink-0"
+              >
                 <Card className="ios-card animate-fade-in hover:shadow-md transition-all">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">

@@ -9,6 +9,8 @@ type ExploreItemType = {
   title: string;
   subtitle: string;
   image?: string;
+  id?: string; // Add optional id for specific item identification
+  linkTo?: string; // Add optional linkTo for custom navigation
 };
 
 type ExploreSectionProps = {
@@ -17,6 +19,22 @@ type ExploreSectionProps = {
 };
 
 const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => {
+  // Function to determine where each explore item should link to
+  const getExploreLink = (item: ExploreItemType) => {
+    // If a custom link is provided, use it
+    if (item.linkTo) {
+      return item.linkTo;
+    }
+    
+    // If an ID is provided, link to a specific explore page
+    if (item.id) {
+      return `/explore/${item.id}`;
+    }
+    
+    // Default to the explore page
+    return "/explore";
+  };
+  
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
@@ -30,8 +48,13 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
         <ScrollArea className="w-full pb-4">
           <div className="flex space-x-4 px-1">
             {items.map((item, index) => (
-              <Link to="/explore" key={index} className="flex-shrink-0">
-                <Card className="ios-card min-w-[180px] overflow-hidden">
+              <Link 
+                to={getExploreLink(item)} 
+                key={index} 
+                state={{ item }}
+                className="flex-shrink-0 min-w-[180px]"
+              >
+                <Card className="ios-card overflow-hidden hover:shadow-md transition-all">
                   <div className="h-24 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
                     {item.image ? (
                       <img src={item.image} alt={item.title} className="object-cover w-full h-full" />

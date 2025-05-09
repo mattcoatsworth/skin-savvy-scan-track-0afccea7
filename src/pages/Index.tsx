@@ -23,25 +23,33 @@ const Index = () => {
       title: "Retinol Cream", 
       status: "positive" as const, 
       description: "No reaction",
-      rating: 85
+      rating: 85,
+      id: "retinol-cream",
+      linkTo: "/recent-logs/retinol-cream"
     },
     { 
       title: "Whey Protein", 
       status: "negative" as const, 
       description: "Possible acne trigger",
-      rating: 30
+      rating: 30,
+      id: "whey-protein",
+      linkTo: "/recent-logs/whey-protein"
     },
     { 
       title: "Avocado", 
       status: "positive" as const, 
       description: "Skin hydration improved",
-      rating: 92
+      rating: 92,
+      id: "avocado",
+      linkTo: "/recent-logs/avocado"
     },
     { 
       title: "New Foundation", 
       status: "neutral" as const, 
       description: "No noticeable change",
-      rating: 65
+      rating: 65,
+      id: "new-foundation",
+      linkTo: "/recent-logs/new-foundation"
     },
   ];
 
@@ -71,24 +79,34 @@ const Index = () => {
     {
       title: "Collagen supplements",
       description: "Improved skin elasticity after 2 weeks",
-      icon: "✨"
+      icon: "✨",
+      id: "collagen-supplements",
+      iconName: "badge-check",
+      category: "positive" as const
     },
     {
       title: "Alcohol consumption",
       description: "Correlates with next-day puffiness 3 times this month",
-      icon: "🍷"
+      icon: "🍷",
+      id: "alcohol-consumption",
+      iconName: "wine",
+      category: "negative" as const
     },
     {
       title: "Vitamin C serum",
       description: "Brightening effect noted after regular use",
-      icon: "🍊"
+      icon: "🍊",
+      id: "vitamin-c-serum",
+      iconName: "sun",
+      category: "positive" as const
     },
   ];
 
   const suggestedActions = [
     { 
       text: "Try logging your water intake today",
-      linkTo: "/day-log/today" // Link directly to today's log
+      linkTo: "/day-log/today", // Link directly to today's log
+      id: "water-intake"
     },
     { 
       text: "Consider pausing this supplement to see if irritation decreases",
@@ -96,22 +114,29 @@ const Index = () => {
       id: "supplement-irritation" // ID to pass to the insights page
     },
     { 
-      text: "Use SPF more consistently this week" 
+      text: "Use SPF more consistently this week",
+      id: "spf-consistency"
     },
   ];
 
   const exploreItems = [
     { 
       title: "Skin Tips for Your Skin Type", 
-      subtitle: "Personalized advice" 
+      subtitle: "Personalized advice",
+      id: "skin-tips",
+      linkTo: "/explore/skin-tips"
     },
     { 
       title: "Science Behind Vitamin C", 
-      subtitle: "Research & benefits" 
+      subtitle: "Research & benefits",
+      id: "vitamin-c-science",
+      linkTo: "/explore/vitamin-c-science"
     },
     { 
       title: "New in the Community", 
-      subtitle: "Connect with others" 
+      subtitle: "Connect with others",
+      id: "community",
+      linkTo: "/explore/community"
     },
   ];
 
