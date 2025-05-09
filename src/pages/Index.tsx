@@ -7,14 +7,15 @@ import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import AppNavigation from "@/components/AppNavigation";
 import SkinHistory from "@/components/SkinHistory";
+import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 
 const Index = () => {
   // Sample data
   const skinFactors = [
-    { type: "Food" as const, status: "Hydrating", icon: "🥗" },
-    { type: "Supplement" as const, status: "New", icon: "💊" },
-    { type: "Makeup" as const, status: "Same as usual", icon: "💄" },
-    { type: "Weather" as const, status: "Dry + Cold", icon: "🌡️" },
+    { type: "Food" as const, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement" as const, status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup" as const, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   const recentLogs = [

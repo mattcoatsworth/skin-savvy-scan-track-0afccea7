@@ -3,13 +3,14 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { Smile } from "lucide-react";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
 type Factor = {
   type: FactorType;
   status: string;
-  icon: string;
+  icon: React.ReactNode;
 };
 
 type SkinSnapshotProps = {
@@ -45,7 +46,9 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
       <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
         <CardContent className="p-4">
           <div className="flex items-center mb-4">
-            <span className="text-4xl mr-3">{emoji}</span>
+            <div className="text-4xl mr-3">
+              <Smile className="h-8 w-8" />
+            </div>
             <div>
               <h2 className="font-medium text-lg">Today's Skin</h2>
               <p className="text-xl font-semibold">{status}</p>
@@ -58,9 +61,9 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               {factors.map((factor, index) => (
                 <span 
                   key={index} 
-                  className={`factor-tag ${getFactorColor(factor.type)}`}
+                  className={`factor-tag ${getFactorColor(factor.type)} flex items-center`}
                 >
-                  {factor.icon} {factor.type}: {factor.status}
+                  <span className="mr-1">{factor.icon}</span> {factor.type}: {factor.status}
                 </span>
               ))}
             </div>
