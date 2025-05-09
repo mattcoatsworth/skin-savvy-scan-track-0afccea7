@@ -340,7 +340,7 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Updated chat input area with design changes */}
+      {/* Updated chat input area with rounded line */}
       <div className="p-4 bg-white">
         <div className="max-w-4xl mx-auto flex flex-col">
           {/* Text input */}
@@ -357,8 +357,8 @@ const ChatPage: React.FC = () => {
           </div>
           
           {/* Bottom row with paperclip and horizontal line with rounded ends */}
-          <div className="flex items-center justify-between">
-            {/* Paperclip button only (no mic button) */}
+          <div className="flex items-center justify-between relative">
+            {/* Paperclip button */}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -367,12 +367,12 @@ const ChatPage: React.FC = () => {
               <Paperclip className="h-4 w-4 text-gray-500" />
             </Button>
             
-            {/* Rounded line indicator with rounded caps */}
-            <div className="flex-1 flex justify-center mx-4">
-              <div className="w-16 h-1 bg-gray-400 rounded-full"></div>
+            {/* Fully rounded line that spans the entire width */}
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-4">
+              <div className="h-0.5 bg-red-500 rounded-full"></div>
             </div>
             
-            {/* Empty space where the mic button was */}
+            {/* Empty space for symmetrical layout */}
             <div className="w-10 h-10"></div>
           </div>
         </div>
