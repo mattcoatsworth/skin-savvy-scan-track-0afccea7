@@ -94,75 +94,77 @@ const History = () => {
   }
 
   return (
-    <div>
-      <header className="mb-6 flex items-center">
-        <BackButton />
-        <h1 className="text-2xl font-bold">Skin</h1>
-      </header>
-      
-      {/* Add SkinHistory at the top with moderate margin */}
-      <SkinHistory ratings={skinRatings} className="mb-6" />
-      
-      {/* Use gap-y-6 for moderate spacing between cards to match scans page */}
-      <div className="flex flex-col gap-y-6 mb-2">
-        {dayLogs.map((log) => (
-          <Link key={log.id} to={`/day-log/${log.id}`}>
-            <Card className="ios-card hover:shadow-md transition-all">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-medium">{format(log.date, "EEEE")}</h3>
-                    <p className="text-sm text-muted-foreground">{format(log.date, "MMM d, yyyy")}</p>
-                    <p className="text-sm mt-2">{log.summary}</p>
-                    
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {log.factors.skin.map((factor, index) => (
-                        <span key={index} className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
-                          {factor}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="relative w-12 h-12 flex items-center justify-center">
-                      {/* Background circle */}
-                      <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                        <path
-                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none"
-                          stroke={getBackgroundColor(log.rating)}
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                        />
-                      </svg>
+    <div className="bg-slate-50 min-h-screen">
+      <div className="max-w-md mx-auto">
+        <header className="mb-6 flex items-center">
+          <BackButton />
+          <h1 className="text-2xl font-bold">Skin</h1>
+        </header>
+        
+        {/* Add SkinHistory at the top with moderate margin */}
+        <SkinHistory ratings={skinRatings} className="mb-6" />
+        
+        {/* Use gap-y-6 for moderate spacing between cards to match scans page */}
+        <div className="flex flex-col gap-y-6">
+          {dayLogs.map((log) => (
+            <Link key={log.id} to={`/day-log/${log.id}`}>
+              <Card className="ios-card hover:shadow-md transition-all">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-medium">{format(log.date, "EEEE")}</h3>
+                      <p className="text-sm text-muted-foreground">{format(log.date, "MMM d, yyyy")}</p>
+                      <p className="text-sm mt-2">{log.summary}</p>
                       
-                      {/* Foreground circle - the actual progress */}
-                      <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                        <path
-                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none"
-                          stroke={getProgressColor(log.rating)}
-                          strokeWidth="4"
-                          strokeDasharray={`${log.rating}, 100`}
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      
-                      {/* Rating number in the center */}
-                      <div className="text-sm font-semibold">
-                        {log.rating}
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {log.factors.skin.map((factor, index) => (
+                          <span key={index} className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
+                            {factor}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                    <span className="text-xs mt-1 text-muted-foreground">
-                      {getRatingLabel(log.rating)}
-                    </span>
+                    
+                    <div className="flex flex-col items-center">
+                      <div className="relative w-12 h-12 flex items-center justify-center">
+                        {/* Background circle */}
+                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getBackgroundColor(log.rating)}
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        
+                        {/* Foreground circle - the actual progress */}
+                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getProgressColor(log.rating)}
+                            strokeWidth="4"
+                            strokeDasharray={`${log.rating}, 100`}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        
+                        {/* Rating number in the center */}
+                        <div className="text-sm font-semibold">
+                          {log.rating}
+                        </div>
+                      </div>
+                      <span className="text-xs mt-1 text-muted-foreground">
+                        {getRatingLabel(log.rating)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

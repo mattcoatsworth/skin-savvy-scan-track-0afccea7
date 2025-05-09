@@ -36,13 +36,11 @@ const queryClient = new QueryClient();
 // Layout component that includes the ChatInput and AppNavigation
 const AppLayout = () => (
   <>
-    <div className="bg-slate-50 min-h-screen flex flex-col">
-      <div className="flex-1 max-w-md mx-auto px-4 py-6 pb-4">
+    <div className="bg-slate-50 min-h-screen">
+      <div className="max-w-md mx-auto px-4 py-6">
         <Outlet />
       </div>
-      <div className="mt-4">
-        <ChatInput />
-      </div>
+      <ChatInput />
       <AppNavigation />
     </div>
   </>
