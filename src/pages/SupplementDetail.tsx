@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ExclamationTriangle, Info, ArrowRight, X } from "lucide-react";
+import { Check, AlertTriangle, Info, ArrowRight, X } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import { useParams, Link } from "react-router-dom";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
@@ -192,7 +192,7 @@ const SupplementDetail = () => {
         <Card className="mb-6 ios-card">
           <CardContent className="p-4">
             <div className="flex items-center mb-3">
-              <ExclamationTriangle className="h-5 w-5 text-red-500 mr-2" />
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
               <h2 className="text-lg font-semibold">Why We Recommend Pausing</h2>
             </div>
             
