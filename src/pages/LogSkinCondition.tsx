@@ -119,13 +119,13 @@ const LogSkinCondition = () => {
                 onClick={() => {
                   setSearchOpen(prev => ({ ...prev, [category]: !prev[category] }));
                 }}
-                className="pl-8 py-2 text-sm h-9 w-full pr-4 rounded-sm"
+                className="pl-8 py-2 text-sm h-9 w-full pr-4"
               />
             </div>
             
             {searchOpen[categoryKey] && (
-              <div className="absolute z-50 mt-1 w-full bg-white rounded-sm border shadow-md">
-                <Command className="rounded-sm">
+              <div className="absolute z-50 mt-1 w-full bg-white border shadow-md">
+                <Command>
                   <CommandList className="py-0">
                     {inputValue && (
                       <CommandItem 
@@ -172,7 +172,7 @@ const LogSkinCondition = () => {
                 key={factor}
                 variant="default" 
                 size="sm" 
-                className="rounded-sm bg-skin-black text-white"
+                className="bg-skin-black text-white"
                 onClick={() => handleFactorSelect(category, factor)}
               >
                 {factor}
@@ -198,7 +198,7 @@ const LogSkinCondition = () => {
           {/* Upload Selfie Button */}
           <div className="flex justify-center">
             <Button 
-              className="bg-skin-black text-white flex items-center gap-2 px-6 py-5 h-auto rounded-sm"
+              className="bg-skin-black text-white flex items-center gap-2 px-6 py-5 h-auto"
               onClick={() => console.log("Upload selfie initiated")}
             >
               <Camera className="h-5 w-5" />
@@ -232,7 +232,7 @@ const LogSkinCondition = () => {
               {renderCategoryWithSearch('supplements', '💊', 'Supplements')}
               {renderCategoryWithSearch('makeup', '💄', 'Makeup')}
               
-              {/* Weather Card - Updating button styling */}
+              {/* Weather Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">🌡️ Weather</h3>
@@ -242,7 +242,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.weather.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-sm ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('weather', factor)}
                       >
                         {factor}
@@ -262,7 +262,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-sm ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('menstrualCycle', factor)}
                       >
                         {factor}
@@ -275,7 +275,7 @@ const LogSkinCondition = () => {
           </div>
           
           <div className="pt-4">
-            <Button className="w-full bg-skin-black text-white rounded-sm h-12">
+            <Button className="w-full bg-skin-black text-white h-12">
               Save Today's Log
             </Button>
           </div>
