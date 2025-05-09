@@ -300,8 +300,8 @@ const ChatPage: React.FC = () => {
         </Drawer>
       </div>
       
-      <div className="flex-1 overflow-hidden bg-gray-50">
-        <ScrollArea ref={scrollAreaRef} className="h-full p-4">
+      <div className="flex-1 overflow-hidden bg-gray-50 flex flex-col">
+        <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
           <div className="flex flex-col space-y-4">
             {activeChat.messages.map((msg) => (
               <div
@@ -323,50 +323,55 @@ const ChatPage: React.FC = () => {
             ))}
           </div>
         </ScrollArea>
-      </div>
-      
-      {/* Updated chat input area to match the design in the reference image */}
-      <div className="p-4 pb-6 bg-white border-t border-gray-200">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between px-4">
-            {/* Input field with paperclip */}
-            <div className="flex-1 relative flex items-center bg-gray-100 rounded-full overflow-hidden">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Ask anything"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pl-12 text-base py-3"
-              />
-              <Paperclip className="absolute left-4 h-5 w-5 text-gray-500" />
-            </div>
-            
-            {/* Mic button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="ml-2 rounded-full p-0 h-12 w-12 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-            >
-              <Mic className="h-6 w-6" />
-            </Button>
-          </div>
-
-          {/* Example suggestions */}
-          <div className="flex mt-4 space-x-3 px-4 overflow-x-auto pb-2">
-            <div className="flex-shrink-0 bg-gray-100 rounded-2xl p-4 cursor-pointer">
+        
+        {/* Suggestion chips now appear at the bottom of the chat area */}
+        <div className="p-4 pb-5">
+          <div className="flex gap-3 overflow-x-auto">
+            <div className="flex-shrink-0 bg-white rounded-2xl p-4 cursor-pointer shadow-sm">
               <p className="font-medium text-black text-sm">Creative product naming</p>
               <p className="text-gray-500 text-xs mt-1">for a new brand</p>
             </div>
-            <div className="flex-shrink-0 bg-gray-100 rounded-2xl p-4 cursor-pointer">
+            <div className="flex-shrink-0 bg-white rounded-2xl p-4 cursor-pointer shadow-sm">
               <p className="font-medium text-black text-sm">Optimize email</p>
               <p className="text-gray-500 text-xs mt-1">marketing strategies</p>
             </div>
           </div>
-
-          {/* Bottom line indicator */}
-          <div className="w-1/3 h-1 bg-gray-900 mx-auto mt-3 rounded-full"></div>
+        </div>
+      </div>
+      
+      {/* Chat input area now at the bottom, after suggestions */}
+      <div className="p-4 bg-white border-t border-gray-200">
+        <div className="max-w-4xl mx-auto flex gap-2 items-center">
+          {/* Attachment button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full bg-gray-50 h-12 w-12 flex-shrink-0"
+          >
+            <Paperclip className="h-5 w-5 text-gray-500" />
+          </Button>
+          
+          {/* Text input */}
+          <div className="flex-1 relative">
+            <Input
+              ref={inputRef}
+              type="text"
+              placeholder="Ask anything"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="w-full bg-gray-50 border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
+            />
+          </div>
+          
+          {/* Mic button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full bg-black text-white h-12 w-12 flex-shrink-0"
+          >
+            <Mic className="h-5 w-5" />
+          </Button>
         </div>
       </div>
     </div>
