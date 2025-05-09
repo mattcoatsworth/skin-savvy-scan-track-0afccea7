@@ -37,6 +37,11 @@ const BackButton: React.FC = () => {
           backPath = '/products';
         }
         
+        // Special case for products page - always go back to home
+        if (location.pathname === '/products') {
+          backPath = '/';
+        }
+        
         // If we're in a second-level page under a main section, go back to that section
         if (backPath === '/day-log') {
           backPath = '/';
