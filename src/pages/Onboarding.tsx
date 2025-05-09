@@ -20,10 +20,22 @@ const Onboarding: React.FC = () => {
   });
 
   const onSubmit = (data: GenderFormValues) => {
-    // In a real app, we'd save this to state/context/localStorage/backend
-    console.log("Selected gender:", data.gender);
-    // Navigate to the next onboarding step (or home for now)
-    navigate("/");
+    // Save gender to localStorage for future reference
+    localStorage.setItem("userGender", data.gender);
+    
+    // Navigate to the appropriate onboarding path based on gender
+    switch (data.gender) {
+      case "female":
+        navigate("/onboarding/female/birthdate");
+        break;
+      case "male":
+        // Will create male flow later
+        navigate("/onboarding/female/birthdate"); // Temporarily use female flow
+        break;
+      default:
+        // For "other", we'll use the female flow for now
+        navigate("/onboarding/female/birthdate");
+    }
   };
 
   const handleNext = () => {

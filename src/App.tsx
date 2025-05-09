@@ -37,6 +37,7 @@ import RecommendationsDetail from "./pages/RecommendationsDetail";
 import SupplementDetail from "./pages/SupplementDetail";
 import Onboarding from "./pages/Onboarding";
 import SplashScreen from "./pages/SplashScreen";
+import FemaleOnboardingBirthdate from "./pages/onboarding/FemaleOnboardingBirthdate";
 
 const queryClient = new QueryClient();
 
@@ -75,7 +76,13 @@ const App = () => (
           {/* Onboarding flow routes */}
           <Route element={<OnboardingLayout />}>
             <Route path="/onboarding" element={<Onboarding />} />
-            {/* Will add more onboarding steps here later */}
+            
+            {/* Female onboarding flow */}
+            <Route path="/onboarding/female/birthdate" element={<FemaleOnboardingBirthdate />} />
+            {/* Will add more female onboarding steps here later */}
+            
+            {/* Male onboarding flow */}
+            {/* Will add male onboarding steps here later */}
           </Route>
 
           {/* Main app routes */}
