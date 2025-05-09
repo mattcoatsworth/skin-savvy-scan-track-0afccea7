@@ -124,13 +124,13 @@ const LogSkinCondition = () => {
             </div>
             
             {searchOpen[categoryKey] && (
-              <div className="absolute z-50 mt-1 w-full bg-white rounded-md border shadow-md">
-                <Command className="rounded-md">
+              <div className="absolute z-50 mt-1 w-full bg-white rounded-sm border shadow-md">
+                <Command className="rounded-sm">
                   <CommandList className="py-0">
                     {inputValue && (
                       <CommandItem 
                         onSelect={() => handleAddCustomFactor(category)}
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center h-10"
                       >
                         <div className="flex items-center w-full">
                           <Plus className="h-4 w-4 mr-2" />
@@ -232,7 +232,7 @@ const LogSkinCondition = () => {
               {renderCategoryWithSearch('supplements', '💊', 'Supplements')}
               {renderCategoryWithSearch('makeup', '💄', 'Makeup')}
               
-              {/* Weather Card - Keeping original */}
+              {/* Weather Card - Updating button styling */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black">🌡️ Weather</h3>
