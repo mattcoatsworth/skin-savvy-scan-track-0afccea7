@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText, ScanBarcode } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,9 +10,11 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import AppNavigation from "@/components/AppNavigation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const LogSkinCondition = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedFactors, setSelectedFactors] = useState<Record<string, string[]>>({
     food: [],
@@ -40,6 +43,11 @@ const LogSkinCondition = () => {
     makeup: false
   });
 
+  // Add state for scan dialog
+  const [scanDialogOpen, setScanDialogOpen] = useState(false);
+  const [scanningCategory, setScanningCategory] = useState<string | null>(null);
+  const [scanResult, setScanResult] = useState<string | null>(null);
+  
   // Load notes from localStorage on component mount
   useEffect(() => {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -140,6 +148,77 @@ const LogSkinCondition = () => {
     }
   };
   
+  // Handle scanning functionality
+  const handleStartScan = (category: string) => {
+    setScanningCategory(category);
+    setScanDialogOpen(true);
+    
+    // Simulate scanning process (in a real app, this would activate a camera)
+    setTimeout(() => {
+      // Simulate a scan result based on the category
+      let result = '';
+      switch(category) {
+        case 'food':
+          result = ['Avocado', 'Green Tea', 'Salmon', 'Sweet Potato', 'Blueberries'][Math.floor(Math.random() * 5)];
+          break;
+        case 'supplements':
+          result = ['Vitamin C', 'Zinc', 'Collagen', 'Biotin', 'Omega-3'][Math.floor(Math.random() * 5)];
+          break;
+        case 'makeup':
+          result = ['Foundation XYZ', 'Concealer ABC', 'Mascara 123', 'Blush Pink', 'Eyeshadow Gold'][Math.floor(Math.random() * 5)];
+          break;
+        default:
+          result = 'Unknown Item';
+      }
+      
+      setScanResult(result);
+    }, 1500); // Simulate 1.5 seconds of scanning
+  };
+  
+  // Handle adding scanned item to the factor list
+  const handleAddScannedItem = () => {
+    if (scanningCategory && scanResult) {
+      handleFactorSelect(scanningCategory, scanResult);
+      toast({
+        title: "Item added",
+        description: `Added ${scanResult} to your ${scanningCategory} list.`,
+        duration: 3000
+      });
+      
+      // Close dialog and reset scan states
+      setScanDialogOpen(false);
+      setScanningCategory(null);
+      setScanResult(null);
+    }
+  };
+  
+  // Handle saving the entire log
+  const handleSaveLog = () => {
+    // Save all data to localStorage
+    const currentDate = new Date().toISOString().split('T')[0];
+    
+    // Save factors
+    Object.entries(selectedFactors).forEach(([category, items]) => {
+      localStorage.setItem(`skin-${category}-${currentDate}`, JSON.stringify(items));
+    });
+    
+    // Save other data
+    localStorage.setItem(`skin-mood-${currentDate}`, selectedMood || '');
+    localStorage.setItem(`skin-sleep-${currentDate}`, sleepHours.toString());
+    localStorage.setItem(`skin-stress-${currentDate}`, stressLevel.toString());
+    
+    // Already saving notes and water intake in their respective handlers
+    
+    toast({
+      title: "Log saved",
+      description: "Your skin condition log has been saved successfully.",
+      duration: 3000
+    });
+    
+    // Navigate to today's detail page
+    navigate("/day-log/today");
+  };
+  
   const getDefaultOptions = (category: string) => {
     switch(category) {
       case 'food':
@@ -163,6 +242,34 @@ const LogSkinCondition = () => {
     if (level <= 6) return "Moderate";
     return "High";
   };
+  
+  // Get the appropriate icon for the category
+  const getCategoryIcon = (category: string) => {
+    switch(category) {
+      case 'food':
+        return <Utensils className="h-6 w-6 text-white" />;
+      case 'supplements':
+        return <Pill className="h-6 w-6 text-white" />;
+      case 'makeup':
+        return <Palette className="h-6 w-6 text-white" />;
+      default:
+        return <Camera className="h-6 w-6 text-white" />;
+    }
+  };
+  
+  // Get the color for the scanning category
+  const getCategoryColor = (category: string) => {
+    switch(category) {
+      case 'food':
+        return "bg-green-600";
+      case 'supplements':
+        return "bg-blue-600";
+      case 'makeup':
+        return "bg-pink-600";
+      default:
+        return "bg-gray-600";
+    }
+  };
 
   // Render a category section with search box
   const renderCategoryWithSearch = (category: string, icon: React.ReactNode, title: string) => {
@@ -173,8 +280,19 @@ const LogSkinCondition = () => {
     return (
       <Card className="ios-card">
         <CardContent className="p-4">
-          <h3 className="font-medium mb-2 text-skin-black flex items-center">
-            <span className="mr-2">{icon}</span> {title}
+          <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="mr-2">{icon}</span> {title}
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-1 text-xs"
+              onClick={() => handleStartScan(category)}
+            >
+              <ScanBarcode className="h-3.5 w-3.5" />
+              Scan {title}
+            </Button>
           </h3>
           
           <div className="relative mb-2">
@@ -301,7 +419,7 @@ const LogSkinCondition = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
-              {/* Water Intake Card - NEW */}
+              {/* Water Intake Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center">
@@ -436,7 +554,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Notes Section - New Addition */}
+              {/* Notes Section */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center">
@@ -460,12 +578,58 @@ const LogSkinCondition = () => {
           </div>
           
           <div className="pt-4">
-            <Button className="w-full bg-skin-black text-white h-12 rounded-xl">
+            <Button 
+              className="w-full bg-skin-black text-white h-12 rounded-xl"
+              onClick={handleSaveLog}
+            >
               Save Today's Log
             </Button>
           </div>
         </main>
       </div>
+      
+      {/* Scanning Dialog */}
+      <Dialog open={scanDialogOpen} onOpenChange={setScanDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-center">
+              {scanningCategory && (
+                <span className="mr-2">Scanning {scanningCategory}</span>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center justify-center py-8 space-y-6">
+            {!scanResult ? (
+              <>
+                <div className={`rounded-full p-6 ${scanningCategory ? getCategoryColor(scanningCategory) : 'bg-skin-black'}`}>
+                  {scanningCategory ? getCategoryIcon(scanningCategory) : <Camera className="h-6 w-6 text-white" />}
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-medium">Scanning...</p>
+                  <p className="text-sm text-muted-foreground">Hold the product barcode in front of the camera</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="rounded-full p-6 bg-green-600">
+                  <Camera className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-medium">Scanned Successfully!</p>
+                  <p className="text-xl font-bold my-2">{scanResult}</p>
+                </div>
+                <Button 
+                  className="w-full bg-skin-black text-white"
+                  onClick={handleAddScannedItem}
+                >
+                  Add to {scanningCategory} List
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
       
       <AppNavigation />
     </div>
