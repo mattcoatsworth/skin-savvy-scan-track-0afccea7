@@ -70,11 +70,16 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-medium mb-1">{log.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {getStatusIndicator(log.status)} {log.description}
-                        <br />
-                        <span className="text-xs">{log.description.includes("days") ? "" : "3 days"}</span>
-                      </p>
+                      <div className="text-sm text-muted-foreground">
+                        <div className="flex items-start">
+                          <span className="mr-1">{getStatusIndicator(log.status)}</span>
+                          <div>
+                            {log.description}
+                            <br />
+                            <span className="text-xs">{log.description.includes("days") ? "" : "3 days"}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     {log.rating !== undefined && (
                       <div className="flex flex-col items-center">
