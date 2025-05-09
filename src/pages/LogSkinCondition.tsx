@@ -95,8 +95,6 @@ const LogSkinCondition = () => {
     }
   };
   
-  const waterRating = getWaterIntakeRating(waterIntake);
-
   // Get sleep rating feedback
   const getSleepRating = (hours: number): {label: string; color: string} => {
     if (hours >= 8) {
@@ -123,6 +121,11 @@ const LogSkinCondition = () => {
     }
   };
   
+  // Calculate the ratings for the current values
+  const waterRating = getWaterIntakeRating(waterIntake);
+  const sleepRating = getSleepRating(sleepHours);
+  const stressRating = getStressRating(stressLevel);
+
   const moodOptions = [
     { icon: <Smile className="h-10 w-10" />, label: "Balanced" },
     { icon: <Frown className="h-10 w-10" />, label: "Sensitive" },
