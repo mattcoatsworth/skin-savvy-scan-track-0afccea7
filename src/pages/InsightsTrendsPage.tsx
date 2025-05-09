@@ -1,3 +1,4 @@
+
 import React from "react";
 import BackButton from "@/components/BackButton";
 import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
@@ -41,7 +42,7 @@ const insightData = [
     content: "According to your logs, days when you consumed 8 or more glasses of water showed a significant improvement in your skin's moisture levels. Hydration plays a crucial role in maintaining skin elasticity and preventing dryness."
   },
   {
-    id: "vitamin-c-serum",
+    id: "vitamin-c-brightening",
     title: "Vitamin C Serum",
     description: "Regular use has helped with brightening and texture",
     iconName: "star",
@@ -90,8 +91,20 @@ const insightData = [
   }
 ];
 
+// Define an interface for the detailed insight data to maintain consistent structure
+interface DetailedInsight {
+  title: string;
+  summary: string;
+  icon: string;
+  category: string;
+  detailedContent: string;
+  recommendations?: string[];
+  relatedFactors?: string[];
+  dataPoints?: { date: string; [key: string]: number | string }[];
+}
+
 // Extended content for detailed insight pages
-const extendedInsightData = {
+const extendedInsightData: Record<string, DetailedInsight> = {
   "collagen-supplements": {
     title: "Collagen supplements",
     summary: "Improved skin elasticity after 2 weeks",
@@ -167,12 +180,23 @@ const extendedInsightData = {
       { date: "This month", hydration: 82 }
     ]
   },
-  "vitamin-c-serum": {
+  "vitamin-c-brightening": {
     title: "Vitamin C Serum",
     summary: "Regular use has helped with brightening and texture",
     icon: "star",
     category: "positive",
-    detailedContent: "Your consistent use of Vitamin C serum appears to be contributing to improved skin brightness and texture. Vitamin C is known for its antioxidant properties and ability to promote collagen production."
+    detailedContent: "Your consistent use of Vitamin C serum appears to be contributing to improved skin brightness and texture. Vitamin C is known for its antioxidant properties and ability to promote collagen production.",
+    recommendations: [
+      "Apply your vitamin C serum in the morning",
+      "Store your serum in a dark, cool place to preserve potency",
+      "Layer with hyaluronic acid for enhanced hydration",
+      "Follow with sunscreen for optimal protection"
+    ],
+    relatedFactors: ["Sun exposure", "Free radical damage", "Collagen production"],
+    dataPoints: [
+      { date: "Before use", brightness: 45 },
+      { date: "After 4 weeks", brightness: 72 }
+    ]
   },
   "sleep-quality": {
     title: "Sleep Quality",
@@ -402,31 +426,35 @@ const InsightsTrendsPage = () => {
           </Card>
         </section>
         
-        <section className="mb-6">
-          <h2 className="text-lg font-medium mb-3">Recommendations</h2>
-          <Card className="ios-card bg-white border shadow-sm">
-            <CardContent className="p-4">
-              <ul className="list-disc pl-5 space-y-2">
-                {insightDetail.recommendations.map((rec, idx) => (
-                  <li key={idx}>{rec}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </section>
+        {insightDetail.recommendations && (
+          <section className="mb-6">
+            <h2 className="text-lg font-medium mb-3">Recommendations</h2>
+            <Card className="ios-card bg-white border shadow-sm">
+              <CardContent className="p-4">
+                <ul className="list-disc pl-5 space-y-2">
+                  {insightDetail.recommendations.map((rec, idx) => (
+                    <li key={idx}>{rec}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </section>
+        )}
         
-        <section className="mb-6">
-          <h2 className="text-lg font-medium mb-3">Related Factors</h2>
-          <Card className="ios-card bg-white border shadow-sm">
-            <CardContent className="p-4">
-              <ul className="list-disc pl-5 space-y-1">
-                {insightDetail.relatedFactors.map((factor, idx) => (
-                  <li key={idx}>{factor}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </section>
+        {insightDetail.relatedFactors && (
+          <section className="mb-6">
+            <h2 className="text-lg font-medium mb-3">Related Factors</h2>
+            <Card className="ios-card bg-white border shadow-sm">
+              <CardContent className="p-4">
+                <ul className="list-disc pl-5 space-y-1">
+                  {insightDetail.relatedFactors.map((factor, idx) => (
+                    <li key={idx}>{factor}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </section>
+        )}
         
         {/* Add View Scoring Method component at the bottom */}
         <ViewScoringMethod />
