@@ -1,4 +1,3 @@
-
 /**
  * Spacing definitions for the application.
  * These are based on a 4px base unit to maintain consistency across the app.
@@ -75,7 +74,7 @@ export const spacing = {
       paddingX: '1rem', // 16px
       paddingTop: '1.5rem', // 24px
       paddingBottom: '4rem', // 64px
-      marginTop: '-2rem', // Reduced from -4rem to -2rem (50% reduction)
+      marginTop: '-4rem', // Negative margin increased to reduce more space (original value was -2rem)
       background: 'bg-slate-50'
     }
   }
