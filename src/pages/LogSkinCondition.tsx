@@ -97,6 +97,32 @@ const LogSkinCondition = () => {
   
   const waterRating = getWaterIntakeRating(waterIntake);
 
+  // Get sleep rating feedback
+  const getSleepRating = (hours: number): {label: string; color: string} => {
+    if (hours >= 8) {
+      return { label: "Excellent", color: "#4ADE80" }; // Green
+    } else if (hours >= 7) {
+      return { label: "Good", color: "#FACC15" }; // Yellow
+    } else if (hours >= 6) {
+      return { label: "Adequate", color: "#FFA500" }; // Orange
+    } else {
+      return { label: "Low", color: "#F87171" }; // Red
+    }
+  };
+  
+  // Get stress level rating feedback
+  const getStressRating = (level: number): {label: string; color: string} => {
+    if (level <= 2) {
+      return { label: "Low", color: "#4ADE80" }; // Green 
+    } else if (level <= 5) {
+      return { label: "Moderate", color: "#FACC15" }; // Yellow
+    } else if (level <= 7) {
+      return { label: "High", color: "#FFA500" }; // Orange
+    } else {
+      return { label: "Severe", color: "#F87171" }; // Red
+    }
+  };
+  
   const moodOptions = [
     { icon: <Smile className="h-10 w-10" />, label: "Balanced" },
     { icon: <Frown className="h-10 w-10" />, label: "Sensitive" },
@@ -451,12 +477,17 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Sleep Card */}
+              {/* Sleep Card - Updated with rating badge */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
-                    <Clock className="h-5 w-5 mr-2 text-skin-black" /> Sleep
-                  </h3>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-skin-black flex items-center">
+                      <Clock className="h-5 w-5 mr-2 text-skin-black" /> Sleep
+                    </h3>
+                    <Badge className="text-xs px-2" style={{ backgroundColor: `${sleepRating.color}20`, color: sleepRating.color }}>
+                      {sleepRating.label}
+                    </Badge>
+                  </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-skin-black">Hours slept:</span>
@@ -483,12 +514,17 @@ const LogSkinCondition = () => {
               {renderCategoryWithSearch('supplements', <Pill className="h-5 w-5 text-skin-black" />, 'Supplements')}
               {renderCategoryWithSearch('makeup', <Palette className="h-5 w-5 text-skin-black" />, 'Makeup')}
               
-              {/* Stress Level Card */}
+              {/* Stress Level Card - Updated with rating badge */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
-                    <Thermometer className="h-5 w-5 mr-2 text-skin-black" /> Stress Level
-                  </h3>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-skin-black flex items-center">
+                      <Thermometer className="h-5 w-5 mr-2 text-skin-black" /> Stress Level
+                    </h3>
+                    <Badge className="text-xs px-2" style={{ backgroundColor: `${stressRating.color}20`, color: stressRating.color }}>
+                      {stressRating.label}
+                    </Badge>
+                  </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-skin-black">Level:</span>
