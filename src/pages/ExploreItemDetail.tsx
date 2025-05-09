@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 type ExploreItemType = {
   id: string;
@@ -16,8 +17,10 @@ type ExploreItemType = {
     content: string;
   }[];
   relatedItems?: {
+    id?: string;
     title: string;
     description: string;
+    content?: string;
   }[];
 };
 
@@ -55,12 +58,16 @@ const ExploreItemDetail = () => {
       ],
       relatedItems: [
         {
+          id: "skincare-routine",
           title: "Building Your Skincare Routine",
-          description: "Step-by-step guide to creating a personalized routine"
+          description: "Step-by-step guide to creating a personalized routine",
+          content: "Creating an effective skincare routine isn't one-size-fits-all. This guide walks you through the essential steps to build a routine that works specifically for your skin's needs."
         },
         {
+          id: "skin-barrier",
           title: "Understanding Skin Barrier",
-          description: "How to protect and repair your skin's natural barrier"
+          description: "How to protect and repair your skin's natural barrier",
+          content: "Your skin barrier is the outermost layer that protects against environmental aggressors and locks in moisture. Learn how to identify signs of damage and effective ways to restore your skin barrier."
         }
       ]
     },
@@ -131,6 +138,120 @@ const ExploreItemDetail = () => {
           description: "Our approach to supportive, scientific discussions"
         }
       ]
+    },
+    {
+      id: "skincare-routine",
+      title: "Building Your Skincare Routine",
+      subtitle: "Personalized approach",
+      content: "Creating an effective skincare routine isn't one-size-fits-all. This guide walks you through the essential steps to build a routine that works specifically for your skin's needs.",
+      sections: [
+        {
+          title: "Step 1: Cleanse",
+          content: "Start with a gentle cleanser appropriate for your skin type. Cleanse morning and night to remove dirt, oil, and product residue without stripping your skin's natural moisture."
+        },
+        {
+          title: "Step 2: Treat",
+          content: "Apply targeted treatments like serums or spot treatments to address specific concerns. This is when you'd use actives like vitamin C, retinol, or acids. Layer from thinnest to thickest consistency."
+        },
+        {
+          title: "Step 3: Moisturize",
+          content: "Everyone needs moisturizer, regardless of skin type. Choose gel formulations for oily skin and richer creams for dry skin. This step locks in your treatments and provides essential hydration."
+        },
+        {
+          title: "Step 4: Protect",
+          content: "In the morning, always finish with sunscreen (minimum SPF 30). This is the most important anti-aging and skin health step. Reapply every 2 hours when outdoors."
+        }
+      ],
+      relatedItems: [
+        {
+          id: "ingredient-layering",
+          title: "How to Layer Active Ingredients",
+          description: "The right order to apply your skincare products",
+          content: "Learn the science behind product layering and why the sequence of application matters for maximum effectiveness and to prevent irritation."
+        },
+        {
+          id: "skin-tips",
+          title: "Skin Tips for Your Skin Type",
+          description: "Personalized advice for your specific skin needs",
+          content: "Understanding your unique skin type is essential for creating an effective skincare routine."
+        }
+      ]
+    },
+    {
+      id: "skin-barrier",
+      title: "Understanding Skin Barrier",
+      subtitle: "Protection & repair",
+      content: "Your skin barrier is the outermost layer that protects against environmental aggressors and locks in moisture. Learn how to identify signs of damage and effective ways to restore your skin barrier.",
+      sections: [
+        {
+          title: "Signs of Barrier Damage",
+          content: "Symptoms include increased sensitivity, redness, inflammation, dryness, flakiness, and breakouts. You may notice products that never bothered you before now cause stinging or irritation."
+        },
+        {
+          title: "Common Causes",
+          content: "Overexfoliation, harsh products, environmental stressors (pollution, extreme weather), stress, and lack of sleep all contribute to barrier damage. Age and genetics also play a role in barrier function."
+        },
+        {
+          title: "Repair Strategies",
+          content: "Simplify your routine temporarily, focusing on gentle cleansers and barrier-supporting ingredients like ceramides, fatty acids, and cholesterol. Avoid actives until your barrier has recovered."
+        },
+        {
+          title: "Prevention",
+          content: "Maintain barrier health by limiting exfoliation to 1-3 times weekly, using a moisturizer daily, protecting with SPF, gradually introducing active ingredients, and listening to your skin's needs."
+        }
+      ],
+      relatedItems: [
+        {
+          id: "skin-tips",
+          title: "Skin Tips for Your Skin Type",
+          description: "Personalized advice for different skin types",
+          content: "Understanding your unique skin type is essential for creating an effective skincare routine."
+        },
+        {
+          id: "ingredient-layering",
+          title: "How to Layer Active Ingredients",
+          description: "The right order to apply your skincare products",
+          content: "Learn the science behind product layering and why the sequence of application matters for maximum effectiveness and to prevent irritation."
+        }
+      ]
+    },
+    {
+      id: "ingredient-layering",
+      title: "How to Layer Active Ingredients",
+      subtitle: "Maximize effectiveness",
+      content: "Learn the science behind product layering and why the sequence of application matters for maximum effectiveness and to prevent irritation.",
+      sections: [
+        {
+          title: "The Basic Rule",
+          content: "Generally, apply products from thinnest to thickest consistency. Water-based products should go before oil-based products, as oil can prevent water-based ingredients from penetrating the skin."
+        },
+        {
+          title: "Morning Routine Order",
+          content: "1. Cleanser, 2. Toner, 3. Vitamin C serum, 4. Hydrating serums, 5. Eye cream, 6. Spot treatments, 7. Moisturizer, 8. Sunscreen. Adjust based on your specific products."
+        },
+        {
+          title: "Evening Routine Order",
+          content: "1. Cleanser (double cleanse if wearing makeup/sunscreen), 2. Exfoliating treatments (AHA/BHA), 3. Retinoids, 4. Hydrating serums, 5. Eye cream, 6. Treatments, 7. Moisturizer, 8. Facial oil (if needed)."
+        },
+        {
+          title: "Ingredients That Don't Mix",
+          content: "Some ingredients can neutralize each other or increase irritation when used together. For example, avoid using vitamin C with retinol, or benzoyl peroxide with retinoids. Separate these into morning and evening routines."
+        }
+      ],
+      relatedItems: [
+        {
+          id: "skincare-routine",
+          title: "Building Your Skincare Routine",
+          description: "Step-by-step guide to creating a personalized routine",
+          content: "Creating an effective skincare routine isn't one-size-fits-all. This guide walks you through the essential steps to build a routine that works specifically for your skin's needs."
+        },
+        {
+          id: "skin-barrier",
+          title: "Understanding Skin Barrier",
+          description: "How to protect and repair your skin's natural barrier",
+          content: "Your skin barrier is the outermost layer that protects against environmental aggressors and locks in moisture. Learn how to identify signs of damage and effective ways to restore your skin barrier."
+        }
+      ]
     }
   ];
 
@@ -156,6 +277,13 @@ const ExploreItemDetail = () => {
       }
     }
   }, [location, itemId, navigate]);
+
+  const handleRelatedItemClick = (relatedItem: any) => {
+    const fullRelatedItem = sampleItems.find(i => i.id === relatedItem.id);
+    if (fullRelatedItem) {
+      navigate(`/explore/${relatedItem.id}`, { state: { item: fullRelatedItem } });
+    }
+  };
 
   if (!item) {
     return (
@@ -216,7 +344,11 @@ const ExploreItemDetail = () => {
           {item.relatedItems && item.relatedItems.length > 0 ? (
             <div className="space-y-4 mt-4">
               {item.relatedItems.map((related, index) => (
-                <Card key={index} className="cursor-pointer hover:shadow-md transition-all">
+                <Card 
+                  key={index} 
+                  className="cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => handleRelatedItemClick(related)}
+                >
                   <CardContent className="p-4">
                     <h3 className="font-semibold">{related.title}</h3>
                     <p className="text-sm text-muted-foreground">{related.description}</p>
@@ -233,6 +365,8 @@ const ExploreItemDetail = () => {
           )}
         </TabsContent>
       </Tabs>
+      
+      <ViewScoringMethod />
     </div>
   );
 };
