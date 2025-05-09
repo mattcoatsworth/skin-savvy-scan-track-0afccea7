@@ -68,7 +68,7 @@ const ChatInput = () => {
               onClick={() => handleSuggestionClick(suggestion)}
               className="flex-shrink-0 px-3 py-1.5 bg-white rounded-full border text-sm text-gray-700 whitespace-nowrap flex items-center gap-1.5 hover:bg-gray-50"
             >
-              <MessageSquare className="h-3.5 w-3.5" />
+              <MessageCircle className="h-3.5 w-3.5" />
               {suggestion}
             </button>
           ))}
