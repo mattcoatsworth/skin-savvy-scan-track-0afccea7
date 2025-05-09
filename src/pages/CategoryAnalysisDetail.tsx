@@ -1,7 +1,6 @@
 
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Calendar, Apple, Pill, Moon, Droplet, Activity, Thermometer, Eye, Sun } from "lucide-react";
 import BackButton from "@/components/BackButton";
@@ -300,7 +299,12 @@ const CategoryAnalysisDetail = () => {
 
             <div className="mt-4">
               <p className="text-sm font-medium mb-2">Weekly Trend:</p>
-              <TrendChart data={data.weeklyTrend} height={80} />
+              <TrendChart 
+                data={data.weeklyTrend} 
+                height={80} 
+                showLabels={false}
+                className="mt-2"
+              />
             </div>
           </CardContent>
         </Card>
@@ -355,7 +359,12 @@ const CategoryAnalysisDetail = () => {
                   {factor.trend && (
                     <div>
                       <p className="text-xs font-medium mb-1">7-Day Trend:</p>
-                      <TrendChart data={factor.trend} height={40} />
+                      <TrendChart 
+                        data={factor.trend} 
+                        height={40} 
+                        showLabels={false}
+                        className="mt-2" 
+                      />
                     </div>
                   )}
                 </CardContent>

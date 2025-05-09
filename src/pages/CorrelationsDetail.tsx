@@ -182,7 +182,12 @@ const CorrelationsDetail = () => {
                 
                 <div>
                   <p className="text-xs font-medium mb-1">7-Day Trend:</p>
-                  <TrendChart data={correlation.trend} height={50} />
+                  <TrendChart 
+                    data={correlation.trend} 
+                    height={50} 
+                    showLabels={false}
+                    className="mt-2" 
+                  />
                 </div>
                 
                 {idx < 2 && (

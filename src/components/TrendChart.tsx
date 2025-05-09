@@ -12,9 +12,15 @@ interface TrendChartProps {
   data: DataPoint[];
   height?: number;
   className?: string;
+  showLabels?: boolean;
 }
 
-const TrendChart = ({ data, height = 120, className }: TrendChartProps) => {
+const TrendChart = ({ 
+  data, 
+  height = 120, 
+  className = "", 
+  showLabels = true 
+}: TrendChartProps) => {
   if (!data || data.length === 0) return null;
 
   // Calculate min and max for domain padding
@@ -24,15 +30,17 @@ const TrendChart = ({ data, height = 120, className }: TrendChartProps) => {
   
   return (
     <div className={`w-full ${className}`}>
-      <div className="flex items-center justify-between text-sm mb-1">
-        {data.map((point) => (
-          <span key={point.date} className="text-sm font-medium">
-            {point.date}
-          </span>
-        ))}
-      </div>
+      {showLabels && (
+        <div className="flex items-center justify-between text-sm mb-1">
+          {data.map((point) => (
+            <span key={point.date} className="text-sm font-medium">
+              {point.date}
+            </span>
+          ))}
+        </div>
+      )}
       
-      <div className="relative h-[120px]">
+      <div className="relative h-[120px]" style={{ height: height }}>
         <ResponsiveContainer width="100%" height={height}>
           <LineChart data={data} margin={{ top: 20, right: 15, left: 15, bottom: 5 }}>
             <defs>
@@ -73,24 +81,26 @@ const TrendChart = ({ data, height = 120, className }: TrendChartProps) => {
         </ResponsiveContainer>
         
         {/* Data points & labels */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-          <div className="flex justify-between items-end h-full pb-2">
-            {data.map((point, index) => {
-              const prevValue = index > 0 ? data[index - 1].value : point.value;
-              const trend = point.value > prevValue ? "up" : point.value < prevValue ? "down" : "flat";
-              
-              return (
-                <div key={`label-${index}`} className="flex flex-col items-center">
-                  <span className="text-xs font-medium mt-16">
-                    {trend === "up" && <TrendingUp className="h-3 w-3 text-green-500 inline mr-0.5" />}
-                    {trend === "down" && <TrendingDown className="h-3 w-3 text-red-500 inline mr-0.5" />}
-                    {point.value}
-                  </span>
-                </div>
-              );
-            })}
+        {showLabels && (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="flex justify-between items-end h-full pb-2">
+              {data.map((point, index) => {
+                const prevValue = index > 0 ? data[index - 1].value : point.value;
+                const trend = point.value > prevValue ? "up" : point.value < prevValue ? "down" : "flat";
+                
+                return (
+                  <div key={`label-${index}`} className="flex flex-col items-center">
+                    <span className="text-xs font-medium mt-16">
+                      {trend === "up" && <TrendingUp className="h-3 w-3 text-green-500 inline mr-0.5" />}
+                      {trend === "down" && <TrendingDown className="h-3 w-3 text-red-500 inline mr-0.5" />}
+                      {point.value}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
