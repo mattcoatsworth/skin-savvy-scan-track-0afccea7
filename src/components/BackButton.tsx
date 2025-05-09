@@ -27,6 +27,16 @@ const BackButton: React.FC = () => {
       if (backPath === '/day-log') {
         backPath = '/';
       }
+      
+      // Handle the new category analysis pages
+      if (pathParts[0] === 'category-analysis') {
+        backPath = '/weekly-skin-analysis';
+      }
+      
+      // Handle correlations and recommendations pages
+      if (pathParts[0] === 'correlations-detail' || pathParts[0] === 'recommendations-detail') {
+        backPath = '/weekly-skin-analysis';
+      }
     }
     
     return backPath;
