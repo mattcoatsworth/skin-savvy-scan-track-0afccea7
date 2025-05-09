@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -342,17 +343,17 @@ const ChatPage: React.FC = () => {
       
       {/* Chat input area with shadow divider */}
       <div className="p-4 pt-0 bg-white relative">
-        {/* Shadow divider with properly curved edges */}
-        <div className="absolute left-0 right-0 top-0 w-full h-4 overflow-hidden">
+        {/* Shadow divider with properly rounded edges */}
+        <div className="absolute left-0 right-0 top-0 h-[1px] w-full">
           <div 
             style={{
               position: 'absolute',
-              top: '-4px',
-              left: '-10%',
-              width: '120%', /* Extend beyond screen edges */
-              height: '8px',
-              borderRadius: '50%', 
-              boxShadow: '0 0 5px rgba(0,0,0,0.15)'
+              top: '-16px',
+              left: '0',
+              width: '100%',
+              height: '16px',
+              boxShadow: 'inset 0px 8px 8px -8px rgba(0,0,0,0.1)',
+              borderRadius: '50% 50% 0 0'
             }}
           />
         </div>
