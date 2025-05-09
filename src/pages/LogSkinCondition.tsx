@@ -130,11 +130,11 @@ const LogSkinCondition = () => {
             {searchOpen[categoryKey] && (
               <div className="absolute z-50 mt-1 w-full bg-white rounded-md border shadow-md">
                 <Command className="rounded-md">
-                  <CommandList>
+                  <CommandList className="py-0">
                     {inputValue && (
                       <CommandItem 
                         onSelect={() => handleAddCustomFactor(category)}
-                        className="flex items-center justify-center h-10"
+                        className="flex items-center justify-center"
                       >
                         <div className="flex items-center w-full">
                           <Plus className="h-4 w-4 mr-2" />
