@@ -32,7 +32,7 @@ const Insights = () => {
     <>
       <header className="mb-6 flex items-center">
         <BackButton />
-        <h1 className="text-2xl font-bold">Scans</h1>
+        <h1 className="text-2xl font-bold">Products</h1>
       </header>
       
       <InsightsTrends insights={insightData} className="mb-6" />

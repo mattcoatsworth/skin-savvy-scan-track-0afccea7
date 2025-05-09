@@ -18,8 +18,13 @@ const BackButton: React.FC = () => {
       pathParts.pop();
       backPath = '/' + pathParts.join('/');
       
+      // If we're in a second-level page under product, go back to products page
+      if (backPath === '/product') {
+        backPath = '/products';
+      }
+      
       // If we're in a second-level page under a main section, go back to that section
-      if (backPath === '/product' || backPath === '/day-log') {
+      if (backPath === '/day-log') {
         backPath = '/';
       }
     }
