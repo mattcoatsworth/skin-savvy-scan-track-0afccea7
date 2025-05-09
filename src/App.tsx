@@ -37,11 +37,11 @@ import RecommendationsDetail from "./pages/RecommendationsDetail";
 
 const queryClient = new QueryClient();
 
-// Layout component that includes the ChatInput and AppNavigation
+// Layout component that includes the AppNavigation but not the ChatInput
 const AppLayout = () => (
   <>
     <div className="bg-slate-50 min-h-screen">
-      <div className="max-w-md mx-auto px-4 py-6">
+      <div className="max-w-md mx-auto px-4 py-6 pb-0">
         <Outlet />
       </div>
       <ChatInput />

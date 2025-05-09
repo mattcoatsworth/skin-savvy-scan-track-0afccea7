@@ -72,10 +72,13 @@ export const spacing = {
       padding: '1.5rem' // 24px
     },
     chatInput: {
-      paddingX: '1rem', // 16px
       paddingTop: '1.5rem', // 24px
       paddingBottom: '4rem', // 64px
-      background: 'bg-slate-50'
+      background: 'bg-slate-50',
+      shadow: 'shadow-sm'
+    },
+    pageContent: {
+      bottomMargin: '0' // Removing bottom margin as ChatInput will handle spacing
     }
   }
 };
