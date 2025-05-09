@@ -9,6 +9,7 @@ type ActionType = {
   text: string;
   linkTo?: string; // Add optional linkTo property for custom navigation
   id?: string; // Add optional id for specific item identification
+  supplementId?: string; // Add optional supplementId for supplement-related actions
 };
 
 type SuggestedActionsProps = {
@@ -19,6 +20,11 @@ type SuggestedActionsProps = {
 const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className }) => {
   // Function to determine where each action should link to
   const getActionLink = (action: ActionType) => {
+    // If this is a supplement-related action, link directly to the supplement page
+    if (action.supplementId) {
+      return `/supplement/${action.supplementId}`;
+    }
+    
     // If a custom link is provided, use it
     if (action.linkTo) {
       return action.linkTo;
@@ -47,7 +53,7 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
           <Link 
             to={getActionLink(action)} 
             key={index} 
-            state={action.id ? { insightId: action.id } : undefined}
+            state={{ insightId: action.id, from: window.location.pathname }}
             className="block"
           >
             <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all">

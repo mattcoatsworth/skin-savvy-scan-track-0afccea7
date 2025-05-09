@@ -170,6 +170,7 @@ const RecommendationsDetail = () => {
                   <Link 
                     to={rec.linkTo || `/category-analysis/${rec.category}`}
                     className="text-skin-teal text-sm font-medium flex items-center justify-end"
+                    state={{ from: window.location.pathname }}
                   >
                     {rec.linkTo ? 'Learn more about this supplement' : 'See related category'} <ArrowRight className="h-4 w-4 ml-1" />
                   </Link>

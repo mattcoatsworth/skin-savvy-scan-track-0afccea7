@@ -3,7 +3,8 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
-import { CheckCircle, Clock } from "lucide-react";
+import { CheckCircle, Clock, AlertTriangle, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type ActionType = {
   id: string;
@@ -13,6 +14,7 @@ type ActionType = {
   benefits?: string[];
   timeEstimate?: string;
   completed?: boolean;
+  supplementId?: string; // Add reference to supplement ID if action is related to supplements
 };
 
 const SuggestedActionDetail = () => {
@@ -46,9 +48,9 @@ const SuggestedActionDetail = () => {
     {
       id: "supplement-irritation",
       text: "Consider pausing this supplement to see if irritation decreases",
-      description: "Our analysis has detected a possible correlation between your new supplement and recent skin irritation. Taking a break from this supplement may help determine if it's causing your skin concerns.",
+      description: "Our analysis has detected a possible correlation between your new collagen supplement and recent skin irritation. Taking a break from this supplement may help determine if it's causing your skin concerns.",
       steps: [
-        "Discontinue supplement use for 7-10 days",
+        "Discontinue collagen supplement use for 7-10 days",
         "Continue with your regular skincare routine",
         "Document any changes in skin condition daily",
         "If irritation subsides, consider reintroducing at a lower dose to confirm"
@@ -60,7 +62,8 @@ const SuggestedActionDetail = () => {
         "Better understand your skin's sensitivities"
       ],
       timeEstimate: "7-10 days",
-      completed: false
+      completed: false,
+      supplementId: "collagen" // Reference to the supplement ID
     },
     {
       id: "spf-consistency",
@@ -215,6 +218,25 @@ const SuggestedActionDetail = () => {
             <div className="flex items-center text-sm text-muted-foreground mb-4">
               <Clock className="h-4 w-4 mr-2" />
               <span>Time estimate: {action.timeEstimate}</span>
+            </div>
+          )}
+
+          {/* Add link to supplement detail if this is a supplement action */}
+          {action.supplementId && (
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md flex items-start">
+              <AlertTriangle className="h-5 w-5 text-amber-500 mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm mb-2">
+                  We've detected a potential correlation between this supplement and your skin irritation.
+                </p>
+                <Link 
+                  to={`/supplement/${action.supplementId}`} 
+                  className="text-skin-teal text-sm font-medium flex items-center"
+                >
+                  View detailed supplement analysis
+                  <ExternalLink className="h-4 w-4 ml-1" />
+                </Link>
+              </div>
             </div>
           )}
 

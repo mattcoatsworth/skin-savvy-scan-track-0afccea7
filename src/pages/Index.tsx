@@ -110,8 +110,8 @@ const Index = () => {
     },
     { 
       text: "Consider pausing this supplement to see if irritation decreases",
-      linkTo: "/insights-trends/supplement-irritation", // Link to specific insight
-      id: "supplement-irritation" // ID to pass to the insights page
+      id: "supplement-irritation", 
+      supplementId: "collagen" // Add supplementId to link directly to supplement page
     },
     { 
       text: "Use SPF more consistently this week",
