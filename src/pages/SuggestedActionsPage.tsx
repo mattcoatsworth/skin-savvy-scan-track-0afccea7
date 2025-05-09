@@ -1,9 +1,9 @@
-
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import BackButton from "@/components/BackButton";
 
 type ActionType = {
   text: string;
@@ -53,9 +53,7 @@ const SuggestedActionsPage = () => {
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
-          <Link to="/" className="mr-4">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+          <BackButton />
           <h1 className="text-2xl font-bold">Suggested Actions</h1>
         </header>
         

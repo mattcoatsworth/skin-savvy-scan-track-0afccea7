@@ -4,13 +4,15 @@ import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Settings, FileText, Bell } from "lucide-react";
+import BackButton from "@/components/BackButton";
 
 const Profile = () => {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold text-center">Profile</h1>
+        <header className="mb-6 flex items-center">
+          <BackButton />
+          <h1 className="text-2xl font-bold">Profile</h1>
         </header>
         
         <div className="flex flex-col items-center mb-6">

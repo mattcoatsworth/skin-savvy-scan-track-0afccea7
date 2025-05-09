@@ -1,10 +1,10 @@
-
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { format, subDays } from "date-fns";
 import SkinHistory from "@/components/SkinHistory";
+import BackButton from "@/components/BackButton";
 
 // Mock data for skin ratings
 const skinRatings = [
@@ -82,8 +82,9 @@ const History = () => {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold text-center">Skin</h1>
+        <header className="mb-6 flex items-center">
+          <BackButton />
+          <h1 className="text-2xl font-bold">Skin</h1>
         </header>
         
         {/* Add SkinHistory at the top with moderate margin */}

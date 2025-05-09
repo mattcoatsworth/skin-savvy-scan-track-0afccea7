@@ -1,4 +1,3 @@
-
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import { Link } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
 import { foodItems, productItems } from "@/data/products";
+import BackButton from "@/components/BackButton";
 
 // Mock data for insights
 const insightData = [
@@ -31,8 +31,9 @@ const Insights = () => {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold text-center">Scans</h1>
+        <header className="mb-6 flex items-center">
+          <BackButton />
+          <h1 className="text-2xl font-bold">Scans</h1>
         </header>
         
         <InsightsTrends insights={insightData} className="mb-6" />
