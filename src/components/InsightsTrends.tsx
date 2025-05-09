@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Droplet, Sun, Thermometer, CloudSun, Star, BadgeCheck, Activity, Heart, Bandage, Smile, Frown, Wine } from "lucide-react";
@@ -79,33 +79,36 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
         </Link>
       </div>
       
-      <ScrollArea className="w-full whitespace-nowrap pb-4">
-        <div className="flex space-x-4 px-1">
-          {insights.map((insight, index) => (
-            <Link 
-              key={index} 
-              to={`/insights-trends/${insight.id || index}`} 
-              state={{ insight }} 
-              className="min-w-[280px]"
-            >
-              <Card className="ios-card bg-white border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                <CardContent className="p-4">
-                  <div className="flex items-start">
-                    {insight.iconName ? getIconComponent(insight.iconName) : (insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>)}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-medium">{insight.title}</h3>
-                        {getCategoryBadge(insight.category)}
+      <div className="relative">
+        <ScrollArea className="w-full pb-4">
+          <div className="flex space-x-4 px-1">
+            {insights.map((insight, index) => (
+              <Link 
+                key={index} 
+                to={`/insights-trends/${insight.id || index}`} 
+                state={{ insight }} 
+                className="min-w-[280px] flex-shrink-0"
+              >
+                <Card className="ios-card bg-white border shadow-sm hover:shadow-md transition-all cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex items-start">
+                      {insight.iconName ? getIconComponent(insight.iconName) : (insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>)}
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium">{insight.title}</h3>
+                          {getCategoryBadge(insight.category)}
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{insight.description}</p>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">{insight.description}</p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </ScrollArea>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
     </div>
   );
 };
