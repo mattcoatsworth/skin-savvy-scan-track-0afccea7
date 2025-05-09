@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -350,11 +349,10 @@ const ChatPage: React.FC = () => {
             <div 
               style={{
                 position: 'absolute',
-                width: '100%',
-                height: '1px',
                 left: 0,
                 right: 0,
                 top: 0,
+                height: '1px',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
                 borderRadius: '100%/0.5rem',  /* Creates the downward curve effect */
                 marginLeft: '-0.5rem',
