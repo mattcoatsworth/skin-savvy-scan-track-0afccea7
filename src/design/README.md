@@ -21,5 +21,16 @@ The application follows an iOS-inspired design system with:
 - Subtle shadows
 - Generous whitespace
 - Accessible color palette
+- Inter font family for all text elements
 
 All UI components are built using Tailwind CSS with shadcn/ui components as a foundation.
+
+## Important: Adding the Inter Font
+
+To complete the font integration, add the following link to the `<head>` section of your index.html file:
+
+```html
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+```
+
+This will load the Inter font from Google Fonts with the necessary weights (400, 500, 600, and 700).
