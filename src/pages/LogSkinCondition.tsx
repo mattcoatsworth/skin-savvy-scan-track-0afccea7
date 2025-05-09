@@ -191,7 +191,7 @@ const LogSkinCondition = () => {
                 key={factor}
                 variant="default" 
                 size="sm" 
-                className="bg-skin-black text-white rounded-full"
+                className="bg-skin-black text-white rounded-xl"
                 onClick={() => handleFactorSelect(category, factor)}
               >
                 {factor}
