@@ -35,8 +35,8 @@ const AppLayout = () => (
     <div className="bg-slate-50 min-h-screen">
       <div className="max-w-md mx-auto px-4 py-6 pb-20">
         <Outlet />
+        <ChatInput />
       </div>
-      <ChatInput />
       <AppNavigation />
     </div>
   </>
