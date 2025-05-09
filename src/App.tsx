@@ -30,6 +30,7 @@ import ScannedFoods from "./pages/ScannedFoods";
 import ScannedProducts from "./pages/ScannedProducts";
 import TrendingFoods from "./pages/TrendingFoods";
 import TrendingProducts from "./pages/TrendingProducts";
+import WeeklySkinAnalysis from "./pages/WeeklySkinAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/scanned-products" element={<ScannedProducts />} />
             <Route path="/trending-foods" element={<TrendingFoods />} />
             <Route path="/trending-products" element={<TrendingProducts />} />
+            <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
           </Route>
           {/* Chat page doesn't need the chat input */}
           <Route path="/chat" element={<ChatPage />} />
