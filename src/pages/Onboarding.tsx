@@ -3,10 +3,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { ArrowRight } from "lucide-react";
+import OnboardingTemplate from "@/components/OnboardingTemplate";
 
 type GenderFormValues = {
   gender: "female" | "male" | "other";
@@ -27,15 +26,22 @@ const Onboarding: React.FC = () => {
     navigate("/");
   };
 
-  return (
-    <div className="flex flex-col min-h-[80vh] px-4 py-8">
-      <h1 className="text-2xl font-bold mb-2">Welcome to Skin Savvy</h1>
-      <p className="text-muted-foreground mb-8">
-        Let's get to know you better to personalize your skin care journey.
-      </p>
+  const handleNext = () => {
+    form.handleSubmit(onSubmit)();
+  };
 
+  return (
+    <OnboardingTemplate
+      title="Welcome to Skin Savvy"
+      description="Let's get to know you better to personalize your skin care journey."
+      currentStep={1}
+      totalSteps={4}
+      onNext={handleNext}
+      showBackButton={false}
+      nextDisabled={!form.watch("gender")}
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex-1 flex flex-col">
+        <form className="space-y-8 flex-1 flex flex-col">
           <FormField
             control={form.control}
             name="gender"
@@ -79,20 +85,9 @@ const Onboarding: React.FC = () => {
               </FormItem>
             )}
           />
-
-          <div className="mt-auto pt-10">
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={!form.watch("gender")}
-            >
-              Next
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
         </form>
       </Form>
-    </div>
+    </OnboardingTemplate>
   );
 };
 

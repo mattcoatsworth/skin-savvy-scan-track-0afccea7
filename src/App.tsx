@@ -68,6 +68,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Redirect root to onboarding by default */}
+          <Route path="/" element={<Navigate to="/onboarding" replace />} />
+          
           {/* Onboarding flow routes */}
           <Route element={<OnboardingLayout />}>
             <Route path="/onboarding" element={<Onboarding />} />
@@ -76,7 +79,7 @@ const App = () => (
 
           {/* Main app routes */}
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Index />} />
+            <Route path="/home" element={<Index />} />
             <Route path="/history" element={<History />} />
             <Route path="/products" element={<Insights />} />
             <Route path="/profile" element={<Profile />} />
@@ -109,7 +112,7 @@ const App = () => (
           {/* Chat page doesn't need the chat input */}
           <Route path="/chat" element={<ChatPage />} />
           
-          {/* Redirect root to onboarding by default */}
+          {/* Catch all for 404s */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
