@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -329,8 +330,8 @@ const ChatPage: React.FC = () => {
         <div className="p-4 pb-5">
           <div className="flex gap-3 overflow-x-auto">
             <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
-              <p className="font-medium text-black text-sm">Creative product naming</p>
-              <p className="text-gray-500 text-xs mt-1">for a new brand</p>
+              <p className="font-medium text-black text-sm">Best food for breakouts</p>
+              <p className="text-gray-500 text-xs mt-1">during the summer</p>
             </div>
             <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
               <p className="font-medium text-black text-sm">Optimize email</p>
