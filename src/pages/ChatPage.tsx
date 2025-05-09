@@ -4,7 +4,7 @@ import { MessageSquare, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar } from "@/components/ui/avatar";
+import BackButton from "@/components/BackButton";
 
 type Message = {
   id: string;
@@ -86,6 +86,7 @@ const ChatPage: React.FC = () => {
   return (
     <div className="flex flex-col h-screen pb-16">
       <div className="bg-white p-4 border-b border-gray-200 flex items-center">
+        <BackButton />
         <MessageSquare className="h-6 w-6 mr-2 text-skin-teal" />
         <h1 className="text-lg font-semibold">Ask Anything</h1>
       </div>
@@ -115,8 +116,8 @@ const ChatPage: React.FC = () => {
         </ScrollArea>
       </div>
       
-      <div className="p-4 border-t border-gray-200 bg-white">
-        <div className="flex space-x-2">
+      <div className="px-4 py-3 border-t border-gray-200 bg-white">
+        <div className="relative flex w-full">
           <Input
             ref={inputRef}
             type="text"
@@ -124,16 +125,16 @@ const ChatPage: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
-            className="rounded-full"
+            className="rounded-full pr-12"
           />
           <Button 
             type="button"
             onClick={handleSend}
-            className="rounded-full bg-skin-teal"
+            className="absolute right-0 rounded-full bg-transparent hover:bg-transparent"
             size="icon"
             disabled={!input.trim()}
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-5 w-5 text-gray-500" />
           </Button>
         </div>
       </div>
