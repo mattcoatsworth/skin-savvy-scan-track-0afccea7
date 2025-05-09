@@ -560,7 +560,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Stressors Card - NEW - Modified to use clear background */}
+              {/* Stressors Card - Modified to integrate + button into the input field */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
@@ -583,20 +583,20 @@ const LogSkinCondition = () => {
                     ))}
                   </div>
                   <div className="mt-3 pt-3 border-t border-gray-100">
-                    <div className="flex items-center">
+                    <div className="relative">
                       <Input
                         placeholder="Add other stressor..."
                         value={searchInputs.stressors || ''}
                         onChange={(e) => handleSearchChange('stressors', e.target.value)}
-                        className="text-sm h-9 rounded-l-md"
+                        className="text-sm h-9 pr-10"
                       />
-                      <Button 
+                      <button 
                         onClick={() => handleAddCustomFactor('stressors')}
-                        className="h-9 rounded-l-none bg-skin-black hover:bg-skin-black/90"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 flex items-center justify-center rounded-full bg-skin-black text-white disabled:opacity-50 disabled:bg-gray-400"
                         disabled={!searchInputs.stressors}
                       >
                         <Plus className="h-4 w-4" />
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 </CardContent>
