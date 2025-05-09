@@ -118,12 +118,24 @@ const LogSkinCondition = () => {
                     value={searchInputs[categoryKey]}
                     onChange={(e) => handleSearchChange(category, e.target.value)}
                     className="pl-8 py-2 text-sm h-9 w-full pr-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSearchOpen(prev => ({ ...prev, [category]: true }));
+                    }}
                     onFocus={() => setSearchOpen(prev => ({ ...prev, [category]: true }))}
                   />
                 </div>
               </PopoverTrigger>
               
-              <PopoverContent className="p-0 w-[300px]" align="start">
+              <PopoverContent 
+                className="p-0 w-[300px]" 
+                align="start"
+                sideOffset={4}
+                onInteractOutside={(e) => {
+                  // Prevent closing when interacting with the content
+                  e.preventDefault();
+                }}
+              >
                 <Command>
                   <CommandList>
                     <CommandEmpty>
