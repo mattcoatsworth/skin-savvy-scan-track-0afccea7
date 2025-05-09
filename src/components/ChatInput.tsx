@@ -43,7 +43,7 @@ const ChatInput = () => {
   };
 
   return (
-    <div className="mt-8 mb-4">
+    <div className="mt-4 mb-4">
       <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
         <div className="relative flex items-center">
           <Input
