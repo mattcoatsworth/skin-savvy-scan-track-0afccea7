@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText, ScanBarcode } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
 import AppNavigation from "@/components/AppNavigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -419,21 +419,21 @@ const LogSkinCondition = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
-              {/* Water Intake Card */}
+              {/* Water Intake Card - Updated layout */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
-                    <Droplet className="h-5 w-5 mr-2 text-skin-black" /> Water Intake
-                  </h3>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-skin-black flex items-center">
+                      <Droplet className="h-5 w-5 mr-2 text-skin-black" /> Water Intake
+                    </h3>
+                    <Badge className="text-xs px-2" style={{ backgroundColor: `${waterRating.color}20`, color: waterRating.color }}>
+                      {waterRating.label}
+                    </Badge>
+                  </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-skin-black">How many cups of water did you drink today?</span>
-                      <span className="text-sm font-medium text-skin-black flex items-center">
-                        {waterIntake} cups
-                        <span className="ml-2 px-2 py-0.5 text-xs rounded" style={{ backgroundColor: `${waterRating.color}20`, color: waterRating.color }}>
-                          {waterRating.label}
-                        </span>
-                      </span>
+                      <span className="text-sm font-medium text-skin-black">{waterIntake} cups</span>
                     </div>
                     <Slider 
                       value={[waterIntake]} 
