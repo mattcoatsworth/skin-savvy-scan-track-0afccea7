@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Menu, PlusCircle, Paperclip } from "lucide-react";
+import { MessageSquare, Menu, PlusCircle, Paperclip, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -14,6 +14,7 @@ import {
   DrawerClose
 } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
+import { useLocation } from "react-router-dom";
 
 type Message = {
   id: string;
@@ -31,6 +32,9 @@ type Chat = {
 };
 
 const ChatPage: React.FC = () => {
+  const location = useLocation();
+  const initialMessage = location.state?.initialMessage || "";
+  
   const [input, setInput] = useState("");
   const [activeChat, setActiveChat] = useState<Chat>({
     id: "current",
@@ -76,6 +80,14 @@ const ChatPage: React.FC = () => {
     }
   }, []);
   
+  // Handle initial message if provided
+  useEffect(() => {
+    if (initialMessage) {
+      // Use the initial message as the first user input
+      handleSendMessage(initialMessage);
+    }
+  }, [initialMessage]);
+  
   // Save chats to localStorage whenever they change
   useEffect(() => {
     if (savedChats.length > 0) {
@@ -98,13 +110,14 @@ const ChatPage: React.FC = () => {
     }
   }, []);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  // Extract send functionality into a reusable function
+  const handleSendMessage = (message: string) => {
+    if (!message.trim()) return;
     
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: input,
+      text: message,
       sender: "user",
       timestamp: new Date(),
     };
@@ -147,6 +160,10 @@ const ChatPage: React.FC = () => {
         lastUpdated: new Date()
       }));
     }, 1000);
+  };
+
+  const handleSend = () => {
+    handleSendMessage(input);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -377,15 +394,24 @@ const ChatPage: React.FC = () => {
         </div>
         
         <div className="max-w-4xl mx-auto mt-8">
-          <Input
-            ref={inputRef}
-            type="text"
-            placeholder="Ask anything"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            className="w-full bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
-          />
+          <div className="flex items-center">
+            <Input
+              ref={inputRef}
+              type="text"
+              placeholder="Ask anything"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="flex-1 bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
+            />
+            <button 
+              onClick={handleSend}
+              disabled={!input.trim()} 
+              className="ml-2 bg-skin-teal text-white p-2 rounded-full flex items-center justify-center"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
           
           <div className="flex items-center justify-between mt-4">
             <Button 

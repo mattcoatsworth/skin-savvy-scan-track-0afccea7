@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link, useParams, useLocation } from "react-router-dom";
+import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BackButton from "@/components/BackButton";
 import { 
   ChevronRight, TrendingUp, TrendingDown, BarChart, 
   Droplet, Sun, Star, Heart, BadgeCheck, Activity, 
-  Thermometer, CloudSun, Bandage, Wine 
+  Thermometer, CloudSun, Bandage, Wine, Send
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
+import { Input } from "@/components/ui/input";
 
 type InsightType = {
   title: string;
@@ -37,8 +38,10 @@ type InsightType = {
 const InsightsTrendsPage = () => {
   const { insightId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedInsight, setSelectedInsight] = useState<InsightType | null>(null);
   const [activeTab, setActiveTab] = useState("all");
+  const [chatInput, setChatInput] = useState("");
   
   // Sample data
   const insights: InsightType[] = [
@@ -184,6 +187,8 @@ const InsightsTrendsPage = () => {
         return <Bandage className="h-6 w-6 text-skin-teal mr-3" />;
       case "wine":
         return <Wine className="h-6 w-6 text-skin-red mr-3" />;
+      case "send":
+        return <Send className="h-6 w-6 text-skin-teal mr-3" />;
       default:
         return <Star className="h-6 w-6 text-skin-amber mr-3" />; // Default icon
     }
@@ -209,6 +214,18 @@ const InsightsTrendsPage = () => {
     if (score >= 70) return "text-green-500";
     if (score >= 40) return "text-amber-500";
     return "text-red-500";
+  };
+
+  // Handle chat form submission
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (chatInput.trim()) {
+      // Navigate to chat page with the input as state
+      navigate("/chat", { 
+        state: { initialMessage: chatInput }
+      });
+    }
   };
 
   useEffect(() => {
@@ -410,7 +427,26 @@ const InsightsTrendsPage = () => {
         )}
       </div>
       
-      <AppNavigation />
+      {/* Chat input bar - replaces the AppNavigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-10">
+        <form onSubmit={handleChatSubmit} className="max-w-md mx-auto flex items-center">
+          <Input
+            type="text"
+            placeholder="Ask anything"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            className="flex-1 rounded-full border-gray-200"
+          />
+          <button 
+            type="submit" 
+            className="ml-2 bg-skin-teal text-white p-2 rounded-full"
+            disabled={!chatInput.trim()}
+          >
+            <Send className="h-4 w-4" />
+            <span className="sr-only">Send</span>
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
