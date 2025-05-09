@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,7 +9,7 @@ import BackButton from "@/components/BackButton";
 import { 
   ChevronRight, TrendingUp, TrendingDown, BarChart, 
   Droplet, Sun, Star, Heart, BadgeCheck, Activity, 
-  Thermometer, CloudSun, Bandage, Wine, Send
+  Thermometer, CloudSun, Bandage, Wine, Send, Paperclip
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
@@ -254,7 +255,7 @@ const InsightsTrendsPage = () => {
   }, [location, insightId]);
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="bg-slate-50 min-h-screen pb-28">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
@@ -426,24 +427,37 @@ const InsightsTrendsPage = () => {
           </>
         )}
         
-        {/* Chat input form - placed at bottom before navigation */}
-        <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4 z-10">
-          <form onSubmit={handleChatSubmit} className="max-w-md mx-auto flex items-center">
-            <Input
-              type="text"
-              placeholder="Ask anything"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              className="flex-1 rounded-full border-gray-200"
-            />
-            <button 
-              type="submit" 
-              className="ml-2 bg-skin-teal text-white p-2 rounded-full"
-              disabled={!chatInput.trim()}
-            >
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send</span>
-            </button>
+        {/* Chat input form - placed at bottom as part of the scrollable content */}
+        <div className="mt-8 mb-4">
+          <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
+            <div className="flex items-center">
+              <Input
+                type="text"
+                placeholder="Ask anything"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                className="flex-1 rounded-full border-gray-200"
+              />
+              <button 
+                type="submit" 
+                className="ml-2 bg-skin-teal text-white p-2 rounded-full"
+                disabled={!chatInput.trim()}
+              >
+                <Send className="h-4 w-4" />
+                <span className="sr-only">Send</span>
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-between mt-4">
+              <button 
+                type="button" 
+                className="rounded-full bg-gray-50 p-2 h-10 w-10 flex items-center justify-center"
+              >
+                <Paperclip className="h-5 w-5 text-gray-500" />
+              </button>
+              
+              <div className="w-10 h-10"></div>
+            </div>
           </form>
         </div>
       </div>
