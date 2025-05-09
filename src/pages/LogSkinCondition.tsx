@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ArrowLeft, Camera, Search } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -105,43 +104,37 @@ const LogSkinCondition = () => {
         <CardContent className="p-4">
           <h3 className="font-medium mb-2 text-skin-black">{emoji} {title}</h3>
           
-          {/* Search Input with Popover */}
+          {/* Use a regular input field with a separate display of options */}
           <div className="relative mb-2">
-            <Popover 
-              open={searchOpen[categoryKey]} 
-              onOpenChange={(open) => {
-                // Only update if we're opening the popover or if input is empty when closing
-                if (open || (!open && !searchInputs[categoryKey])) {
-                  setSearchOpen(prev => ({ ...prev, [category]: open }));
-                }
-              }}
-            >
-              <PopoverTrigger asChild>
-                <div className="relative flex-grow">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder={`Search or add ${category} items`}
-                    value={searchInputs[categoryKey]}
-                    onChange={(e) => handleSearchChange(category, e.target.value)}
-                    className="pl-8 py-2 text-sm h-9 w-full pr-4"
-                    onClick={() => setSearchOpen(prev => ({ ...prev, [category]: true }))}
-                    onFocus={() => setSearchOpen(prev => ({ ...prev, [category]: true }))}
-                  />
-                </div>
-              </PopoverTrigger>
-              
-              <PopoverContent 
-                className="p-0 w-[300px]" 
-                align="start"
-                sideOffset={4}
-                // Remove the problematic onInteractOutside handler
-              >
-                <Command>
+            <div className="relative flex-grow">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={`Search or add ${category} items`}
+                value={searchInputs[categoryKey]}
+                onChange={(e) => {
+                  handleSearchChange(category, e.target.value);
+                  // Open the dropdown when typing
+                  if (!searchOpen[categoryKey] && e.target.value) {
+                    setSearchOpen(prev => ({ ...prev, [category]: true }));
+                  }
+                }}
+                onClick={() => {
+                  // Toggle dropdown when clicking on input
+                  setSearchOpen(prev => ({ ...prev, [category]: !prev[category] }));
+                }}
+                className="pl-8 py-2 text-sm h-9 w-full pr-4"
+              />
+            </div>
+            
+            {/* Show options if search is open or there is text in the input */}
+            {(searchOpen[categoryKey] || searchInputs[categoryKey]) && (
+              <div className="absolute z-50 mt-1 w-full bg-popover rounded-md border shadow-md">
+                <Command className="rounded-md">
                   <CommandList>
                     <CommandEmpty>
                       {searchInputs[categoryKey] && (
                         <CommandItem 
-                          onSelect={() => handleAddCustomFactor(category)} 
+                          onSelect={() => handleAddCustomFactor(category)}
                           className="cursor-pointer flex items-center gap-2"
                         >
                           <span>Add "{searchInputs[categoryKey]}"</span>
@@ -149,25 +142,26 @@ const LogSkinCondition = () => {
                       )}
                     </CommandEmpty>
                     <CommandGroup>
-                      {defaultOptions.filter(option => 
-                        option.toLowerCase().includes(searchInputs[categoryKey].toLowerCase())
-                      ).map(option => (
-                        <CommandItem 
-                          key={option} 
-                          onSelect={() => {
-                            handleFactorSelect(category, option);
-                            setSearchOpen(prev => ({ ...prev, [category]: false }));
-                            setSearchInputs(prev => ({ ...prev, [category]: "" }));
-                          }}
-                        >
-                          {option}
-                        </CommandItem>
-                      ))}
+                      {defaultOptions
+                        .filter(option => option.toLowerCase().includes(searchInputs[categoryKey].toLowerCase()))
+                        .map(option => (
+                          <CommandItem 
+                            key={option} 
+                            onSelect={() => {
+                              handleFactorSelect(category, option);
+                              setSearchInputs(prev => ({ ...prev, [category]: "" }));
+                              setSearchOpen(prev => ({ ...prev, [category]: false }));
+                            }}
+                          >
+                            {option}
+                          </CommandItem>
+                        ))
+                      }
                     </CommandGroup>
                   </CommandList>
                 </Command>
-              </PopoverContent>
-            </Popover>
+              </div>
+            )}
           </div>
           
           <div className="flex flex-wrap gap-2">
