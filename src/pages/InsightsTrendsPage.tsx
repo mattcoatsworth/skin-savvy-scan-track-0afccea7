@@ -1,21 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import AppNavigation from "@/components/AppNavigation";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BackButton from "@/components/BackButton";
 import { 
-  ChevronRight, TrendingUp, TrendingDown, BarChart, 
-  Droplet, Sun, Star, Heart, BadgeCheck, Activity, 
-  Thermometer, CloudSun, Bandage, Wine, Send, Paperclip,
-  Image, Camera, File, X 
+  ChevronRight, Star, Droplet, Sun, Heart, BadgeCheck, Activity, 
+  Thermometer, CloudSun, Bandage, Wine
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type InsightType = {
   title: string;
@@ -44,8 +38,6 @@ const InsightsTrendsPage = () => {
   const navigate = useNavigate();
   const [selectedInsight, setSelectedInsight] = useState<InsightType | null>(null);
   const [activeTab, setActiveTab] = useState("all");
-  const [chatInput, setChatInput] = useState("");
-  const [attachmentMenuOpen, setAttachmentMenuOpen] = useState(false);
   
   // Sample data
   const insights: InsightType[] = [
@@ -191,8 +183,6 @@ const InsightsTrendsPage = () => {
         return <Bandage className="h-6 w-6 text-skin-teal mr-3" />;
       case "wine":
         return <Wine className="h-6 w-6 text-skin-red mr-3" />;
-      case "send":
-        return <Send className="h-6 w-6 text-skin-teal mr-3" />;
       default:
         return <Star className="h-6 w-6 text-skin-amber mr-3" />; // Default icon
     }
@@ -218,37 +208,6 @@ const InsightsTrendsPage = () => {
     if (score >= 70) return "text-green-500";
     if (score >= 40) return "text-amber-500";
     return "text-red-500";
-  };
-
-  // Handle chat form submission
-  const handleChatSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (chatInput.trim()) {
-      // Navigate to chat page with the input as state
-      navigate("/chat", { 
-        state: { initialMessage: chatInput }
-      });
-    }
-  };
-
-  // Handle attachment options
-  const handleFileUpload = () => {
-    console.log("File upload selected");
-    setAttachmentMenuOpen(false);
-    // Implementation for file upload would go here
-  };
-
-  const handleCameraCapture = () => {
-    console.log("Camera capture selected");
-    setAttachmentMenuOpen(false);
-    // Implementation for camera capture would go here
-  };
-
-  const handlePhotoLibrary = () => {
-    console.log("Photo library selected");
-    setAttachmentMenuOpen(false);
-    // Implementation for photo library would go here
   };
 
   useEffect(() => {
@@ -437,61 +396,6 @@ const InsightsTrendsPage = () => {
             </div>
           </>
         )}
-        
-        {/* Chat input form - placed at the bottom of the content, not fixed */}
-        <div className="mt-8 mb-4">
-          <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
-            <div className="relative flex items-center">
-              <Input
-                type="text"
-                placeholder="Ask anything"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                className="flex-1 rounded-full border-gray-200 pr-10 pl-10"
-              />
-              
-              <Popover open={attachmentMenuOpen} onOpenChange={setAttachmentMenuOpen}>
-                <PopoverTrigger asChild>
-                  <button 
-                    type="button"
-                    className="absolute left-2 text-gray-500 p-1"
-                  >
-                    <Paperclip className="h-4 w-4" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-64 p-0" side="top" align="start">
-                  <div className="py-1 border-b">
-                    <button onClick={handleFileUpload} className="w-full flex items-center px-4 py-3 hover:bg-gray-100">
-                      <File className="h-5 w-5 mr-3" />
-                      <span>Files</span>
-                    </button>
-                  </div>
-                  <div className="py-1 border-b">
-                    <button onClick={handleCameraCapture} className="w-full flex items-center px-4 py-3 hover:bg-gray-100">
-                      <Camera className="h-5 w-5 mr-3" />
-                      <span>Camera</span>
-                    </button>
-                  </div>
-                  <div className="py-1">
-                    <button onClick={handlePhotoLibrary} className="w-full flex items-center px-4 py-3 hover:bg-gray-100">
-                      <Image className="h-5 w-5 mr-3" />
-                      <span>Photos</span>
-                    </button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              <button 
-                type="submit" 
-                className="absolute right-2 text-skin-teal p-1"
-                disabled={!chatInput.trim()}
-              >
-                <Send className="h-5 w-5" />
-                <span className="sr-only">Send</span>
-              </button>
-            </div>
-          </form>
-        </div>
       </div>
       
       {/* Keep the AppNavigation component */}
