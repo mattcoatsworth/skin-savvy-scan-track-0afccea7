@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, Droplet } from "lucide-react";
+import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +8,7 @@ import AppNavigation from "@/components/AppNavigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Slider } from "@/components/ui/slider";
 
 // Define types for the page
 type Factor = {
@@ -71,6 +72,7 @@ const DayLogDetail = () => {
   // State for notes and water intake
   const [notes, setNotes] = useState("");
   const [waterIntake, setWaterIntake] = useState<number>(4);
+  const [isEditingWater, setIsEditingWater] = useState(false);
   
   // In a real app, this would fetch data from an API based on the ID
   // For this demo, we'll generate mock data
@@ -103,6 +105,30 @@ const DayLogDetail = () => {
         duration: 3000
       });
     }
+  };
+  
+  // Save water intake to localStorage
+  const handleSaveWaterIntake = () => {
+    if (id) {
+      localStorage.setItem(`water-intake-${id}`, waterIntake.toString());
+      setIsEditingWater(false);
+      toast({
+        title: "Water intake updated",
+        description: `You've logged ${waterIntake} cups of water for today.`,
+        duration: 3000
+      });
+    }
+  };
+  
+  // Increment or decrement water intake
+  const adjustWaterIntake = (amount: number) => {
+    const newValue = Math.max(0, Math.min(12, waterIntake + amount));
+    setWaterIntake(newValue);
+  };
+  
+  // Handle water intake slider change
+  const handleWaterIntakeChange = (value: number[]) => {
+    setWaterIntake(value[0]);
   };
   
   const waterRating = getWaterIntakeRating(waterIntake);
@@ -234,10 +260,10 @@ const DayLogDetail = () => {
           </CardContent>
         </Card>
         
-        {/* Water Intake Card - New Addition */}
+        {/* Water Intake Card - Enhanced to allow updating */}
         <Card className="ios-card mb-6">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <Droplet className="h-5 w-5 mr-2" />
                 <h3 className="font-medium">Water Intake</h3>
@@ -246,24 +272,96 @@ const DayLogDetail = () => {
                 {waterRating.label}
               </span>
             </div>
-            <div className="mt-2 flex items-center">
-              <div className="flex-1">
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full" 
-                    style={{ 
-                      width: `${Math.min(waterIntake * 100 / 12, 100)}%`, 
-                      backgroundColor: waterRating.color 
-                    }}
-                  ></div>
+            
+            {isEditingWater ? (
+              <>
+                <div className="mt-2 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Update your water intake:</span>
+                    <div className="flex items-center">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="h-8 w-8 p-0 rounded-full"
+                        onClick={() => adjustWaterIntake(-1)}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <span className="mx-3 font-medium">{waterIntake} cups</span>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="h-8 w-8 p-0 rounded-full"
+                        onClick={() => adjustWaterIntake(1)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <Slider 
+                    value={[waterIntake]} 
+                    min={0} 
+                    max={12} 
+                    step={1} 
+                    onValueChange={handleWaterIntakeChange}
+                    className="cursor-pointer"
+                  />
+                  
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>0 cups</span>
+                    <span className="font-medium">{waterIntake} cups</span>
+                    <span>12 cups</span>
+                  </div>
+                  
+                  <div className="flex gap-2 pt-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => setIsEditingWater(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      className="flex-1"
+                      onClick={handleSaveWaterIntake}
+                    >
+                      Save
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex justify-between text-xs mt-1">
-                  <span>0 cups</span>
-                  <span className="font-medium">{waterIntake} cups</span>
-                  <span>12 cups</span>
+              </>
+            ) : (
+              <>
+                <div className="mt-2">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm">Did you reach your water intake goal today?</span>
+                  </div>
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full" 
+                      style={{ 
+                        width: `${Math.min(waterIntake * 100 / 12, 100)}%`, 
+                        backgroundColor: waterRating.color 
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-xs mt-1">
+                    <span>0 cups</span>
+                    <span className="font-medium">{waterIntake} cups</span>
+                    <span>12 cups (ideal)</span>
+                  </div>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-3"
+                    onClick={() => setIsEditingWater(true)}
+                  >
+                    Update Water Intake
+                  </Button>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </CardContent>
         </Card>
         
