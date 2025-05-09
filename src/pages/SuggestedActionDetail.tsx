@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -187,6 +186,11 @@ const SuggestedActionDetail = () => {
     setIsCompleted(true);
     // In a real app, you would send this update to the server
   };
+  
+  // Add function to navigate to the log page
+  const navigateToLogPage = () => {
+    navigate("/log-skin-condition");
+  };
 
   if (!action) {
     return (
@@ -265,7 +269,13 @@ const SuggestedActionDetail = () => {
         <Card>
           <CardContent className="p-4">
             <p className="mb-4">Log your daily progress to see how this action affects your skin over time.</p>
-            <Button variant="outline" className="w-full">Add to Daily Log</Button>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={navigateToLogPage}
+            >
+              Add to Daily Log
+            </Button>
           </CardContent>
         </Card>
       </div>
