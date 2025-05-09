@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -5,7 +6,6 @@ import RecentLogsCarousel from "@/components/RecentLogsCarousel";
 import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
-import AppNavigation from "@/components/AppNavigation";
 import SkinHistory from "@/components/SkinHistory";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 
@@ -96,7 +96,7 @@ const Index = () => {
       title: "Vitamin C serum",
       description: "Brightening effect noted after regular use",
       icon: "🍊",
-      id: "vitamin-c-serum",
+      id: "vitamin-c-brightening",
       iconName: "sun",
       category: "positive" as const
     },
@@ -141,37 +141,33 @@ const Index = () => {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
-      <div className="max-w-md mx-auto px-4 py-6">
-        {/* Simplified header with smaller Skin Savvy text */}
-        <header className="mb-6">
-          <h1 className="text-xl font-bold">Skin Savvy</h1>
-        </header>
-        
-        <main className="space-y-8">
-          <DailySkinSnapshot 
-            emoji="😊" 
-            status="Balanced" 
-            factors={skinFactors} 
-          />
-          
-          <div className="my-4">
-            <ScanButton />
-          </div>
-          
-          <SkinHistory ratings={skinHistory} />
-          
-          <RecentLogsCarousel logs={recentLogs} />
-          
-          <InsightsTrends insights={insights} />
-          
-          <SuggestedActions actions={suggestedActions} />
-          
-          <ExploreSection items={exploreItems} />
-        </main>
-      </div>
+    <div>
+      {/* Simplified header with smaller Skin Savvy text */}
+      <header className="mb-6">
+        <h1 className="text-xl font-bold">Skin Savvy</h1>
+      </header>
       
-      <AppNavigation />
+      <main className="space-y-8">
+        <DailySkinSnapshot 
+          emoji="😊" 
+          status="Balanced" 
+          factors={skinFactors} 
+        />
+        
+        <div className="my-4">
+          <ScanButton />
+        </div>
+        
+        <SkinHistory ratings={skinHistory} />
+        
+        <RecentLogsCarousel logs={recentLogs} />
+        
+        <InsightsTrends insights={insights} />
+        
+        <SuggestedActions actions={suggestedActions} />
+        
+        <ExploreSection items={exploreItems} />
+      </main>
     </div>
   );
 };

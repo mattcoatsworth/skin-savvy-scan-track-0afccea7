@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -73,55 +74,53 @@ const ExplorePage = () => {
   });
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
-      <div className="max-w-md mx-auto px-4 py-6">
-        <header className="mb-6 flex items-center">
-          <BackButton />
-          <h1 className="text-2xl font-bold">Explore</h1>
-        </header>
-        
-        <Tabs defaultValue="all" className="w-full mb-6" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="tips">Tips</TabsTrigger>
-            <TabsTrigger value="articles">Articles</TabsTrigger>
-            <TabsTrigger value="community">Community</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        
-        <div className="space-y-6">
-          {filteredItems.map((item, index) => (
-            <Link 
-              key={index} 
-              to={`/explore/${item.id}`}
-              state={{ item }}
-              className="block"
-            >
-              <Card className="ios-card overflow-hidden hover:shadow-md transition-all">
-                <div className="h-32 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
-                  {item.image ? (
-                    <img src={item.image} alt={item.title} className="object-cover w-full h-full" />
-                  ) : (
-                    <div className="text-xl font-semibold text-white">✨</div>
-                  )}
+    <>
+      <header className="mb-6 flex items-center">
+        <BackButton />
+        <h1 className="text-2xl font-bold">Explore</h1>
+      </header>
+      
+      <Tabs defaultValue="all" className="w-full mb-6" onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="tips">Tips</TabsTrigger>
+          <TabsTrigger value="articles">Articles</TabsTrigger>
+          <TabsTrigger value="community">Community</TabsTrigger>
+        </TabsList>
+      </Tabs>
+      
+      <div className="space-y-6">
+        {filteredItems.map((item, index) => (
+          <Link 
+            key={index} 
+            to={`/explore/${item.id}`}
+            state={{ item }}
+            className="block"
+          >
+            <Card className="ios-card overflow-hidden hover:shadow-md transition-all">
+              <div className="h-32 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
+                {item.image ? (
+                  <img src={item.image} alt={item.title} className="object-cover w-full h-full" />
+                ) : (
+                  <div className="text-xl font-semibold text-white">✨</div>
+                )}
+              </div>
+              <CardContent className="p-4">
+                <h3 className="font-medium text-lg">{item.title}</h3>
+                <p className="text-sm text-muted-foreground mb-3">{item.subtitle}</p>
+                <p className="text-sm">{item.content}</p>
+                <div className="text-skin-teal text-sm font-medium mt-3 inline-block">
+                  Read more
                 </div>
-                <CardContent className="p-4">
-                  <h3 className="font-medium text-lg">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">{item.subtitle}</p>
-                  <p className="text-sm">{item.content}</p>
-                  <div className="text-skin-teal text-sm font-medium mt-3 inline-block">
-                    Read more
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-        
-        {/* Add View Scoring Method component at the bottom */}
-        <ViewScoringMethod />
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
-    </div>
+      
+      {/* Add View Scoring Method component at the bottom */}
+      <ViewScoringMethod />
+    </>
   );
 };
 
