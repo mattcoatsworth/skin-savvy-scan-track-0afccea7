@@ -1,3 +1,4 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,17 +14,17 @@ const insightData = [
   {
     title: "Hydration Effect",
     description: "Drinking 8+ glasses of water improved skin moisture by 30%",
-    icon: "💧"
+    iconName: "droplet"
   },
   {
     title: "Vitamin C Serum",
     description: "Regular use has helped with brightening and texture",
-    icon: "✨"
+    iconName: "star"
   },
   {
     title: "Sleep Quality",
     description: "Nights with 7+ hours sleep show 40% better skin clarity",
-    icon: "😴"
+    iconName: "activity"
   }
 ];
 

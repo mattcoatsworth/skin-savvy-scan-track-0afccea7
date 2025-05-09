@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { Droplet, Sun, Thermometer, CloudSun, Star, BadgeCheck, Activity, Heart, Bandage } from "lucide-react";
+import { Droplet, Sun, Thermometer, CloudSun, Star, BadgeCheck, Activity, Heart, Bandage, Smile, Frown, Wine } from "lucide-react";
 
 type InsightType = {
   title: string;
@@ -41,6 +40,12 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
         return <Heart className="h-6 w-6 text-skin-red mr-3" />;
       case "bandage":
         return <Bandage className="h-6 w-6 text-skin-teal mr-3" />;
+      case "smile":
+        return <Smile className="h-6 w-6 text-skin-amber mr-3" />;
+      case "frown":
+        return <Frown className="h-6 w-6 text-skin-red mr-3" />;
+      case "wine":
+        return <Wine className="h-6 w-6 text-skin-amber mr-3" />;
       default:
         return <Star className="h-6 w-6 text-skin-amber mr-3" />; // Default icon
     }

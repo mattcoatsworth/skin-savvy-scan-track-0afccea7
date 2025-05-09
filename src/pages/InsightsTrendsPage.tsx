@@ -6,12 +6,17 @@ import { Link, useParams, useLocation } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BackButton from "@/components/BackButton";
-import { ChevronRight, TrendingUp, TrendingDown, BarChart } from "lucide-react";
+import { 
+  ChevronRight, TrendingUp, TrendingDown, BarChart, 
+  Droplet, Sun, Star, Heart, BadgeCheck, Activity, 
+  Thermometer, CloudSun, Bandage, Wine
+} from "lucide-react";
 
 type InsightType = {
   title: string;
   description: string;
   icon?: string;
+  iconName?: string;
   category: "positive" | "negative" | "neutral";
   timeframe: string;
   id?: string;
@@ -36,7 +41,7 @@ const InsightsTrendsPage = () => {
       id: "collagen-supplements",
       title: "Collagen supplements",
       description: "Improved skin elasticity after 2 weeks of daily use",
-      icon: "✨",
+      iconName: "star",
       category: "positive",
       timeframe: "This month",
       detailedAnalysis: "Your skin showed a 27% improvement in elasticity measurements after consistent use of collagen supplements for 14 days. The most noticeable changes were in the cheek and forehead areas.",
@@ -52,7 +57,7 @@ const InsightsTrendsPage = () => {
       id: "alcohol-consumption",
       title: "Alcohol consumption",
       description: "Correlates with next-day puffiness 3 times this month",
-      icon: "🍷",
+      iconName: "wine",
       category: "negative",
       timeframe: "This month",
       detailedAnalysis: "We've detected a pattern where alcohol consumption is followed by increased facial puffiness and dehydration within 24 hours. Your skin moisture levels dropped by an average of 15% after consuming alcoholic beverages.",
@@ -68,7 +73,7 @@ const InsightsTrendsPage = () => {
       id: "vitamin-c",
       title: "Vitamin C serum",
       description: "Brightening effect noted after regular use",
-      icon: "🍊",
+      iconName: "sun",
       category: "positive",
       timeframe: "Last 3 weeks",
       detailedAnalysis: "Your skin tone has shown significant improvement with consistent use of Vitamin C serum. After 3 weeks of daily application, we've measured a 22% improvement in overall brightness and a reduction in dark spots.",
@@ -84,7 +89,7 @@ const InsightsTrendsPage = () => {
       id: "dairy",
       title: "Dairy products",
       description: "Possible link to mild breakouts along jawline",
-      icon: "🥛",
+      iconName: "bandage",
       category: "negative",
       timeframe: "Ongoing pattern",
       detailedAnalysis: "We've observed a correlation between dairy consumption and mild acne breakouts, particularly along the jawline. When you consumed dairy products 3+ days in a row, breakouts increased by approximately 40% compared to dairy-free periods.",
@@ -100,7 +105,7 @@ const InsightsTrendsPage = () => {
       id: "hyaluronic-acid",
       title: "Hyaluronic acid",
       description: "Significant improvement in skin hydration when used daily",
-      icon: "💧",
+      iconName: "droplet",
       category: "positive",
       timeframe: "Last month",
       detailedAnalysis: "Hyaluronic acid has been remarkably effective for your skin's hydration levels. Daily use has increased moisture retention by 35% and improved the appearance of fine lines in the under-eye and forehead areas.",
@@ -116,7 +121,7 @@ const InsightsTrendsPage = () => {
       id: "sleep-quality",
       title: "Sleep quality",
       description: "Better skin clarity on days following 7+ hours of sleep",
-      icon: "😴",
+      iconName: "activity",
       category: "positive",
       timeframe: "Consistent pattern",
       detailedAnalysis: "There's a strong correlation between nights with 7+ hours of quality sleep and improved skin appearance the following day. Your skin barrier function is 28% stronger and inflammation markers are lower after good sleep nights.",
@@ -129,6 +134,34 @@ const InsightsTrendsPage = () => {
       ]
     },
   ];
+
+  // Function to get icon component based on iconName
+  const getIconComponent = (iconName?: string) => {
+    switch (iconName) {
+      case "droplet":
+        return <Droplet className="h-6 w-6 text-skin-teal mr-3" />;
+      case "sun":
+        return <Sun className="h-6 w-6 text-skin-amber mr-3" />;
+      case "thermometer":
+        return <Thermometer className="h-6 w-6 text-skin-red mr-3" />;
+      case "cloud-sun":
+        return <CloudSun className="h-6 w-6 text-skin-blue mr-3" />;
+      case "star":
+        return <Star className="h-6 w-6 text-skin-amber mr-3" />;
+      case "badge-check":
+        return <BadgeCheck className="h-6 w-6 text-skin-teal mr-3" />;
+      case "activity":
+        return <Activity className="h-6 w-6 text-skin-blue mr-3" />;
+      case "heart":
+        return <Heart className="h-6 w-6 text-skin-red mr-3" />;
+      case "bandage":
+        return <Bandage className="h-6 w-6 text-skin-teal mr-3" />;
+      case "wine":
+        return <Wine className="h-6 w-6 text-skin-red mr-3" />;
+      default:
+        return <Star className="h-6 w-6 text-skin-amber mr-3" />; // Default icon
+    }
+  };
 
   // Filter insights based on active tab
   const filteredInsights = insights.filter(insight => {
@@ -168,7 +201,10 @@ const InsightsTrendsPage = () => {
             <Card className="mb-6 overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  {selectedInsight.icon && <span className="text-3xl mr-3">{selectedInsight.icon}</span>}
+                  {selectedInsight.iconName ? 
+                    getIconComponent(selectedInsight.iconName) : 
+                    (selectedInsight.icon && <span className="text-3xl mr-3">{selectedInsight.icon}</span>)
+                  }
                   <div>
                     <h2 className="text-xl font-semibold">{selectedInsight.title}</h2>
                     <p className="text-muted-foreground text-sm">{selectedInsight.timeframe}</p>
@@ -330,7 +366,10 @@ const InsightsTrendsPage = () => {
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex items-start">
-                            {insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>}
+                            {insight.iconName ? 
+                              getIconComponent(insight.iconName) : 
+                              (insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>)
+                            }
                             <div>
                               <h3 className="font-medium">{insight.title}</h3>
                               <p className="text-sm">{insight.description}</p>
