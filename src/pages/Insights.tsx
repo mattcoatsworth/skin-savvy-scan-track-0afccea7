@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
@@ -69,7 +70,7 @@ const Insights = () => {
   const [activeTab, setActiveTab] = useState("scanned");
   
   return (
-    <div className="pb-20">
+    <div className="pb-24">
       <header className="mb-6 flex items-center">
         <BackButton />
         <h1 className="text-2xl font-bold">Products</h1>

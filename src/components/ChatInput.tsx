@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useNavigate } from "react-router-dom";
 import { Send, Paperclip, File, Camera, Image, MessageCircle } from "lucide-react";
+import { spacing } from "@/design";
 
 const ChatInput = () => {
   const navigate = useNavigate();
@@ -57,7 +58,10 @@ const ChatInput = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 px-4 pb-16 pt-6 bg-slate-50 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 px-4 pb-16 pt-6 bg-slate-50 shadow-sm" style={{
+      paddingTop: spacing.components.chatInput.paddingTop,
+      paddingBottom: spacing.components.chatInput.paddingBottom,
+    }}>
       <div className="max-w-md mx-auto">
         {/* Quick suggestions */}
         <div className="flex overflow-x-auto gap-2 pb-1.5 no-scrollbar">

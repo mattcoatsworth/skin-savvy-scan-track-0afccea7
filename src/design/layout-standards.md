@@ -1,4 +1,3 @@
-
 # Layout Standards
 
 This document outlines the standardized layout patterns for the application.
@@ -77,19 +76,19 @@ All product and food detail pages follow a consistent layout pattern derived fro
    - Text explaining that users can learn about the scoring methodology
    - Links to detailed page about calculation methods
 
-6. **Suggested Actions & Chat Text Box**
-   - Suggested Actions
-     - Title: text-xl font-semibold mb-3
-     - List of recommended actions based on product/food analysis
-     - Each action in a separate card with border-l-4 accent color
-     - Arrow icon indicating it's clickable for more details
-   - Chat Text Box
-     - Fixed at bottom of screen with paddingX: 1rem, paddingTop: 1.5rem, paddingBottom: 4rem
-     - Negative top margin (-6rem) to reduce space
-     - Background: bg-slate-50
-     - Input field with rounded corners and placeholder
-     - Send button with appropriate icon
-     - Optional quick-select suggestion buttons above input field
+### Suggested Actions & Chat Text Box
+
+1. **Chat Input Component**
+   - Fixed at bottom of screen (position: fixed)
+   - Standard padding: paddingX: 1rem, paddingTop: 1.5rem, paddingBottom: 4rem
+   - Background: bg-slate-50 with subtle shadow (shadow-sm)
+   - Contains quick suggestion chips and input field
+   - Max width of content matches page container (max-w-md)
+
+2. **Page Bottom Padding**
+   - All pages should include sufficient bottom padding (pb-24) to prevent content from being obscured by the chat input
+   - This ensures content is fully visible above the fixed chat input component
+   - Standard bottom padding value: 6rem (24 in tailwind)
 
 ### Visual Consistency
 - Cards have consistent padding (`p-6`)
