@@ -111,13 +111,26 @@ const SplashScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Add keyframes for the progress bar animation */}
-      <style jsx>{`
-        @keyframes progress-bar {
-          0% { width: 0%; }
-          100% { width: 100%; }
-        }
-      `}</style>
+      {/* Add keyframes for animations using standard style tag */}
+      <style>
+        {`
+          @keyframes progress-bar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+          }
+
+          @keyframes fade-in {
+            0% { 
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            100% { 
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
