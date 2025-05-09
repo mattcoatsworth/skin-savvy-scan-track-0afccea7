@@ -74,7 +74,7 @@ export const spacing = {
       paddingX: '1rem', // 16px
       paddingTop: '1.5rem', // 24px
       paddingBottom: '4rem', // 64px
-      marginTop: '-4rem', // Negative margin increased to reduce more space (original value was -2rem)
+      marginTop: '-6rem', // Negative margin increased to reduce more space (previous value was -4rem)
       background: 'bg-slate-50'
     }
   }

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -58,7 +57,7 @@ const ChatInput = () => {
   ];
 
   return (
-    <div className="px-4 pb-16 pt-6 bg-slate-50 mt-[-4rem]">
+    <div className="px-4 pb-16 pt-6 bg-slate-50 mt-[-6rem]">
       <div className="max-w-md mx-auto">
         {/* Quick suggestions */}
         <div className="flex overflow-x-auto gap-2 pb-1.5 no-scrollbar">
