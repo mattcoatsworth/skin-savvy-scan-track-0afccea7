@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
 import { format, subDays, isValid } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppNavigation from "@/components/AppNavigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -383,15 +383,10 @@ const DayLogDetail = () => {
           </CardContent>
         </Card>
         
-        {/* Tabs for different factor categories */}
-        <Tabs defaultValue="food" className="w-full mb-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="food">Food</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="environmental">Environmental</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="food" className="mt-4 space-y-3">
+        {/* Food Section - Scrollable section instead of tab */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Food</h2>
+          <div className="space-y-3">
             {foodFactors.map((factor, index) => (
               <Card key={index} className="ios-card">
                 <CardContent className="p-4">
@@ -406,7 +401,6 @@ const DayLogDetail = () => {
                     {factor.rating !== undefined && (
                       <div className="flex flex-col items-center">
                         <div className="relative w-12 h-12 flex items-center justify-center">
-                          {/* Background circle */}
                           <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                             <path
                               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -417,7 +411,6 @@ const DayLogDetail = () => {
                             />
                           </svg>
                           
-                          {/* Foreground circle - the actual progress */}
                           <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                             <path
                               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -429,7 +422,6 @@ const DayLogDetail = () => {
                             />
                           </svg>
                           
-                          {/* Rating number in the center */}
                           <div className="text-sm font-semibold">
                             {factor.rating}
                           </div>
@@ -443,9 +435,13 @@ const DayLogDetail = () => {
                 </CardContent>
               </Card>
             ))}
-          </TabsContent>
-          
-          <TabsContent value="products" className="mt-4 space-y-3">
+          </div>
+        </div>
+        
+        {/* Products Section - Scrollable section instead of tab */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Products</h2>
+          <div className="space-y-3">
             {productFactors.map((factor, index) => (
               <Card key={index} className="ios-card">
                 <CardContent className="p-4">
@@ -460,7 +456,6 @@ const DayLogDetail = () => {
                     {factor.rating !== undefined && (
                       <div className="flex flex-col items-center">
                         <div className="relative w-12 h-12 flex items-center justify-center">
-                          {/* Background circle */}
                           <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                             <path
                               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -471,7 +466,6 @@ const DayLogDetail = () => {
                             />
                           </svg>
                           
-                          {/* Foreground circle - the actual progress */}
                           <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                             <path
                               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -483,7 +477,6 @@ const DayLogDetail = () => {
                             />
                           </svg>
                           
-                          {/* Rating number in the center */}
                           <div className="text-sm font-semibold">
                             {factor.rating}
                           </div>
@@ -497,9 +490,13 @@ const DayLogDetail = () => {
                 </CardContent>
               </Card>
             ))}
-          </TabsContent>
-          
-          <TabsContent value="environmental" className="mt-4 space-y-3">
+          </div>
+        </div>
+        
+        {/* Environmental Section - Scrollable section instead of tab */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Environmental</h2>
+          <div className="space-y-3">
             {environmentalFactors.map((factor, index) => (
               <Card key={index} className="ios-card">
                 <CardContent className="p-4">
@@ -514,7 +511,6 @@ const DayLogDetail = () => {
                     {factor.rating !== undefined && (
                       <div className="flex flex-col items-center">
                         <div className="relative w-12 h-12 flex items-center justify-center">
-                          {/* Background circle */}
                           <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                             <path
                               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -525,7 +521,6 @@ const DayLogDetail = () => {
                             />
                           </svg>
                           
-                          {/* Foreground circle - the actual progress */}
                           <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                             <path
                               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -537,7 +532,6 @@ const DayLogDetail = () => {
                             />
                           </svg>
                           
-                          {/* Rating number in the center */}
                           <div className="text-sm font-semibold">
                             {factor.rating}
                           </div>
@@ -551,8 +545,8 @@ const DayLogDetail = () => {
                 </CardContent>
               </Card>
             ))}
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
         
         {/* Self Photos Section */}
         <div className="mb-6">
@@ -567,7 +561,7 @@ const DayLogDetail = () => {
           </div>
         </div>
         
-        {/* Notes Section - New Addition */}
+        {/* Notes Section */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Notes</h2>
           <Card className="ios-card">

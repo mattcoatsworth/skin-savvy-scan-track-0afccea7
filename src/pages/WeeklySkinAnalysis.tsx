@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -14,7 +15,6 @@ import {
   Eye
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Table, 
   TableBody, 
@@ -364,18 +364,12 @@ const WeeklySkinAnalysis = () => {
           </div>
         </div>
 
-        {/* Category Analysis Tabs */}
-        <Tabs defaultValue="food" className="w-full mb-6">
-          <TabsList className="grid grid-cols-5 mb-2">
-            <TabsTrigger value="food">Food</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="sleep">Sleep</TabsTrigger>
-            <TabsTrigger value="stress">Stress</TabsTrigger>
-            <TabsTrigger value="environment">Env.</TabsTrigger>
-          </TabsList>
+        {/* Category Analysis - Scrollable Sections (replaced tabs) */}
+        <div className="space-y-6 mb-6">
+          <h2 className="text-lg font-semibold mb-3">Category Analysis</h2>
           
           {Object.entries(analysisData.categories).map(([category, data]) => (
-            <TabsContent key={category} value={category} className="mt-2">
+            <div key={category} className="mb-4">
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-4">
@@ -425,9 +419,9 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </div>
           ))}
-        </Tabs>
+        </div>
 
         {/* Correlations Table */}
         <div className="mb-6">
