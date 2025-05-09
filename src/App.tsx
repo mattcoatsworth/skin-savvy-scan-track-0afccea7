@@ -1,12 +1,9 @@
+
 import React from 'react';
 import './App.css';
 import Index from "@/pages/Index";
 import History from "@/pages/History";
-import Scans from "@/pages/Scans";
-import DayLog from "@/pages/DayLog";
-import Explore from "@/pages/Explore";
-import InsightsTrends from "@/pages/InsightsTrends";
-import Settings from "@/pages/Settings";
+import DayLogDetail from "@/pages/DayLogDetail";
 import SkinAnalysis from "@/pages/SkinAnalysis";
 import WeeklySkinAnalysis from "@/pages/WeeklySkinAnalysis";
 import MonthlyAnalysisDetail from "@/pages/MonthlyAnalysisDetail";
@@ -29,11 +26,7 @@ function App() {
         <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
         <Route path="/monthly-analysis" element={<MonthlyAnalysisDetail />} />
         <Route path="/history" element={<History />} />
-        <Route path="/scans" element={<Scans />} />
-        <Route path="/day-log/:id" element={<DayLog />} />
-        <Route path="/explore/:id" element={<Explore />} />
-        <Route path="/insights-trends/:id" element={<InsightsTrends />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/day-log/:id" element={<DayLogDetail />} />
       </Routes>
     </Router>
   );
