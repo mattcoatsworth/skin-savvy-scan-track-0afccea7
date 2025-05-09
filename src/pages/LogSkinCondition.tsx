@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import AppNavigation from "@/components/AppNavigation";
 
 const LogSkinCondition = () => {
+  const { toast } = useToast();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedFactors, setSelectedFactors] = useState<Record<string, string[]>>({
     food: [],
@@ -20,6 +23,7 @@ const LogSkinCondition = () => {
   
   const [sleepHours, setSleepHours] = useState<number>(7);
   const [stressLevel, setStressLevel] = useState<number>(3);
+  const [notes, setNotes] = useState("");
   
   // Add state for search inputs
   const [searchInputs, setSearchInputs] = useState({
@@ -34,6 +38,26 @@ const LogSkinCondition = () => {
     supplements: false,
     makeup: false
   });
+
+  // Load notes from localStorage on component mount
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const savedNotes = localStorage.getItem(`skin-notes-${currentDate}`);
+    if (savedNotes) {
+      setNotes(savedNotes);
+    }
+  }, []);
+
+  // Save notes to localStorage
+  const handleSaveNotes = () => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    localStorage.setItem(`skin-notes-${currentDate}`, notes);
+    toast({
+      title: "Notes saved",
+      description: "Your notes have been saved successfully.",
+      duration: 3000
+    });
+  };
 
   const moodOptions = [
     { icon: <Smile className="h-10 w-10" />, label: "Balanced" },
@@ -347,6 +371,27 @@ const LogSkinCondition = () => {
                       </Button>
                     ))}
                   </div>
+                </CardContent>
+              </Card>
+              
+              {/* Notes Section - New Addition */}
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <FileText className="h-5 w-5 mr-2 text-skin-black" /> Notes
+                  </h3>
+                  <Textarea 
+                    placeholder="Add your notes about today..." 
+                    className="min-h-[120px] rounded-md border border-input"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                  <Button 
+                    onClick={handleSaveNotes} 
+                    className="mt-3 w-full bg-skin-black text-white rounded-xl"
+                  >
+                    Save Notes
+                  </Button>
                 </CardContent>
               </Card>
             </div>
