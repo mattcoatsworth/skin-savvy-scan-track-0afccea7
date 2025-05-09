@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, Menu, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -229,7 +228,7 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen pb-16">
+    <div className="flex flex-col h-screen">
       <div className="bg-white p-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center">
           <BackButton />
@@ -301,7 +300,7 @@ const ChatPage: React.FC = () => {
         </Drawer>
       </div>
       
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden bg-gray-50">
         <ScrollArea ref={scrollAreaRef} className="h-full p-4">
           <div className="flex flex-col space-y-4">
             {activeChat.messages.map((msg) => (
@@ -326,26 +325,27 @@ const ChatPage: React.FC = () => {
         </ScrollArea>
       </div>
       
-      <div className="px-4 py-3 border-t border-gray-200 bg-white">
-        <div className="relative flex w-full">
-          <Input
-            ref={inputRef}
-            type="text"
-            placeholder="Type your question..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            className="rounded-md pr-12"
-          />
-          <Button 
-            type="button"
-            onClick={handleSend}
-            className="absolute right-0 rounded-md bg-transparent hover:bg-transparent"
-            size="icon"
-            disabled={!input.trim()}
-          >
-            <Send className="h-5 w-5 text-gray-500" />
-          </Button>
+      <div className="p-4 pb-6">
+        <div className="relative w-full">
+          <div className="relative flex items-center w-full rounded-full border border-gray-300 bg-white px-4 py-2 shadow-sm">
+            <Input
+              ref={inputRef}
+              type="text"
+              placeholder="Type your question..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pl-0"
+            />
+            <Button 
+              type="button"
+              onClick={handleSend}
+              className="p-1 h-auto bg-transparent hover:bg-transparent"
+              disabled={!input.trim()}
+            >
+              <Send className="h-5 w-5 text-gray-400" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
