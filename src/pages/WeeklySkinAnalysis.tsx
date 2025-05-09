@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -370,55 +371,57 @@ const WeeklySkinAnalysis = () => {
           
           {Object.entries(analysisData.categories).map(([category, data]) => (
             <div key={category} className="mb-4">
-              <Card className="ios-card">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      {getCategoryIcon(category)}
-                      <h3 className="text-lg font-medium capitalize">{category}</h3>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="relative w-10 h-10 mr-2 flex items-center justify-center">
-                        <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            fill="none"
-                            stroke={getProgressColor(data.score)}
-                            strokeWidth="4"
-                            strokeDasharray={`${data.score}, 100`}
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        <div className="text-sm font-medium">{data.score}</div>
+              <Link to={`/category-analysis/${category}`} className="block">
+                <Card className="ios-card hover:shadow-md transition-all">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        {getCategoryIcon(category)}
+                        <h3 className="text-lg font-medium capitalize">{category}</h3>
                       </div>
-                      <span className="text-sm">{getRatingLabel(data.score)}</span>
+                      <div className="flex items-center">
+                        <div className="relative w-10 h-10 mr-2 flex items-center justify-center">
+                          <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getProgressColor(data.score)}
+                              strokeWidth="4"
+                              strokeDasharray={`${data.score}, 100`}
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          <div className="text-sm font-medium">{data.score}</div>
+                        </div>
+                        <span className="text-sm">{getRatingLabel(data.score)}</span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {data.factors.map((factor, idx) => (
-                      <div key={idx} className="border-t pt-3">
-                        <div className="flex justify-between">
-                          <div>
-                            <span className="font-medium">{factor.name}</span>
-                            <p className="text-sm text-muted-foreground mt-1">{factor.details}</p>
-                          </div>
-                          <div className="ml-2 flex flex-shrink-0 items-center">
-                            <div className={`w-3 h-3 rounded-full mr-1 ${
-                              factor.impact === 'positive' 
-                                ? 'bg-green-500' 
-                                : factor.impact === 'negative' 
-                                  ? 'bg-red-500' 
-                                  : 'bg-yellow-500'
-                            }`}></div>
-                            <span className="text-sm font-medium">{factor.rating}</span>
+                    
+                    <div className="space-y-4">
+                      {data.factors.map((factor, idx) => (
+                        <div key={idx} className="border-t pt-3">
+                          <div className="flex justify-between">
+                            <div>
+                              <span className="font-medium">{factor.name}</span>
+                              <p className="text-sm text-muted-foreground mt-1">{factor.details}</p>
+                            </div>
+                            <div className="ml-2 flex flex-shrink-0 items-center">
+                              <div className={`w-3 h-3 rounded-full mr-1 ${
+                                factor.impact === 'positive' 
+                                  ? 'bg-green-500' 
+                                  : factor.impact === 'negative' 
+                                    ? 'bg-red-500' 
+                                    : 'bg-yellow-500'
+                              }`}></div>
+                              <span className="text-sm font-medium">{factor.rating}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           ))}
         </div>
@@ -426,74 +429,78 @@ const WeeklySkinAnalysis = () => {
         {/* Correlations Table */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Key Correlations</h2>
-          <Card className="ios-card">
-            <CardContent className="p-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Factor</TableHead>
-                    <TableHead>Impact</TableHead>
-                    <TableHead className="text-right">Correlation</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">Dairy Consumption</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                        Negative
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">92%</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Hydration</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                        Positive
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">89%</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Stress Levels</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                        Negative
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">78%</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Sunscreen Use</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                        Positive
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">85%</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <Link to="/correlations-detail" className="block">
+            <Card className="ios-card hover:shadow-md transition-all">
+              <CardContent className="p-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Factor</TableHead>
+                      <TableHead>Impact</TableHead>
+                      <TableHead className="text-right">Correlation</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Dairy Consumption</TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                          Negative
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">92%</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Hydration</TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          Positive
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">89%</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Stress Levels</TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                          Negative
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">78%</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Sunscreen Use</TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          Positive
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">85%</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Recommendations */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Recommendations</h2>
-          <Card className="ios-card">
-            <CardContent className="p-4">
-              <ul className="space-y-2">
-                {analysisData.recommendations.map((rec, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    <span className="text-sm">{rec}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          <Link to="/recommendations-detail" className="block">
+            <Card className="ios-card hover:shadow-md transition-all">
+              <CardContent className="p-4">
+                <ul className="space-y-2">
+                  {analysisData.recommendations.map((rec, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className="text-green-500 mr-2">•</span>
+                      <span className="text-sm">{rec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Add View Scoring Method component at the bottom */}
