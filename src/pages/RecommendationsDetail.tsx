@@ -91,6 +91,51 @@ const RecommendationsDetail = () => {
         "Take short breaks throughout workday"
       ],
       expectedResults: "Reduced inflammation, fewer stress-related breakouts, improved overall skin tone"
+    },
+    {
+      id: 7,
+      title: "Consider pausing this supplement to see if irritation decreases",
+      category: "supplements",
+      icon: <Pill className="h-5 w-5" />,
+      description: "Your vitamin D supplement correlates with periods of skin sensitivity. A temporary pause could help determine if it's contributing to irritation.",
+      actionSteps: [
+        "Discontinue vitamin D supplement for 2 weeks",
+        "Track any changes in skin condition daily",
+        "Consider alternative sources of vitamin D",
+        "Consult with healthcare provider before long-term changes"
+      ],
+      linkTo: "/supplement/vitamin-d",
+      expectedResults: "Potential reduction in skin irritation and sensitivity"
+    },
+    {
+      id: 8,
+      title: "Fish oil may be triggering breakouts",
+      category: "supplements",
+      icon: <Pill className="h-5 w-5" />,
+      description: "Data shows correlation between fish oil consumption and increased acne. Consider pausing to assess impact.",
+      actionSteps: [
+        "Stop taking fish oil supplements for 3 weeks",
+        "Monitor changes in skin condition",
+        "Consider plant-based omega-3 alternatives",
+        "If reintroducing, use high-quality brands"
+      ],
+      linkTo: "/supplement/fish-oil",
+      expectedResults: "Possible reduction in breakouts, especially on forehead and cheeks"
+    },
+    {
+      id: 9,
+      title: "Biotin may be affecting your skin",
+      category: "supplements",
+      icon: <Pill className="h-5 w-5" />,
+      description: "High-dose biotin supplements often trigger acne in susceptible individuals. Data suggests a connection with your breakout patterns.",
+      actionSteps: [
+        "Stop biotin supplementation for 2-3 weeks",
+        "Track improvements in problem areas",
+        "Consider lower doses if reintroducing",
+        "Focus on food sources of B vitamins"
+      ],
+      linkTo: "/supplement/biotin",
+      expectedResults: "Potential improvement in acne, especially hormonal-pattern breakouts"
     }
   ];
 
@@ -153,10 +198,10 @@ const RecommendationsDetail = () => {
                 
                 <div className="pt-3 border-t">
                   <Link 
-                    to={`/category-analysis/${rec.category}`}
+                    to={rec.linkTo || `/category-analysis/${rec.category}`}
                     className="text-skin-teal text-sm font-medium flex items-center justify-end"
                   >
-                    See related category <ArrowRight className="h-4 w-4 ml-1" />
+                    {rec.linkTo ? "View detailed analysis" : "See related category"} <ArrowRight className="h-4 w-4 ml-1" />
                   </Link>
                 </div>
               </CardContent>
