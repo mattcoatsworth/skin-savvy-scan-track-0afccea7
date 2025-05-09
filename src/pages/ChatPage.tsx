@@ -342,22 +342,19 @@ const ChatPage: React.FC = () => {
       
       {/* Chat input area with shadow divider */}
       <div className="p-4 bg-white">
-        {/* Shadow divider with proper rounded ends that extends full width */}
-        <div className="relative w-full mb-4 overflow-hidden">
+        {/* Shadow divider with proper rounded ends */}
+        <div className="relative max-w-4xl mx-auto mb-4">
           <div className="h-[1px] w-full relative">
-            {/* This is the actual shadow element with rounded ends that curve downward */}
+            {/* This is the actual shadow element with rounded ends */}
             <div 
+              className="absolute w-full" 
               style={{
-                position: 'absolute',
+                height: '1px',
                 left: 0,
                 right: 0,
                 top: 0,
-                height: '1px',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
-                borderRadius: '100%/0.5rem',  /* Creates the downward curve effect */
-                marginLeft: '-0.5rem',
-                marginRight: '-0.5rem',
-                width: 'calc(100% + 1rem)'  /* Extends beyond the container edges */
+                borderRadius: '9999px'
               }}
             ></div>
           </div>
