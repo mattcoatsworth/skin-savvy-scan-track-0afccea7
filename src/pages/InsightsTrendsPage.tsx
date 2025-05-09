@@ -438,8 +438,8 @@ const InsightsTrendsPage = () => {
           </>
         )}
         
-        {/* Chat input form - positioned at bottom with minimal spacing */}
-        <div className="fixed bottom-16 left-0 right-0 bg-white border-t px-4 py-3 z-10">
+        {/* Chat input form - placed at the bottom of the content, not fixed */}
+        <div className="mt-8 mb-4">
           <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
             <div className="relative flex items-center">
               <Input
