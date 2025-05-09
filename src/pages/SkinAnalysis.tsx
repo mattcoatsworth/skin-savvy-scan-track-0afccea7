@@ -1,8 +1,7 @@
-
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 
