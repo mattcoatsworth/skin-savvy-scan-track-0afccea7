@@ -143,20 +143,21 @@ const Index = () => {
   return (
     <div>
       {/* Simplified header with smaller Skin Savvy text */}
-      <header className="mb-6">
+      <header className="mb-4">
         <h1 className="text-xl font-bold">Skin Savvy</h1>
       </header>
       
-      <main className="space-y-8">
+      <main className="space-y-6">
+        {/* Move ScanButton to the top, below the header */}
+        <div className="mb-6">
+          <ScanButton />
+        </div>
+        
         <DailySkinSnapshot 
           emoji="😊" 
           status="Balanced" 
           factors={skinFactors} 
         />
-        
-        <div className="my-4">
-          <ScanButton />
-        </div>
         
         <SkinHistory ratings={skinHistory} />
         
