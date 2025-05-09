@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,12 +33,12 @@ const LogSkinCondition = () => {
   });
 
   const moodOptions = [
-    { emoji: "😊", label: "Balanced" },
-    { emoji: "😣", label: "Dry & Sensitive" },
-    { emoji: "😓", label: "Oily" },
-    { emoji: "😖", label: "Irritated" },
-    { emoji: "😔", label: "Tired" },
-    { emoji: "🙂", label: "Normal" },
+    { icon: <Smile className="h-10 w-10" />, label: "Balanced" },
+    { icon: <Frown className="h-10 w-10" />, label: "Dry & Sensitive" },
+    { icon: <Droplets className="h-10 w-10" />, label: "Oily" },
+    { icon: <Bandage className="h-10 w-10" />, label: "Irritated" },
+    { icon: <Thermometer className="h-10 w-10" />, label: "Tired" },
+    { icon: <Droplet className="h-10 w-10" />, label: "Normal" },
   ];
 
   const handleMoodSelect = (label: string) => {
@@ -218,7 +219,7 @@ const LogSkinCondition = () => {
                   onClick={() => handleMoodSelect(option.label)}
                 >
                   <CardContent className="flex flex-col items-center justify-center p-4">
-                    <span className="text-4xl mb-2">{option.emoji}</span>
+                    <span className="mb-2">{option.icon}</span>
                     <span className="font-medium text-skin-black">{option.label}</span>
                   </CardContent>
                 </Card>
