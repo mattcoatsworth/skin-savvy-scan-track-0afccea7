@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BackButton from "@/components/BackButton";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 type ExploreItemType = {
   id: string;
@@ -117,6 +117,9 @@ const ExplorePage = () => {
             </Link>
           ))}
         </div>
+        
+        {/* Add View Scoring Method component at the bottom */}
+        <ViewScoringMethod />
       </div>
     </div>
   );

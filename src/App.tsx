@@ -25,6 +25,7 @@ import ExploreItemDetail from "./pages/ExploreItemDetail";
 import RecentLogDetail from "./pages/RecentLogDetail";
 import SuggestedActionDetail from "./pages/SuggestedActionDetail";
 import MonthlyAnalysisDetail from "./pages/MonthlyAnalysisDetail";
+import ScoringMethodPage from "./pages/ScoringMethodPage";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/product/:type/:id" element={<ProductDetail />} />
             <Route path="/day-log/:id" element={<DayLogDetail />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/scoring-method" element={<ScoringMethodPage />} />
           </Route>
           {/* Chat page doesn't need the chat input */}
           <Route path="/chat" element={<ChatPage />} />

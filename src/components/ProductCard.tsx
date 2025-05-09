@@ -45,7 +45,7 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
   };
 
   return (
-    <Link to={`/product/${type}/${product.id}`} className="block">
+    <Link to={`/product/${type}/${product.id}`} state={{ product, type }} className="block">
       <Card className="mb-4 hover:shadow-md transition-shadow ios-card">
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center">

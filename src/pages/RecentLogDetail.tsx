@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import { Progress } from "@/components/ui/progress";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 type LogType = {
   title: string;
@@ -199,6 +199,9 @@ const RecentLogDetail = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Add View Scoring Method component if there's a rating */}
+      {log.rating !== undefined && <ViewScoringMethod />}
     </div>
   );
 };
