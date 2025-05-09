@@ -43,7 +43,7 @@ const ChatInput = () => {
   };
 
   return (
-    <div className="mt-4 mb-4">
+    <div className="mt-1 mb-4">
       <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
         <div className="relative flex items-center">
           <Input
@@ -51,7 +51,7 @@ const ChatInput = () => {
             placeholder="Ask anything"
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
-            className="flex-1 rounded-full border-gray-200 pr-10 pl-10"
+            className="flex-1 rounded-full border-gray-200 pr-10 pl-10 bg-white shadow-sm"
           />
           
           <Popover open={attachmentMenuOpen} onOpenChange={setAttachmentMenuOpen}>
