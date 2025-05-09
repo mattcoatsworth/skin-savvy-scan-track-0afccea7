@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText, ScanBarcode } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText, ScanBarcode, Brain } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +21,8 @@ const LogSkinCondition = () => {
     supplements: [],
     makeup: [],
     weather: [],
-    menstrualCycle: []
+    menstrualCycle: [],
+    stressors: [] // Add stressors to the state
   });
   
   const [sleepHours, setSleepHours] = useState<number>(7);
@@ -33,14 +34,16 @@ const LogSkinCondition = () => {
   const [searchInputs, setSearchInputs] = useState({
     food: "",
     supplements: "",
-    makeup: ""
+    makeup: "",
+    stressors: ""
   });
   
   // Add state for search popover visibility
   const [searchOpen, setSearchOpen] = useState({
     food: false,
     supplements: false,
-    makeup: false
+    makeup: false,
+    stressors: false
   });
 
   // Add state for scan dialog
@@ -195,6 +198,9 @@ const LogSkinCondition = () => {
         case 'makeup':
           result = ['Foundation XYZ', 'Concealer ABC', 'Mascara 123', 'Blush Pink', 'Eyeshadow Gold'][Math.floor(Math.random() * 5)];
           break;
+        case 'stressors':
+          result = ['Work', 'Family', 'Financial', 'Health', 'Relationships', 'Social Media', 'News', 'Travel'][Math.floor(Math.random() * 8)];
+          break;
         default:
           result = 'Unknown Item';
       }
@@ -255,6 +261,8 @@ const LogSkinCondition = () => {
         return ["New", "Regular", "Skipped"];
       case 'makeup':
         return ["None", "Light", "Full", "Same as usual"];
+      case 'stressors':
+        return ["Work", "Family", "Financial", "Health", "Relationships", "Social Media", "News", "Travel"];
       default:
         return [];
     }
@@ -280,6 +288,8 @@ const LogSkinCondition = () => {
         return <Pill className="h-6 w-6 text-white" />;
       case 'makeup':
         return <Palette className="h-6 w-6 text-white" />;
+      case 'stressors':
+        return <Brain className="h-6 w-6 text-white" />;
       default:
         return <Camera className="h-6 w-6 text-white" />;
     }
@@ -294,6 +304,8 @@ const LogSkinCondition = () => {
         return "bg-blue-600";
       case 'makeup':
         return "bg-pink-600";
+      case 'stressors':
+        return "bg-purple-600";
       default:
         return "bg-gray-600";
     }
@@ -543,6 +555,48 @@ const LogSkinCondition = () => {
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>Low</span>
                       <span>High</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Stressors Card - NEW */}
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Brain className="h-5 w-5 mr-2 text-skin-black" /> Stressors
+                    </div>
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">What's causing your stress today?</p>
+                  <div className="flex flex-wrap gap-2">
+                    {getDefaultOptions('stressors').map(factor => (
+                      <Button 
+                        key={factor}
+                        variant={selectedFactors.stressors.includes(factor) ? "default" : "outline"} 
+                        size="sm" 
+                        className={`rounded-xl ${selectedFactors.stressors.includes(factor) ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'text-skin-black border-skin-black/20 hover:bg-purple-50'}`}
+                        onClick={() => handleFactorSelect('stressors', factor)}
+                      >
+                        {factor}
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="flex items-center">
+                      <Input
+                        placeholder="Add other stressor..."
+                        value={searchInputs.stressors || ''}
+                        onChange={(e) => handleSearchChange('stressors', e.target.value)}
+                        className="text-sm h-9 rounded-l-md"
+                      />
+                      <Button 
+                        onClick={() => handleAddCustomFactor('stressors')}
+                        className="h-9 rounded-l-none bg-purple-600 hover:bg-purple-700"
+                        disabled={!searchInputs.stressors}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
