@@ -560,7 +560,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Stressors Card - NEW */}
+              {/* Stressors Card - NEW - Modified to use clear background */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
@@ -575,7 +575,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.stressors.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-xl ${selectedFactors.stressors.includes(factor) ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'text-skin-black border-skin-black/20 hover:bg-purple-50'}`}
+                        className={`rounded-xl ${selectedFactors.stressors.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20 hover:bg-gray-50'}`}
                         onClick={() => handleFactorSelect('stressors', factor)}
                       >
                         {factor}
@@ -592,7 +592,7 @@ const LogSkinCondition = () => {
                       />
                       <Button 
                         onClick={() => handleAddCustomFactor('stressors')}
-                        className="h-9 rounded-l-none bg-purple-600 hover:bg-purple-700"
+                        className="h-9 rounded-l-none bg-skin-black hover:bg-skin-black/90"
                         disabled={!searchInputs.stressors}
                       >
                         <Plus className="h-4 w-4" />
