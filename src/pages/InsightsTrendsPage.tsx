@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -278,7 +277,7 @@ const InsightsTrendsPage = () => {
   }, [location, insightId]);
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-28">
+    <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
@@ -439,8 +438,8 @@ const InsightsTrendsPage = () => {
           </>
         )}
         
-        {/* Chat input form - placed at bottom as part of the scrollable content */}
-        <div className="mt-8 mb-4">
+        {/* Chat input form - positioned at bottom with minimal spacing */}
+        <div className="fixed bottom-16 left-0 right-0 bg-white border-t px-4 py-3 z-10">
           <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
             <div className="relative flex items-center">
               <Input
@@ -448,26 +447,16 @@ const InsightsTrendsPage = () => {
                 placeholder="Ask anything"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                className="flex-1 rounded-full border-gray-200 pr-10"
+                className="flex-1 rounded-full border-gray-200 pr-10 pl-10"
               />
-              <button 
-                type="submit" 
-                className="absolute right-2 text-skin-teal p-1"
-                disabled={!chatInput.trim()}
-              >
-                <Send className="h-5 w-5" />
-                <span className="sr-only">Send</span>
-              </button>
-            </div>
-            
-            <div className="flex items-center justify-between mt-4">
+              
               <Popover open={attachmentMenuOpen} onOpenChange={setAttachmentMenuOpen}>
                 <PopoverTrigger asChild>
                   <button 
-                    type="button" 
-                    className="rounded-full bg-gray-50 p-2 h-8 w-8 flex items-center justify-center"
+                    type="button"
+                    className="absolute left-2 text-gray-500 p-1"
                   >
-                    <Paperclip className="h-4 w-4 text-gray-500" />
+                    <Paperclip className="h-4 w-4" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64 p-0" side="top" align="start">
@@ -491,8 +480,15 @@ const InsightsTrendsPage = () => {
                   </div>
                 </PopoverContent>
               </Popover>
-              
-              <div className="w-8 h-8"></div>
+
+              <button 
+                type="submit" 
+                className="absolute right-2 text-skin-teal p-1"
+                disabled={!chatInput.trim()}
+              >
+                <Send className="h-5 w-5" />
+                <span className="sr-only">Send</span>
+              </button>
             </div>
           </form>
         </div>
