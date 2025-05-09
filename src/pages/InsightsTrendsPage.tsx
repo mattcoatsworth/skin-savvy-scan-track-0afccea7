@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -348,17 +347,6 @@ const InsightsTrendsPage = () => {
                 </ul>
               </CardContent>
             </Card>
-            
-            <div className="flex justify-between">
-              <BackButton />
-              <Link
-                to="/insights-trends"
-                className="text-skin-teal font-medium"
-                onClick={() => setSelectedInsight(null)}
-              >
-                View All Insights
-              </Link>
-            </div>
           </div>
         ) : (
           <>
@@ -430,20 +418,20 @@ const InsightsTrendsPage = () => {
         {/* Chat input form - placed at bottom as part of the scrollable content */}
         <div className="mt-8 mb-4">
           <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
-            <div className="flex items-center">
+            <div className="relative flex items-center">
               <Input
                 type="text"
                 placeholder="Ask anything"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                className="flex-1 rounded-full border-gray-200"
+                className="flex-1 rounded-full border-gray-200 pr-10"
               />
               <button 
                 type="submit" 
-                className="ml-2 bg-skin-teal text-white p-2 rounded-full"
+                className="absolute right-2 text-skin-teal p-1"
                 disabled={!chatInput.trim()}
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-5 w-5" />
                 <span className="sr-only">Send</span>
               </button>
             </div>
