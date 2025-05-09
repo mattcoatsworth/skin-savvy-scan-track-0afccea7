@@ -67,11 +67,16 @@ const Onboarding: React.FC = () => {
                     ].map((option) => (
                       <div 
                         key={option.value}
-                        className={`flex items-center space-x-3 rounded-xl border p-4 ${
+                        className={`flex items-center space-x-3 rounded-xl border p-4 cursor-pointer ${
                           field.value === option.value ? "border-primary bg-primary/5" : "border-input"
                         }`}
+                        onClick={() => field.onChange(option.value)}
                       >
-                        <RadioGroupItem value={option.value} id={option.value} />
+                        <RadioGroupItem 
+                          value={option.value} 
+                          id={option.value} 
+                          className="sr-only" 
+                        />
                         <Label 
                           htmlFor={option.value}
                           className="flex-1 cursor-pointer font-normal"
