@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Send, Menu, PlusCircle, Paperclip, Mic } from "lucide-react";
+import { MessageSquare, Menu, PlusCircle, Paperclip, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -325,22 +325,12 @@ const ChatPage: React.FC = () => {
         </ScrollArea>
       </div>
       
-      {/* Updated chat input area to match the design in the image */}
+      {/* Updated chat input area to match the design in the reference image */}
       <div className="p-4 pb-6 bg-white border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
-          <div className="relative flex items-center w-full px-4">
-            {/* Main input field */}
-            <div className="relative flex items-center w-full bg-gray-100 rounded-full px-4 py-2">
-              {/* Attachment button */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full p-2 h-auto w-auto flex items-center justify-center bg-transparent hover:bg-gray-200"
-              >
-                <Paperclip className="h-5 w-5 text-gray-500" />
-              </Button>
-              
-              {/* Text input */}
+          <div className="flex justify-between px-4">
+            {/* Input field with paperclip */}
+            <div className="flex-1 relative flex items-center bg-gray-100 rounded-full overflow-hidden">
               <Input
                 ref={inputRef}
                 type="text"
@@ -348,10 +338,11 @@ const ChatPage: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
-                className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pl-2 text-base"
+                className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pl-12 text-base py-3"
               />
+              <Paperclip className="absolute left-4 h-5 w-5 text-gray-500" />
             </div>
-
+            
             {/* Mic button */}
             <Button 
               variant="ghost" 
@@ -363,7 +354,7 @@ const ChatPage: React.FC = () => {
           </div>
 
           {/* Example suggestions */}
-          <div className="flex overflow-x-auto space-x-3 mt-4 pb-2 px-4">
+          <div className="flex mt-4 space-x-3 px-4 overflow-x-auto pb-2">
             <div className="flex-shrink-0 bg-gray-100 rounded-2xl p-4 cursor-pointer">
               <p className="font-medium text-black text-sm">Creative product naming</p>
               <p className="text-gray-500 text-xs mt-1">for a new brand</p>
