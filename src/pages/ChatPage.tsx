@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -341,7 +340,7 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Chat input area with the updated design for the line with rounded edges */}
+      {/* Updated chat input area with design changes */}
       <div className="p-4 bg-white">
         <div className="max-w-4xl mx-auto flex flex-col">
           {/* Text input */}
@@ -357,31 +356,24 @@ const ChatPage: React.FC = () => {
             />
           </div>
           
-          {/* Bottom row with paperclip and horizontal line with improved rounded edges */}
-          <div className="flex items-center justify-between px-1 relative">
-            {/* Paperclip button */}
+          {/* Bottom row with paperclip and horizontal line with rounded ends */}
+          <div className="flex items-center justify-between">
+            {/* Paperclip button only (no mic button) */}
             <Button 
               variant="ghost" 
               size="icon" 
-              className="rounded-full bg-gray-50 h-10 w-10 z-10"
+              className="rounded-full bg-gray-50 h-10 w-10"
             >
               <Paperclip className="h-4 w-4 text-gray-500" />
             </Button>
             
-            {/* Full-width curved line with improved rounded caps that span the entire width */}
-            <div className="absolute left-0 right-0 flex justify-center items-center">
-              <div 
-                className="w-full h-1 bg-transparent mx-4"
-                style={{
-                  background: "linear-gradient(90deg, transparent, transparent 5px, #A0A0A0 5px, #A0A0A0 calc(100% - 5px), transparent calc(100% - 5px))",
-                  height: "2px",
-                  borderRadius: "999px"
-                }}
-              />
+            {/* Rounded line indicator with rounded caps */}
+            <div className="flex-1 flex justify-center mx-4">
+              <div className="w-16 h-1 bg-gray-400 rounded-full"></div>
             </div>
             
             {/* Empty space where the mic button was */}
-            <div className="w-10 h-10 z-10"></div>
+            <div className="w-10 h-10"></div>
           </div>
         </div>
       </div>
