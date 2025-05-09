@@ -134,10 +134,11 @@ const LogSkinCondition = () => {
                     {inputValue && (
                       <CommandItem 
                         onSelect={() => handleAddCustomFactor(category)}
-                        className="cursor-pointer flex items-center gap-2 text-green-600 font-medium h-9"
+                        className="flex items-center justify-center h-10"
                       >
                         <div className="flex items-center w-full">
-                          <Plus className="h-4 w-4 mr-2" /> Add "{inputValue}"
+                          <Plus className="h-4 w-4 mr-2" />
+                          <span>Add "{inputValue}"</span>
                         </div>
                       </CommandItem>
                     )}
