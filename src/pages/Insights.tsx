@@ -34,7 +34,7 @@ const trendingFoodItems = [
     name: "Green Tea", 
     brand: "Organic Teas",
     rating: 88, 
-    impact: "Positive", 
+    impact: "Positive" as const, 
     description: "Antioxidants help reduce inflammation"
   },
   { 
@@ -42,7 +42,7 @@ const trendingFoodItems = [
     name: "Mixed Berries", 
     brand: "Berry Farms",
     rating: 92, 
-    impact: "Positive", 
+    impact: "Positive" as const, 
     description: "Rich in vitamins and antioxidants"
   }
 ];
@@ -53,7 +53,7 @@ const trendingProductItems = [
     name: "Niacinamide Serum", 
     brand: "The Ordinary",
     rating: 87, 
-    impact: "Positive", 
+    impact: "Positive" as const, 
     description: "Reduces pore appearance and improves texture"
   },
   { 
@@ -61,7 +61,7 @@ const trendingProductItems = [
     name: "Ceramide Moisturizer", 
     brand: "CeraVe",
     rating: 89, 
-    impact: "Positive", 
+    impact: "Positive" as const, 
     description: "Strengthens skin barrier and improves hydration"
   }
 ];
