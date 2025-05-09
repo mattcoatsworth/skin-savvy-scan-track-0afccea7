@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
@@ -8,11 +9,14 @@ import BackButton from "@/components/BackButton";
 import { 
   ChevronRight, TrendingUp, TrendingDown, BarChart, 
   Droplet, Sun, Star, Heart, BadgeCheck, Activity, 
-  Thermometer, CloudSun, Bandage, Wine, Send, Paperclip
+  Thermometer, CloudSun, Bandage, Wine, Send, Paperclip,
+  Image, Camera, File, X 
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type InsightType = {
   title: string;
@@ -42,6 +46,7 @@ const InsightsTrendsPage = () => {
   const [selectedInsight, setSelectedInsight] = useState<InsightType | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [chatInput, setChatInput] = useState("");
+  const [attachmentMenuOpen, setAttachmentMenuOpen] = useState(false);
   
   // Sample data
   const insights: InsightType[] = [
@@ -226,6 +231,25 @@ const InsightsTrendsPage = () => {
         state: { initialMessage: chatInput }
       });
     }
+  };
+
+  // Handle attachment options
+  const handleFileUpload = () => {
+    console.log("File upload selected");
+    setAttachmentMenuOpen(false);
+    // Implementation for file upload would go here
+  };
+
+  const handleCameraCapture = () => {
+    console.log("Camera capture selected");
+    setAttachmentMenuOpen(false);
+    // Implementation for camera capture would go here
+  };
+
+  const handlePhotoLibrary = () => {
+    console.log("Photo library selected");
+    setAttachmentMenuOpen(false);
+    // Implementation for photo library would go here
   };
 
   useEffect(() => {
@@ -437,14 +461,38 @@ const InsightsTrendsPage = () => {
             </div>
             
             <div className="flex items-center justify-between mt-4">
-              <button 
-                type="button" 
-                className="rounded-full bg-gray-50 p-2 h-10 w-10 flex items-center justify-center"
-              >
-                <Paperclip className="h-5 w-5 text-gray-500" />
-              </button>
+              <Popover open={attachmentMenuOpen} onOpenChange={setAttachmentMenuOpen}>
+                <PopoverTrigger asChild>
+                  <button 
+                    type="button" 
+                    className="rounded-full bg-gray-50 p-2 h-8 w-8 flex items-center justify-center"
+                  >
+                    <Paperclip className="h-4 w-4 text-gray-500" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-0" side="top" align="start">
+                  <div className="py-1 border-b">
+                    <button onClick={handleFileUpload} className="w-full flex items-center px-4 py-3 hover:bg-gray-100">
+                      <File className="h-5 w-5 mr-3" />
+                      <span>Files</span>
+                    </button>
+                  </div>
+                  <div className="py-1 border-b">
+                    <button onClick={handleCameraCapture} className="w-full flex items-center px-4 py-3 hover:bg-gray-100">
+                      <Camera className="h-5 w-5 mr-3" />
+                      <span>Camera</span>
+                    </button>
+                  </div>
+                  <div className="py-1">
+                    <button onClick={handlePhotoLibrary} className="w-full flex items-center px-4 py-3 hover:bg-gray-100">
+                      <Image className="h-5 w-5 mr-3" />
+                      <span>Photos</span>
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
               
-              <div className="w-10 h-10"></div>
+              <div className="w-8 h-8"></div>
             </div>
           </form>
         </div>
