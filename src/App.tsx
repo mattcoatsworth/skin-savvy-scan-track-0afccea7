@@ -21,6 +21,9 @@ import ChatPage from "./pages/ChatPage";
 import Search from "./pages/Search";
 import AppNavigation from "./components/AppNavigation";
 import ChatInput from "./components/ChatInput";
+import ExploreItemDetail from "./pages/ExploreItemDetail";
+import RecentLogDetail from "./pages/RecentLogDetail";
+import SuggestedActionDetail from "./pages/SuggestedActionDetail";
 
 const queryClient = new QueryClient();
 
@@ -51,10 +54,13 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/skin-analysis" element={<SkinAnalysis />} />
             <Route path="/recent-logs" element={<RecentLogs />} />
+            <Route path="/recent-logs/:logId" element={<RecentLogDetail />} />
             <Route path="/insights-trends" element={<InsightsTrendsPage />} />
             <Route path="/insights-trends/:insightId" element={<InsightsTrendsPage />} />
             <Route path="/suggested-actions" element={<SuggestedActionsPage />} />
+            <Route path="/suggested-actions/:actionId" element={<SuggestedActionDetail />} />
             <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/explore/:itemId" element={<ExploreItemDetail />} />
             <Route path="/log-skin-condition" element={<LogSkinCondition />} />
             <Route path="/product/:type/:id" element={<ProductDetail />} />
             <Route path="/day-log/:id" element={<DayLogDetail />} />
