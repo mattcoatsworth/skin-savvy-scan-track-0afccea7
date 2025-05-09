@@ -36,6 +36,7 @@ import CorrelationsDetail from "./pages/CorrelationsDetail";
 import RecommendationsDetail from "./pages/RecommendationsDetail";
 import SupplementDetail from "./pages/SupplementDetail";
 import Onboarding from "./pages/Onboarding";
+import SplashScreen from "./pages/SplashScreen";
 
 const queryClient = new QueryClient();
 
@@ -68,8 +69,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Redirect root to onboarding by default */}
-          <Route path="/" element={<Navigate to="/onboarding" replace />} />
+          {/* Redirect root to splash screen */}
+          <Route path="/" element={<SplashScreen />} />
           
           {/* Onboarding flow routes */}
           <Route element={<OnboardingLayout />}>
