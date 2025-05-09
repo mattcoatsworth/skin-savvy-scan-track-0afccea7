@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
-import { format, subDays } from "date-fns";
+import { format, subDays, isValid } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppNavigation from "@/components/AppNavigation";
@@ -74,10 +74,24 @@ const DayLogDetail = () => {
   const [waterIntake, setWaterIntake] = useState<number>(4);
   const [isEditingWater, setIsEditingWater] = useState(false);
   
-  // In a real app, this would fetch data from an API based on the ID
-  // For this demo, we'll generate mock data
-  const dayIndex = parseInt(id?.replace('day-', '') || '0');
-  const date = subDays(new Date(), dayIndex);
+  // Handle special case for "today"
+  const getCurrentDate = () => {
+    if (id === "today") {
+      return new Date();
+    }
+    
+    // Parse the day number from the id (e.g., "day-3" => 3)
+    const dayIndex = parseInt(id?.replace('day-', '') || '0', 10);
+    // Only proceed if we got a valid number
+    if (!isNaN(dayIndex)) {
+      return subDays(new Date(), dayIndex);
+    }
+    
+    // Fallback to current date if id is invalid
+    return new Date();
+  };
+  
+  const date = getCurrentDate();
   const rating = Math.floor(Math.random() * 100) + 1;
   
   // Load notes and water intake from localStorage on component mount
@@ -197,6 +211,10 @@ const DayLogDetail = () => {
       ? "Some minor issues today, possibly related to diet." 
       : "Rough skin day. Environmental factors and diet may have contributed.";
 
+  // Only format the date if it's valid
+  const formattedDay = isValid(date) ? format(date, "EEEE") : "Today";
+  const formattedDate = isValid(date) ? format(date, "MMMM d, yyyy") : "Invalid date";
+
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
@@ -205,10 +223,10 @@ const DayLogDetail = () => {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">{format(date, "EEEE")}</h1>
+            <h1 className="text-2xl font-bold">{formattedDay}</h1>
             <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 mr-1" />
-              <span>{format(date, "MMMM d, yyyy")}</span>
+              <span>{formattedDate}</span>
             </div>
           </div>
         </header>
