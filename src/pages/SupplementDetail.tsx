@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
-import { AlertTriangle, Check, X, Flask, Calendar, Activity, UserCircle, PieChart } from "lucide-react";
+import { AlertTriangle, Check, X, Beaker, Calendar, Activity, UserCircle, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type SupplementDetailsType = {
@@ -134,7 +134,7 @@ const SupplementDetail = () => {
           <Card className="ios-card">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center">
-                <Flask className="h-5 w-5 text-muted-foreground mr-3" />
+                <Beaker className="h-5 w-5 text-muted-foreground mr-3" />
                 <div>
                   <span className="text-sm text-muted-foreground">Brand</span>
                   <p>{supplement.brand}</p>
