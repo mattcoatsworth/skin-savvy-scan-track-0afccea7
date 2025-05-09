@@ -9,6 +9,7 @@ type InsightType = {
   title: string;
   description: string;
   icon?: string;
+  id?: string; // Adding id to uniquely identify each insight
 };
 
 type InsightsTrendsProps = {
@@ -32,8 +33,13 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
       <ScrollArea className="w-full whitespace-nowrap pb-4">
         <div className="flex space-x-4 px-1">
           {insights.map((insight, index) => (
-            <Link key={index} to="/insights-trends" className="min-w-[280px]">
-              <Card className="ios-card bg-skin-light border-0 hover:shadow-md transition-all">
+            <Link 
+              key={index} 
+              to={`/insights-trends/${insight.id || index}`} 
+              state={{ insight }} 
+              className="min-w-[280px]"
+            >
+              <Card className="ios-card bg-skin-light border-0 hover:shadow-md transition-all cursor-pointer">
                 <CardContent className="p-4">
                   <div className="flex items-start">
                     {insight.icon && <span className="text-2xl mr-3">{insight.icon}</span>}

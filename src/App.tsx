@@ -34,6 +34,7 @@ const App = () => (
           <Route path="/skin-analysis" element={<SkinAnalysis />} />
           <Route path="/recent-logs" element={<RecentLogs />} />
           <Route path="/insights-trends" element={<InsightsTrendsPage />} />
+          <Route path="/insights-trends/:insightId" element={<InsightsTrendsPage />} />
           <Route path="/suggested-actions" element={<SuggestedActionsPage />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/log-skin-condition" element={<LogSkinCondition />} />
