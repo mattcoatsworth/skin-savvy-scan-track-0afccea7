@@ -12,7 +12,7 @@ import {
   Area
 } from "recharts";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface DataPoint {
   date: string;
@@ -52,6 +52,12 @@ const TrendChart = ({
   const trendColor = lastValue >= firstValue ? "#8B5CF6" : "#EF4444";
   const secondaryColor = lastValue >= firstValue ? "#6BB9FF" : "#F97316";
   
+  const chartConfig = {
+    primary: { theme: { light: trendColor, dark: trendColor } },
+    secondary: { theme: { light: secondaryColor, dark: secondaryColor } },
+    area: { theme: { light: 'rgba(139, 92, 246, 0.3)', dark: 'rgba(139, 92, 246, 0.3)' } },
+  };
+  
   return (
     <div className={`w-full ${className}`}>
       {showLabels && (
@@ -65,7 +71,7 @@ const TrendChart = ({
       )}
       
       <div className="relative" style={{ height }}>
-        <ResponsiveContainer width="100%" height="100%">
+        <ChartContainer config={chartConfig} className="w-full h-full">
           <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
             <defs>
               <linearGradient id="colorGradient" x1="0" y1="0" x2="1" y2="0">
@@ -135,7 +141,7 @@ const TrendChart = ({
               return null;
             })}
           </LineChart>
-        </ResponsiveContainer>
+        </ChartContainer>
         
         {/* Data points & labels */}
         {showLabels && (
