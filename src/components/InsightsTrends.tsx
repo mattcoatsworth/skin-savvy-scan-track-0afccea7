@@ -74,7 +74,7 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
           <h2 className="text-xl font-semibold">Insights & Trends</h2>
           <h3 className="text-base text-muted-foreground">What's Been Helping Your Skin</h3>
         </div>
-        <Link to="/insights-trends" className="text-sm text-blue-600 font-medium">
+        <Link to="/insights-trends" className="text-sm text-skin-black font-medium">
           View all
         </Link>
       </div>
