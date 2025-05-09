@@ -425,28 +425,31 @@ const InsightsTrendsPage = () => {
             </div>
           </>
         )}
+        
+        {/* Chat input form - placed at bottom before navigation */}
+        <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4 z-10">
+          <form onSubmit={handleChatSubmit} className="max-w-md mx-auto flex items-center">
+            <Input
+              type="text"
+              placeholder="Ask anything"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              className="flex-1 rounded-full border-gray-200"
+            />
+            <button 
+              type="submit" 
+              className="ml-2 bg-skin-teal text-white p-2 rounded-full"
+              disabled={!chatInput.trim()}
+            >
+              <Send className="h-4 w-4" />
+              <span className="sr-only">Send</span>
+            </button>
+          </form>
+        </div>
       </div>
       
-      {/* Chat input bar - replaces the AppNavigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-10">
-        <form onSubmit={handleChatSubmit} className="max-w-md mx-auto flex items-center">
-          <Input
-            type="text"
-            placeholder="Ask anything"
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            className="flex-1 rounded-full border-gray-200"
-          />
-          <button 
-            type="submit" 
-            className="ml-2 bg-skin-teal text-white p-2 rounded-full"
-            disabled={!chatInput.trim()}
-          >
-            <Send className="h-4 w-4" />
-            <span className="sr-only">Send</span>
-          </button>
-        </form>
-      </div>
+      {/* Keep the AppNavigation component */}
+      <AppNavigation />
     </div>
   );
 };
