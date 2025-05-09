@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -22,7 +21,7 @@ const Index = () => {
     { 
       title: "Retinol Cream", 
       status: "positive" as const, 
-      description: "No reaction after 3 days",
+      description: "No reaction",
       rating: 85
     },
     { 

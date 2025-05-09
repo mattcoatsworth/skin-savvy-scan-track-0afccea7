@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -71,6 +72,8 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
                       <h3 className="font-medium mb-1">{log.title}</h3>
                       <p className="text-sm text-muted-foreground">
                         {getStatusIndicator(log.status)} {log.description}
+                        <br />
+                        <span className="text-xs">{log.description.includes("days") ? "" : "3 days"}</span>
                       </p>
                     </div>
                     {log.rating !== undefined && (
