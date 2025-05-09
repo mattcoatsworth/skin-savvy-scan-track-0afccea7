@@ -1,13 +1,37 @@
-
 import React from "react";
 import BackButton from "@/components/BackButton";
 import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { Card, CardContent } from "@/components/ui/card";
-import { Droplet, Sun, CloudSun, Star, Activity, Heart, Bandage, Smile } from "lucide-react";
+import { Droplet, Sun, CloudSun, Star, Activity, Heart, Bandage, Smile, Wine, Frown, BadgeCheck, Thermometer } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 // Extended mock data for insights
 const insightData = [
+  {
+    id: "collagen-supplements",
+    title: "Collagen supplements",
+    description: "Improved skin elasticity after 2 weeks",
+    iconName: "badge-check",
+    category: "positive",
+    content: "Your consistent use of collagen supplements over the past 2 weeks has shown a measurable improvement in your skin's elasticity. This is based on before and after comparisons in your skin logs."
+  },
+  {
+    id: "alcohol-consumption",
+    title: "Alcohol consumption",
+    description: "Correlates with next-day puffiness 3 times this month",
+    iconName: "wine",
+    category: "negative",
+    content: "We've detected a pattern where days following alcohol consumption show increased facial puffiness. This has occurred 3 times in the past month according to your logs."
+  },
+  {
+    id: "vitamin-c-serum",
+    title: "Vitamin C serum",
+    description: "Brightening effect noted after regular use",
+    iconName: "sun",
+    category: "positive",
+    content: "Your consistent application of Vitamin C serum appears to be working positively. Your skin logs show improved brightness and tone since you started using this product regularly."
+  },
   {
     id: "hydration-effect",
     title: "Hydration Effect",
@@ -68,6 +92,63 @@ const insightData = [
 
 // Extended content for detailed insight pages
 const extendedInsightData = {
+  "collagen-supplements": {
+    title: "Collagen supplements",
+    summary: "Improved skin elasticity after 2 weeks",
+    icon: "badge-check",
+    category: "positive",
+    detailedContent: "Your skin logs have revealed a significant improvement in skin elasticity after 2 weeks of consistent collagen supplementation. Based on the comparison of your before and after photos, there's approximately a 15% increase in skin firmness and elasticity.\n\nCollagen is the most abundant protein in your body and is vital for skin health:\n\n- It provides structure and firmness to your skin\n- It helps retain moisture and improve hydration\n- It supports skin regeneration and renewal\n- As we age, our natural collagen production decreases, which contributes to skin aging",
+    recommendations: [
+      "Continue with your current collagen supplement regimen",
+      "For optimal absorption, take collagen supplements with vitamin C",
+      "Maintain adequate hydration to maximize collagen benefits",
+      "Consistency is key - results typically improve over 6-12 weeks of regular use"
+    ],
+    relatedFactors: ["Diet quality", "Hydration levels", "Sleep quality"],
+    dataPoints: [
+      { date: "Week 1", elasticity: 62 },
+      { date: "Week 2", elasticity: 71 },
+      { date: "Week 3", elasticity: 78 }
+    ]
+  },
+  "alcohol-consumption": {
+    title: "Alcohol consumption",
+    summary: "Correlates with next-day puffiness 3 times this month",
+    icon: "wine",
+    category: "negative",
+    detailedContent: "Analysis of your skin logs has revealed a strong correlation between alcohol consumption and facial puffiness the following day. This pattern has been observed 3 distinct times this month.\n\nAlcohol affects your skin in multiple ways:\n\n- It's dehydrating, which can make skin appear less plump and more prone to fine lines\n- It causes blood vessels to dilate, leading to facial redness and puffiness\n- It disrupts sleep quality, which is essential for skin regeneration\n- It may trigger inflammatory responses in some individuals",
+    recommendations: [
+      "Consider reducing alcohol consumption, especially before important events",
+      "Increase hydration when consuming alcohol (try alternating alcoholic drinks with water)",
+      "Try applying a cold compress in the morning after consuming alcohol to reduce puffiness",
+      "Monitor specific types of alcoholic beverages to identify if some cause stronger reactions"
+    ],
+    relatedFactors: ["Hydration levels", "Sleep quality", "Sodium intake"],
+    dataPoints: [
+      { date: "April 5", puffiness: 72 },
+      { date: "April 12", puffiness: 68 },
+      { date: "April 19", puffiness: 75 }
+    ]
+  },
+  "vitamin-c-serum": {
+    title: "Vitamin C serum",
+    summary: "Brightening effect noted after regular use",
+    icon: "sun",
+    category: "positive",
+    detailedContent: "Your consistent application of Vitamin C serum over the past 3 months has produced measurable improvements in your skin brightness and tone. The data shows a 22% increase in skin radiance scores and a 18% improvement in texture smoothness metrics.\n\nVitamin C (ascorbic acid) provides multiple benefits for skin health:\n\n- It's a potent antioxidant that neutralizes free radicals from UV exposure\n- Promotes collagen synthesis, helping maintain skin firmness\n- Inhibits melanin production which helps fade dark spots and hyperpigmentation\n- Enhances skin's natural repair process",
+    recommendations: [
+      "Continue daily morning application of Vitamin C serum",
+      "Pair with sunscreen for enhanced protection and results",
+      "Store your vitamin C products properly to prevent oxidation",
+      "Consider using products with complementary ingredients like vitamin E and ferulic acid"
+    ],
+    relatedFactors: ["Sun exposure", "Antioxidant intake", "Skin exfoliation frequency"],
+    dataPoints: [
+      { date: "January", brightness: 60 },
+      { date: "February", brightness: 72 },
+      { date: "March", brightness: 82 }
+    ]
+  },
   "hydration-effect": {
     title: "Hydration Effect",
     summary: "Drinking 8+ glasses of water improved skin moisture by 30%",
@@ -91,26 +172,14 @@ const extendedInsightData = {
     summary: "Regular use has helped with brightening and texture",
     icon: "star",
     category: "positive",
-    detailedContent: "Your consistent application of Vitamin C serum over the past 3 months has produced measurable improvements in your skin brightness and texture. The data shows a 22% increase in skin radiance scores and a 18% improvement in texture smoothness metrics.\n\nVitamin C (ascorbic acid) provides multiple benefits for skin health:\n\n- It's a potent antioxidant that neutralizes free radicals from UV exposure\n- Promotes collagen synthesis, helping maintain skin firmness\n- Inhibits melanin production which helps fade dark spots and hyperpigmentation\n- Enhances skin's natural repair process",
-    recommendations: [
-      "Continue daily morning application of Vitamin C serum",
-      "Pair with sunscreen for enhanced protection and results",
-      "Store your vitamin C products properly to prevent oxidation",
-      "Consider using products with complementary ingredients like vitamin E and ferulic acid"
-    ],
-    relatedFactors: ["Sun exposure", "Antioxidant intake", "Skin exfoliation frequency"],
-    dataPoints: [
-      { date: "January", brightness: 60 },
-      { date: "February", brightness: 72 },
-      { date: "March", brightness: 82 }
-    ]
+    detailedContent: "Your consistent use of Vitamin C serum appears to be contributing to improved skin brightness and texture. Vitamin C is known for its antioxidant properties and ability to promote collagen production."
   },
   "sleep-quality": {
     title: "Sleep Quality",
     summary: "Nights with 7+ hours sleep show 40% better skin clarity",
     icon: "activity",
     category: "positive",
-    detailedContent: "Your skin logs reveal a strong relationship between sleep duration and skin clarity. When you consistently get 7 or more hours of quality sleep, your skin clarity scores improve by approximately 40% compared to periods of insufficient sleep.\n\nSleep is essential for skin health because:\n\n- During deep sleep, your body increases blood flow to the skin\n- Growth hormone released during sleep accelerates cell repair and regeneration\n- Sleep deprivation increases cortisol, which can trigger inflammation and breakouts\n- Your skin's moisture barrier recovers and rebalances overnight",
+    detailedContent: "Our analysis shows a strong correlation between your sleep duration and skin clarity. When you get 7 or more hours of sleep, your skin clarity scores improve by approximately 40% compared to periods of insufficient sleep.\n\nSleep is essential for skin health because:\n\n- During deep sleep, your body increases blood flow to the skin\n- Growth hormone released during sleep accelerates cell repair and regeneration\n- Sleep deprivation increases cortisol, which can trigger inflammation and breakouts\n- Your skin's moisture barrier recovers and rebalances overnight",
     recommendations: [
       "Maintain a consistent sleep schedule, even on weekends",
       "Create a relaxing bedtime routine to improve sleep quality",
@@ -202,6 +271,38 @@ const extendedInsightData = {
   }
 };
 
+// Helper function to get icon component
+const getIconComponent = (iconName?: string) => {
+  switch (iconName) {
+    case "droplet":
+      return <Droplet className="h-6 w-6 text-sky-500 mr-3 shrink-0" />;
+    case "sun":
+      return <Sun className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
+    case "thermometer":
+      return <Thermometer className="h-6 w-6 text-red-500 mr-3 shrink-0" />;
+    case "cloud-sun":
+      return <CloudSun className="h-6 w-6 text-blue-500 mr-3 shrink-0" />;
+    case "star":
+      return <Star className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
+    case "badge-check":
+      return <BadgeCheck className="h-6 w-6 text-teal-500 mr-3 shrink-0" />;
+    case "activity":
+      return <Activity className="h-6 w-6 text-blue-500 mr-3 shrink-0" />;
+    case "heart":
+      return <Heart className="h-6 w-6 text-red-500 mr-3 shrink-0" />;
+    case "bandage":
+      return <Bandage className="h-6 w-6 text-teal-500 mr-3 shrink-0" />;
+    case "smile":
+      return <Smile className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
+    case "frown":
+      return <Frown className="h-6 w-6 text-red-500 mr-3 shrink-0" />;
+    case "wine":
+      return <Wine className="h-6 w-6 text-purple-500 mr-3 shrink-0" />;
+    default:
+      return <Star className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
+  }
+};
+
 const InsightsTrendsPage = () => {
   const { insightId } = useParams();
   const location = useLocation();
@@ -209,14 +310,62 @@ const InsightsTrendsPage = () => {
 
   // If insightId is provided, show detailed view for that insight
   if (insightId) {
+    // First check the extended data, then fall back to the regular insight data
     const insightDetail = extendedInsightData[insightId as keyof typeof extendedInsightData];
     
-    // If insightDetail doesn't exist, navigate back to insights page
+    // If insightDetail doesn't exist, try to find a matching insight in the regular data
     if (!insightDetail) {
-      navigate('/insights-trends');
-      return null;
+      const matchingInsight = insightData.find(insight => insight.id === insightId);
+      
+      // If no matching insight is found, navigate back to insights page
+      if (!matchingInsight) {
+        navigate('/insights-trends');
+        return null;
+      }
+      
+      // If we have a matching insight but no extended data, show a simplified detail view
+      return (
+        <div className="pb-20">
+          <header className="mb-6 flex items-center">
+            <BackButton />
+            <h1 className="text-2xl font-bold">{matchingInsight.title}</h1>
+          </header>
+          
+          <Card className="ios-card bg-white border shadow-sm mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-start">
+                {getIconComponent(matchingInsight.iconName)}
+                <p className="text-sm">{matchingInsight.description}</p>
+                {matchingInsight.category && (
+                  <Badge 
+                    className={`ml-auto ${
+                      matchingInsight.category === 'positive' ? 'bg-green-100 text-green-700' : 
+                      matchingInsight.category === 'negative' ? 'bg-red-100 text-red-700' : 
+                      'bg-gray-100 text-gray-700'
+                    } hover:bg-opacity-90`}
+                  >
+                    {matchingInsight.category.charAt(0).toUpperCase() + matchingInsight.category.slice(1)}
+                  </Badge>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+          
+          <section className="mb-6">
+            <h2 className="text-lg font-medium mb-3">Analysis</h2>
+            <Card className="ios-card bg-white border shadow-sm">
+              <CardContent className="p-4">
+                <p className="whitespace-pre-line">{matchingInsight.content || "Detailed analysis coming soon..."}</p>
+              </CardContent>
+            </Card>
+          </section>
+          
+          <ViewScoringMethod />
+        </div>
+      );
     }
     
+    // If extended insight detail exists, show the full detailed view
     return (
       <div className="pb-20">
         <header className="mb-6 flex items-center">
@@ -227,19 +376,19 @@ const InsightsTrendsPage = () => {
         <Card className="ios-card bg-white border shadow-sm mb-6">
           <CardContent className="p-4">
             <div className="flex items-start">
-              {(() => {
-                switch (insightDetail.icon) {
-                  case "droplet": return <Droplet className="h-6 w-6 text-sky-500 mr-3 shrink-0" />;
-                  case "star": return <Star className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
-                  case "activity": return <Activity className="h-6 w-6 text-blue-500 mr-3 shrink-0" />;
-                  case "heart": return <Heart className="h-6 w-6 text-red-500 mr-3 shrink-0" />;
-                  case "cloud-sun": return <CloudSun className="h-6 w-6 text-blue-500 mr-3 shrink-0" />;
-                  case "bandage": return <Bandage className="h-6 w-6 text-teal-500 mr-3 shrink-0" />;
-                  case "smile": return <Smile className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
-                  default: return <Star className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
-                }
-              })()}
+              {getIconComponent(insightDetail.icon)}
               <p className="text-sm">{insightDetail.summary}</p>
+              {insightDetail.category && (
+                <Badge 
+                  className={`ml-auto ${
+                    insightDetail.category === 'positive' ? 'bg-green-100 text-green-700' : 
+                    insightDetail.category === 'negative' ? 'bg-red-100 text-red-700' : 
+                    'bg-gray-100 text-gray-700'
+                  } hover:bg-opacity-90`}
+                >
+                  {insightDetail.category.charAt(0).toUpperCase() + insightDetail.category.slice(1)}
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -305,18 +454,7 @@ const InsightsTrendsPage = () => {
               <Card className="ios-card bg-white border shadow-sm hover:shadow-md transition-all cursor-pointer">
                 <CardContent className="p-4">
                   <div className="flex items-start">
-                    {(() => {
-                      switch (insight.iconName) {
-                        case "droplet": return <Droplet className="h-6 w-6 text-sky-500 mr-3 shrink-0" />;
-                        case "star": return <Star className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
-                        case "activity": return <Activity className="h-6 w-6 text-blue-500 mr-3 shrink-0" />;
-                        case "heart": return <Heart className="h-6 w-6 text-red-500 mr-3 shrink-0" />;
-                        case "cloud-sun": return <CloudSun className="h-6 w-6 text-blue-500 mr-3 shrink-0" />;
-                        case "bandage": return <Bandage className="h-6 w-6 text-teal-500 mr-3 shrink-0" />;
-                        case "smile": return <Smile className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
-                        default: return <Star className="h-6 w-6 text-amber-500 mr-3 shrink-0" />;
-                      }
-                    })()}
+                    {getIconComponent(insight.iconName)}
                     <div>
                       <h3 className="font-medium">{insight.title}</h3>
                       <p className="text-sm text-muted-foreground mt-1">{insight.description}</p>
