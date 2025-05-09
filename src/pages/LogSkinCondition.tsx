@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Slider } from "@/components/ui/slider";
 import AppNavigation from "@/components/AppNavigation";
 
 const LogSkinCondition = () => {
@@ -16,6 +17,8 @@ const LogSkinCondition = () => {
     weather: [],
     menstrualCycle: []
   });
+  
+  const [sleepHours, setSleepHours] = useState<number>(7);
   
   // Add state for search inputs
   const [searchInputs, setSearchInputs] = useState({
@@ -93,6 +96,11 @@ const LogSkinCondition = () => {
       default:
         return [];
     }
+  };
+
+  const getHoursLabel = (hours: number) => {
+    if (hours === 1) return "1 hour";
+    return `${hours} hours`;
   };
 
   // Render a category section with search box
@@ -231,6 +239,33 @@ const LogSkinCondition = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
+              {/* Sleep Card */}
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <Clock className="h-5 w-5 mr-2 text-skin-black" /> Sleep
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-skin-black">Hours slept:</span>
+                      <span className="text-sm font-medium text-skin-black">{getHoursLabel(sleepHours)}</span>
+                    </div>
+                    <Slider 
+                      value={[sleepHours]} 
+                      min={0} 
+                      max={12} 
+                      step={0.5} 
+                      onValueChange={(values) => setSleepHours(values[0])}
+                      className="cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>12 hours</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
               {/* Render sections with search */}
               {renderCategoryWithSearch('food', <Utensils className="h-5 w-5 text-skin-black" />, 'Food')}
               {renderCategoryWithSearch('supplements', <Pill className="h-5 w-5 text-skin-black" />, 'Supplements')}
