@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar } from "@/components/ui/calendar";
@@ -28,8 +27,7 @@ const FemaleOnboardingBirthdate: React.FC = () => {
       localStorage.setItem("userBirthdate", date.toISOString());
       
       // Navigate to the next step in the female onboarding flow
-      // For now, we'll navigate to home since we haven't created the next step
-      navigate("/home");
+      navigate("/onboarding/female/previous-apps");
     }
   };
 
