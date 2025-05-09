@@ -6,7 +6,6 @@ import BackButton from "@/components/BackButton";
 import { Progress } from "@/components/ui/progress";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { Calendar, Activity, Clock, BadgeInfo, ArrowRight } from "lucide-react";
-import { spacing } from "@/design";
 
 type LogType = {
   title: string;
@@ -248,7 +247,7 @@ const RecentLogDetail = () => {
   }
 
   return (
-    <div className="pb-20">
+    <div className="pb-20 bg-slate-50 min-h-screen">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
@@ -434,7 +433,7 @@ const RecentLogDetail = () => {
         
         {/* Science Section */}
         {(log.relatedFactors || log.scientificReferences) && (
-          <div className="mb-16">
+          <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Science</h2>
             <div className="space-y-4">
               {log.relatedFactors && log.relatedFactors.length > 0 && (
@@ -503,12 +502,8 @@ const RecentLogDetail = () => {
           </div>
         )}
         
-        {/* View Scoring Method (always at bottom with proper spacing) */}
-        {log.rating !== undefined && (
-          <div className="mt-[-1rem] mb-16">
-            <ViewScoringMethod />
-          </div>
-        )}
+        {/* View Scoring Method (always at bottom) */}
+        {log.rating !== undefined && <ViewScoringMethod />}
       </div>
     </div>
   );
