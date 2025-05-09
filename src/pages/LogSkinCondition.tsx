@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ArrowLeft, Camera, Search } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -108,7 +109,12 @@ const LogSkinCondition = () => {
           <div className="relative mb-2">
             <Popover 
               open={searchOpen[categoryKey]} 
-              onOpenChange={(open) => setSearchOpen(prev => ({ ...prev, [category]: open }))}
+              onOpenChange={(open) => {
+                // Only update if we're opening the popover or if input is empty when closing
+                if (open || (!open && !searchInputs[categoryKey])) {
+                  setSearchOpen(prev => ({ ...prev, [category]: open }));
+                }
+              }}
             >
               <PopoverTrigger asChild>
                 <div className="relative flex-grow">
@@ -118,10 +124,7 @@ const LogSkinCondition = () => {
                     value={searchInputs[categoryKey]}
                     onChange={(e) => handleSearchChange(category, e.target.value)}
                     className="pl-8 py-2 text-sm h-9 w-full pr-4"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSearchOpen(prev => ({ ...prev, [category]: true }));
-                    }}
+                    onClick={() => setSearchOpen(prev => ({ ...prev, [category]: true }))}
                     onFocus={() => setSearchOpen(prev => ({ ...prev, [category]: true }))}
                   />
                 </div>
@@ -131,10 +134,7 @@ const LogSkinCondition = () => {
                 className="p-0 w-[300px]" 
                 align="start"
                 sideOffset={4}
-                onInteractOutside={(e) => {
-                  // Prevent closing when interacting with the content
-                  e.preventDefault();
-                }}
+                // Remove the problematic onInteractOutside handler
               >
                 <Command>
                   <CommandList>
