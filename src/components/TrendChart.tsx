@@ -1,18 +1,7 @@
 
 import React from "react";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  ResponsiveContainer, 
-  ReferenceDot,
-  Tooltip,
-  CartesianGrid,
-  Area
-} from "recharts";
+import { LineChart, Line, XAxis, ResponsiveContainer, ReferenceDot } from "recharts";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface DataPoint {
   date: string;
@@ -36,27 +25,8 @@ const TrendChart = ({
 
   // Calculate min and max for domain padding
   const values = data.map(item => item.value);
-  const minValue = Math.min(...values) * 0.8;
-  const maxValue = Math.max(...values) * 1.1;
-  
-  // Get color based on the trend
-  const getColor = (value: number) => {
-    if (value >= 70) return "#10B981"; // green
-    if (value >= 40) return "#FBBF24"; // yellow
-    return "#EF4444"; // red
-  };
-  
-  // Calculate the overall trend for gradient color
-  const firstValue = data[0]?.value || 0;
-  const lastValue = data[data.length - 1]?.value || 0;
-  const trendColor = lastValue >= firstValue ? "#8B5CF6" : "#EF4444";
-  const secondaryColor = lastValue >= firstValue ? "#6BB9FF" : "#F97316";
-  
-  const chartConfig = {
-    primary: { theme: { light: trendColor, dark: trendColor } },
-    secondary: { theme: { light: secondaryColor, dark: secondaryColor } },
-    area: { theme: { light: 'rgba(139, 92, 246, 0.3)', dark: 'rgba(139, 92, 246, 0.3)' } },
-  };
+  const minValue = Math.min(...values) - 5;
+  const maxValue = Math.max(...values) + 5;
   
   return (
     <div className={`w-full ${className}`}>
@@ -70,78 +40,45 @@ const TrendChart = ({
         </div>
       )}
       
-      <div className="relative" style={{ height }}>
-        <ChartContainer config={chartConfig} className="w-full h-full">
-          <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+      <div className="relative h-[120px]" style={{ height: height }}>
+        <ResponsiveContainer width="100%" height={height}>
+          <LineChart data={data} margin={{ top: 20, right: 15, left: 15, bottom: 5 }}>
             <defs>
-              <linearGradient id="colorGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor={secondaryColor} />
-                <stop offset="100%" stopColor={trendColor} />
-              </linearGradient>
-              <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={trendColor} stopOpacity={0.3} />
-                <stop offset="100%" stopColor={trendColor} stopOpacity={0} />
+              <linearGradient id="colorValue" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#6BB9FF" />
+                <stop offset="100%" stopColor="#8B5CF6" />
               </linearGradient>
             </defs>
-            
-            <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-            <XAxis 
-              dataKey="date" 
-              axisLine={false} 
-              tickLine={false} 
-              tick={{ fontSize: 10, fill: '#888' }}
-              dy={5}
-            />
-            
-            {!showLabels && (
-              <YAxis 
-                hide 
-                domain={[minValue, maxValue]}
-              />
-            )}
-            
-            <ChartTooltip
-              content={<ChartTooltipContent />}
-            />
-            
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="none"
-              fill="url(#areaGradient)"
-              fillOpacity={0.6}
-            />
-            
+            <XAxis dataKey="date" tick={false} axisLine={false} />
             <Line
               type="monotone"
               dataKey="value"
-              stroke="url(#colorGradient)"
+              stroke="url(#colorValue)"
               strokeWidth={3}
               dot={false}
-              activeDot={{ stroke: '#FFF', strokeWidth: 2, r: 6, fill: trendColor }}
+              activeDot={false}
             />
-            
             {data.map((point, index) => {
-              // Only show dots on the first and last points for cleaner look
-              if (index === 0 || index === data.length - 1) {
-                const dotColor = getColor(point.value);
-                
-                return (
-                  <ReferenceDot
-                    key={`dot-${index}`}
-                    x={point.date}
-                    y={point.value}
-                    r={4}
-                    fill={dotColor}
-                    stroke="#fff"
-                    strokeWidth={2}
-                  />
-                );
-              }
-              return null;
+              const prevValue = index > 0 ? data[index - 1].value : point.value;
+              const trend = point.value > prevValue ? "up" : point.value < prevValue ? "down" : "flat";
+              
+              // Calculate color based on value
+              const dotColor = point.value >= 70 ? "#10B981" : point.value >= 40 ? "#FBBF24" : "#EF4444";
+              
+              return (
+                <ReferenceDot
+                  key={`dot-${index}`}
+                  x={point.date}
+                  y={point.value}
+                  r={6}
+                  fill={dotColor}
+                  stroke="#fff"
+                  strokeWidth={2}
+                />
+              );
             })}
           </LineChart>
-        </ChartContainer>
+        </ResponsiveContainer>
         
         {/* Data points & labels */}
         {showLabels && (
