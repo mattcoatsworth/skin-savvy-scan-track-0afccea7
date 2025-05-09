@@ -96,7 +96,8 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
         </Card>
       </Link>
       
-      {/* Remove the Skin History title that was here */}
+      {/* Add Skin History title below the weekly block */}
+      <h2 className="text-xl font-semibold mt-6 mb-3">Skin History</h2>
     </div>
   );
 };

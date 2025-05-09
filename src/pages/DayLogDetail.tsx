@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
@@ -64,12 +63,6 @@ const getWaterIntakeRating = (cups: number): {label: string; color: string} => {
   } else {
     return { label: "Low", color: "#F87171" }; // Red
   }
-};
-
-// Calculate water intake rating (fixed to avoid floating point errors)
-const calculateWaterIntakeRating = (cups: number): number => {
-  // Cap at 100 for 12 or more cups, and ensure we get clean integers
-  return Math.min(Math.round(cups * 100 / 12), 100);
 };
 
 const DayLogDetail = () => {
@@ -153,7 +146,6 @@ const DayLogDetail = () => {
   };
   
   const waterRating = getWaterIntakeRating(waterIntake);
-  const waterIntakeScore = calculateWaterIntakeRating(waterIntake);
   
   // Mock data for the day details
   const foodFactors: Factor[] = [
@@ -209,7 +201,7 @@ const DayLogDetail = () => {
       name: "Water Intake", 
       impact: waterIntake >= 6 ? "positive" : (waterIntake >= 4 ? "neutral" : "negative"), 
       description: `${waterIntake} cups - ${waterRating.label} hydration`,
-      rating: waterIntakeScore
+      rating: waterIntake * 8.3 // Convert to a rating out of 100
     }
   ];
   
