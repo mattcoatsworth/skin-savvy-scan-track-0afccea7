@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
+import TrendChart from "@/components/TrendChart";
 
 const SkinAnalysis = () => {
   // Sample data
@@ -14,6 +15,17 @@ const SkinAnalysis = () => {
     { type: "Weather" as const, status: "Dry + Cold", iconName: "cloud-sun", details: "Low humidity affecting skin hydration" },
     { type: "Sleep" as const, status: "Improved", iconName: "moon-star", details: "Getting 7+ hours consistently this week" },
     { type: "Stress" as const, status: "Moderate", iconName: "activity", details: "Work deadline approaching" },
+  ];
+
+  // Weekly trend data
+  const weeklyTrendData = [
+    { date: "Mon", value: 35 },
+    { date: "Tue", value: 40 },
+    { date: "Wed", value: 45 },
+    { date: "Thu", value: 60 },
+    { date: "Fri", value: 75 },
+    { date: "Sat", value: 80 },
+    { date: "Sun", value: 85 }
   ];
 
   // Function to get icon component based on iconName
@@ -88,37 +100,8 @@ const SkinAnalysis = () => {
             <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
             <Card className="ios-card">
               <CardContent className="p-4">
-                <p className="text-muted-foreground mb-2">Your skin has been gradually improving this week</p>
-                <div className="flex justify-between items-center">
-                  <div className="flex flex-col items-center">
-                    <Frown className="text-sm" />
-                    <span className="text-xs">Mon</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Frown className="text-sm" />
-                    <span className="text-xs">Tue</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Frown className="text-sm" />
-                    <span className="text-xs">Wed</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Frown className="text-sm" />
-                    <span className="text-xs">Thu</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Smile className="text-sm" />
-                    <span className="text-xs">Fri</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Smile className="text-sm" />
-                    <span className="text-xs">Sat</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Smile className="text-sm" />
-                    <span className="text-xs">Sun</span>
-                  </div>
-                </div>
+                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
+                <TrendChart data={weeklyTrendData} height={80} />
               </CardContent>
             </Card>
           </div>

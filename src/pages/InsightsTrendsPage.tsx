@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,8 +8,10 @@ import BackButton from "@/components/BackButton";
 import { 
   ChevronRight, TrendingUp, TrendingDown, BarChart, 
   Droplet, Sun, Star, Heart, BadgeCheck, Activity, 
-  Thermometer, CloudSun, Bandage, Wine
+  Thermometer, CloudSun, Bandage, Wine 
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import TrendChart from "@/components/TrendChart";
 
 type InsightType = {
   title: string;
@@ -169,6 +170,22 @@ const InsightsTrendsPage = () => {
     return insight.category === activeTab;
   });
 
+  // Get color based on impact score
+  const getScoreColor = (score?: number) => {
+    if (!score) return "bg-gray-500";
+    if (score >= 70) return "bg-green-500";
+    if (score >= 40) return "bg-amber-500";
+    return "bg-red-500";
+  };
+
+  // Get text color based on impact score
+  const getScoreTextColor = (score?: number) => {
+    if (!score) return "text-gray-500";
+    if (score >= 70) return "text-green-500";
+    if (score >= 40) return "text-amber-500";
+    return "text-red-500";
+  };
+
   useEffect(() => {
     // Check if we have an insight from the state
     if (location.state && location.state.insight) {
@@ -214,22 +231,15 @@ const InsightsTrendsPage = () => {
                 <div className="mt-4 mb-6">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">Impact Score</span>
-                    <span className={`font-semibold ${
-                      selectedInsight.impactScore && selectedInsight.impactScore >= 70 ? 'text-green-500' : 
-                      selectedInsight.impactScore && selectedInsight.impactScore >= 40 ? 'text-amber-500' : 'text-red-500'
-                    }`}>
+                    <span className={getScoreTextColor(selectedInsight.impactScore)}>
                       {selectedInsight.impactScore}/100
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
-                      className={`h-2.5 rounded-full ${
-                        selectedInsight.impactScore && selectedInsight.impactScore >= 70 ? 'bg-green-500' : 
-                        selectedInsight.impactScore && selectedInsight.impactScore >= 40 ? 'bg-amber-500' : 'bg-red-500'
-                      }`} 
-                      style={{ width: `${selectedInsight.impactScore}%` }}>
-                    </div>
-                  </div>
+                  <Progress 
+                    value={selectedInsight.impactScore} 
+                    className="h-2 bg-gray-200"
+                    indicatorClassName={getScoreColor(selectedInsight.impactScore)}
+                  />
                 </div>
                 
                 <h3 className="font-semibold text-lg mb-2">Analysis</h3>
@@ -247,69 +257,12 @@ const InsightsTrendsPage = () => {
                 )}
                 
                 <h3 className="font-semibold text-lg mb-2">Trend Over Time</h3>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span>Week 1</span>
-                  <span>Week 2</span>
-                  <span>Week 3</span>
-                </div>
-                <div className="relative h-10 bg-gray-100 rounded-lg mb-6">
-                  {selectedInsight.historicalData && selectedInsight.historicalData.map((data, index, arr) => {
-                    const prevValue = index > 0 ? arr[index - 1].value : data.value;
-                    const trend = data.value > prevValue ? 'up' : data.value < prevValue ? 'down' : 'flat';
-                    
-                    return (
-                      <div 
-                        key={index}
-                        className="absolute flex flex-col items-center justify-center"
-                        style={{
-                          left: `${(index / (arr.length - 1)) * 100}%`,
-                          bottom: '0',
-                          transform: 'translateX(-50%)'
-                        }}
-                      >
-                        <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                          data.value >= 70 ? 'bg-green-100' : 
-                          data.value >= 40 ? 'bg-amber-100' : 'bg-red-100'
-                        }`}>
-                          <div className={`w-2.5 h-2.5 rounded-full ${
-                            data.value >= 70 ? 'bg-green-500' : 
-                            data.value >= 40 ? 'bg-amber-500' : 'bg-red-500'
-                          }`}></div>
-                        </div>
-                        
-                        <span className="text-xs mt-1 font-medium">
-                          {trend === 'up' && <TrendingUp className="h-3 w-3 text-green-500 inline" />}
-                          {trend === 'down' && <TrendingDown className="h-3 w-3 text-red-500 inline" />}
-                          {data.value}
-                        </span>
-                      </div>
-                    );
-                  })}
-                  
-                  {selectedInsight.historicalData && selectedInsight.historicalData.length > 1 && 
-                    selectedInsight.historicalData.map((data, index, arr) => {
-                      if (index === 0) return null;
-                      const prevData = arr[index - 1];
-                      
-                      // Calculate positions for the line
-                      const startX = ((index - 1) / (arr.length - 1)) * 100;
-                      const endX = (index / (arr.length - 1)) * 100;
-                      
-                      return (
-                        <div 
-                          key={`line-${index}`}
-                          className={`absolute h-0.5 ${
-                            data.value >= prevData.value ? 'bg-green-400' : 'bg-red-400'
-                          }`}
-                          style={{
-                            left: `${startX}%`,
-                            width: `${endX - startX}%`,
-                            bottom: '7px'
-                          }}
-                        ></div>
-                      );
-                  })}
-                </div>
+                {selectedInsight.historicalData && (
+                  <TrendChart 
+                    data={selectedInsight.historicalData}
+                    className="mb-6"
+                  />
+                )}
                 
                 <h3 className="font-semibold text-lg mb-2">Recommendations</h3>
                 <ul className="list-disc pl-5">
