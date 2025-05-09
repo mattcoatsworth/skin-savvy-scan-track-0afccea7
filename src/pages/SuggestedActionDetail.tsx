@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,6 +81,82 @@ const SuggestedActionDetail = () => {
       ],
       timeEstimate: "Ongoing, 7+ days to see results",
       completed: false
+    },
+    {
+      id: "sleep-patterns",
+      text: "Record your sleep patterns for the next few days",
+      description: "Sleep quality directly impacts skin health and repair mechanisms. By tracking your sleep, we can identify correlations between sleep patterns and skin condition changes.",
+      steps: [
+        "Note your bedtime and wake time daily",
+        "Rate your sleep quality each morning (1-10 scale)",
+        "Track any nighttime awakenings",
+        "Record how your skin looks and feels each morning"
+      ],
+      benefits: [
+        "Identify optimal sleep duration for your skin",
+        "Understand how sleep quality affects breakouts or irritation",
+        "Improve overall skin repair and regeneration",
+        "Create better sleep habits for long-term skin health"
+      ],
+      timeEstimate: "3-5 days minimum",
+      completed: false
+    },
+    {
+      id: "dairy-elimination",
+      text: "Try eliminating dairy for one week",
+      description: "Some research suggests dairy consumption may trigger inflammatory responses in certain individuals, potentially contributing to acne and other skin issues.",
+      steps: [
+        "Identify and avoid all dairy products for 7 days",
+        "Read ingredients lists carefully (dairy appears in many processed foods)",
+        "Keep a daily log of any changes in skin condition",
+        "Consider dairy alternatives like almond, oat, or coconut milk"
+      ],
+      benefits: [
+        "Determine if dairy is triggering your skin issues",
+        "Potentially reduce inflammation and breakouts",
+        "Discover dairy alternatives that work for you",
+        "Establish a clearer understanding of your skin's dietary triggers"
+      ],
+      timeEstimate: "7 days",
+      completed: false
+    },
+    {
+      id: "morning-skincare",
+      text: "Log your morning skincare routine",
+      description: "Consistently tracking your skincare routine helps identify which products and practices are most effective for your skin. You've already made great progress by logging consistently.",
+      steps: [
+        "Continue your daily morning routine logging",
+        "Note any product changes or adjustments",
+        "Record your skin's condition before and after routine",
+        "Tag products used for better data analysis"
+      ],
+      benefits: [
+        "Build long-term data about product efficacy",
+        "Identify seasonal patterns in your skin needs",
+        "Optimize product combinations",
+        "Track improvements over time"
+      ],
+      timeEstimate: "Ongoing daily practice",
+      completed: true
+    },
+    {
+      id: "moisturizer-scan",
+      text: "Scan your new moisturizer",
+      description: "You've successfully added this product to your inventory. This helps our system analyze ingredient combinations and potential interactions across your product lineup.",
+      steps: [
+        "Continue using the product as directed",
+        "Track how your skin responds daily",
+        "Consider taking before/after photos weekly",
+        "Add notes about texture, absorption, and any reactions"
+      ],
+      benefits: [
+        "Get personalized insights about this product's effectiveness",
+        "Receive alerts about potential ingredient conflicts",
+        "Compare results against similar products",
+        "Build your personal skincare database"
+      ],
+      timeEstimate: "Already completed, ongoing monitoring recommended",
+      completed: true
     }
   ];
 

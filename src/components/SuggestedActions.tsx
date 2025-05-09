@@ -24,6 +24,11 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
       return action.linkTo;
     }
     
+    // If we have an ID, link to specific action detail page
+    if (action.id) {
+      return `/suggested-actions/${action.id}`;
+    }
+    
     // Default to the suggested actions page
     return "/suggested-actions";
   };
