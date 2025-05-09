@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, Camera, Plus, Search } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -94,7 +94,7 @@ const LogSkinCondition = () => {
   };
 
   // Render a category section with search box
-  const renderCategoryWithSearch = (category: string, emoji: string, title: string) => {
+  const renderCategoryWithSearch = (category: string, icon: React.ReactNode, title: string) => {
     const categoryKey = category as keyof typeof searchInputs;
     const defaultOptions = getDefaultOptions(category);
     const inputValue = searchInputs[categoryKey];
@@ -102,7 +102,9 @@ const LogSkinCondition = () => {
     return (
       <Card className="ios-card">
         <CardContent className="p-4">
-          <h3 className="font-medium mb-2 text-skin-black">{emoji} {title}</h3>
+          <h3 className="font-medium mb-2 text-skin-black flex items-center">
+            <span className="mr-2">{icon}</span> {title}
+          </h3>
           
           <div className="relative mb-2">
             <div className="relative flex-grow">
@@ -228,14 +230,16 @@ const LogSkinCondition = () => {
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
               {/* Render sections with search */}
-              {renderCategoryWithSearch('food', '🥗', 'Food')}
-              {renderCategoryWithSearch('supplements', '💊', 'Supplements')}
-              {renderCategoryWithSearch('makeup', '💄', 'Makeup')}
+              {renderCategoryWithSearch('food', <Utensils className="h-5 w-5 text-skin-black" />, 'Food')}
+              {renderCategoryWithSearch('supplements', <Pill className="h-5 w-5 text-skin-black" />, 'Supplements')}
+              {renderCategoryWithSearch('makeup', <Palette className="h-5 w-5 text-skin-black" />, 'Makeup')}
               
               {/* Weather Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black">🌡️ Weather</h3>
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <CloudSun className="h-5 w-5 mr-2 text-skin-black" /> Weather
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {["Dry + Cold", "Humid + Hot", "Moderate", "Windy"].map(factor => (
                       <Button 
@@ -255,7 +259,9 @@ const LogSkinCondition = () => {
               {/* Menstrual Cycle Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black">🔴 Menstrual Cycle</h3>
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <Heart className="h-5 w-5 mr-2 text-skin-black" /> Menstrual Cycle
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {["Not Menstruating", "Menstruating", "PMS", "Ovulation", "Spotting"].map(factor => (
                       <Button 
