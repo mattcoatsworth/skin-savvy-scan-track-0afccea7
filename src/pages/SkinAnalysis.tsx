@@ -115,11 +115,8 @@ const SkinAnalysis = () => {
           </div>
         </div>
       </div>
-      
-      <AppNavigation />
     </div>
   );
 };
 
 export default SkinAnalysis;
-
