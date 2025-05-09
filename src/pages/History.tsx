@@ -1,6 +1,5 @@
 
 import React from "react";
-import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { format, subDays } from "date-fns";
@@ -95,8 +94,8 @@ const History = () => {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
-      <div className="max-w-md mx-auto px-4 py-6">
+    <div className="bg-slate-50 min-h-screen">
+      <div className="max-w-md mx-auto">
         <header className="mb-6 flex items-center">
           <BackButton />
           <h1 className="text-2xl font-bold">Skin</h1>
@@ -167,8 +166,6 @@ const History = () => {
           ))}
         </div>
       </div>
-      
-      <AppNavigation />
     </div>
   );
 };

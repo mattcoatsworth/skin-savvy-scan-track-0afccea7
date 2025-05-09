@@ -1,3 +1,4 @@
+
 # Layout Standards
 
 This document outlines the standardized layout patterns for the application.
@@ -79,16 +80,11 @@ All product and food detail pages follow a consistent layout pattern derived fro
 ### Suggested Actions & Chat Text Box
 
 1. **Chat Input Component**
-   - Fixed at bottom of screen (position: fixed)
-   - Standard padding: paddingX: 1rem, paddingTop: 1.5rem, paddingBottom: 4rem
+   - Positioned at the bottom of the content flow (not fixed)
+   - Standard padding: paddingTop: 1.5rem, paddingBottom: 4rem
    - Background: bg-slate-50 with subtle shadow (shadow-sm)
    - Contains quick suggestion chips and input field
    - Max width of content matches page container (max-w-md)
-
-2. **Page Bottom Padding**
-   - All pages should include sufficient bottom padding (pb-24) to prevent content from being obscured by the chat input
-   - This ensures content is fully visible above the fixed chat input component
-   - Standard bottom padding value: 6rem (24 in tailwind)
 
 ### Visual Consistency
 - Cards have consistent padding (`p-6`)
