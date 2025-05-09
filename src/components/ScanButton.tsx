@@ -8,7 +8,7 @@ const ScanButton: React.FC = () => {
     <div className="flex flex-col items-center gap-3">
       <Button 
         variant="outline" 
-        className="bg-transparent border-2 border-skin-black text-skin-black hover:bg-skin-black/5 w-full max-w-xs rounded-md"
+        className="bg-transparent border-2 border-skin-black text-skin-black hover:bg-skin-black/5 w-full max-w-xs rounded-full"
         asChild
       >
         <Link to="/log-skin-condition">
