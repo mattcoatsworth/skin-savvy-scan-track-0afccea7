@@ -340,25 +340,25 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Updated chat input area with rounded line */}
+      {/* Chat input area with soft gray line above the input */}
       <div className="p-4 bg-white">
-        <div className="max-w-4xl mx-auto flex flex-col">
-          {/* Text input */}
-          <div className="mb-4">
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder="Ask anything"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="w-full bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
-            />
-          </div>
+        {/* Soft gray line with rounded edges at the top */}
+        <div className="relative max-w-4xl mx-auto mb-4">
+          <div className="absolute inset-x-0 top-0 h-0.5 bg-gray-200 rounded-full"></div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto">
+          <Input
+            ref={inputRef}
+            type="text"
+            placeholder="Ask anything"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyPress}
+            className="w-full bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
+          />
           
-          {/* Bottom row with paperclip and horizontal line with rounded ends */}
-          <div className="flex items-center justify-between relative">
-            {/* Paperclip button */}
+          <div className="flex items-center justify-between mt-4">
             <Button 
               variant="ghost" 
               size="icon" 
@@ -367,12 +367,6 @@ const ChatPage: React.FC = () => {
               <Paperclip className="h-4 w-4 text-gray-500" />
             </Button>
             
-            {/* Fully rounded line that spans the entire width */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-4">
-              <div className="h-0.5 bg-red-500 rounded-full"></div>
-            </div>
-            
-            {/* Empty space for symmetrical layout */}
             <div className="w-10 h-10"></div>
           </div>
         </div>
