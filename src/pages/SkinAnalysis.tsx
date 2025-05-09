@@ -1,12 +1,10 @@
-
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown, ArrowRight } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
-import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 const SkinAnalysis = () => {
   // Sample data
@@ -83,45 +81,30 @@ const SkinAnalysis = () => {
             <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
             <div className="space-y-3">
               {skinFactors.map((factor, index) => (
-                <Link key={index} to={`/factor-analysis/${factor.type.toLowerCase()}`}>
-                  <Card className="ios-card hover:shadow-md transition-all">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start">
-                          {getIconComponent(factor.iconName)}
-                          <div>
-                            <h3 className="font-medium">{factor.type}: {factor.status}</h3>
-                            <p className="text-sm text-muted-foreground">{factor.details}</p>
-                          </div>
-                        </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                <Card key={index} className="ios-card">
+                  <CardContent className="p-4">
+                    <div className="flex items-start">
+                      {getIconComponent(factor.iconName)}
+                      <div>
+                        <h3 className="font-medium">{factor.type}: {factor.status}</h3>
+                        <p className="text-sm text-muted-foreground">{factor.details}</p>
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
           
           <div>
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-xl font-semibold">Weekly Trend</h2>
-              <Link to="/weekly-trend-analysis" className="text-skin-teal text-sm font-medium flex items-center">
-                View Details <ArrowRight className="h-4 w-4 ml-1" />
-              </Link>
-            </div>
-            <Link to="/weekly-trend-analysis">
-              <Card className="ios-card hover:shadow-md transition-all">
-                <CardContent className="p-4">
-                  <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
-                  <TrendChart data={weeklyTrendData} height={80} />
-                </CardContent>
-              </Card>
-            </Link>
+            <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
+            <Card className="ios-card">
+              <CardContent className="p-4">
+                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
+                <TrendChart data={weeklyTrendData} height={80} />
+              </CardContent>
+            </Card>
           </div>
-          
-          {/* Add View Scoring Method component at the bottom */}
-          <ViewScoringMethod />
         </div>
       </div>
       
