@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,11 +33,13 @@ const LogSkinCondition = () => {
 
   const moodOptions = [
     { icon: <Smile className="h-10 w-10" />, label: "Balanced" },
-    { icon: <Frown className="h-10 w-10" />, label: "Dry & Sensitive" },
+    { icon: <Frown className="h-10 w-10" />, label: "Sensitive" },
     { icon: <Droplets className="h-10 w-10" />, label: "Oily" },
     { icon: <Bandage className="h-10 w-10" />, label: "Irritated" },
     { icon: <Thermometer className="h-10 w-10" />, label: "Tired" },
     { icon: <Droplet className="h-10 w-10" />, label: "Normal" },
+    { icon: <Sun className="h-10 w-10" />, label: "Glowing" },
+    { icon: <CloudSun className="h-10 w-10" />, label: "Dry" },
   ];
 
   const handleMoodSelect = (label: string) => {
