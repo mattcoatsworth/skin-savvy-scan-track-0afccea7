@@ -340,11 +340,14 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Chat input area with soft gray line above the input */}
+      {/* Chat input area with shadow divider */}
       <div className="p-4 bg-white">
-        {/* Soft gray line with rounded edges at the top */}
+        {/* Shadow divider with rounded edges */}
         <div className="relative max-w-4xl mx-auto mb-4">
-          <div className="absolute inset-x-0 top-0 h-0.5 bg-gray-200 rounded-full"></div>
+          <div className="absolute inset-x-0 top-0 h-px rounded-full" style={{
+            boxShadow: '0 1px 2px rgba(0,0,0,0.08), 0 1px 1px rgba(0,0,0,0.04)',
+            background: 'transparent'
+          }}></div>
         </div>
         
         <div className="max-w-4xl mx-auto">
