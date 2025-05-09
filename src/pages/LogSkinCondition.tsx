@@ -306,7 +306,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Weather Card */}
+              {/* Weather Card - Updated to match the button style of Food, Supplements, and Makeup */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center">
@@ -318,7 +318,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.weather.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-full ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-xl ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('weather', factor)}
                       >
                         {factor}
@@ -328,7 +328,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Menstrual Cycle Card */}
+              {/* Menstrual Cycle Card - Updated to match the button style of Food, Supplements, and Makeup */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center">
@@ -340,7 +340,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-full ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-xl ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('menstrualCycle', factor)}
                       >
                         {factor}
