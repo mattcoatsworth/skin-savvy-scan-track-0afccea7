@@ -19,6 +19,7 @@ const LogSkinCondition = () => {
   });
   
   const [sleepHours, setSleepHours] = useState<number>(7);
+  const [stressLevel, setStressLevel] = useState<number>(3);
   
   // Add state for search inputs
   const [searchInputs, setSearchInputs] = useState({
@@ -101,6 +102,12 @@ const LogSkinCondition = () => {
   const getHoursLabel = (hours: number) => {
     if (hours === 1) return "1 hour";
     return `${hours} hours`;
+  };
+
+  const getStressLabel = (level: number) => {
+    if (level <= 2) return "Low";
+    if (level <= 6) return "Moderate";
+    return "High";
   };
 
   // Render a category section with search box
@@ -218,6 +225,7 @@ const LogSkinCondition = () => {
             </Button>
           </div>
           
+          {/* Mood Section */}
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">How does your skin feel today?</h2>
             <div className="grid grid-cols-2 gap-3">
@@ -270,6 +278,33 @@ const LogSkinCondition = () => {
               {renderCategoryWithSearch('food', <Utensils className="h-5 w-5 text-skin-black" />, 'Food')}
               {renderCategoryWithSearch('supplements', <Pill className="h-5 w-5 text-skin-black" />, 'Supplements')}
               {renderCategoryWithSearch('makeup', <Palette className="h-5 w-5 text-skin-black" />, 'Makeup')}
+              
+              {/* Stress Level Card */}
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <Thermometer className="h-5 w-5 mr-2 text-skin-black" /> Stress Level
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-skin-black">Level:</span>
+                      <span className="text-sm font-medium text-skin-black">{getStressLabel(stressLevel)} ({stressLevel}/10)</span>
+                    </div>
+                    <Slider 
+                      value={[stressLevel]} 
+                      min={0} 
+                      max={10} 
+                      step={1} 
+                      onValueChange={(values) => setStressLevel(values[0])}
+                      className="cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Low</span>
+                      <span>High</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
               
               {/* Weather Card */}
               <Card className="ios-card">
