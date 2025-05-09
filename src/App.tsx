@@ -17,6 +17,7 @@ import ExplorePage from "./pages/ExplorePage";
 import LogSkinCondition from "./pages/LogSkinCondition";
 import ProductDetail from "./pages/ProductDetail";
 import DayLogDetail from "./pages/DayLogDetail";
+import ChatPage from "./pages/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/log-skin-condition" element={<LogSkinCondition />} />
           <Route path="/product/:type/:id" element={<ProductDetail />} />
           <Route path="/day-log/:id" element={<DayLogDetail />} />
+          <Route path="/chat" element={<ChatPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

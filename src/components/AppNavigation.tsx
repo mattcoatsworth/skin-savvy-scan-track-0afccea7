@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Home, User, Plus, Camera, Image, Scan, Smile } from "lucide-react";
+import { Home, User, Plus, Camera, Image, Scan, Smile, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { 
@@ -68,6 +68,17 @@ const AppNavigation: React.FC = () => {
                         >
                           <Image className="h-5 w-5 text-skin-teal" />
                           <span>Take Selfie</span>
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          className="flex items-center justify-start gap-2"
+                          onClick={() => setOpen(false)}
+                          asChild
+                        >
+                          <Link to="/chat">
+                            <MessageSquare className="h-5 w-5 text-skin-teal" />
+                            <span>Ask Anything</span>
+                          </Link>
                         </Button>
                       </div>
                     </PopoverContent>
