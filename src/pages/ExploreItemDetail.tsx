@@ -314,7 +314,7 @@ const ExploreItemDetail = () => {
   }
 
   return (
-    <div className="pb-8">
+    <div className="pb-20">
       <header className="mb-6 flex items-center">
         <BackButton />
         <h1 className="text-2xl font-bold">{item.title}</h1>
