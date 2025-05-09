@@ -1,7 +1,8 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
@@ -57,53 +58,59 @@ const SkinAnalysis = () => {
         </header>
         
         <div className="space-y-6">
-          <Card className="ios-card">
-            <CardContent className="p-4">
-              <div className="flex items-center mb-4">
-                <Smile className="text-4xl mr-3" />
-                <div>
-                  <h2 className="font-medium text-lg">Today's Skin</h2>
-                  <p className="text-xl font-semibold">Balanced</p>
+          <Link to="/factor-analysis/skin">
+            <Card className="ios-card hover:shadow-lg transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-center mb-4">
+                  <Smile className="text-4xl mr-3" />
+                  <div>
+                    <h2 className="font-medium text-lg">Today's Skin</h2>
+                    <p className="text-xl font-semibold">Balanced</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="mb-3">
-                <p className="text-sm font-medium mb-2">Detailed Analysis:</p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Your skin appears balanced today with good hydration levels. Inflammation is minimal and there's
-                  an improvement in overall tone compared to yesterday.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+                
+                <div className="mb-3">
+                  <p className="text-sm font-medium mb-2">Detailed Analysis:</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Your skin appears balanced today with good hydration levels. Inflammation is minimal and there's
+                    an improvement in overall tone compared to yesterday.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
           
           <div>
             <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
             <div className="space-y-3">
               {skinFactors.map((factor, index) => (
-                <Card key={index} className="ios-card">
-                  <CardContent className="p-4">
-                    <div className="flex items-start">
-                      {getIconComponent(factor.iconName)}
-                      <div>
-                        <h3 className="font-medium">{factor.type}: {factor.status}</h3>
-                        <p className="text-sm text-muted-foreground">{factor.details}</p>
+                <Link key={index} to={`/factor-analysis/${factor.type.toLowerCase()}`}>
+                  <Card className="ios-card hover:shadow-lg transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex items-start">
+                        {getIconComponent(factor.iconName)}
+                        <div>
+                          <h3 className="font-medium">{factor.type}: {factor.status}</h3>
+                          <p className="text-sm text-muted-foreground">{factor.details}</p>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>
           
           <div>
             <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
-            <Card className="ios-card">
-              <CardContent className="p-4">
-                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
-                <TrendChart data={weeklyTrendData} height={80} />
-              </CardContent>
-            </Card>
+            <Link to="/weekly-skin-analysis">
+              <Card className="ios-card hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
+                  <TrendChart data={weeklyTrendData} height={80} />
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </div>
