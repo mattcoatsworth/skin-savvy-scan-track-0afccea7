@@ -342,29 +342,19 @@ const ChatPage: React.FC = () => {
       
       {/* Chat input area with shadow divider */}
       <div className="p-4 pt-0 bg-white relative">
-        {/* Shadow divider with pronounced rounded edges that extends to screen edges */}
-        <div className="absolute left-0 right-0 top-0 w-full overflow-hidden">
+        {/* Shadow divider with properly curved edges */}
+        <div className="absolute left-0 right-0 top-0 w-full h-4 overflow-hidden">
           <div 
-            className="mx-[-20px]" 
             style={{
-              height: '2px',
-              marginTop: '-1px',
-              background: 'transparent',
-              position: 'relative'
+              position: 'absolute',
+              top: '-4px',
+              left: '-10%',
+              width: '120%', /* Extend beyond screen edges */
+              height: '8px',
+              borderRadius: '50%', 
+              boxShadow: '0 0 5px rgba(0,0,0,0.15)'
             }}
-          >
-            <div 
-              style={{
-                position: 'absolute',
-                height: '12px',
-                width: 'calc(100% + 40px)',
-                left: '0',
-                top: '-6px',
-                borderRadius: '50%',
-                boxShadow: '0 0 10px rgba(0,0,0,0.1)'
-              }}
-            ></div>
-          </div>
+          />
         </div>
         
         <div className="max-w-4xl mx-auto mt-8">
