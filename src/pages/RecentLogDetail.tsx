@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -123,7 +124,7 @@ const RecentLogDetail = () => {
   }
 
   return (
-    <div>
+    <div className="pb-8">
       <header className="mb-6 flex items-center">
         <BackButton />
         <h1 className="text-2xl font-bold">{log.title}</h1>
@@ -172,7 +173,7 @@ const RecentLogDetail = () => {
         </CardContent>
       </Card>
 
-      <div className="mb-6">
+      <div className="mb-10">
         <h2 className="text-xl font-semibold mb-3">Recommendations</h2>
         <Card>
           <CardContent className="p-4">

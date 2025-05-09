@@ -166,7 +166,7 @@ const ExploreItemDetail = () => {
   }
 
   return (
-    <div>
+    <div className="pb-8">
       <header className="mb-6 flex items-center">
         <BackButton />
         <h1 className="text-2xl font-bold">{item.title}</h1>
@@ -187,7 +187,7 @@ const ExploreItemDetail = () => {
         <p className="text-muted-foreground">{item.content}</p>
       </div>
 
-      <Tabs defaultValue={activeTab} className="w-full mb-6" onValueChange={setActiveTab}>
+      <Tabs defaultValue={activeTab} className="w-full mb-10" onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="related">Related</TabsTrigger>

@@ -57,7 +57,7 @@ const ChatInput = () => {
   ];
 
   return (
-    <div className="bg-slate-50 px-4 -mt-12">
+    <div className="bg-slate-50 px-4 -mt-10 pt-6">
       <div className="max-w-md mx-auto">
         {/* Quick suggestions */}
         <div className="flex overflow-x-auto gap-2 pb-1.5 no-scrollbar">
