@@ -91,6 +91,21 @@ const RecommendationsDetail = () => {
         "Take short breaks throughout workday"
       ],
       expectedResults: "Reduced inflammation, fewer stress-related breakouts, improved overall skin tone"
+    },
+    {
+      id: 7,
+      title: "Consider pausing this supplement to see if irritation decreases",
+      category: "supplements",
+      icon: <Pill className="h-5 w-5" />,
+      description: "We've detected a possible correlation between your collagen supplement and recent skin irritation.",
+      actionSteps: [
+        "Pause collagen supplementation for 2 weeks",
+        "Monitor skin reaction during this period",
+        "Document changes in your skin log",
+        "Consider alternative supplement formulations"
+      ],
+      expectedResults: "Potential reduction in skin irritation and sensitivity if supplement is the trigger",
+      linkTo: "/supplement/collagen"
     }
   ];
 
@@ -153,10 +168,10 @@ const RecommendationsDetail = () => {
                 
                 <div className="pt-3 border-t">
                   <Link 
-                    to={`/category-analysis/${rec.category}`}
+                    to={rec.linkTo || `/category-analysis/${rec.category}`}
                     className="text-skin-teal text-sm font-medium flex items-center justify-end"
                   >
-                    See related category <ArrowRight className="h-4 w-4 ml-1" />
+                    {rec.linkTo ? 'Learn more about this supplement' : 'See related category'} <ArrowRight className="h-4 w-4 ml-1" />
                   </Link>
                 </div>
               </CardContent>
