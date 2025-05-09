@@ -67,6 +67,26 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
     }
   };
 
+  // Ensure all insights have a valid ID for routing
+  const getInsightId = (insight: InsightType, index: number) => {
+    // If insight has an ID, use it. Otherwise, use standard IDs based on the insight title
+    if (insight.id) return insight.id;
+    
+    const standardIds: Record<string, string> = {
+      "Collagen supplements": "collagen-supplements",
+      "Alcohol consumption": "alcohol-consumption",
+      "Vitamin C serum": "vitamin-c-serum",
+      "Hydration Effect": "hydration-effect",
+      "Sleep Quality": "sleep-quality",
+      "Stress Impact": "stress-levels",
+      "Seasonal Sensitivity": "seasonal-changes",
+      "Product Reaction": "product-reactions",
+      "Diet Impact": "diet-correlation"
+    };
+    
+    return standardIds[insight.title] || `insight-${index}`;
+  };
+
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
@@ -85,8 +105,7 @@ const InsightsTrends: React.FC<InsightsTrendsProps> = ({ insights, className }) 
             {insights.map((insight, index) => (
               <Link 
                 key={index} 
-                to={`/insights-trends/${insight.id || index}`} 
-                state={{ insight }} 
+                to={`/insights-trends/${getInsightId(insight, index)}`}
                 className="min-w-[280px] flex-shrink-0"
               >
                 <Card className="ios-card bg-white border shadow-sm hover:shadow-md transition-all cursor-pointer">
