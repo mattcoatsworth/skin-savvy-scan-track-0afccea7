@@ -279,9 +279,29 @@ const ExploreItemDetail = () => {
   }, [location, itemId, navigate]);
 
   const handleRelatedItemClick = (relatedItem: any) => {
-    const fullRelatedItem = sampleItems.find(i => i.id === relatedItem.id);
+    // First look for a match by ID if it exists
+    if (relatedItem.id) {
+      const fullRelatedItem = sampleItems.find(i => i.id === relatedItem.id);
+      if (fullRelatedItem) {
+        navigate(`/explore/${relatedItem.id}`, { state: { item: fullRelatedItem } });
+        return;
+      }
+    }
+    
+    // Otherwise try to find a match by title
+    const fullRelatedItem = sampleItems.find(i => i.title === relatedItem.title);
     if (fullRelatedItem) {
-      navigate(`/explore/${relatedItem.id}`, { state: { item: fullRelatedItem } });
+      navigate(`/explore/${fullRelatedItem.id}`, { state: { item: fullRelatedItem } });
+    } else {
+      // If we have no matching full item but the related item has content
+      // We can create a minimal item with available data
+      const minimalItem = {
+        id: relatedItem.id || relatedItem.title.toLowerCase().replace(/\s+/g, '-'),
+        title: relatedItem.title,
+        subtitle: relatedItem.description || "",
+        content: relatedItem.content || "Additional information coming soon.",
+      };
+      navigate(`/explore/${minimalItem.id}`, { state: { item: minimalItem } });
     }
   };
 
