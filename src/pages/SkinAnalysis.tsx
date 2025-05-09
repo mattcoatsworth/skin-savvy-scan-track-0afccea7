@@ -6,6 +6,7 @@ import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile } from "lucid
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
+import { spacing } from "@/design/spacing";
 
 const SkinAnalysis = () => {
   // Sample data
@@ -82,7 +83,7 @@ const SkinAnalysis = () => {
           
           <div>
             <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {skinFactors.map((factor, index) => (
                 <Link key={index} to={`/factor-analysis/${factor.type.toLowerCase()}`}>
                   <Card className="ios-card hover:shadow-lg transition-shadow">
@@ -121,3 +122,4 @@ const SkinAnalysis = () => {
 };
 
 export default SkinAnalysis;
+
