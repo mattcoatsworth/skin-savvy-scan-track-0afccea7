@@ -26,6 +26,10 @@ import RecentLogDetail from "./pages/RecentLogDetail";
 import SuggestedActionDetail from "./pages/SuggestedActionDetail";
 import MonthlyAnalysisDetail from "./pages/MonthlyAnalysisDetail";
 import ScoringMethodPage from "./pages/ScoringMethodPage";
+import ScannedFoods from "./pages/ScannedFoods";
+import ScannedProducts from "./pages/ScannedProducts";
+import TrendingFoods from "./pages/TrendingFoods";
+import TrendingProducts from "./pages/TrendingProducts";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +73,10 @@ const App = () => (
             <Route path="/day-log/:id" element={<DayLogDetail />} />
             <Route path="/search" element={<Search />} />
             <Route path="/scoring-method" element={<ScoringMethodPage />} />
+            <Route path="/scanned-foods" element={<ScannedFoods />} />
+            <Route path="/scanned-products" element={<ScannedProducts />} />
+            <Route path="/trending-foods" element={<TrendingFoods />} />
+            <Route path="/trending-products" element={<TrendingProducts />} />
           </Route>
           {/* Chat page doesn't need the chat input */}
           <Route path="/chat" element={<ChatPage />} />

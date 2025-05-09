@@ -105,7 +105,7 @@ const Insights = () => {
           <div className="ios-section mb-6">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-xl font-semibold">Food Impacts</h2>
-              <Link to="/food-impacts" className="text-sm text-skin-teal flex items-center">
+              <Link to="/scanned-foods" className="text-sm text-skin-teal flex items-center">
                 View all <ArrowRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
@@ -121,7 +121,7 @@ const Insights = () => {
           <div className="ios-section mb-6">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-xl font-semibold">Product Effects</h2>
-              <Link to="/product-effects" className="text-sm text-skin-teal flex items-center">
+              <Link to="/scanned-products" className="text-sm text-skin-teal flex items-center">
                 View all <ArrowRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
