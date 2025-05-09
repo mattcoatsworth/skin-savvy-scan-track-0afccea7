@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ArrowLeft, Camera, Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -135,9 +134,11 @@ const LogSkinCondition = () => {
                     {inputValue && (
                       <CommandItem 
                         onSelect={() => handleAddCustomFactor(category)}
-                        className="cursor-pointer flex items-center gap-2 text-green-600 font-medium"
+                        className="cursor-pointer flex items-center gap-2 text-green-600 font-medium h-9"
                       >
-                        <Plus className="h-4 w-4" /> Add "{inputValue}"
+                        <div className="flex items-center w-full">
+                          <Plus className="h-4 w-4 mr-2" /> Add "{inputValue}"
+                        </div>
                       </CommandItem>
                     )}
                     <CommandGroup>
