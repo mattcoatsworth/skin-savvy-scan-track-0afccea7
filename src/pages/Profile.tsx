@@ -22,17 +22,17 @@ const Profile = () => {
         </div>
         
         <div className="space-y-3">
-          <Button variant="outline" className="w-full justify-start text-left h-12">
+          <Button variant="outline" className="w-full justify-start text-left h-12 rounded-sm">
             <FileText className="mr-2 h-5 w-5" />
             Your Skin Journal
           </Button>
           
-          <Button variant="outline" className="w-full justify-start text-left h-12">
+          <Button variant="outline" className="w-full justify-start text-left h-12 rounded-sm">
             <Bell className="mr-2 h-5 w-5" />
             Notifications
           </Button>
           
-          <Button variant="outline" className="w-full justify-start text-left h-12">
+          <Button variant="outline" className="w-full justify-start text-left h-12 rounded-sm">
             <Settings className="mr-2 h-5 w-5" />
             Settings
           </Button>

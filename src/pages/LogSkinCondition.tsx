@@ -104,7 +104,6 @@ const LogSkinCondition = () => {
         <CardContent className="p-4">
           <h3 className="font-medium mb-2 text-skin-black">{emoji} {title}</h3>
           
-          {/* Use a regular input field with a separate display of options */}
           <div className="relative mb-2">
             <div className="relative flex-grow">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -113,20 +112,17 @@ const LogSkinCondition = () => {
                 value={inputValue}
                 onChange={(e) => {
                   handleSearchChange(category, e.target.value);
-                  // Open the dropdown when typing
                   if (!searchOpen[categoryKey]) {
                     setSearchOpen(prev => ({ ...prev, [category]: true }));
                   }
                 }}
                 onClick={() => {
-                  // Toggle dropdown when clicking on input
                   setSearchOpen(prev => ({ ...prev, [category]: !prev[category] }));
                 }}
-                className="pl-8 py-2 text-sm h-9 w-full pr-4"
+                className="pl-8 py-2 text-sm h-9 w-full pr-4 rounded-sm"
               />
             </div>
             
-            {/* Show options if search is open */}
             {searchOpen[categoryKey] && (
               <div className="absolute z-50 mt-1 w-full bg-white rounded-md border shadow-md">
                 <Command className="rounded-md">
@@ -176,7 +172,7 @@ const LogSkinCondition = () => {
                 key={factor}
                 variant="default" 
                 size="sm" 
-                className="rounded-full bg-skin-black text-white"
+                className="rounded-sm bg-skin-black text-white"
                 onClick={() => handleFactorSelect(category, factor)}
               >
                 {factor}
@@ -202,7 +198,7 @@ const LogSkinCondition = () => {
           {/* Upload Selfie Button */}
           <div className="flex justify-center">
             <Button 
-              className="bg-skin-black text-white flex items-center gap-2 px-6 py-5 h-auto rounded-full"
+              className="bg-skin-black text-white flex items-center gap-2 px-6 py-5 h-auto rounded-sm"
               onClick={() => console.log("Upload selfie initiated")}
             >
               <Camera className="h-5 w-5" />
@@ -246,7 +242,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.weather.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-full ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-sm ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('weather', factor)}
                       >
                         {factor}
@@ -266,7 +262,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-full ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-sm ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('menstrualCycle', factor)}
                       >
                         {factor}
@@ -279,7 +275,7 @@ const LogSkinCondition = () => {
           </div>
           
           <div className="pt-4">
-            <Button className="w-full bg-skin-black text-white rounded-full h-12">
+            <Button className="w-full bg-skin-black text-white rounded-sm h-12">
               Save Today's Log
             </Button>
           </div>
