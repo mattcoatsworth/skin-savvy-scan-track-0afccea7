@@ -1,11 +1,13 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppNavigation from "@/components/AppNavigation";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 // Define types for the page
 type Factor = {
@@ -51,12 +53,38 @@ const getImpactIndicator = (impact: Factor['impact']) => {
 
 const DayLogDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const { toast } = useToast();
+  
+  // State for notes
+  const [notes, setNotes] = useState("");
   
   // In a real app, this would fetch data from an API based on the ID
   // For this demo, we'll generate mock data
   const dayIndex = parseInt(id?.replace('day-', '') || '0');
   const date = subDays(new Date(), dayIndex);
   const rating = Math.floor(Math.random() * 100) + 1;
+  
+  // Load notes from localStorage on component mount
+  useEffect(() => {
+    if (id) {
+      const savedNotes = localStorage.getItem(`skin-notes-${id}`);
+      if (savedNotes) {
+        setNotes(savedNotes);
+      }
+    }
+  }, [id]);
+  
+  // Save notes to localStorage
+  const handleSaveNotes = () => {
+    if (id) {
+      localStorage.setItem(`skin-notes-${id}`, notes);
+      toast({
+        title: "Notes saved",
+        description: "Your notes have been saved successfully.",
+        duration: 3000
+      });
+    }
+  };
   
   // Mock data for the day details
   const foodFactors: Factor[] = [
@@ -361,6 +389,27 @@ const DayLogDetail = () => {
               <span className="text-gray-400">PM Photo</span>
             </div>
           </div>
+        </div>
+        
+        {/* Notes Section - New Addition */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Notes</h2>
+          <Card className="ios-card">
+            <CardContent className="p-4">
+              <Textarea 
+                placeholder="Add your notes about this day..." 
+                className="min-h-[120px] rounded-md border border-input"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+              <Button 
+                onClick={handleSaveNotes} 
+                className="mt-3 w-full"
+              >
+                Save Notes
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
       
