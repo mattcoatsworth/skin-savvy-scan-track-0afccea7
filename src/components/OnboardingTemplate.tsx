@@ -48,9 +48,7 @@ const OnboardingTemplate: React.FC<OnboardingTemplateProps> = ({
           ) : (
             <div className="w-9"></div>
           )}
-          <div className="text-sm font-medium">
-            {currentStep}/{totalSteps}
-          </div>
+          {/* Step numbers removed */}
         </div>
         <Progress value={progressPercentage} className="h-1" />
       </div>
