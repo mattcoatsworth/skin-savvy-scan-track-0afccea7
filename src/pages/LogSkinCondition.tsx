@@ -191,7 +191,7 @@ const LogSkinCondition = () => {
                 key={factor}
                 variant="default" 
                 size="sm" 
-                className="bg-skin-black text-white rounded-full"
+                className="bg-skin-black text-white"
                 onClick={() => handleFactorSelect(category, factor)}
               >
                 {factor}
@@ -318,7 +318,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.weather.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-full ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-xl ${selectedFactors.weather.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('weather', factor)}
                       >
                         {factor}
@@ -340,7 +340,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-full ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                        className={`rounded-xl ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('menstrualCycle', factor)}
                       >
                         {factor}
