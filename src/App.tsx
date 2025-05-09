@@ -34,7 +34,6 @@ import WeeklySkinAnalysis from "./pages/WeeklySkinAnalysis";
 import CategoryAnalysisDetail from "./pages/CategoryAnalysisDetail";
 import CorrelationsDetail from "./pages/CorrelationsDetail";
 import RecommendationsDetail from "./pages/RecommendationsDetail";
-import SupplementDetail from "./pages/SupplementDetail";
 
 const queryClient = new QueryClient();
 
@@ -86,7 +85,6 @@ const App = () => (
             <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
             <Route path="/correlations-detail" element={<CorrelationsDetail />} />
             <Route path="/recommendations-detail" element={<RecommendationsDetail />} />
-            <Route path="/supplement/:id" element={<SupplementDetail />} />
           </Route>
           {/* Chat page doesn't need the chat input */}
           <Route path="/chat" element={<ChatPage />} />
