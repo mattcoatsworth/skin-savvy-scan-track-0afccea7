@@ -1,11 +1,11 @@
+
 import React, { useState } from "react";
-import { ArrowLeft, Camera, Search } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import AppNavigation from "@/components/AppNavigation";
 
 const LogSkinCondition = () => {
@@ -98,6 +98,7 @@ const LogSkinCondition = () => {
   const renderCategoryWithSearch = (category: string, emoji: string, title: string) => {
     const categoryKey = category as keyof typeof searchInputs;
     const defaultOptions = getDefaultOptions(category);
+    const inputValue = searchInputs[categoryKey];
     
     return (
       <Card className="ios-card">
@@ -110,11 +111,11 @@ const LogSkinCondition = () => {
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={`Search or add ${category} items`}
-                value={searchInputs[categoryKey]}
+                value={inputValue}
                 onChange={(e) => {
                   handleSearchChange(category, e.target.value);
                   // Open the dropdown when typing
-                  if (!searchOpen[categoryKey] && e.target.value) {
+                  if (!searchOpen[categoryKey]) {
                     setSearchOpen(prev => ({ ...prev, [category]: true }));
                   }
                 }}
@@ -126,24 +127,22 @@ const LogSkinCondition = () => {
               />
             </div>
             
-            {/* Show options if search is open or there is text in the input */}
-            {(searchOpen[categoryKey] || searchInputs[categoryKey]) && (
-              <div className="absolute z-50 mt-1 w-full bg-popover rounded-md border shadow-md">
+            {/* Show options if search is open */}
+            {searchOpen[categoryKey] && (
+              <div className="absolute z-50 mt-1 w-full bg-white rounded-md border shadow-md">
                 <Command className="rounded-md">
                   <CommandList>
-                    <CommandEmpty>
-                      {searchInputs[categoryKey] && (
-                        <CommandItem 
-                          onSelect={() => handleAddCustomFactor(category)}
-                          className="cursor-pointer flex items-center gap-2"
-                        >
-                          <span>Add "{searchInputs[categoryKey]}"</span>
-                        </CommandItem>
-                      )}
-                    </CommandEmpty>
+                    {inputValue && (
+                      <CommandItem 
+                        onSelect={() => handleAddCustomFactor(category)}
+                        className="cursor-pointer flex items-center gap-2 text-green-600 font-medium"
+                      >
+                        <Plus className="h-4 w-4" /> Add "{inputValue}"
+                      </CommandItem>
+                    )}
                     <CommandGroup>
                       {defaultOptions
-                        .filter(option => option.toLowerCase().includes(searchInputs[categoryKey].toLowerCase()))
+                        .filter(option => option.toLowerCase().includes(inputValue.toLowerCase()))
                         .map(option => (
                           <CommandItem 
                             key={option} 
@@ -158,6 +157,11 @@ const LogSkinCondition = () => {
                         ))
                       }
                     </CommandGroup>
+                    {defaultOptions.filter(option => 
+                      option.toLowerCase().includes(inputValue.toLowerCase())).length === 0 &&
+                      !inputValue && (
+                      <CommandEmpty>No options found</CommandEmpty>
+                    )}
                   </CommandList>
                 </Command>
               </div>
