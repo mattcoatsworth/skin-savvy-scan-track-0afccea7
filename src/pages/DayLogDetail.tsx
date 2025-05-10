@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
@@ -39,17 +40,6 @@ const getRatingLabel = (rating: number) => {
   if (rating >= 40) return "OK";
   if (rating >= 20) return "Fair";
   return "Poor";
-};
-
-const getImpactIndicator = (impact: Factor['impact']) => {
-  switch (impact) {
-    case "positive":
-      return "🟢";
-    case "negative":
-      return "🔴";
-    case "neutral":
-      return "🟡";
-  }
 };
 
 // Get water intake rating feedback
@@ -394,7 +384,7 @@ const DayLogDetail = () => {
                     <div>
                       <h3 className="font-medium">{factor.name}</h3>
                       <p className="text-sm text-muted-foreground mb-1">
-                        {getImpactIndicator(factor.impact)} {factor.description}
+                        {factor.description}
                       </p>
                     </div>
                     
@@ -449,7 +439,7 @@ const DayLogDetail = () => {
                     <div>
                       <h3 className="font-medium">{factor.name}</h3>
                       <p className="text-sm text-muted-foreground mb-1">
-                        {getImpactIndicator(factor.impact)} {factor.description}
+                        {factor.description}
                       </p>
                     </div>
                     
@@ -504,7 +494,7 @@ const DayLogDetail = () => {
                     <div>
                       <h3 className="font-medium">{factor.name}</h3>
                       <p className="text-sm text-muted-foreground mb-1">
-                        {getImpactIndicator(factor.impact)} {factor.description}
+                        {factor.description}
                       </p>
                     </div>
                     

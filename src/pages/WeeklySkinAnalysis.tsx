@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -409,13 +410,6 @@ const WeeklySkinAnalysis = () => {
                               <p className="text-sm text-muted-foreground mt-1">{factor.details}</p>
                             </div>
                             <div className="ml-2 flex flex-shrink-0 items-center">
-                              <div className={`w-3 h-3 rounded-full mr-1 ${
-                                factor.impact === 'positive' 
-                                  ? 'bg-green-500' 
-                                  : factor.impact === 'negative' 
-                                    ? 'bg-red-500' 
-                                    : 'bg-yellow-500'
-                              }`}></div>
                               <span className="text-sm font-medium">{factor.rating}</span>
                             </div>
                           </div>
@@ -447,7 +441,7 @@ const WeeklySkinAnalysis = () => {
                     <TableRow>
                       <TableCell className="font-medium">Dairy Consumption</TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
                           Negative
                         </span>
                       </TableCell>
@@ -456,7 +450,7 @@ const WeeklySkinAnalysis = () => {
                     <TableRow>
                       <TableCell className="font-medium">Hydration</TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
                           Positive
                         </span>
                       </TableCell>
@@ -465,7 +459,7 @@ const WeeklySkinAnalysis = () => {
                     <TableRow>
                       <TableCell className="font-medium">Stress Levels</TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
                           Negative
                         </span>
                       </TableCell>
@@ -474,7 +468,7 @@ const WeeklySkinAnalysis = () => {
                     <TableRow>
                       <TableCell className="font-medium">Sunscreen Use</TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
                           Positive
                         </span>
                       </TableCell>
@@ -496,7 +490,7 @@ const WeeklySkinAnalysis = () => {
                 <ul className="space-y-2">
                   {analysisData.recommendations.map((rec, idx) => (
                     <li key={idx} className="flex items-start">
-                      <span className="text-green-500 mr-2">•</span>
+                      <span className="text-slate-500 mr-2">•</span>
                       <span className="text-sm">{rec}</span>
                     </li>
                   ))}
