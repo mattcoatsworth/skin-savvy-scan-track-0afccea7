@@ -2,12 +2,21 @@
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown, ArrowRight } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown, ArrowRight, Droplet, Utensils, Circle } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
-import SuggestedActions from "@/components/SuggestedActions";
 import { Separator } from "@/components/ui/separator";
+
+// Define the types for recommendations
+type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
+
+type Recommendation = {
+  type: RecommendationType;
+  text: string;
+  icon: React.ReactNode;
+  linkTo: string;
+};
 
 const SkinAnalysis = () => {
   // Sample data
@@ -31,22 +40,37 @@ const SkinAnalysis = () => {
     { date: "Sun", value: 85 }
   ];
   
-  // Sample recommendations
-  const recommendations = [
+  // For You Recommendations - Same as the ones in the Homepage
+  const forYouRecommendations = [
     { 
-      text: "Add hyaluronic acid serum to your routine", 
-      id: "rec1",
-      linkTo: "/recommendations/hyaluronic-acid"
+      type: "skincare" as const, 
+      text: "Try vitamin C serum", 
+      icon: <Droplet className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/vitamin-c-serum"
     },
     { 
-      text: "Reduce dairy consumption this week", 
-      id: "rec2",
-      linkTo: "/recommendations/reduce-dairy"
+      type: "food" as const, 
+      text: "Increase omega-3", 
+      icon: <Utensils className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/increase-omega-3"
     },
     { 
-      text: "Try a gentle exfoliator for skin texture", 
-      id: "rec3",
-      linkTo: "/recommendations/exfoliator"
+      type: "supplements" as const, 
+      text: "Add zinc", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/add-zinc"
+    },
+    { 
+      type: "makeup" as const, 
+      text: "Switch foundation", 
+      icon: <Circle className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/switch-foundation"
+    },
+    { 
+      type: "lifestyle" as const, 
+      text: "Stress management", 
+      icon: <Activity className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/stress-management"
     }
   ];
 
@@ -67,6 +91,24 @@ const SkinAnalysis = () => {
         return <Activity className="text-2xl mr-3" />;
       default:
         return null;
+    }
+  };
+
+  // Helper function for recommendation tag colors
+  const getRecommendationColor = (type: RecommendationType) => {
+    switch (type) {
+      case "skincare":
+        return "bg-blue-100 text-blue-800";
+      case "food":
+        return "bg-green-100 text-green-800";
+      case "supplements":
+        return "bg-indigo-100 text-indigo-800";
+      case "makeup":
+        return "bg-purple-100 text-purple-800";
+      case "lifestyle":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -103,7 +145,7 @@ const SkinAnalysis = () => {
             </CardContent>
           </Card>
           
-          {/* Weekly Trend Section - Moved up above Contributing Factors */}
+          {/* Weekly Trend Section - Positioned above Contributing Factors */}
           <div>
             <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
             <Card className="ios-card">
@@ -133,13 +175,25 @@ const SkinAnalysis = () => {
             </div>
           </div>
           
-          {/* For You Recommendations Section - Added below Contributing Factors */}
-          <Separator className="my-6" />
-          
-          <SuggestedActions 
-            actions={recommendations} 
-            className="mt-6"
-          />
+          {/* For You Recommendations Section - Below Contributing Factors */}
+          <div>
+            <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
+            <Card className="ios-card">
+              <CardContent className="p-4">
+                <div className="flex flex-wrap gap-2">
+                  {forYouRecommendations.map((recommendation, index) => (
+                    <Link 
+                      key={index} 
+                      to={recommendation.linkTo}
+                      className={`factor-tag ${getRecommendationColor(recommendation.type)} flex items-center cursor-pointer hover:opacity-80 transition-opacity`}
+                    >
+                      <span className="mr-1">{recommendation.icon}</span> {recommendation.text}
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
       
@@ -149,3 +203,4 @@ const SkinAnalysis = () => {
 };
 
 export default SkinAnalysis;
+
