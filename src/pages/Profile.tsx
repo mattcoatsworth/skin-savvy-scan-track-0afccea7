@@ -6,8 +6,12 @@ import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Ute
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Profile = () => {
+  // Add scroll to top functionality
+  useScrollToTop();
+  
   // Sample data
   const skinFactors = [
     { type: "Food" as const, status: "Hydrating", iconName: "salad", details: "Increased water-rich foods and avoided dairy this week" },

@@ -8,11 +8,15 @@ import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 // Import product data (In a real app, this would come from an API)
 import { foodItems, productItems } from "@/data/products";
 
 const ProductDetail = () => {
+  // Add scroll to top functionality
+  useScrollToTop();
+  
   const { type, id } = useParams<{ type: string; id: string }>();
   const location = useLocation();
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);

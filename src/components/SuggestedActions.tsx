@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 
 type ActionType = {
   text: string;
-  linkTo?: string; // Add optional linkTo property for custom navigation
-  id?: string; // Add optional id for specific item identification
-  supplementId?: string; // Add optional supplementId for supplement-related actions
+  linkTo?: string;
+  id?: string;
+  supplementId?: string;
 };
 
 type SuggestedActionsProps = {
@@ -39,11 +39,16 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
     return "/suggested-actions";
   };
   
+  // Add onClick handler for scrolling to top when clicked
+  const handleClick = () => {
+    window.scrollTo(0, 0);
+  };
+  
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Suggested Actions</h2>
-        <Link to="/suggested-actions" className="text-sm text-skin-teal">
+        <Link to="/suggested-actions" className="text-sm text-skin-teal" onClick={handleClick}>
           View all
         </Link>
       </div>
@@ -55,6 +60,7 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
             key={index} 
             state={{ insightId: action.id, from: window.location.pathname }}
             className="block"
+            onClick={handleClick}
           >
             <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all">
               <CardContent className="p-4">

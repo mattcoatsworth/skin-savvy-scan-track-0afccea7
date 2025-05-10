@@ -2,6 +2,7 @@
 import React from "react";
 import BackButton from "@/components/BackButton";
 import ProductCard from "@/components/ProductCard";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 // Mock trending food data
 const trendingFoodItems = [
@@ -48,6 +49,9 @@ const trendingFoodItems = [
 ];
 
 const TrendingFoods = () => {
+  // Add scroll to top functionality
+  useScrollToTop();
+  
   return (
     <div className="pb-24">
       <header className="mb-6 flex items-center">
