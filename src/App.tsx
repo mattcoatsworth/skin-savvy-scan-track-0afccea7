@@ -115,7 +115,7 @@ const App = () => (
             <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
             <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
             <Route path="/correlations-detail" element={<CorrelationsDetail />} />
-            <Route path="/recommendations-detail" element={<RecommendationsDetail />} />
+            <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
             <Route path="/supplement/:id" element={<SupplementDetail />} />
           </Route>
           
