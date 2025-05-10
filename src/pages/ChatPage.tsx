@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import BackButton from "@/components/BackButton";
+import { useApiKey } from "@/contexts/ApiKeyContext";
+import { toast } from "sonner";
 import { 
   Drawer, 
   DrawerTrigger, 
@@ -53,7 +55,9 @@ const ChatPage: React.FC = () => {
   
   const [savedChats, setSavedChats] = useState<Chat[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
+  const { openaiApiKey } = useApiKey();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -110,8 +114,61 @@ const ChatPage: React.FC = () => {
     }
   }, []);
 
+  // Function to get a response from OpenAI API
+  const getAIResponse = async (userMessage: string) => {
+    if (!openaiApiKey) {
+      toast.error("Please add your OpenAI API key in your profile settings");
+      return "Please add your OpenAI API key in your profile settings to enable AI chat functionality.";
+    }
+
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${openaiApiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful skincare assistant that provides personalized advice. Be supportive, empathetic, and provide evidence-based advice about skin health, skincare routines, ingredients, and lifestyle factors that affect skin. Answer with compassion but focus on scientific evidence."
+            },
+            ...activeChat.messages.map(msg => ({
+              role: msg.sender === "user" ? "user" : "assistant",
+              content: msg.text
+            })),
+            {
+              role: "user",
+              content: userMessage
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "Failed to get response from OpenAI");
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error("Error calling OpenAI API:", error);
+      toast.error("Failed to get AI response. Please try again.");
+      return "I'm having trouble connecting to my knowledge base right now. Please try again in a moment.";
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Extract send functionality into a reusable function
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = async (message: string) => {
     if (!message.trim()) return;
     
     // Add user message
@@ -137,29 +194,21 @@ const ChatPage: React.FC = () => {
       updatedChat.title = userMessage.text.substring(0, 25) + (userMessage.text.length > 25 ? "..." : "");
     }
     
-    // Simulate AI response (with a slight delay)
-    setTimeout(() => {
-      const responses = [
-        "Based on what you've described, it sounds like you might be experiencing some skin sensitivity. Try to avoid harsh products for a few days.",
-        "Hydration is key for healthy skin. Make sure you're drinking enough water and using a good moisturizer.",
-        "For acne concerns, products with salicylic acid or benzoyl peroxide can be helpful, but start with lower concentrations.",
-        "Sunscreen is essential for preventing premature aging and protecting your skin. Use it daily, even on cloudy days.",
-        "Diet can influence skin health. Consider adding more fruits, vegetables, and omega-3 fatty acids to your diet.",
-      ];
-      
-      const aiMessage: Message = {
-        id: Date.now().toString(),
-        text: responses[Math.floor(Math.random() * responses.length)],
-        sender: "ai",
-        timestamp: new Date(),
-      };
-      
-      setActiveChat(prev => ({
-        ...prev,
-        messages: [...prev.messages, aiMessage],
-        lastUpdated: new Date()
-      }));
-    }, 1000);
+    // Get AI response
+    const aiResponseText = await getAIResponse(message);
+    
+    const aiMessage: Message = {
+      id: Date.now().toString(),
+      text: aiResponseText,
+      sender: "ai",
+      timestamp: new Date(),
+    };
+    
+    setActiveChat(prev => ({
+      ...prev,
+      messages: [...prev.messages, aiMessage],
+      lastUpdated: new Date()
+    }));
   };
 
   const handleSend = () => {
@@ -340,17 +389,34 @@ const ChatPage: React.FC = () => {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 text-gray-800 max-w-[80%] p-3 rounded-2xl">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '600ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
         
         {/* Suggestion chips */}
         <div className="p-4 pb-5">
           <div className="flex gap-3 overflow-x-auto">
-            <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
+            <div 
+              className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer"
+              onClick={() => handleSendMessage("Best food for breakouts during the summer")}
+            >
               <p className="font-medium text-black text-sm">Best food for breakouts</p>
               <p className="text-gray-500 text-xs mt-1">during the summer</p>
             </div>
-            <div className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer">
+            <div 
+              className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer"
+              onClick={() => handleSendMessage("Face cream to ease inflammation")}
+            >
               <p className="font-medium text-black text-sm">Face cream to</p>
               <p className="text-gray-500 text-xs mt-1">ease inflammation</p>
             </div>
@@ -398,16 +464,17 @@ const ChatPage: React.FC = () => {
             <Input
               ref={inputRef}
               type="text"
-              placeholder="Ask anything"
+              placeholder={!openaiApiKey ? "Add OpenAI API key in Profile to chat" : "Ask anything"}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
               className="flex-1 bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
+              disabled={!openaiApiKey || isLoading}
             />
             <button 
               onClick={handleSend}
-              disabled={!input.trim()} 
-              className="ml-2 bg-skin-teal text-white p-2 rounded-full flex items-center justify-center"
+              disabled={!input.trim() || !openaiApiKey || isLoading} 
+              className={`ml-2 bg-skin-teal text-white p-2 rounded-full flex items-center justify-center ${(!input.trim() || !openaiApiKey || isLoading) ? 'opacity-50' : ''}`}
             >
               <Send className="h-4 w-4" />
             </button>
@@ -418,6 +485,7 @@ const ChatPage: React.FC = () => {
               variant="ghost" 
               size="icon" 
               className="rounded-full bg-gray-50 h-10 w-10"
+              disabled={!openaiApiKey || isLoading}
             >
               <Paperclip className="h-4 w-4 text-gray-500" />
             </Button>
