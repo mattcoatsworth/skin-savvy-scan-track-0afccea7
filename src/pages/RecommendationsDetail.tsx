@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -393,9 +392,6 @@ const RecommendationsDetail = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center mb-4">
-                <span className="text-2xl mr-3">
-                  {recommendation.impact === "Positive" ? "🟢" : recommendation.impact === "Neutral" ? "🟡" : "🔴"}
-                </span>
                 <div>
                   <h2 className="text-xl font-semibold">{recommendation.impact} Effect</h2>
                   <p className="text-muted-foreground">{recommendation.description}</p>
