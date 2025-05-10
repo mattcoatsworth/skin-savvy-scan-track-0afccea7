@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
+import useScrollToTop from "@/hooks/useScrollToTop";
 
 // Types for the analysis data
 type AnalysisData = {
@@ -100,6 +100,9 @@ const getCategoryIcon = (category: string) => {
 };
 
 const WeeklySkinAnalysis = () => {
+  // Apply the scroll to top hook
+  useScrollToTop();
+  
   // In a real app, we would fetch this data from an API based on date range
   // For now, we'll use mock data
   const generateMockData = (): AnalysisData => {

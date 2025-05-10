@@ -1,10 +1,10 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Calendar, Apple, Pill, Moon, Droplet, Activity, Thermometer, Eye, Sun } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
+import useScrollToTop from "@/hooks/useScrollToTop";
 
 type Factor = {
   name: string;
@@ -16,6 +16,8 @@ type Factor = {
 
 const CategoryAnalysisDetail = () => {
   const { category } = useParams<{ category: string }>();
+  // Apply the scroll to top hook
+  useScrollToTop();
 
   // Get icon for category
   const getCategoryIcon = (category: string | undefined) => {

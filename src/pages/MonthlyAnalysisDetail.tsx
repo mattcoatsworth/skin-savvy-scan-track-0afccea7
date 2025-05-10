@@ -1,10 +1,10 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useScrollToTop from "@/hooks/useScrollToTop";
 
 type FactorType = {
   name: string;
@@ -18,6 +18,9 @@ type FactorType = {
 };
 
 const MonthlyAnalysisDetail = () => {
+  // Apply the scroll to top hook
+  useScrollToTop();
+  
   // Sample data for the monthly analysis
   const positiveFactors: FactorType[] = [
     {
