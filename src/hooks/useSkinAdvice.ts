@@ -1,7 +1,8 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
 
 type AdviceType = "general" | "product" | "recommendation" | "action";
 
@@ -15,6 +16,12 @@ export const useSkinAdvice = ({
   model = "gpt-4o-mini"
 }: UseSkinAdviceProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation();
+
+  // Scroll to top when location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Get AI advice based on provided context
   const getAdvice = async (
