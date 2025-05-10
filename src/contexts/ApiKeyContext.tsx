@@ -1,6 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// This context is now deprecated as we're using Supabase Edge Functions with secrets
+// It's kept for backward compatibility
+
 interface ApiKeyContextType {
   openaiApiKey: string;
   setOpenaiApiKey: (key: string) => void;

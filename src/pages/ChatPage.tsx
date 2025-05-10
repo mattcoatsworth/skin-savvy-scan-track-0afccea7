@@ -1,11 +1,9 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Paperclip, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import BackButton from "@/components/BackButton";
-import { useApiKey } from "@/contexts/ApiKeyContext";
 import { toast } from "sonner";
 import { 
   Drawer, 
@@ -17,6 +15,7 @@ import {
 } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 type Message = {
   id: string;
@@ -57,7 +56,6 @@ const ChatPage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { openaiApiKey } = useApiKey();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -114,52 +112,41 @@ const ChatPage: React.FC = () => {
     }
   }, []);
 
-  // Function to get a response from OpenAI API
+  // Function to get a response from our Supabase Edge Function
   const getAIResponse = async (userMessage: string) => {
-    if (!openaiApiKey) {
-      toast.error("Please add your OpenAI API key in your profile settings");
-      return "Please add your OpenAI API key in your profile settings to enable AI chat functionality.";
-    }
-
     try {
       setIsLoading(true);
       
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${openaiApiKey}`,
+      // Prepare messages for the API call
+      const messages = [
+        {
+          role: "system",
+          content: "You are a helpful skincare assistant that provides personalized advice. Be supportive, empathetic, and provide evidence-based advice about skin health, skincare routines, ingredients, and lifestyle factors that affect skin. Answer with compassion but focus on scientific evidence."
         },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content: "You are a helpful skincare assistant that provides personalized advice. Be supportive, empathetic, and provide evidence-based advice about skin health, skincare routines, ingredients, and lifestyle factors that affect skin. Answer with compassion but focus on scientific evidence."
-            },
-            ...activeChat.messages.map(msg => ({
-              role: msg.sender === "user" ? "user" : "assistant",
-              content: msg.text
-            })),
-            {
-              role: "user",
-              content: userMessage
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 500
-        }),
+        ...activeChat.messages.map(msg => ({
+          role: msg.sender === "user" ? "user" : "assistant",
+          content: msg.text
+        })),
+        {
+          role: "user",
+          content: userMessage
+        }
+      ];
+      
+      // Call our Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('chat', {
+        body: { messages, model: "gpt-4o-mini" }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "Failed to get response from OpenAI");
+      if (error) {
+        console.error("Error calling Edge Function:", error);
+        toast.error("Failed to get AI response. Please try again.");
+        return "I'm having trouble connecting to my knowledge base right now. Please try again in a moment.";
       }
 
-      const data = await response.json();
-      return data.choices[0].message.content;
+      return data.content;
     } catch (error) {
-      console.error("Error calling OpenAI API:", error);
+      console.error("Error getting AI response:", error);
       toast.error("Failed to get AI response. Please try again.");
       return "I'm having trouble connecting to my knowledge base right now. Please try again in a moment.";
     } finally {
@@ -464,17 +451,17 @@ const ChatPage: React.FC = () => {
             <Input
               ref={inputRef}
               type="text"
-              placeholder={!openaiApiKey ? "Add OpenAI API key in Profile to chat" : "Ask anything"}
+              placeholder="Ask anything"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
               className="flex-1 bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
-              disabled={!openaiApiKey || isLoading}
+              disabled={isLoading}
             />
             <button 
               onClick={handleSend}
-              disabled={!input.trim() || !openaiApiKey || isLoading} 
-              className={`ml-2 bg-skin-teal text-white p-2 rounded-full flex items-center justify-center ${(!input.trim() || !openaiApiKey || isLoading) ? 'opacity-50' : ''}`}
+              disabled={!input.trim() || isLoading} 
+              className={`ml-2 bg-skin-teal text-white p-2 rounded-full flex items-center justify-center ${(!input.trim() || isLoading) ? 'opacity-50' : ''}`}
             >
               <Send className="h-4 w-4" />
             </button>
@@ -485,7 +472,7 @@ const ChatPage: React.FC = () => {
               variant="ghost" 
               size="icon" 
               className="rounded-full bg-gray-50 h-10 w-10"
-              disabled={!openaiApiKey || isLoading}
+              disabled={isLoading}
             >
               <Paperclip className="h-4 w-4 text-gray-500" />
             </Button>

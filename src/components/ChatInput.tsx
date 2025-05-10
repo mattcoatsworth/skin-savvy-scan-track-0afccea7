@@ -5,13 +5,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useNavigate } from "react-router-dom";
 import { Send, Paperclip, File, Camera, Image, MessageCircle } from "lucide-react";
 import { spacing } from "@/design";
-import { useApiKey } from "@/contexts/ApiKeyContext";
 
 const ChatInput = () => {
   const navigate = useNavigate();
   const [chatInput, setChatInput] = useState("");
   const [attachmentMenuOpen, setAttachmentMenuOpen] = useState(false);
-  const { openaiApiKey } = useApiKey();
   
   // Handle chat form submission
   const handleChatSubmit = (e: React.FormEvent) => {
@@ -76,17 +74,11 @@ const ChatInput = () => {
           ))}
         </div>
 
-        {!openaiApiKey && (
-          <div className="text-sm text-amber-600 mb-2 text-center">
-            Add OpenAI API key in Profile to enable AI chat
-          </div>
-        )}
-
         <form onSubmit={handleChatSubmit} className="max-w-md mx-auto mb-3">
           <div className="relative flex items-center">
             <Input
               type="text"
-              placeholder={!openaiApiKey ? "Add API key in Profile" : "Ask anything"}
+              placeholder="Ask anything"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               className="flex-1 rounded-full border-gray-200 pr-10 pl-10 bg-white shadow-sm"
