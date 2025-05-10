@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle, Wine, Beer, Lipstick, Brush } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle, Wine, Beer, Brush } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
@@ -32,7 +32,7 @@ const SkinAnalysis = () => {
     { date: "Sun", value: 85 }
   ];
 
-  // For You Recommendations - All 12 from homepage with detailed messages
+  // For You Recommendations 
   const skinRecommendations = [
     { 
       type: "food" as const, 
@@ -86,7 +86,7 @@ const SkinAnalysis = () => {
     { 
       type: "makeup" as const, 
       text: "Switch foundation", 
-      iconName: "lipstick",
+      iconName: "brush",
       linkTo: "/recommendations-detail/switch-foundation",
       details: "Current foundation may be contributing to clogged pores"
     },
@@ -141,8 +141,6 @@ const SkinAnalysis = () => {
         return <Utensils className="text-2xl mr-3" />;
       case "circle":
         return <Circle className="text-2xl mr-3" />;
-      case "lipstick":
-        return <Lipstick className="text-2xl mr-3" />;
       case "brush":
         return <Brush className="text-2xl mr-3" />;
       case "beer":
