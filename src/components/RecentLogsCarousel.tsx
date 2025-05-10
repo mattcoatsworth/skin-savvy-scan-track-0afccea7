@@ -19,16 +19,7 @@ type RecentLogsCarouselProps = {
   className?: string;
 };
 
-const getStatusIndicator = (status: RecentLogType['status']) => {
-  switch (status) {
-    case "positive":
-      return "🟢";
-    case "negative":
-      return "🔴";
-    case "neutral":
-      return "🟡";
-  }
-};
+// Remove getStatusIndicator function that used color dots
 
 // Determine progress color based on rating
 const getProgressColor = (rating: number) => {
@@ -96,7 +87,6 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
                         <h3 className="font-medium mb-1">{log.title}</h3>
                         <div className="text-sm text-muted-foreground">
                           <div className="flex items-start">
-                            <span className="mr-1">{getStatusIndicator(log.status)}</span>
                             <div>
                               {log.description}
                               <br />

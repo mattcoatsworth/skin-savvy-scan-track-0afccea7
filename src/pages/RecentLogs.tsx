@@ -155,7 +155,7 @@ const RecentLogs = () => {
                     <div>
                       <h3 className="font-medium">{log.title}</h3>
                       <p className="text-sm text-muted-foreground mb-1">
-                        {getStatusIndicator(log.status)} {log.description}
+                        {log.description}
                       </p>
                       <p className="text-xs text-muted-foreground">{log.date}</p>
                     </div>

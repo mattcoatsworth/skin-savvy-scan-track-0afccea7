@@ -78,9 +78,6 @@ const ProductDetail = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center mb-4">
-                <span className="text-2xl mr-3">
-                  {product.impact === "Positive" ? "🟢" : product.impact === "Neutral" ? "🟡" : "🔴"}
-                </span>
                 <div>
                   <h2 className="text-xl font-semibold">{product.impact} Effect</h2>
                   <p className="text-muted-foreground">{product.description}</p>
