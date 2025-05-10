@@ -29,15 +29,17 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
   const navigate = useNavigate();
   
   // Function to handle card click with manual scroll to top
-  const handleCardClick = () => {
+  const handleCardClick = (event: React.MouseEvent) => {
+    // Prevent default link behavior
+    event.preventDefault();
+    
     // First scroll to top
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'auto'
-    });
-    // Then navigate
-    navigate('/weekly-skin-analysis');
+    window.scrollTo(0, 0);
+    
+    // Wait a tiny bit before navigation to allow the scroll to happen
+    setTimeout(() => {
+      navigate('/weekly-skin-analysis');
+    }, 10);
   };
   
   return (
@@ -47,34 +49,39 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
         <Link 
           to="/weekly-skin-analysis" 
           className="text-skin-teal text-sm font-medium flex items-center"
-          onClick={() => window.scrollTo(0, 0)}
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo(0, 0);
+            setTimeout(() => navigate('/weekly-skin-analysis'), 10);
+          }}
         >
           View Report <ArrowRight className="h-4 w-4 ml-1" />
         </Link>
       </div>
       
-      <div onClick={handleCardClick} className="cursor-pointer">
-        <Card className="ios-card p-2 hover:shadow-md transition-all">
-          <CardContent className="p-2">
-            <div className="flex justify-between items-center">
-              {ratings.map((item, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <span className="text-sm font-medium">{item.day}</span>
-                  <span className="text-xs text-muted-foreground">{item.date}</span>
-                  <div className="mt-2 flex flex-col items-center justify-center">
-                    <div className="text-base font-semibold">
-                      {item.rating}
-                    </div>
-                    <span className="text-xs mt-1 text-muted-foreground">
-                      {getRatingLabel(item.rating)}
-                    </span>
+      <Card 
+        className="ios-card p-2 hover:shadow-md transition-all cursor-pointer" 
+        onClick={handleCardClick}
+      >
+        <CardContent className="p-2">
+          <div className="flex justify-between items-center">
+            {ratings.map((item, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <span className="text-sm font-medium">{item.day}</span>
+                <span className="text-xs text-muted-foreground">{item.date}</span>
+                <div className="mt-2 flex flex-col items-center justify-center">
+                  <div className="text-base font-semibold">
+                    {item.rating}
                   </div>
+                  <span className="text-xs mt-1 text-muted-foreground">
+                    {getRatingLabel(item.rating)}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

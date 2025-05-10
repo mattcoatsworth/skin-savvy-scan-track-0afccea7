@@ -10,25 +10,14 @@ export const useScrollToTop = () => {
   const { pathname } = useLocation();
   
   useEffect(() => {
-    // Force scroll to top with immediate effect
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'auto' // Using 'auto' instead of 'smooth' for immediate effect
-    });
+    try {
+      // Simple and direct approach - scroll to top immediately
+      window.scrollTo(0, 0);
+    } catch (e) {
+      console.error("Error in useScrollToTop hook:", e);
+    }
     
-    // Additional safety measure - set a small timeout to ensure scroll happens
-    // after any rendering is complete
-    const timeoutId = setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'auto'
-      });
-    }, 0);
-    
-    // Clean up timeout on unmount
-    return () => clearTimeout(timeoutId);
+    // No dependencies array means this effect runs once on mount
   }, [pathname]); // Re-run when pathname changes
 };
 

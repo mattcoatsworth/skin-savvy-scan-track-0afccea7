@@ -42,18 +42,18 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
   };
   
   // Enhanced click handler for scrolling to top before navigation
-  const handleActionClick = (path: string, actionId?: string) => {
-    // First scroll to top
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'auto'
-    });
+  const handleActionClick = (e: React.MouseEvent, path: string, actionId?: string) => {
+    e.preventDefault();
     
-    // Then navigate with state if needed
-    navigate(path, { 
-      state: actionId ? { insightId: actionId, from: window.location.pathname } : undefined
-    });
+    // First scroll to top
+    window.scrollTo(0, 0);
+    
+    // Small timeout to allow scroll to happen before navigation
+    setTimeout(() => {
+      navigate(path, { 
+        state: actionId ? { insightId: actionId, from: window.location.pathname } : undefined
+      });
+    }, 10);
   };
   
   return (
@@ -63,20 +63,25 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
         <Link 
           to="/suggested-actions" 
           className="text-sm text-skin-teal" 
-          onClick={() => window.scrollTo(0, 0)}
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo(0, 0);
+            setTimeout(() => navigate("/suggested-actions"), 10);
+          }}
         >
           View all
         </Link>
       </div>
       
       <div className="space-y-3">
-        {actions.map((action, index) => (
-          <div 
-            key={index} 
-            className="block cursor-pointer"
-            onClick={() => handleActionClick(getActionLink(action), action.id)}
-          >
-            <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all">
+        {actions.map((action, index) => {
+          const path = getActionLink(action);
+          return (
+            <Card 
+              key={index} 
+              className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all cursor-pointer"
+              onClick={(e) => handleActionClick(e, path, action.id)}
+            >
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">
                   <p className="font-medium">{action.text}</p>
@@ -84,8 +89,8 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
                 </div>
               </CardContent>
             </Card>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
