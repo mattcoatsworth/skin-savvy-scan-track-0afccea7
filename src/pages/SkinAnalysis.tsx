@@ -1,3 +1,4 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,79 +29,91 @@ const SkinAnalysis = () => {
     { date: "Sun", value: 85 }
   ];
 
-  // For You Recommendations - All 12 from homepage
+  // For You Recommendations - All 12 from homepage with detailed messages
   const skinRecommendations = [
     { 
       type: "skincare" as const, 
       text: "Try vitamin C serum", 
       iconName: "droplet",
-      linkTo: "/recommendations-detail/vitamin-c-serum"
+      linkTo: "/recommendations-detail/vitamin-c-serum",
+      details: "Helps brighten skin and reduce visible inflammation"
     },
     { 
       type: "food" as const, 
       text: "Increase omega-3", 
       iconName: "utensils",
-      linkTo: "/recommendations-detail/increase-omega-3"
+      linkTo: "/recommendations-detail/increase-omega-3",
+      details: "May reduce redness and support skin barrier function"
     },
     { 
       type: "supplements" as const, 
       text: "Add zinc", 
       iconName: "pill",
-      linkTo: "/recommendations-detail/add-zinc"
+      linkTo: "/recommendations-detail/add-zinc",
+      details: "Could help regulate oil production based on your skin pattern"
     },
     { 
       type: "makeup" as const, 
       text: "Switch foundation", 
       iconName: "circle",
-      linkTo: "/recommendations-detail/switch-foundation"
+      linkTo: "/recommendations-detail/switch-foundation",
+      details: "Current foundation may be contributing to clogged pores"
     },
     { 
       type: "lifestyle" as const, 
       text: "Stress management", 
       iconName: "activity",
-      linkTo: "/recommendations-detail/stress-management"
+      linkTo: "/recommendations-detail/stress-management",
+      details: "Recent stress appears to be triggering breakouts on chin area"
     },
     { 
       type: "skincare" as const, 
       text: "Gentle night exfoliant", 
       iconName: "droplet",
-      linkTo: "/recommendations-detail/night-exfoliant"
+      linkTo: "/recommendations-detail/night-exfoliant",
+      details: "Could help with uneven texture seen in recent logs"
     },
     { 
       type: "food" as const, 
       text: "Add antioxidant foods", 
       iconName: "utensils",
-      linkTo: "/recommendations-detail/antioxidant-foods"
+      linkTo: "/recommendations-detail/antioxidant-foods",
+      details: "Support skin healing and combat environmental damage"
     },
     { 
       type: "supplements" as const, 
       text: "Try evening primrose", 
       iconName: "pill",
-      linkTo: "/recommendations-detail/evening-primrose"
+      linkTo: "/recommendations-detail/evening-primrose",
+      details: "May help with hormonal fluctuations affecting your skin"
     },
     { 
       type: "lifestyle" as const, 
       text: "Morning hydration", 
       iconName: "activity",
-      linkTo: "/recommendations-detail/morning-hydration"
+      linkTo: "/recommendations-detail/morning-hydration",
+      details: "Starting day with water could improve skin's moisture levels"
     },
     { 
       type: "makeup" as const, 
       text: "Oil-free concealer", 
       iconName: "circle",
-      linkTo: "/recommendations-detail/oil-free-concealer"
+      linkTo: "/recommendations-detail/oil-free-concealer",
+      details: "Better option for your T-zone where oil is more prominent"
     },
     { 
       type: "skincare" as const, 
       text: "Add ceramide moisturizer", 
       iconName: "droplet",
-      linkTo: "/recommendations-detail/ceramide-moisturizer"
+      linkTo: "/recommendations-detail/ceramide-moisturizer",
+      details: "Would strengthen your skin barrier which shows signs of damage"
     },
     { 
       type: "food" as const, 
       text: "Limit dairy consumption", 
       iconName: "utensils",
-      linkTo: "/recommendations-detail/limit-dairy"
+      linkTo: "/recommendations-detail/limit-dairy",
+      details: "Strong correlation between dairy intake and your breakouts"
     }
   ];
 
@@ -200,7 +213,7 @@ const SkinAnalysis = () => {
                         <div>
                           <h3 className="font-medium">{recommendation.type}: {recommendation.text}</h3>
                           <p className="text-sm text-muted-foreground">
-                            Suggested for your skin profile
+                            {recommendation.details}
                           </p>
                         </div>
                       </div>
