@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -20,31 +21,31 @@ const Index = () => {
   // Sample personalized recommendations
   const skinRecommendations = [
     { 
-      type: "skincare", 
+      type: "skincare" as const, 
       text: "Try vitamin C serum", 
       icon: <Droplet className="h-4 w-4" />,
       linkTo: "/recommendations-detail/vitamin-c-serum"
     },
     { 
-      type: "food", 
+      type: "food" as const, 
       text: "Increase omega-3", 
       icon: <Utensils className="h-4 w-4" />,
       linkTo: "/recommendations-detail/increase-omega-3"
     },
     { 
-      type: "supplements", 
+      type: "supplements" as const, 
       text: "Add zinc", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/add-zinc"
     },
     { 
-      type: "makeup", 
+      type: "makeup" as const, 
       text: "Switch foundation", 
       icon: <Circle className="h-4 w-4" />,
       linkTo: "/recommendations-detail/switch-foundation"
     },
     { 
-      type: "lifestyle", 
+      type: "lifestyle" as const, 
       text: "Stress management", 
       icon: <Activity className="h-4 w-4" />,
       linkTo: "/recommendations-detail/stress-management"
