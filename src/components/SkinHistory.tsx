@@ -86,14 +86,14 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
           <div className="flex justify-between items-center">
             {ratings.map((item, index) => (
               <div key={index} className="flex flex-col items-center">
-                <span className="text-sm font-medium">{item.day}</span>
-                <span className="text-xs text-muted-foreground">{item.date}</span>
+                <span className="text-xs font-medium">{item.day}</span>
+                <span className="text-[10px] text-muted-foreground">{item.date}</span>
                 
-                <div className="mt-4 mb-2 relative">
+                <div className="mt-2 mb-1 relative">
                   {/* Circular progress indicator styled to match the reference image */}
-                  <div className="relative w-16 h-16 flex items-center justify-center">
+                  <div className="relative w-12 h-12 flex items-center justify-center">
                     {/* SVG-based circular progress to match the design */}
-                    <svg className="w-16 h-16 absolute" viewBox="0 0 36 36">
+                    <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
@@ -104,7 +104,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                     </svg>
                     
                     {/* Foreground circle - the actual progress */}
-                    <svg className="w-16 h-16 absolute" viewBox="0 0 36 36">
+                    <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
@@ -116,14 +116,14 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                     </svg>
                     
                     {/* Rating number in the middle */}
-                    <div className="text-2xl font-bold z-10">
+                    <div className="text-lg font-bold z-10">
                       {item.rating}
                     </div>
                   </div>
                   
                   {/* Rating label below the circle */}
-                  <div className="text-center mt-1">
-                    <span className="text-sm text-gray-500 font-medium">
+                  <div className="text-center mt-0.5">
+                    <span className="text-xs text-gray-500 font-medium">
                       {getRatingLabel(item.rating)}
                     </span>
                   </div>
