@@ -1,13 +1,16 @@
-
-import React from "react";
+import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle, Wine, Beer, Lipstick, Brush } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const SkinAnalysis = () => {
+  // For keeping track of the active tab
+  const [activeTab, setActiveTab] = useState<string>("all");
+
   // Sample data
   const skinFactors = [
     { type: "Food" as const, status: "Hydrating", iconName: "salad", details: "Increased water-rich foods and avoided dairy this week" },
@@ -32,9 +35,9 @@ const SkinAnalysis = () => {
   // For You Recommendations - All 12 from homepage with detailed messages
   const skinRecommendations = [
     { 
-      type: "skincare" as const, 
+      type: "food" as const, 
       text: "Try vitamin C serum", 
-      iconName: "droplet",
+      iconName: "utensils",
       linkTo: "/recommendations-detail/vitamin-c-serum",
       details: "Helps brighten skin and reduce visible inflammation"
     },
@@ -46,6 +49,27 @@ const SkinAnalysis = () => {
       details: "May reduce redness and support skin barrier function"
     },
     { 
+      type: "food" as const, 
+      text: "Add antioxidant foods", 
+      iconName: "utensils",
+      linkTo: "/recommendations-detail/antioxidant-foods",
+      details: "Support skin healing and combat environmental damage"
+    },
+    { 
+      type: "food" as const, 
+      text: "Limit dairy consumption", 
+      iconName: "utensils",
+      linkTo: "/recommendations-detail/limit-dairy",
+      details: "Strong correlation between dairy intake and your breakouts"
+    },
+    { 
+      type: "drink" as const, 
+      text: "Morning hydration", 
+      iconName: "beer",
+      linkTo: "/recommendations-detail/morning-hydration",
+      details: "Starting day with water could improve skin's moisture levels"
+    },
+    { 
       type: "supplements" as const, 
       text: "Add zinc", 
       iconName: "pill",
@@ -53,11 +77,25 @@ const SkinAnalysis = () => {
       details: "Could help regulate oil production based on your skin pattern"
     },
     { 
+      type: "supplements" as const, 
+      text: "Try evening primrose", 
+      iconName: "pill",
+      linkTo: "/recommendations-detail/evening-primrose",
+      details: "May help with hormonal fluctuations affecting your skin"
+    },
+    { 
       type: "makeup" as const, 
       text: "Switch foundation", 
-      iconName: "circle",
+      iconName: "lipstick",
       linkTo: "/recommendations-detail/switch-foundation",
       details: "Current foundation may be contributing to clogged pores"
+    },
+    { 
+      type: "makeup" as const, 
+      text: "Oil-free concealer", 
+      iconName: "brush",
+      linkTo: "/recommendations-detail/oil-free-concealer",
+      details: "Better option for your T-zone where oil is more prominent"
     },
     { 
       type: "lifestyle" as const, 
@@ -74,46 +112,11 @@ const SkinAnalysis = () => {
       details: "Could help with uneven texture seen in recent logs"
     },
     { 
-      type: "food" as const, 
-      text: "Add antioxidant foods", 
-      iconName: "utensils",
-      linkTo: "/recommendations-detail/antioxidant-foods",
-      details: "Support skin healing and combat environmental damage"
-    },
-    { 
-      type: "supplements" as const, 
-      text: "Try evening primrose", 
-      iconName: "pill",
-      linkTo: "/recommendations-detail/evening-primrose",
-      details: "May help with hormonal fluctuations affecting your skin"
-    },
-    { 
-      type: "lifestyle" as const, 
-      text: "Morning hydration", 
-      iconName: "activity",
-      linkTo: "/recommendations-detail/morning-hydration",
-      details: "Starting day with water could improve skin's moisture levels"
-    },
-    { 
-      type: "makeup" as const, 
-      text: "Oil-free concealer", 
-      iconName: "circle",
-      linkTo: "/recommendations-detail/oil-free-concealer",
-      details: "Better option for your T-zone where oil is more prominent"
-    },
-    { 
       type: "skincare" as const, 
       text: "Add ceramide moisturizer", 
       iconName: "droplet",
       linkTo: "/recommendations-detail/ceramide-moisturizer",
       details: "Would strengthen your skin barrier which shows signs of damage"
-    },
-    { 
-      type: "food" as const, 
-      text: "Limit dairy consumption", 
-      iconName: "utensils",
-      linkTo: "/recommendations-detail/limit-dairy",
-      details: "Strong correlation between dairy intake and your breakouts"
     }
   ];
 
@@ -138,10 +141,26 @@ const SkinAnalysis = () => {
         return <Utensils className="text-2xl mr-3" />;
       case "circle":
         return <Circle className="text-2xl mr-3" />;
+      case "lipstick":
+        return <Lipstick className="text-2xl mr-3" />;
+      case "brush":
+        return <Brush className="text-2xl mr-3" />;
+      case "beer":
+        return <Beer className="text-2xl mr-3" />;
+      case "wine":
+        return <Wine className="text-2xl mr-3" />;
       default:
         return null;
     }
   };
+
+  // Get unique categories for tabs
+  const categories = ["all", ...new Set(skinRecommendations.map(rec => rec.type))];
+
+  // Filter recommendations based on active tab
+  const filteredRecommendations = activeTab === "all" 
+    ? skinRecommendations 
+    : skinRecommendations.filter(rec => rec.type === activeTab);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -204,19 +223,34 @@ const SkinAnalysis = () => {
             </div>
           </div>
           
-          {/* For You Recommendations with proper spacing */}
+          {/* For You Recommendations with categories */}
           <div>
             <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
-            <div>
-              {skinRecommendations.map((recommendation, index) => (
-                <div key={index} className="mb-3">
+            
+            <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-4">
+              <TabsList className="w-full overflow-x-auto flex justify-start">
+                {categories.map((category) => (
+                  <TabsTrigger 
+                    key={category} 
+                    value={category}
+                    className="flex-1 capitalize"
+                  >
+                    {category}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+            
+            <div className="space-y-3">
+              {filteredRecommendations.map((recommendation, index) => (
+                <div key={index}>
                   <Link to={recommendation.linkTo}>
                     <Card className="ios-card hover:shadow-md transition-all">
                       <CardContent className="p-4">
                         <div className="flex items-start">
                           {getIconComponent(recommendation.iconName)}
                           <div>
-                            <h3 className="font-medium">{recommendation.type}: {recommendation.text}</h3>
+                            <h3 className="font-medium capitalize">{recommendation.type}: {recommendation.text}</h3>
                             <p className="text-sm text-muted-foreground">
                               {recommendation.details}
                             </p>
