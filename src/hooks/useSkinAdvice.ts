@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
 
-type AdviceType = "general" | "product" | "recommendation" | "action";
+type AdviceType = "general" | "product" | "recommendation" | "action" | "supplement";
 
 interface UseSkinAdviceProps {
   adviceType?: AdviceType;
@@ -31,8 +31,28 @@ export const useSkinAdvice = ({
     try {
       setIsLoading(true);
 
+      // Add supplement-specific system guidance if this is supplement content
+      let systemPrompt = "";
+      
+      if (adviceType === "supplement" || 
+         (adviceType === "recommendation" && context.supplementName)) {
+        systemPrompt = `
+          When providing information about supplements:
+          1. Always include proper medical disclaimers
+          2. Avoid making direct dosage recommendations (instead say "commonly reported dosages include...")
+          3. Emphasize consulting healthcare providers
+          4. Discuss evidence levels objectively
+          5. Mention potential side effects and interactions
+          6. Clarify that individual responses may vary
+        `;
+      }
+
       // Create messages for the AI
       const messages = [
+        {
+          role: "system",
+          content: systemPrompt
+        },
         {
           role: "user",
           content: `

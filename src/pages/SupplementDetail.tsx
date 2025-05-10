@@ -4,8 +4,10 @@ import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
-import { AlertTriangle, Check, X, Beaker, Calendar, Activity, UserCircle, PieChart } from "lucide-react";
+import { AlertTriangle, Check, X, Beaker, Calendar, Activity, UserCircle, PieChart, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useState, useEffect } from "react";
 
 type SupplementDetailsType = {
   id: string;
@@ -36,6 +38,8 @@ type SupplementDetailsType = {
 
 const SupplementDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  const [aiEnhancedInfo, setAiEnhancedInfo] = useState<string | null>(null);
   
   // Mock data for the supplements
   const supplementsData: Record<string, SupplementDetailsType> = {
@@ -77,6 +81,34 @@ const SupplementDetail = () => {
   };
 
   const supplement = id ? supplementsData[id] : null;
+
+  // Fetch AI-enhanced information when component loads
+  useEffect(() => {
+    const fetchAiInfo = async () => {
+      if (supplement) {
+        try {
+          const context = {
+            supplementName: supplement.name,
+            supplementType: supplement.form,
+            dosageInfo: supplement.dosage,
+            ingredients: supplement.ingredients,
+            scientificEvidence: supplement.scientificEvidence
+          };
+          
+          const aiResponse = await getAdvice(
+            "Please provide accurate, evidence-based information about this supplement with proper healthcare disclaimers. Include information about dosage considerations, precautions, and scientific evidence.", 
+            context
+          );
+          
+          setAiEnhancedInfo(aiResponse);
+        } catch (error) {
+          console.error("Error fetching AI supplement information:", error);
+        }
+      }
+    };
+    
+    fetchAiInfo();
+  }, [supplement, getAdvice]);
 
   if (!supplement) {
     return (
@@ -128,6 +160,25 @@ const SupplementDetail = () => {
           </Card>
         </section>
 
+        {/* Medical Disclaimer */}
+        <section className="mb-8">
+          <Card className="ios-card bg-slate-50 border-l-4 border-l-blue-500">
+            <CardContent className="p-6">
+              <div className="flex items-start space-x-3">
+                <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
+                <div>
+                  <h2 className="text-lg font-semibold mb-2">Important Health Information</h2>
+                  <div className="text-sm space-y-2 text-muted-foreground">
+                    <p>The information provided about this supplement is for educational purposes only and is not intended as medical advice, diagnosis, or treatment.</p>
+                    <p>Supplement dosage suggestions are based on commonly reported ranges in scientific literature, but individual needs may vary.</p>
+                    <p>Always consult with a qualified healthcare provider before starting, stopping, or changing any supplement regimen.</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
         {/* Supplement Details */}
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Supplement Details</h2>
@@ -152,8 +203,9 @@ const SupplementDetail = () => {
               <div className="flex items-center">
                 <Activity className="h-5 w-5 text-muted-foreground mr-3" />
                 <div>
-                  <span className="text-sm text-muted-foreground">Dosage</span>
+                  <span className="text-sm text-muted-foreground">Commonly Reported Dosage Range</span>
                   <p>{supplement.dosage}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Individual needs may vary. Consult with a healthcare provider for personalized advice.</p>
                 </div>
               </div>
               
@@ -175,6 +227,28 @@ const SupplementDetail = () => {
             </CardContent>
           </Card>
         </section>
+
+        {/* AI-Enhanced Information */}
+        {(aiEnhancedInfo || isLoading) && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
+            <Card className="ios-card">
+              <CardContent className="p-6">
+                {isLoading ? (
+                  <div className="py-4 text-center">
+                    <p className="text-muted-foreground">Loading detailed information...</p>
+                  </div>
+                ) : (
+                  <div className="text-sm space-y-3">
+                    {aiEnhancedInfo && (
+                      <div dangerouslySetInnerHTML={{ __html: aiEnhancedInfo.replace(/\n/g, '<br/>') }} />
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
         {/* Potential Issues Section */}
         <section className="mb-8">
@@ -206,6 +280,7 @@ const SupplementDetail = () => {
                   </li>
                 ))}
               </ul>
+              <p className="text-xs text-muted-foreground mt-4">Note: Individual results may vary. These benefits are based on reported experiences and available research.</p>
             </CardContent>
           </Card>
         </section>
@@ -220,6 +295,7 @@ const SupplementDetail = () => {
                 <p className="font-medium">{supplement.scientificEvidence.level}</p>
               </div>
               <p className="text-sm">{supplement.scientificEvidence.summary}</p>
+              <p className="text-xs text-muted-foreground mt-4">Scientific understanding is continually evolving. This information is based on current research as of {new Date().toLocaleDateString()}.</p>
             </CardContent>
           </Card>
         </section>
@@ -256,6 +332,12 @@ const SupplementDetail = () => {
                   <p className="text-sm">{supplement.recommendations.resumptionGuidance}</p>
                 </div>
               )}
+
+              <div className="mt-6 pt-4 border-t border-gray-100">
+                <p className="text-xs text-muted-foreground">
+                  These recommendations are suggestions only and not prescriptive medical advice. Each individual is different, and what works for one person may not work for another. Always consult with a qualified healthcare provider before making changes to your supplement regimen.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </section>

@@ -39,6 +39,14 @@ serve(async (req) => {
         break;
       case "recommendation":
         systemMessage += "You provide personalized product and routine recommendations based on skin concerns, type, and history. " + corePrinciple;
+        
+        // Add supplement disclaimers for recommendation types
+        if (messages.some(m => m.content && m.content.includes("supplement"))) {
+          systemMessage += " When discussing supplements: Always include disclaimers that this is not medical advice. Never make direct dosage recommendations; instead reference commonly reported dosage ranges from scientific literature. Always advise consulting healthcare providers before starting any supplement. Clarify that individual responses to supplements vary significantly.";
+        }
+        break;
+      case "supplement":
+        systemMessage += "You provide information about dietary supplements related to skin health. Always include proper medical disclaimers. Never make direct dosage recommendations; instead reference commonly reported dosage ranges from scientific literature. Always emphasize consulting healthcare providers. Discuss evidence levels objectively. Mention potential side effects and interactions. Clarify that individual responses may vary. " + corePrinciple;
         break;
       case "action":
         systemMessage += "You suggest specific actions users can take to improve their skin health, like lifestyle changes, dietary adjustments, or routine modifications. " + corePrinciple;
