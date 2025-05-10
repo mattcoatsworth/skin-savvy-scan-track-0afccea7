@@ -1,4 +1,3 @@
-
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
