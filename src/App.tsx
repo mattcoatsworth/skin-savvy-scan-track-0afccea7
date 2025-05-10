@@ -1,8 +1,9 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate, ScrollRestoration } from "react-router-dom";
 import { ApiKeyProvider } from "./contexts/ApiKeyContext";
 import Index from "./pages/Index";
 import History from "./pages/History";
@@ -52,6 +53,7 @@ const AppLayout = () => (
       <ChatInput />
       <AppNavigation />
     </div>
+    <ScrollRestoration /> {/* Add ScrollRestoration to manage scroll position */}
   </>
 );
 
@@ -60,6 +62,7 @@ const OnboardingLayout = () => (
   <div className="bg-slate-50 min-h-screen">
     <div className="max-w-md mx-auto">
       <Outlet />
+      <ScrollRestoration /> {/* Add ScrollRestoration here too */}
     </div>
   </div>
 );

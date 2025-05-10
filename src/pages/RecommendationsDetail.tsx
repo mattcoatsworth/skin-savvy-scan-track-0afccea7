@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
+import useScrollToTop from "@/hooks/useScrollToTop";
 
 type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
@@ -335,6 +336,9 @@ const recommendationsData: Record<string, Recommendation> = {
 const RecommendationsDetail = () => {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
+  
+  // Apply the scroll to top hook
+  useScrollToTop();
   
   // Find the recommendation data
   const recommendation = id ? recommendationsData[id as keyof typeof recommendationsData] : null;
