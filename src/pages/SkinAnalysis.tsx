@@ -1,7 +1,8 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
@@ -28,6 +29,82 @@ const SkinAnalysis = () => {
     { date: "Sun", value: 85 }
   ];
 
+  // For You Recommendations - All 12 from homepage
+  const skinRecommendations = [
+    { 
+      type: "skincare" as const, 
+      text: "Try vitamin C serum", 
+      iconName: "droplet",
+      linkTo: "/recommendations-detail/vitamin-c-serum"
+    },
+    { 
+      type: "food" as const, 
+      text: "Increase omega-3", 
+      iconName: "utensils",
+      linkTo: "/recommendations-detail/increase-omega-3"
+    },
+    { 
+      type: "supplements" as const, 
+      text: "Add zinc", 
+      iconName: "pill",
+      linkTo: "/recommendations-detail/add-zinc"
+    },
+    { 
+      type: "makeup" as const, 
+      text: "Switch foundation", 
+      iconName: "circle",
+      linkTo: "/recommendations-detail/switch-foundation"
+    },
+    { 
+      type: "lifestyle" as const, 
+      text: "Stress management", 
+      iconName: "activity",
+      linkTo: "/recommendations-detail/stress-management"
+    },
+    { 
+      type: "skincare" as const, 
+      text: "Gentle night exfoliant", 
+      iconName: "droplet",
+      linkTo: "/recommendations-detail/night-exfoliant"
+    },
+    { 
+      type: "food" as const, 
+      text: "Add antioxidant foods", 
+      iconName: "utensils",
+      linkTo: "/recommendations-detail/antioxidant-foods"
+    },
+    { 
+      type: "supplements" as const, 
+      text: "Try evening primrose", 
+      iconName: "pill",
+      linkTo: "/recommendations-detail/evening-primrose"
+    },
+    { 
+      type: "lifestyle" as const, 
+      text: "Morning hydration", 
+      iconName: "activity",
+      linkTo: "/recommendations-detail/morning-hydration"
+    },
+    { 
+      type: "makeup" as const, 
+      text: "Oil-free concealer", 
+      iconName: "circle",
+      linkTo: "/recommendations-detail/oil-free-concealer"
+    },
+    { 
+      type: "skincare" as const, 
+      text: "Add ceramide moisturizer", 
+      iconName: "droplet",
+      linkTo: "/recommendations-detail/ceramide-moisturizer"
+    },
+    { 
+      type: "food" as const, 
+      text: "Limit dairy consumption", 
+      iconName: "utensils",
+      linkTo: "/recommendations-detail/limit-dairy"
+    }
+  ];
+
   // Function to get icon component based on iconName
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
@@ -43,6 +120,12 @@ const SkinAnalysis = () => {
         return <MoonStar className="text-2xl mr-3" />;
       case "activity":
         return <Activity className="text-2xl mr-3" />;
+      case "droplet":
+        return <Droplet className="text-2xl mr-3" />;
+      case "utensils":
+        return <Utensils className="text-2xl mr-3" />;
+      case "circle":
+        return <Circle className="text-2xl mr-3" />;
       default:
         return null;
     }
@@ -78,6 +161,16 @@ const SkinAnalysis = () => {
           </Card>
           
           <div>
+            <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
+            <Card className="ios-card">
+              <CardContent className="p-4">
+                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
+                <TrendChart data={weeklyTrendData} height={80} />
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div>
             <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
             <div className="space-y-3">
               {skinFactors.map((factor, index) => (
@@ -97,13 +190,26 @@ const SkinAnalysis = () => {
           </div>
           
           <div>
-            <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
-            <Card className="ios-card">
-              <CardContent className="p-4">
-                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
-                <TrendChart data={weeklyTrendData} height={80} />
-              </CardContent>
-            </Card>
+            <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
+            <div className="space-y-3">
+              {skinRecommendations.map((recommendation, index) => (
+                <Link key={index} to={recommendation.linkTo}>
+                  <Card className="ios-card hover:shadow-md transition-all">
+                    <CardContent className="p-4">
+                      <div className="flex items-start">
+                        {getIconComponent(recommendation.iconName)}
+                        <div>
+                          <h3 className="font-medium">{recommendation.type}: {recommendation.text}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Suggested for your skin profile
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
