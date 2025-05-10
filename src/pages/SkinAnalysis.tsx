@@ -178,21 +178,23 @@ const SkinAnalysis = () => {
           {/* For You Recommendations Section - Below Contributing Factors */}
           <div>
             <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
-            <Card className="ios-card">
-              <CardContent className="p-4">
-                <div className="flex flex-wrap gap-2">
-                  {forYouRecommendations.map((recommendation, index) => (
-                    <Link 
-                      key={index} 
-                      to={recommendation.linkTo}
-                      className={`factor-tag ${getRecommendationColor(recommendation.type)} flex items-center cursor-pointer hover:opacity-80 transition-opacity`}
-                    >
-                      <span className="mr-1">{recommendation.icon}</span> {recommendation.text}
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-3">
+              {forYouRecommendations.map((recommendation, index) => (
+                <Link to={recommendation.linkTo} key={index}>
+                  <Card className="ios-card hover:shadow-md transition-all">
+                    <CardContent className="p-4">
+                      <div className="flex items-start">
+                        {recommendation.icon}
+                        <div className="ml-3">
+                          <h3 className="font-medium">{recommendation.text}</h3>
+                          <p className="text-sm text-muted-foreground">Recommended for your skin type</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -203,4 +205,3 @@ const SkinAnalysis = () => {
 };
 
 export default SkinAnalysis;
-
