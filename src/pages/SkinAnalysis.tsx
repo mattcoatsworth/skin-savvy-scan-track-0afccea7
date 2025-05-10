@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,12 +6,8 @@ import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Ute
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const SkinAnalysis = () => {
-  // For keeping track of the active tab
-  const [activeTab, setActiveTab] = useState<string>("all");
-
   // Sample data
   const skinFactors = [
     { type: "Food" as const, status: "Hydrating", iconName: "salad", details: "Increased water-rich foods and avoided dairy this week" },
@@ -152,14 +149,18 @@ const SkinAnalysis = () => {
     }
   };
 
-  // Get unique categories for tabs
-  const categories = ["all", ...new Set(skinRecommendations.map(rec => rec.type))];
+  // Group recommendations by category
+  const groupedRecommendations = skinRecommendations.reduce((acc, item) => {
+    if (!acc[item.type]) {
+      acc[item.type] = [];
+    }
+    acc[item.type].push(item);
+    return acc;
+  }, {} as Record<string, typeof skinRecommendations>);
 
-  // Filter recommendations based on active tab
-  const filteredRecommendations = activeTab === "all" 
-    ? skinRecommendations 
-    : skinRecommendations.filter(rec => rec.type === activeTab);
-
+  // Get categories in the desired order
+  const categoryOrder = ["food", "drink", "supplements", "makeup", "lifestyle", "skincare"];
+  
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
@@ -221,44 +222,43 @@ const SkinAnalysis = () => {
             </div>
           </div>
           
-          {/* For You Recommendations with categories */}
+          {/* For You Recommendations with category headings */}
           <div>
             <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
             
-            <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-4">
-              <TabsList className="w-full overflow-x-auto flex justify-start">
-                {categories.map((category) => (
-                  <TabsTrigger 
-                    key={category} 
-                    value={category}
-                    className="flex-1 capitalize"
-                  >
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-            
-            <div className="space-y-3">
-              {filteredRecommendations.map((recommendation, index) => (
-                <div key={index}>
-                  <Link to={recommendation.linkTo}>
-                    <Card className="ios-card hover:shadow-md transition-all">
-                      <CardContent className="p-4">
-                        <div className="flex items-start">
-                          {getIconComponent(recommendation.iconName)}
-                          <div>
-                            <h3 className="font-medium capitalize">{recommendation.type}: {recommendation.text}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {recommendation.details}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </div>
-              ))}
+            <div className="space-y-5">
+              {categoryOrder.map((category) => {
+                const recs = groupedRecommendations[category];
+                
+                // Skip if no recommendations in this category
+                if (!recs || recs.length === 0) return null;
+                
+                return (
+                  <div key={category} className="space-y-3">
+                    <h3 className="text-lg font-medium capitalize mt-2">{category}</h3>
+                    
+                    {recs.map((recommendation, index) => (
+                      <div key={index} className="mb-3">
+                        <Link to={recommendation.linkTo}>
+                          <Card className="ios-card hover:shadow-md transition-all">
+                            <CardContent className="p-4">
+                              <div className="flex items-start">
+                                {getIconComponent(recommendation.iconName)}
+                                <div>
+                                  <h3 className="font-medium">{recommendation.text}</h3>
+                                  <p className="text-sm text-muted-foreground">
+                                    {recommendation.details}
+                                  </p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
