@@ -42,6 +42,15 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
     }, 10);
   };
   
+  // Helper function to get color based on rating
+  const getRatingColor = (rating: number) => {
+    if (rating >= 80) return "text-green-600";
+    if (rating >= 60) return "text-emerald-600";
+    if (rating >= 40) return "text-amber-500";
+    if (rating >= 20) return "text-orange-500";
+    return "text-red-500";
+  };
+  
   return (
     <div className={cn("ios-section block", className)}>
       <div className="flex justify-between items-center mb-3">
@@ -70,7 +79,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                 <span className="text-sm font-medium">{item.day}</span>
                 <span className="text-xs text-muted-foreground">{item.date}</span>
                 <div className="mt-2 flex flex-col items-center justify-center">
-                  <div className="text-base font-semibold">
+                  <div className={`text-base font-semibold ${getRatingColor(item.rating)}`}>
                     {item.rating}
                   </div>
                   <span className="text-xs mt-1 text-muted-foreground">
