@@ -55,7 +55,7 @@ const Index = () => {
       category: "makeup",
       priority: "low"
     }
-  ] as const;
+  ];
 
   // Sample data
   const recentLogs = [

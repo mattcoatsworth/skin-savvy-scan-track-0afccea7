@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Droplet, Utensils, Pill, Lipstick, Activity, Calendar, ArrowRight } from "lucide-react";
+import { Droplet, Utensils, Pill, Circle, Activity, Calendar, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 
@@ -28,7 +28,7 @@ const getCategoryIcon = (category: string) => {
     case "supplements":
       return <Pill className="h-4 w-4" />;
     case "makeup":
-      return <Lipstick className="h-4 w-4" />;
+      return <Circle className="h-4 w-4" />; // Changed from Lipstick to Circle
     case "lifestyle":
       return <Activity className="h-4 w-4" />;
     default:
