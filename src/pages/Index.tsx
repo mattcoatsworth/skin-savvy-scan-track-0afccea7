@@ -18,7 +18,7 @@ const Index = () => {
     { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
-  // Sample personalized recommendations
+  // Sample personalized recommendations - Added more recommendations
   const skinRecommendations = [
     { 
       type: "skincare" as const, 
@@ -49,6 +49,49 @@ const Index = () => {
       text: "Stress management", 
       icon: <Activity className="h-4 w-4" />,
       linkTo: "/recommendations-detail/stress-management"
+    },
+    // New recommendations
+    { 
+      type: "skincare" as const, 
+      text: "Gentle night exfoliant", 
+      icon: <Droplet className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/night-exfoliant"
+    },
+    { 
+      type: "food" as const, 
+      text: "Add antioxidant foods", 
+      icon: <Utensils className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/antioxidant-foods"
+    },
+    { 
+      type: "supplements" as const, 
+      text: "Try evening primrose", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/evening-primrose"
+    },
+    { 
+      type: "lifestyle" as const, 
+      text: "Morning hydration", 
+      icon: <Activity className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/morning-hydration"
+    },
+    { 
+      type: "makeup" as const, 
+      text: "Oil-free concealer", 
+      icon: <Circle className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/oil-free-concealer"
+    },
+    { 
+      type: "skincare" as const, 
+      text: "Add ceramide moisturizer", 
+      icon: <Droplet className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/ceramide-moisturizer"
+    },
+    { 
+      type: "food" as const, 
+      text: "Limit dairy consumption", 
+      icon: <Utensils className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/limit-dairy"
     }
   ];
 
