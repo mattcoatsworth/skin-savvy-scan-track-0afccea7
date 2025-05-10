@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -7,7 +6,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
-import { Salad, Pill, Palette, CloudSun } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, Droplet, Utensils, Circle, Activity, Calendar } from "lucide-react";
 
 const Index = () => {
   // Sample data
@@ -16,6 +15,40 @@ const Index = () => {
     { type: "Supplement" as const, status: "New", icon: <Pill className="h-4 w-4" /> },
     { type: "Makeup" as const, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
     { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+  ];
+
+  // Sample personalized recommendations
+  const skinRecommendations = [
+    { 
+      type: "skincare", 
+      text: "Try vitamin C serum", 
+      icon: <Droplet className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/vitamin-c-serum"
+    },
+    { 
+      type: "food", 
+      text: "Increase omega-3", 
+      icon: <Utensils className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/increase-omega-3"
+    },
+    { 
+      type: "supplements", 
+      text: "Add zinc", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/add-zinc"
+    },
+    { 
+      type: "makeup", 
+      text: "Switch foundation", 
+      icon: <Circle className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/switch-foundation"
+    },
+    { 
+      type: "lifestyle", 
+      text: "Stress management", 
+      icon: <Activity className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/stress-management"
+    }
   ];
 
   const recentLogs = [
@@ -156,7 +189,8 @@ const Index = () => {
         <DailySkinSnapshot 
           emoji="😊" 
           status="Balanced" 
-          factors={skinFactors} 
+          factors={skinFactors}
+          recommendations={skinRecommendations}
         />
         
         <SkinHistory ratings={skinHistory} />

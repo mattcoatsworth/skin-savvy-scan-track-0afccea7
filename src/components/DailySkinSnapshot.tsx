@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { Smile } from "lucide-react";
+import { Smile, Droplet, Utensils, Pill, Circle, Activity, Calendar } from "lucide-react";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -13,10 +13,20 @@ type Factor = {
   icon: React.ReactNode;
 };
 
+type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
+
+type Recommendation = {
+  type: RecommendationType;
+  text: string;
+  icon: React.ReactNode;
+  linkTo: string;
+};
+
 type SkinSnapshotProps = {
   emoji: string;
   status: string;
   factors: Factor[];
+  recommendations?: Recommendation[];
   className?: string;
 };
 
@@ -35,10 +45,28 @@ const getFactorColor = (type: FactorType) => {
   }
 };
 
+const getRecommendationColor = (type: RecommendationType) => {
+  switch (type) {
+    case "skincare":
+      return "bg-blue-100 text-blue-800";
+    case "food":
+      return "bg-green-100 text-green-800";
+    case "supplements":
+      return "bg-indigo-100 text-indigo-800";
+    case "makeup":
+      return "bg-purple-100 text-purple-800";
+    case "lifestyle":
+      return "bg-orange-100 text-orange-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
+
 const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   emoji,
   status,
   factors,
+  recommendations = [],
   className,
 }) => {
   return (
@@ -68,6 +96,23 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               ))}
             </div>
           </div>
+          
+          {recommendations.length > 0 && (
+            <div className="mb-3 pt-2 border-t border-gray-100">
+              <p className="text-sm text-muted-foreground mb-2">For You Recommendations:</p>
+              <div className="flex flex-wrap">
+                {recommendations.map((recommendation, index) => (
+                  <Link 
+                    key={index} 
+                    to={recommendation.linkTo}
+                    className={`factor-tag ${getRecommendationColor(recommendation.type)} flex items-center cursor-pointer hover:opacity-80 transition-opacity`}
+                  >
+                    <span className="mr-1">{recommendation.icon}</span> {recommendation.text}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
           
           <div className="text-center mt-4">
             View Full Analysis →
