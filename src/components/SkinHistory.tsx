@@ -43,22 +43,22 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
     }, 10);
   };
   
-  // Helper function to get progress color based on rating
+  // Determine progress color based on rating
   const getProgressColor = (rating: number) => {
-    if (rating >= 80) return "bg-green-500";
-    if (rating >= 60) return "bg-green-500"; // Using green for Good too
-    if (rating >= 40) return "bg-yellow-400"; // Yellow for OK
-    if (rating >= 20) return "bg-orange-400"; // Orange for Fair
-    return "bg-red-500";
+    if (rating >= 80) return "#4ADE80"; // Green for good ratings
+    if (rating >= 60) return "#4ADE80"; // Also green for good ratings
+    if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
+    if (rating >= 20) return "#FB923C"; // Orange for fair ratings
+    return "#F87171"; // Red for poor ratings
   };
   
-  // Helper function to get track color based on rating (lighter version of progress color)
-  const getTrackColor = (rating: number) => {
-    if (rating >= 80) return "bg-green-100";
-    if (rating >= 60) return "bg-green-100"; // Light green for Good too
-    if (rating >= 40) return "bg-yellow-100"; // Light yellow for OK
-    if (rating >= 20) return "bg-orange-100"; // Light orange for Fair
-    return "bg-red-100";
+  // Get the lighter background color for the circle
+  const getBackgroundColor = (rating: number) => {
+    if (rating >= 80) return "#E6F8EA"; // Light green
+    if (rating >= 60) return "#E6F8EA"; // Also light green
+    if (rating >= 40) return "#FEF7CD"; // Light yellow
+    if (rating >= 20) return "#FEF0E6"; // Light orange
+    return "#FFDEE2"; // Light red
   };
   
   return (
@@ -88,32 +88,42 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
               <div key={index} className="flex flex-col items-center">
                 <span className="text-sm font-medium">{item.day}</span>
                 <span className="text-xs text-muted-foreground">{item.date}</span>
-                <div className="mt-4 mb-6 relative">
+                
+                <div className="mt-4 mb-2 relative">
                   {/* Circular progress indicator styled to match the reference image */}
                   <div className="relative w-16 h-16 flex items-center justify-center">
-                    {/* Background track (lighter color) */}
-                    <Progress 
-                      value={100}
-                      className="w-16 h-16 rounded-full absolute -rotate-90"
-                      indicatorClassName={cn(getTrackColor(item.rating))}
-                    />
+                    {/* SVG-based circular progress to match the design */}
+                    <svg className="w-16 h-16 absolute" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke={getBackgroundColor(item.rating)}
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                    </svg>
                     
-                    {/* Foreground progress (actual rating) */}
-                    <Progress 
-                      value={item.rating}
-                      className="w-16 h-16 rounded-full absolute -rotate-90"
-                      indicatorClassName={cn(getProgressColor(item.rating))}
-                    />
+                    {/* Foreground circle - the actual progress */}
+                    <svg className="w-16 h-16 absolute" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke={getProgressColor(item.rating)}
+                        strokeWidth="4"
+                        strokeDasharray={`${item.rating}, 100`}
+                        strokeLinecap="round"
+                      />
+                    </svg>
                     
                     {/* Rating number in the middle */}
-                    <span className="text-2xl font-bold z-10">
+                    <div className="text-2xl font-bold z-10">
                       {item.rating}
-                    </span>
+                    </div>
                   </div>
                   
                   {/* Rating label below the circle */}
-                  <div className="text-center mt-2">
-                    <span className="text-sm font-medium">
+                  <div className="text-center mt-1">
+                    <span className="text-sm text-gray-500 font-medium">
                       {getRatingLabel(item.rating)}
                     </span>
                   </div>
