@@ -3,8 +3,9 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
-import { CheckCircle, Clock, AlertTriangle, ExternalLink } from "lucide-react";
+import { CheckCircle, Clock, AlertTriangle, ExternalLink, MessageSquare, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 
 type ActionType = {
   id: string;
@@ -23,6 +24,12 @@ const SuggestedActionDetail = () => {
   const navigate = useNavigate();
   const [action, setAction] = useState<ActionType | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [aiAdvice, setAiAdvice] = useState<string | null>(null);
+  
+  // Initialize the skin advice hook for action advice
+  const { getAdvice, isLoading: isAdviceLoading } = useSkinAdvice({
+    adviceType: "action"
+  });
 
   // Sample data - in a real app, this would come from an API
   const sampleActions: ActionType[] = [
@@ -184,6 +191,30 @@ const SuggestedActionDetail = () => {
       }
     }
   }, [location, actionId, navigate]);
+  
+  useEffect(() => {
+    // Get AI advice when action changes
+    const getAiActionAdvice = async () => {
+      if (!action) return;
+      
+      try {
+        const advice = await getAdvice(`Provide personalized advice for this suggested action: ${action.text}`, {
+          actionId: action.id,
+          actionDescription: action.description,
+          steps: action.steps || [],
+          benefits: action.benefits || [],
+          timeEstimate: action.timeEstimate || "Not specified",
+          isCompleted: isCompleted
+        });
+        
+        setAiAdvice(advice);
+      } catch (error) {
+        console.error("Error getting AI advice for action:", error);
+      }
+    };
+    
+    getAiActionAdvice();
+  }, [action, isCompleted]);
 
   const handleMarkComplete = () => {
     setIsCompleted(true);
@@ -193,6 +224,13 @@ const SuggestedActionDetail = () => {
   // Add function to navigate to the log page
   const navigateToLogPage = () => {
     navigate("/log-skin-condition");
+  };
+  
+  // Navigate to the chat page with initial question about this action
+  const askAiAboutAction = () => {
+    if (!action) return;
+    const initialMessage = `I'd like more information about how to "${action.text}" for better skin health. Can you provide detailed guidance?`;
+    navigate("/chat", { state: { initialMessage } });
   };
 
   if (!action) {
@@ -255,6 +293,35 @@ const SuggestedActionDetail = () => {
           )}
         </CardContent>
       </Card>
+      
+      {/* AI Personalized Advice */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-3">AI Skin Care Advisor</h2>
+        <Card>
+          <CardContent className="p-4">
+            {isAdviceLoading ? (
+              <div className="flex justify-center items-center py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-skin-teal mr-2" />
+                <span>Getting personalized advice...</span>
+              </div>
+            ) : (
+              <>
+                <div className="text-sm mb-4">
+                  {aiAdvice || "Unable to generate personalized advice at this time."}
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={askAiAboutAction}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Ask for more guidance
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {action.steps && action.steps.length > 0 && (
         <div className="mb-6">

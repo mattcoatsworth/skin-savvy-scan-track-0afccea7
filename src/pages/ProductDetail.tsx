@@ -1,12 +1,13 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity } from "lucide-react";
+import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 
 // Import product data (In a real app, this would come from an API)
 import { foodItems, productItems } from "@/data/products";
@@ -14,6 +15,13 @@ import { foodItems, productItems } from "@/data/products";
 const ProductDetail = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
   const location = useLocation();
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  
+  // Initialize the skin advice hook for product analysis
+  const { getAdvice, isLoading: isAdviceLoading } = useSkinAdvice({
+    adviceType: "product"
+  });
   
   // First try to get product from location state
   const productFromState = location.state?.product;
@@ -21,6 +29,35 @@ const ProductDetail = () => {
   // If not in state, get from our data
   const products = type === "food" ? foodItems : productItems;
   const product = productFromState || products.find(p => p.id === id);
+
+  useEffect(() => {
+    // Get AI analysis when product changes
+    const getAiAnalysis = async () => {
+      if (!product) return;
+      
+      setIsLoadingAnalysis(true);
+      
+      try {
+        const advice = await getAdvice("Analyze this product for skin health", { 
+          productType: type,
+          productName: product.name,
+          productBrand: product.brand,
+          productDescription: product.description,
+          productImpact: product.impact,
+          benefits: product.benefits || [],
+          concerns: product.concerns || []
+        });
+        
+        setAiAnalysis(advice);
+      } catch (error) {
+        console.error("Error getting AI analysis:", error);
+      } finally {
+        setIsLoadingAnalysis(false);
+      }
+    };
+    
+    getAiAnalysis();
+  }, [product, type]);
   
   if (!product) {
     return (
@@ -62,6 +99,12 @@ const ProductDetail = () => {
     if (rating >= 70) return "text-green-600";
     if (rating >= 40) return "text-amber-600";
     return "text-red-600";
+  };
+
+  // Navigate to the chat page with initial product question
+  const askAiAboutProduct = () => {
+    const initialMessage = `Can you tell me more about ${product.name} by ${product.brand || 'this brand'} and how it might affect my skin?`;
+    window.location.href = `/chat?initial=${encodeURIComponent(initialMessage)}`;
   };
 
   return (
@@ -126,9 +169,43 @@ const ProductDetail = () => {
                 <h3 className="text-base font-medium mb-1">Summary</h3>
                 <p className="text-sm">{product.description}</p>
               </div>
+              
+              <Button 
+                onClick={askAiAboutProduct}
+                className="w-full mt-4 flex items-center justify-center gap-2"
+                variant="outline"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Ask AI about this product
+              </Button>
             </CardContent>
           </Card>
 
+          {/* AI Analysis Section */}
+          <Card className="mt-4">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-semibold mb-3">AI Skin Analysis</h2>
+              {isLoadingAnalysis || isAdviceLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '600ms' }}></div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm">
+                  {aiAnalysis ? (
+                    <p>{aiAnalysis}</p>
+                  ) : (
+                    <p>Unable to generate AI analysis at this time.</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recommendations section - This will be dynamic based on AI's analysis */}
           <Card className="mt-4">
             <CardContent className="p-6">
               <h2 className="text-xl font-semibold mb-3">Recommendations</h2>
