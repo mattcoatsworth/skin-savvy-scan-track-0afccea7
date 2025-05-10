@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -7,6 +6,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
+import ForYouPage from "@/components/ForYouPage";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 
 const Index = () => {
@@ -18,6 +18,46 @@ const Index = () => {
     { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
+  // For You Page recommendations
+  const recommendations = [
+    {
+      id: "rec-001",
+      title: "Try vitamin C serum",
+      description: "Based on your skin type and concerns about hyperpigmentation",
+      category: "skincare",
+      priority: "high"
+    },
+    {
+      id: "rec-002",
+      title: "Increase water intake",
+      description: "Your skin appears dehydrated based on recent logs",
+      category: "lifestyle",
+      priority: "medium"
+    },
+    {
+      id: "rec-003",
+      title: "Consider pausing this supplement",
+      description: "Possible correlation with recent breakouts",
+      category: "supplements",
+      priority: "high"
+    },
+    {
+      id: "rec-004",
+      title: "Reduce dairy consumption",
+      description: "May be triggering inflammation based on your food logs",
+      category: "food",
+      priority: "medium"
+    },
+    {
+      id: "rec-005",
+      title: "Try oil-free makeup options",
+      description: "Better suited for your combination skin type",
+      category: "makeup",
+      priority: "low"
+    }
+  ] as const;
+
+  // Sample data
   const recentLogs = [
     { 
       title: "Retinol Cream", 
@@ -158,6 +198,9 @@ const Index = () => {
           status="Balanced" 
           factors={skinFactors} 
         />
+        
+        {/* Insert the ForYouPage component right after DailySkinSnapshot */}
+        <ForYouPage recommendations={recommendations} />
         
         <SkinHistory ratings={skinHistory} />
         
