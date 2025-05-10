@@ -1,3 +1,4 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -206,23 +207,25 @@ const SkinAnalysis = () => {
           {/* For You Recommendations with proper spacing */}
           <div>
             <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
-            <div className="space-y-3">
+            <div>
               {skinRecommendations.map((recommendation, index) => (
-                <Link key={index} to={recommendation.linkTo}>
-                  <Card className="ios-card hover:shadow-md transition-all">
-                    <CardContent className="p-4">
-                      <div className="flex items-start">
-                        {getIconComponent(recommendation.iconName)}
-                        <div>
-                          <h3 className="font-medium">{recommendation.type}: {recommendation.text}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {recommendation.details}
-                          </p>
+                <div key={index} className="mb-3">
+                  <Link to={recommendation.linkTo}>
+                    <Card className="ios-card hover:shadow-md transition-all">
+                      <CardContent className="p-4">
+                        <div className="flex items-start">
+                          {getIconComponent(recommendation.iconName)}
+                          <div>
+                            <h3 className="font-medium">{recommendation.type}: {recommendation.text}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {recommendation.details}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
