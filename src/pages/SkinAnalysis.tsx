@@ -1,10 +1,13 @@
+
 import React from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Frown, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
+import SuggestedActions from "@/components/SuggestedActions";
+import { Separator } from "@/components/ui/separator";
 
 const SkinAnalysis = () => {
   // Sample data
@@ -26,6 +29,25 @@ const SkinAnalysis = () => {
     { date: "Fri", value: 75 },
     { date: "Sat", value: 80 },
     { date: "Sun", value: 85 }
+  ];
+  
+  // Sample recommendations
+  const recommendations = [
+    { 
+      text: "Add hyaluronic acid serum to your routine", 
+      id: "rec1",
+      linkTo: "/recommendations/hyaluronic-acid"
+    },
+    { 
+      text: "Reduce dairy consumption this week", 
+      id: "rec2",
+      linkTo: "/recommendations/reduce-dairy"
+    },
+    { 
+      text: "Try a gentle exfoliator for skin texture", 
+      id: "rec3",
+      linkTo: "/recommendations/exfoliator"
+    }
   ];
 
   // Function to get icon component based on iconName
@@ -74,8 +96,23 @@ const SkinAnalysis = () => {
                   an improvement in overall tone compared to yesterday.
                 </p>
               </div>
+              
+              <Link to="/full-skin-analysis" className="text-sm text-skin-teal flex items-center">
+                View Full Analysis <ArrowRight className="h-4 w-4 ml-1" />
+              </Link>
             </CardContent>
           </Card>
+          
+          {/* Weekly Trend Section - Moved up above Contributing Factors */}
+          <div>
+            <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
+            <Card className="ios-card">
+              <CardContent className="p-4">
+                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
+                <TrendChart data={weeklyTrendData} height={80} />
+              </CardContent>
+            </Card>
+          </div>
           
           <div>
             <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
@@ -96,15 +133,13 @@ const SkinAnalysis = () => {
             </div>
           </div>
           
-          <div>
-            <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
-            <Card className="ios-card">
-              <CardContent className="p-4">
-                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
-                <TrendChart data={weeklyTrendData} height={80} />
-              </CardContent>
-            </Card>
-          </div>
+          {/* For You Recommendations Section - Added below Contributing Factors */}
+          <Separator className="my-6" />
+          
+          <SuggestedActions 
+            actions={recommendations} 
+            className="mt-6"
+          />
         </div>
       </div>
       
