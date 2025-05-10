@@ -151,6 +151,7 @@ const SkinAnalysis = () => {
         </header>
         
         <div className="space-y-6">
+          {/* Today's Skin Card */}
           <Card className="ios-card">
             <CardContent className="p-4">
               <div className="flex items-center mb-4">
@@ -171,6 +172,7 @@ const SkinAnalysis = () => {
             </CardContent>
           </Card>
           
+          {/* Weekly Trend */}
           <div>
             <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
             <Card className="ios-card">
@@ -181,6 +183,7 @@ const SkinAnalysis = () => {
             </Card>
           </div>
           
+          {/* Contributing Factors */}
           <div>
             <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
             <div className="space-y-3">
@@ -200,6 +203,7 @@ const SkinAnalysis = () => {
             </div>
           </div>
           
+          {/* For You Recommendations with proper spacing */}
           <div>
             <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
             <div className="space-y-3">
