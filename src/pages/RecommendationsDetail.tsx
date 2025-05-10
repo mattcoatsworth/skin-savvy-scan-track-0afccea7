@@ -9,14 +9,78 @@ import ViewScoringMethod from "@/components/ViewScoringMethod";
 
 type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
+// Define interfaces for different recommendation types
+interface BaseRecommendation {
+  id: string;
+  title: string;
+  type: RecommendationType;
+  rating: number;
+  impact: "Positive" | "Neutral" | "Negative";
+  description: string;
+  benefits: string[];
+  scienceInfo: string;
+}
+
+interface SkincareRecommendation extends BaseRecommendation {
+  type: "skincare";
+  usage: string[];
+}
+
+interface FoodRecommendation extends BaseRecommendation {
+  type: "food";
+  sources?: string[];
+  recommendations?: string[];
+  alternatives?: string[];
+}
+
+interface SupplementRecommendation extends BaseRecommendation {
+  type: "supplements";
+  dosage: string;
+  precautions: string[];
+}
+
+interface MakeupRecommendation extends BaseRecommendation {
+  type: "makeup";
+  recommendations: string[];
+}
+
+interface LifestyleRecommendation extends BaseRecommendation {
+  type: "lifestyle";
+  techniques?: string[];
+  routine?: string[];
+}
+
+type Recommendation = 
+  | SkincareRecommendation 
+  | FoodRecommendation 
+  | SupplementRecommendation 
+  | MakeupRecommendation 
+  | LifestyleRecommendation;
+
+// Type guards for checking recommendation types
+const isSkincare = (recommendation: Recommendation): recommendation is SkincareRecommendation => 
+  recommendation.type === 'skincare';
+
+const isFood = (recommendation: Recommendation): recommendation is FoodRecommendation => 
+  recommendation.type === 'food';
+
+const isSupplement = (recommendation: Recommendation): recommendation is SupplementRecommendation => 
+  recommendation.type === 'supplements';
+
+const isMakeup = (recommendation: Recommendation): recommendation is MakeupRecommendation => 
+  recommendation.type === 'makeup';
+
+const isLifestyle = (recommendation: Recommendation): recommendation is LifestyleRecommendation => 
+  recommendation.type === 'lifestyle';
+
 // Sample recommendation data - this would come from an API in a real app
-const recommendationsData = {
+const recommendationsData: Record<string, Recommendation> = {
   "vitamin-c-serum": {
     id: "vitamin-c-serum",
     title: "Try Vitamin C Serum",
-    type: "skincare" as RecommendationType,
+    type: "skincare",
     rating: 92,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "A potent antioxidant that brightens skin tone, reduces hyperpigmentation, and protects against environmental damage.",
     benefits: [
       "Brightens overall skin tone and reduces dark spots",
@@ -35,9 +99,9 @@ const recommendationsData = {
   "increase-omega-3": {
     id: "increase-omega-3",
     title: "Increase Omega-3 Intake",
-    type: "food" as RecommendationType,
+    type: "food",
     rating: 89,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Essential fatty acids that help maintain skin's lipid barrier, reduce inflammation, and support overall skin health.",
     benefits: [
       "Strengthens skin's moisture barrier",
@@ -57,9 +121,9 @@ const recommendationsData = {
   "add-zinc": {
     id: "add-zinc",
     title: "Add Zinc Supplements",
-    type: "supplements" as RecommendationType,
+    type: "supplements",
     rating: 85,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "An essential mineral that supports skin healing, reduces inflammation, and helps regulate oil production.",
     benefits: [
       "Accelerates wound healing and tissue repair",
@@ -78,9 +142,9 @@ const recommendationsData = {
   "switch-foundation": {
     id: "switch-foundation",
     title: "Switch Foundation Type",
-    type: "makeup" as RecommendationType,
+    type: "makeup",
     rating: 78,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Changing to a non-comedogenic, skin-friendly foundation can significantly improve skin clarity and reduce breakouts.",
     benefits: [
       "Reduces pore clogging and subsequent breakouts",
@@ -99,9 +163,9 @@ const recommendationsData = {
   "stress-management": {
     id: "stress-management",
     title: "Stress Management Techniques",
-    type: "lifestyle" as RecommendationType,
+    type: "lifestyle",
     rating: 90,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Chronic stress triggers hormonal changes that can negatively impact skin. Effective stress management can improve skin clarity, tone, and overall health.",
     benefits: [
       "Reduces cortisol levels that trigger inflammation and breakouts",
@@ -121,9 +185,9 @@ const recommendationsData = {
   "night-exfoliant": {
     id: "night-exfoliant",
     title: "Gentle Night Exfoliant",
-    type: "skincare" as RecommendationType,
+    type: "skincare",
     rating: 87,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "A gentle exfoliating product used at night can remove dead skin cells, improve texture, and enhance the absorption of other skincare products.",
     benefits: [
       "Removes build-up of dead skin cells",
@@ -142,9 +206,9 @@ const recommendationsData = {
   "antioxidant-foods": {
     id: "antioxidant-foods",
     title: "Add Antioxidant Foods",
-    type: "food" as RecommendationType,
+    type: "food",
     rating: 91,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Foods rich in antioxidants help fight free radical damage and reduce inflammation, supporting overall skin health and appearance.",
     benefits: [
       "Protects against environmental damage",
@@ -164,9 +228,9 @@ const recommendationsData = {
   "evening-primrose": {
     id: "evening-primrose",
     title: "Try Evening Primrose Oil",
-    type: "supplements" as RecommendationType,
+    type: "supplements",
     rating: 83,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "A supplement rich in gamma-linolenic acid (GLA) that helps balance hormones and improve skin hydration and elasticity.",
     benefits: [
       "Helps maintain skin hydration",
@@ -186,9 +250,9 @@ const recommendationsData = {
   "morning-hydration": {
     id: "morning-hydration",
     title: "Morning Hydration Routine",
-    type: "lifestyle" as RecommendationType,
+    type: "lifestyle",
     rating: 84,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Starting your day with proper hydration helps flush toxins, improve circulation, and maintain skin moisture levels throughout the day.",
     benefits: [
       "Supports cellular renewal and detoxification",
@@ -207,9 +271,9 @@ const recommendationsData = {
   "oil-free-concealer": {
     id: "oil-free-concealer",
     title: "Oil-Free Concealer",
-    type: "makeup" as RecommendationType,
+    type: "makeup",
     rating: 80,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Non-comedogenic concealer formulated without oils to cover imperfections without clogging pores or causing breakouts.",
     benefits: [
       "Provides coverage without causing breakouts",
@@ -228,9 +292,9 @@ const recommendationsData = {
   "ceramide-moisturizer": {
     id: "ceramide-moisturizer",
     title: "Add Ceramide Moisturizer",
-    type: "skincare" as RecommendationType,
+    type: "skincare",
     rating: 89,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Moisturizers containing ceramides help restore and maintain the skin's natural barrier, improving hydration, reducing sensitivity, and protecting against environmental stressors.",
     benefits: [
       "Strengthens the skin's protective barrier",
@@ -249,9 +313,9 @@ const recommendationsData = {
   "limit-dairy": {
     id: "limit-dairy",
     title: "Limit Dairy Consumption",
-    type: "food" as RecommendationType,
+    type: "food",
     rating: 82,
-    impact: "Positive" as const,
+    impact: "Positive",
     description: "Reducing dairy intake may help improve skin clarity for those sensitive to dairy hormones or proteins, potentially decreasing inflammation and breakouts.",
     benefits: [
       "May reduce hormonal acne, particularly around the chin and jawline",
@@ -389,7 +453,7 @@ const RecommendationsDetail = () => {
         )}
         
         {/* Specific sections based on recommendation type */}
-        {recommendation.type === "skincare" && recommendation.usage && (
+        {isSkincare(recommendation) && recommendation.usage && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">How to Use</h2>
             <Card>
@@ -404,7 +468,7 @@ const RecommendationsDetail = () => {
           </div>
         )}
         
-        {recommendation.type === "food" && recommendation.recommendations && (
+        {isFood(recommendation) && recommendation.recommendations && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Recommended Sources</h2>
             <Card>
@@ -419,7 +483,7 @@ const RecommendationsDetail = () => {
           </div>
         )}
 
-        {recommendation.type === "food" && recommendation.sources && (
+        {isFood(recommendation) && recommendation.sources && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Food Sources</h2>
             <Card>
@@ -434,7 +498,22 @@ const RecommendationsDetail = () => {
           </div>
         )}
         
-        {recommendation.type === "supplements" && (
+        {isFood(recommendation) && recommendation.alternatives && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Alternatives</h2>
+            <Card>
+              <CardContent className="p-6">
+                <ul className="list-disc pl-5 space-y-2">
+                  {recommendation.alternatives.map((alternative, index) => (
+                    <li key={index}>{alternative}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+        
+        {isSupplement(recommendation) && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Supplement Information</h2>
             <Card>
@@ -461,7 +540,7 @@ const RecommendationsDetail = () => {
           </div>
         )}
         
-        {recommendation.type === "makeup" && recommendation.recommendations && (
+        {isMakeup(recommendation) && recommendation.recommendations && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Product Tips</h2>
             <Card>
@@ -476,7 +555,7 @@ const RecommendationsDetail = () => {
           </div>
         )}
         
-        {recommendation.type === "lifestyle" && (
+        {isLifestyle(recommendation) && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Implementation</h2>
             <Card>
