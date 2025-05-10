@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { CircleCheck, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type DayRating = {
   day: string;
@@ -26,16 +26,34 @@ const getRatingLabel = (rating: number) => {
 };
 
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
+  const navigate = useNavigate();
+  
+  // Function to handle card click with manual scroll to top
+  const handleCardClick = () => {
+    // First scroll to top
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
+    // Then navigate
+    navigate('/weekly-skin-analysis');
+  };
+  
   return (
     <div className={cn("ios-section block", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Weekly Skin Report</h2>
-        <Link to="/weekly-skin-analysis" className="text-skin-teal text-sm font-medium flex items-center">
+        <Link 
+          to="/weekly-skin-analysis" 
+          className="text-skin-teal text-sm font-medium flex items-center"
+          onClick={() => window.scrollTo(0, 0)}
+        >
           View Report <ArrowRight className="h-4 w-4 ml-1" />
         </Link>
       </div>
       
-      <Link to="/weekly-skin-analysis">
+      <div onClick={handleCardClick} className="cursor-pointer">
         <Card className="ios-card p-2 hover:shadow-md transition-all">
           <CardContent className="p-2">
             <div className="flex justify-between items-center">
@@ -56,7 +74,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
             </div>
           </CardContent>
         </Card>
-      </Link>
+      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type ActionType = {
   text: string;
@@ -18,6 +18,8 @@ type SuggestedActionsProps = {
 };
 
 const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className }) => {
+  const navigate = useNavigate();
+  
   // Function to determine where each action should link to
   const getActionLink = (action: ActionType) => {
     // If this is a supplement-related action, link directly to the supplement page
@@ -39,28 +41,40 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
     return "/suggested-actions";
   };
   
-  // Add onClick handler for scrolling to top when clicked
-  const handleClick = () => {
-    window.scrollTo(0, 0);
+  // Enhanced click handler for scrolling to top before navigation
+  const handleActionClick = (path: string, actionId?: string) => {
+    // First scroll to top
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
+    
+    // Then navigate with state if needed
+    navigate(path, { 
+      state: actionId ? { insightId: actionId, from: window.location.pathname } : undefined
+    });
   };
   
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Suggested Actions</h2>
-        <Link to="/suggested-actions" className="text-sm text-skin-teal" onClick={handleClick}>
+        <Link 
+          to="/suggested-actions" 
+          className="text-sm text-skin-teal" 
+          onClick={() => window.scrollTo(0, 0)}
+        >
           View all
         </Link>
       </div>
       
       <div className="space-y-3">
         {actions.map((action, index) => (
-          <Link 
-            to={getActionLink(action)} 
+          <div 
             key={index} 
-            state={{ insightId: action.id, from: window.location.pathname }}
-            className="block"
-            onClick={handleClick}
+            className="block cursor-pointer"
+            onClick={() => handleActionClick(getActionLink(action), action.id)}
           >
             <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all">
               <CardContent className="p-4">
@@ -70,7 +84,7 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

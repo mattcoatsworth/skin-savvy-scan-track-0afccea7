@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type ExploreItemType = {
   title: string;
@@ -19,6 +19,8 @@ type ExploreSectionProps = {
 };
 
 const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => {
+  const navigate = useNavigate();
+  
   // Function to determine where each explore item should link to
   const getExploreLink = (item: ExploreItemType) => {
     // If a custom link is provided, use it
@@ -35,11 +37,28 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
     return "/explore";
   };
   
+  // Enhanced click handler for navigating with scroll-to-top
+  const handleExploreItemClick = (item: ExploreItemType) => {
+    // First scroll to top
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
+    
+    // Then navigate with state
+    navigate(getExploreLink(item), { state: { item } });
+  };
+  
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Explore</h2>
-        <Link to="/explore" className="text-sm text-skin-teal">
+        <Link 
+          to="/explore" 
+          className="text-sm text-skin-teal"
+          onClick={() => window.scrollTo(0, 0)}
+        >
           View all
         </Link>
       </div>
@@ -48,11 +67,10 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
         <ScrollArea className="w-full pb-4">
           <div className="flex space-x-4 px-1">
             {items.map((item, index) => (
-              <Link 
-                to={getExploreLink(item)} 
+              <div 
                 key={index} 
-                state={{ item }}
-                className="flex-shrink-0 min-w-[180px]"
+                className="flex-shrink-0 min-w-[180px] cursor-pointer"
+                onClick={() => handleExploreItemClick(item)}
               >
                 <Card className="ios-card overflow-hidden hover:shadow-md transition-all">
                   <div className="h-24 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
@@ -67,7 +85,7 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
                     <p className="text-xs text-muted-foreground">{item.subtitle}</p>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
