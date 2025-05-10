@@ -19,8 +19,6 @@ type RecentLogsCarouselProps = {
   className?: string;
 };
 
-// Remove getStatusIndicator function that used color dots
-
 // Determine progress color based on rating
 const getProgressColor = (rating: number) => {
   if (rating >= 70) return "#4ADE80"; // Green for good ratings

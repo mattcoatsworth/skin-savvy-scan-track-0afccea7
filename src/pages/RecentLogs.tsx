@@ -16,17 +16,6 @@ type LogType = {
   category: "product" | "daily" | "other";
 };
 
-const getStatusIndicator = (status: LogType['status']) => {
-  switch (status) {
-    case "positive":
-      return "🟢";
-    case "negative":
-      return "🔴";
-    case "neutral":
-      return "🟡";
-  }
-};
-
 // Determine progress color based on rating
 const getProgressColor = (rating: number) => {
   if (rating >= 70) return "#4ADE80"; // Green for good ratings

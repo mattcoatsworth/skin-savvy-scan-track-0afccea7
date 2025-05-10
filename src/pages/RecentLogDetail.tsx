@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -201,18 +200,7 @@ const RecentLogDetail = () => {
     }
   }, [location, logId, navigate]);
 
-  // Helper functions for status indicators and ratings
-  const getStatusIndicator = (status: LogType['status']) => {
-    switch (status) {
-      case "positive":
-        return "🟢";
-      case "negative":
-        return "🔴";
-      case "neutral":
-        return "🟡";
-    }
-  };
-
+  // Helper functions for status text and ratings
   const getStatusText = (status: LogType['status']) => {
     switch (status) {
       case "positive":
@@ -259,8 +247,7 @@ const RecentLogDetail = () => {
           <h2 className="text-xl font-semibold mb-4">Overview</h2>
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center mb-4">
-                <span className="text-2xl mr-3">{getStatusIndicator(log.status)}</span>
+              <div className="mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">{getStatusText(log.status)}</h2>
                   <p className="text-muted-foreground">{log.description}</p>
@@ -444,14 +431,9 @@ const RecentLogDetail = () => {
                       {log.relatedFactors.map((factor, index) => (
                         <div key={index} className="border-b border-gray-100 last:border-0 pb-3 last:pb-0">
                           <div className="flex items-center">
-                            <span className="mr-2">
-                              {factor.impact === "positive" && "🟢"}
-                              {factor.impact === "negative" && "🔴"}
-                              {factor.impact === "neutral" && "🟡"}
-                            </span>
                             <h4 className="font-medium">{factor.name}</h4>
                           </div>
-                          <p className="text-sm text-gray-600 ml-6">{factor.description}</p>
+                          <p className="text-sm text-gray-600">{factor.description}</p>
                         </div>
                       ))}
                     </div>
