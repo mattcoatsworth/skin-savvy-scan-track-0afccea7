@@ -2,12 +2,20 @@
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle, Wine, Beer, Brush } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const SkinAnalysis = () => {
+  useScrollToTop();
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiAdvice, setAiAdvice] = useState("");
+  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  
   // Sample data
   const skinFactors = [
     { type: "Food" as const, status: "Hydrating", iconName: "salad", details: "Increased water-rich foods and avoided dairy this week" },
@@ -160,6 +168,27 @@ const SkinAnalysis = () => {
 
   // Get categories in the desired order
   const categoryOrder = ["food", "drink", "supplements", "makeup", "lifestyle", "skincare"];
+
+  // Function to generate AI advice using useSkinAdvice hook
+  const generateAiAdvice = async () => {
+    setAiLoading(true);
+    try {
+      const advice = await getAdvice(
+        "Provide personalized analysis of my skin condition based on recent logs and factors", 
+        { skinFactors, weeklyTrendData }
+      );
+      setAiAdvice(advice);
+    } catch (error) {
+      console.error("Error getting AI skin advice:", error);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  
+  // Generate AI advice on first render
+  React.useEffect(() => {
+    generateAiAdvice();
+  }, []);
   
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -169,61 +198,70 @@ const SkinAnalysis = () => {
           <h1 className="text-2xl font-bold">Full Skin Analysis</h1>
         </header>
         
-        <div className="space-y-6">
-          {/* Today's Skin Card */}
-          <Card className="ios-card">
-            <CardContent className="p-4">
-              <div className="flex items-center mb-4">
-                <Smile className="text-4xl mr-3" />
-                <div>
-                  <h2 className="font-medium text-lg">Today's Skin</h2>
-                  <p className="text-xl font-semibold">Balanced</p>
-                </div>
-              </div>
-              
-              <div className="mb-3">
-                <p className="text-sm font-medium mb-2">Detailed Analysis:</p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Your skin appears balanced today with good hydration levels. Inflammation is minimal and there's
-                  an improvement in overall tone compared to yesterday.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="current" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="current">Current</TabsTrigger>
+            <TabsTrigger value="for-you">For You</TabsTrigger>
+            <TabsTrigger value="ai">AI Analysis</TabsTrigger>
+          </TabsList>
           
-          {/* Weekly Trend */}
-          <div>
-            <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
+          {/* Current Tab - Original content */}
+          <TabsContent value="current" className="space-y-6">
+            {/* Today's Skin Card */}
             <Card className="ios-card">
               <CardContent className="p-4">
-                <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
-                <TrendChart data={weeklyTrendData} height={80} />
+                <div className="flex items-center mb-4">
+                  <Smile className="text-4xl mr-3" />
+                  <div>
+                    <h2 className="font-medium text-lg">Today's Skin</h2>
+                    <p className="text-xl font-semibold">Balanced</p>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <p className="text-sm font-medium mb-2">Detailed Analysis:</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Your skin appears balanced today with good hydration levels. Inflammation is minimal and there's
+                    an improvement in overall tone compared to yesterday.
+                  </p>
+                </div>
               </CardContent>
             </Card>
-          </div>
-          
-          {/* Contributing Factors */}
-          <div>
-            <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
-            <div className="space-y-3">
-              {skinFactors.map((factor, index) => (
-                <Card key={index} className="ios-card">
-                  <CardContent className="p-4">
-                    <div className="flex items-start">
-                      {getIconComponent(factor.iconName)}
-                      <div>
-                        <h3 className="font-medium">{factor.type}: {factor.status}</h3>
-                        <p className="text-sm text-muted-foreground">{factor.details}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            
+            {/* Weekly Trend */}
+            <div>
+              <h2 className="text-xl font-semibold mb-3">Weekly Trend</h2>
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <p className="text-muted-foreground mb-3">Your skin has been gradually improving this week</p>
+                  <TrendChart data={weeklyTrendData} height={80} />
+                </CardContent>
+              </Card>
             </div>
-          </div>
+            
+            {/* Contributing Factors */}
+            <div>
+              <h2 className="text-xl font-semibold mb-3">Contributing Factors</h2>
+              <div className="space-y-3">
+                {skinFactors.map((factor, index) => (
+                  <Card key={index} className="ios-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-start">
+                        {getIconComponent(factor.iconName)}
+                        <div>
+                          <h3 className="font-medium">{factor.type}: {factor.status}</h3>
+                          <p className="text-sm text-muted-foreground">{factor.details}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
           
-          {/* For You Recommendations with category headings */}
-          <div>
+          {/* For You Tab - Personalized Recommendations */}
+          <TabsContent value="for-you" className="space-y-6">
             <h2 className="text-xl font-semibold mb-3">For You Recommendations</h2>
             
             <div className="space-y-5">
@@ -260,8 +298,51 @@ const SkinAnalysis = () => {
                 );
               })}
             </div>
-          </div>
-        </div>
+          </TabsContent>
+          
+          {/* AI Tab - AI-Generated Analysis */}
+          <TabsContent value="ai" className="space-y-6">
+            <Card className="ios-card">
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold mb-4">AI Skin Analysis</h2>
+                
+                {aiLoading || isLoading ? (
+                  <div className="flex flex-col items-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
+                    <p className="text-muted-foreground">Generating your personalized skin analysis...</p>
+                  </div>
+                ) : (
+                  <div className="prose prose-sm max-w-none">
+                    {aiAdvice ? (
+                      <div dangerouslySetInnerHTML={{ __html: aiAdvice.replace(/\n/g, '<br/>') }} />
+                    ) : (
+                      <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                    )}
+                    
+                    <button 
+                      onClick={generateAiAdvice} 
+                      className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
+                    >
+                      Regenerate Analysis
+                    </button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            <Card className="ios-card">
+              <CardContent className="p-6">
+                <h3 className="font-medium mb-2">Key Points</h3>
+                <ul className="list-disc pl-5 space-y-2 text-sm">
+                  <li>This analysis is based on your recent skin logs and trends</li>
+                  <li>Consider tracking additional factors to improve accuracy</li>
+                  <li>Recommendations are personalized based on your data</li>
+                  <li>Update your logs regularly for better insights</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
       
       <AppNavigation />
