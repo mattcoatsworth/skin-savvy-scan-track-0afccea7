@@ -41,21 +41,42 @@ import SplashScreen from "./pages/SplashScreen";
 import FemaleOnboardingBirthdate from "./pages/onboarding/FemaleOnboardingBirthdate";
 import FemaleOnboardingPreviousApps from "./pages/onboarding/FemaleOnboardingPreviousApps";
 import ProductAITestPage from "./pages/ProductAITestPage";
+import SkinAuth from "./components/SkinAuth";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
 // Layout component that includes the AppNavigation but not the ChatInput
-const AppLayout = () => (
-  <>
-    <div className="bg-slate-50 min-h-screen">
-      <div className="max-w-md mx-auto px-4 py-6 pb-0">
-        <Outlet />
+const AppLayout = () => {
+  const [session, setSession] = useState(null);
+  
+  useEffect(() => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+  
+  return (
+    <>
+      <div className="bg-slate-50 min-h-screen">
+        <div className="max-w-md mx-auto px-4 py-6 pb-0">
+          <Outlet />
+        </div>
+        <ChatInput />
+        <AppNavigation />
       </div>
-      <ChatInput />
-      <AppNavigation />
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 // Layout for onboarding pages that don't need the navigation or chat input
 const OnboardingLayout = () => (
@@ -76,6 +97,9 @@ const App = () => (
           <Routes>
             {/* Redirect root to splash screen */}
             <Route path="/" element={<SplashScreen />} />
+            
+            {/* Auth route */}
+            <Route path="/auth" element={<SkinAuth />} />
             
             {/* Onboarding flow routes */}
             <Route element={<OnboardingLayout />}>

@@ -31,6 +31,32 @@ export const useSkinAdvice = ({
     try {
       setIsLoading(true);
 
+      // Check for auth session first
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Add user context if available
+      if (session?.user) {
+        // Fetch recent skin logs
+        const { data: recentLogs } = await supabase
+          .from('skin_logs')
+          .select('*, daily_factors(*)')
+          .eq('user_id', session.user.id)
+          .order('log_date', { ascending: false })
+          .limit(7);
+          
+        // Fetch recent product usage
+        const { data: recentProducts } = await supabase
+          .from('product_usage')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .order('usage_date', { ascending: false })
+          .limit(5);
+          
+        // Add to context
+        context.userSkinLogs = recentLogs || [];
+        context.userProductUsage = recentProducts || [];
+      }
+
       // Add supplement-specific system guidance if this is supplement content
       let systemPrompt = "";
       

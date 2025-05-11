@@ -1,7 +1,9 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 export interface Product {
   id: string;
@@ -22,6 +24,50 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, type }: ProductCardProps) => {
   const location = useLocation();
+  const [personalizedRating, setPersonalizedRating] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    const fetchPersonalizedRating = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Check if the user is authenticated
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session?.user) {
+          // User not authenticated, use default rating
+          return;
+        }
+        
+        // Fetch user's product usage data
+        const { data: usageData, error } = await supabase
+          .from('product_usage')
+          .select('rating')
+          .eq('product_id', product.id)
+          .eq('product_type', type)
+          .order('usage_date', { ascending: false })
+          .limit(1);
+        
+        if (error) {
+          console.error('Error fetching product usage:', error);
+          return;
+        }
+        
+        // If user has rated this product before, use their personalized rating
+        if (usageData && usageData.length > 0 && usageData[0].rating) {
+          // Convert the 1-10 scale to our 0-100 scale
+          setPersonalizedRating(usageData[0].rating * 10);
+        }
+      } catch (err) {
+        console.error('Error in personalized rating:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPersonalizedRating();
+  }, [product.id, type]);
   
   // Determine label based on rating
   const getRatingLabel = (rating: number) => {
@@ -46,10 +92,13 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
     return "#FFDEE2";
   };
 
+  // Get rating to display (use personalized if available)
+  const displayRating = personalizedRating !== null ? personalizedRating : product.rating;
+
   return (
     <Link 
       to={`/product/${type}/${product.id}`} 
-      state={{ product, type, from: location.pathname }} 
+      state={{ product, type, from: location.pathname, personalizedRating }} 
       className="block"
     >
       <Card className="mb-4 hover:shadow-md transition-shadow ios-card">
@@ -78,7 +127,7 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke={getBackgroundColor(product.rating)}
+                  stroke={getBackgroundColor(displayRating)}
                   strokeWidth="4"
                   strokeLinecap="round"
                 />
@@ -89,20 +138,20 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke={getProgressColor(product.rating)}
+                  stroke={getProgressColor(displayRating)}
                   strokeWidth="4"
-                  strokeDasharray={`${product.rating}, 100`}
+                  strokeDasharray={`${displayRating}, 100`}
                   strokeLinecap="round"
                 />
               </svg>
               
               {/* Rating number in the center */}
               <div className="text-xs font-semibold">
-                {product.rating}
+                {isLoading ? "..." : displayRating}
               </div>
             </div>
             <span className="text-xs mt-1 text-muted-foreground">
-              {getRatingLabel(product.rating)}
+              {personalizedRating !== null ? "For You" : getRatingLabel(displayRating)}
             </span>
           </div>
         </CardContent>

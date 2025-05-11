@@ -9,7 +9,212 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      daily_factors: {
+        Row: {
+          created_at: string | null
+          hormone_cycle_day: number | null
+          humidity_percent: number | null
+          id: string
+          skin_log_id: string
+          sleep_hours: number | null
+          stress_level: number | null
+          temperature_celsius: number | null
+          updated_at: string | null
+          water_intake_ml: number | null
+          weather_condition: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          hormone_cycle_day?: number | null
+          humidity_percent?: number | null
+          id?: string
+          skin_log_id: string
+          sleep_hours?: number | null
+          stress_level?: number | null
+          temperature_celsius?: number | null
+          updated_at?: string | null
+          water_intake_ml?: number | null
+          weather_condition?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          hormone_cycle_day?: number | null
+          humidity_percent?: number | null
+          id?: string
+          skin_log_id?: string
+          sleep_hours?: number | null
+          stress_level?: number | null
+          temperature_celsius?: number | null
+          updated_at?: string | null
+          water_intake_ml?: number | null
+          weather_condition?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_factors_skin_log_id_fkey"
+            columns: ["skin_log_id"]
+            isOneToOne: false
+            referencedRelation: "skin_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      food_intake: {
+        Row: {
+          created_at: string | null
+          food_id: string | null
+          food_name: string
+          id: string
+          intake_date: string
+          meal_type: string | null
+          notes: string | null
+          quantity: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          food_id?: string | null
+          food_name: string
+          id?: string
+          intake_date?: string
+          meal_type?: string | null
+          notes?: string | null
+          quantity?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          food_id?: string | null
+          food_name?: string
+          id?: string
+          intake_date?: string
+          meal_type?: string | null
+          notes?: string | null
+          quantity?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      product_usage: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          product_id: string
+          product_type: string
+          rating: number | null
+          updated_at: string | null
+          usage_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          product_id: string
+          product_type: string
+          rating?: number | null
+          updated_at?: string | null
+          usage_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          product_id?: string
+          product_type?: string
+          rating?: number | null
+          updated_at?: string | null
+          usage_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      skin_logs: {
+        Row: {
+          acne_level: number | null
+          created_at: string | null
+          hydration_level: number | null
+          id: string
+          log_date: string
+          notes: string | null
+          oiliness_level: number | null
+          overall_condition: string
+          redness_level: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          acne_level?: number | null
+          created_at?: string | null
+          hydration_level?: number | null
+          id?: string
+          log_date?: string
+          notes?: string | null
+          oiliness_level?: number | null
+          overall_condition: string
+          redness_level?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          acne_level?: number | null
+          created_at?: string | null
+          hydration_level?: number | null
+          id?: string
+          log_date?: string
+          notes?: string | null
+          oiliness_level?: number | null
+          overall_condition?: string
+          redness_level?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_insights: {
+        Row: {
+          confidence_level: number | null
+          created_at: string | null
+          id: string
+          insight_text: string
+          insight_type: string
+          is_active: boolean | null
+          related_food_id: string | null
+          related_product_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          confidence_level?: number | null
+          created_at?: string | null
+          id?: string
+          insight_text: string
+          insight_type: string
+          is_active?: boolean | null
+          related_food_id?: string | null
+          related_product_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          confidence_level?: number | null
+          created_at?: string | null
+          id?: string
+          insight_text?: string
+          insight_type?: string
+          is_active?: boolean | null
+          related_food_id?: string | null
+          related_product_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
