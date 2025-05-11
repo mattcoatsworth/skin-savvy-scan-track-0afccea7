@@ -54,8 +54,8 @@ const BackButton: React.FC = () => {
         }
         
         // Handle the new category analysis pages
-        if (pathParts[0] === 'category-analysis') {
-          backPath = '/weekly-skin-analysis';
+        if (pathParts[0] === 'category-analysis' && pathParts.length > 1) {
+          backPath = '/category-analysis';
         }
         
         // Handle correlations and recommendations pages

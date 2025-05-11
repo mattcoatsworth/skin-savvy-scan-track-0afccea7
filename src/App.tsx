@@ -32,6 +32,7 @@ import ScannedProducts from "./pages/ScannedProducts";
 import TrendingFoods from "./pages/TrendingFoods";
 import TrendingProducts from "./pages/TrendingProducts";
 import WeeklySkinAnalysis from "./pages/WeeklySkinAnalysis";
+import CategoryAnalysis from "./pages/CategoryAnalysis";
 import CategoryAnalysisDetail from "./pages/CategoryAnalysisDetail";
 import CorrelationsDetail from "./pages/CorrelationsDetail";
 import RecommendationsDetail from "./pages/RecommendationsDetail";
@@ -141,6 +142,7 @@ const App = () => (
               <Route path="/trending-foods" element={<TrendingFoods />} />
               <Route path="/trending-products" element={<TrendingProducts />} />
               <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
+              <Route path="/category-analysis" element={<CategoryAnalysis />} />
               <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
               <Route path="/correlations-detail" element={<CorrelationsDetail />} />
               <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
