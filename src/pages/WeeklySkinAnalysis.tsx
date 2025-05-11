@@ -582,8 +582,12 @@ const WeeklySkinAnalysis = () => {
               
               <div className="space-y-4">
                 {skinRecommendations.map((recommendation, index) => (
-                  <Link key={index} to={recommendation.linkTo}>
-                    <Card className="ios-card hover:shadow-md transition-all">
+                  <Link 
+                    key={index} 
+                    to={recommendation.linkTo}
+                    className="block transition-transform hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
                       <CardContent className="p-4">
                         <div>
                           <div className="flex justify-between items-center mb-1">
@@ -602,15 +606,20 @@ const WeeklySkinAnalysis = () => {
                 ))}
               </div>
               
-              <Card className="ios-card mt-8">
-                <CardContent className="p-4">
-                  <h3 className="font-medium text-lg mb-2">Weekly Insight</h3>
-                  <p className="text-sm">
-                    Your skin shows consistent patterns with food intake and stress levels. 
-                    Focus on hydration and stress management this week for best results.
-                  </p>
-                </CardContent>
-              </Card>
+              <Link 
+                to="/weekly-insight"
+                className="block transition-transform hover:scale-[1.01] active:scale-[0.99] mt-8"
+              >
+                <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
+                  <CardContent className="p-4">
+                    <h3 className="font-medium text-lg mb-2">Weekly Insight</h3>
+                    <p className="text-sm">
+                      Your skin shows consistent patterns with food intake and stress levels. 
+                      Focus on hydration and stress management this week for best results.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </TabsContent>
           
