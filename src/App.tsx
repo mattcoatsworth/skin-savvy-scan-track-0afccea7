@@ -40,6 +40,7 @@ import Onboarding from "./pages/Onboarding";
 import SplashScreen from "./pages/SplashScreen";
 import FemaleOnboardingBirthdate from "./pages/onboarding/FemaleOnboardingBirthdate";
 import FemaleOnboardingPreviousApps from "./pages/onboarding/FemaleOnboardingPreviousApps";
+import ProductAITestPage from "./pages/ProductAITestPage";
 
 const queryClient = new QueryClient();
 
@@ -107,6 +108,7 @@ const App = () => (
               <Route path="/explore/:itemId" element={<ExploreItemDetail />} />
               <Route path="/log-skin-condition" element={<LogSkinCondition />} />
               <Route path="/product/:type/:id" element={<ProductDetail />} />
+              <Route path="/product/:type/:id/testai" element={<ProductAITestPage />} />
               <Route path="/day-log/:id" element={<DayLogDetail />} />
               <Route path="/search" element={<Search />} />
               <Route path="/scoring-method" element={<ScoringMethodPage />} />
