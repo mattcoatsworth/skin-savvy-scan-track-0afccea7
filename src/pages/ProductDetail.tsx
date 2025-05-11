@@ -11,6 +11,7 @@ import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import SuggestedActions from "@/components/SuggestedActions";
 
 // Import product data (In a real app, this would come from an API)
 import { foodItems, productItems } from "@/data/products";
@@ -24,6 +25,14 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  const [isLoadingPersonalized, setIsLoadingPersonalized] = useState(true);
+  const [personalizedData, setPersonalizedData] = useState<{
+    impact: string;
+    rating: number;
+    matchScore: number;
+    relevantLogs: any[];
+    personalizedRecommendations: string;
+  } | null>(null);
   
   // Initialize the skin advice hook for product analysis
   const { getAdvice, isLoading: isAdviceLoading } = useSkinAdvice({
@@ -40,6 +49,11 @@ const ProductDetail = () => {
   // Function to navigate to AI test page
   const switchToAI = () => {
     navigate(`/product/${type}/${id}/testai`);
+  };
+
+  // Function to navigate to the personalized tab
+  const switchToPersonalized = () => {
+    navigate(`/product/${type}/${id}/personalized`);
   };
 
   useEffect(() => {
@@ -70,6 +84,44 @@ const ProductDetail = () => {
     
     getAiAnalysis();
   }, [product, type]);
+
+  // Load personalized data based on user logs (simulated)
+  useEffect(() => {
+    const loadPersonalizedData = async () => {
+      if (!product) return;
+      
+      setIsLoadingPersonalized(true);
+      
+      try {
+        // In a real implementation, this would fetch and analyze user data
+        // For now, we'll simulate this with a timeout and mock data
+        setTimeout(() => {
+          // This is where we'd analyze user logs for patterns related to this product
+          // For now, using mock data that would be dynamically generated in a real implementation
+          setPersonalizedData({
+            impact: product.impact === "Positive" ? "Positive" : "Neutral", // Personalized impact assessment
+            rating: Math.min(product.rating + 15, 100), // Personalized rating based on user's skin type
+            matchScore: 85, // How well this product matches the user's skin needs
+            relevantLogs: [
+              { date: "2025-05-01", observation: "Skin was clearer after using this product" },
+              { date: "2025-05-05", observation: "Less redness noted in morning" }
+            ],
+            personalizedRecommendations: 
+              `Based on your skin log patterns, this ${product.name} appears to be particularly beneficial for your skin type. 
+               Your skin logs show improved hydration levels on days following use of this product. 
+               Consider using it consistently in your ${product.impact === "Positive" ? "morning" : "evening"} routine for best results.`
+          });
+          setIsLoadingPersonalized(false);
+        }, 1500);
+        
+      } catch (error) {
+        console.error("Error loading personalized data:", error);
+        setIsLoadingPersonalized(false);
+      }
+    };
+    
+    loadPersonalizedData();
+  }, [product]);
   
   if (!product) {
     return (
@@ -119,6 +171,17 @@ const ProductDetail = () => {
     window.location.href = `/chat?initial=${encodeURIComponent(initialMessage)}`;
   };
 
+  // Loading indicator component
+  const LoadingIndicator = () => (
+    <div className="flex items-center justify-center py-4">
+      <div className="flex space-x-2">
+        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '600ms' }}></div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
@@ -128,10 +191,13 @@ const ProductDetail = () => {
         </header>
 
         <Tabs defaultValue="current" className="mb-6">
-          <TabsList className="w-full grid grid-cols-2">
+          <TabsList className="w-full grid grid-cols-3">
             <TabsTrigger value="current">Current</TabsTrigger>
+            <TabsTrigger value="foryou">For You</TabsTrigger>
             <TabsTrigger value="ai" onClick={switchToAI}>AI</TabsTrigger>
           </TabsList>
+          
+          {/* Current Tab Content - Kept the same */}
           <TabsContent value="current" className="mt-4">
             {/* Overview Section */}
             <div className="mb-8">
@@ -204,13 +270,7 @@ const ProductDetail = () => {
                 <CardContent className="p-6">
                   <h2 className="text-xl font-semibold mb-3">AI Skin Analysis</h2>
                   {isLoadingAnalysis || isAdviceLoading ? (
-                    <div className="flex items-center justify-center py-4">
-                      <div className="flex space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '600ms' }}></div>
-                      </div>
-                    </div>
+                    <LoadingIndicator />
                   ) : (
                     <div className="text-sm">
                       {aiAnalysis ? (
@@ -223,7 +283,7 @@ const ProductDetail = () => {
                 </CardContent>
               </Card>
 
-              {/* Recommendations section - This will be dynamic based on AI's analysis */}
+              {/* Recommendations section */}
               <Card className="mt-4">
                 <CardContent className="p-6">
                   <h2 className="text-xl font-semibold mb-3">Recommendations</h2>
@@ -308,6 +368,166 @@ const ProductDetail = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* For You Tab - New personalized content */}
+          <TabsContent value="foryou" className="mt-4">
+            {isLoadingPersonalized ? (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Personalizing Your Insights</h2>
+                  <p className="text-sm mb-4">
+                    We're analyzing your skin logs and product usage patterns to generate personalized insights...
+                  </p>
+                  <LoadingIndicator />
+                </CardContent>
+              </Card>
+            ) : personalizedData ? (
+              <>
+                {/* Personalized Overview Section */}
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Personalized Overview</h2>
+                  <Card className="bg-gradient-to-br from-slate-50 to-blue-50">
+                    <CardContent className="p-6">
+                      <div className="flex items-center mb-4">
+                        <div>
+                          <h2 className="text-xl font-semibold">
+                            <Badge className="mr-2">{personalizedData.matchScore}% Match</Badge> 
+                            {personalizedData.impact} For Your Skin
+                          </h2>
+                          <p className="text-muted-foreground">Based on your skin logs and patterns</p>
+                        </div>
+                      </div>
+
+                      {personalizedData.rating !== undefined && (
+                        <div className="mb-6">
+                          <div className="flex items-center mb-1">
+                            <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
+                            <h3 className="text-base font-medium">Personalized Effect Rating</h3>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="flex-1 mr-4">
+                              <Progress 
+                                value={personalizedData.rating} 
+                                className="h-3 bg-gray-100" 
+                                indicatorClassName={getProgressColor(personalizedData.rating)} 
+                              />
+                            </div>
+                            <div className="text-base font-semibold">{personalizedData.rating}/100</div>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {getRatingLabel(personalizedData.rating)} for your skin type
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="mb-4">
+                        <h3 className="text-base font-medium mb-1">Personalized Analysis</h3>
+                        <p className="text-sm">{personalizedData.personalizedRecommendations}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Personalized Skin Log Observations */}
+                  <Card className="mt-4">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-3">Your Skin Log Observations</h3>
+                      <div className="space-y-4">
+                        {personalizedData.relevantLogs.map((log, index) => (
+                          <div key={index} className="flex items-start">
+                            <div className="bg-slate-100 rounded-full h-7 w-7 flex items-center justify-center mr-3 flex-shrink-0">
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="font-medium">{log.date}</p>
+                              <p className="text-sm text-gray-600">{log.observation}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Personalized Actions */}
+                  <div className="mt-6">
+                    <SuggestedActions 
+                      actions={[
+                        { 
+                          text: "Log your experience with this product", 
+                          linkTo: "/log-skin-condition"
+                        },
+                        { 
+                          text: "View products that work well with this", 
+                          linkTo: "/insights"
+                        },
+                        { 
+                          text: "Set a reminder to use this product", 
+                          linkTo: "/profile"
+                        },
+                      ]} 
+                    />
+                  </div>
+                </div>
+                
+                {/* Personalized Details */}
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Patterns & Correlations</h2>
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-3">How This Product Affects Your Skin</h3>
+                      
+                      <div className="space-y-4">
+                        <div className="border-b border-gray-100 pb-3">
+                          <div className="flex items-center">
+                            <span className="mr-2">🟢</span>
+                            <h4 className="font-medium">Hydration</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">
+                            Your logs show increased hydration when using this product consistently
+                          </p>
+                        </div>
+                        
+                        <div className="border-b border-gray-100 pb-3">
+                          <div className="flex items-center">
+                            <span className="mr-2">🟡</span>
+                            <h4 className="font-medium">Redness</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">
+                            Slight decrease in redness noted after 3+ days of usage
+                          </p>
+                        </div>
+                        
+                        <div className="pb-3">
+                          <div className="flex items-center">
+                            <span className="mr-2">⚪</span>
+                            <h4 className="font-medium">Breakouts</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">
+                            No significant impact on breakouts based on your logs
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Not Enough Data</h2>
+                  <p>
+                    We don't have enough skin logs to generate personalized insights yet. 
+                    Continue logging your daily skin condition to see personalized recommendations.
+                  </p>
+                  <Button 
+                    onClick={() => navigate('/log-skin-condition')}
+                    className="mt-4"
+                  >
+                    Log Skin Condition
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
         
