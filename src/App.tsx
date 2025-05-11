@@ -45,6 +45,14 @@ import ProductAITestPage from "./pages/ProductAITestPage";
 import SkinAuth from "./components/SkinAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import WeeklyInsight from "./pages/WeeklyInsight";
+
+// Import recommendation detail pages
+import LimitDairyPage from "./pages/RecommendationsDetail/LimitDairy";
+import VitaminCSerumPage from "./pages/RecommendationsDetail/VitaminCSerum";
+import MeditationPage from "./pages/RecommendationsDetail/Meditation";
+import ZincSupplementPage from "./pages/RecommendationsDetail/Zinc";
+import GentleCleanserPage from "./pages/RecommendationsDetail/GentleCleanser";
 
 const queryClient = new QueryClient();
 
@@ -142,10 +150,19 @@ const App = () => (
               <Route path="/trending-foods" element={<TrendingFoods />} />
               <Route path="/trending-products" element={<TrendingProducts />} />
               <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
+              <Route path="/weekly-insight" element={<WeeklyInsight />} />
               <Route path="/category-analysis" element={<CategoryAnalysis />} />
               <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
               <Route path="/correlations-detail" element={<CorrelationsDetail />} />
               <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
+              
+              {/* Specific recommendation detail pages */}
+              <Route path="/recommendations-detail/limit-dairy" element={<LimitDairyPage />} />
+              <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerumPage />} />
+              <Route path="/recommendations-detail/meditation" element={<MeditationPage />} />
+              <Route path="/recommendations-detail/zinc" element={<ZincSupplementPage />} />
+              <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanserPage />} />
+              
               <Route path="/supplement/:id" element={<SupplementDetail />} />
             </Route>
             
