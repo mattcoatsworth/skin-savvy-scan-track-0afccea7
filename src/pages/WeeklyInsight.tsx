@@ -275,8 +275,8 @@ const WeeklyInsight = () => {
                     <p className="text-sm text-muted-foreground">
                       Maintain 8+ cups of water daily, with reminders set for mid-day when you typically drop off
                     </p>
-                  </div>
-                </CardContent>
+                  </CardContent>
+                </Card>
               </Link>
               
               <Link to="/challenge/meditation" className="block transition-transform hover:scale-[1.01] active:scale-[0.99]">
@@ -291,8 +291,8 @@ const WeeklyInsight = () => {
                     <p className="text-sm text-muted-foreground">
                       5-minute guided meditation on Wednesday and Thursday evenings to break the mid-week stress pattern
                     </p>
-                  </div>
-                </CardContent>
+                  </CardContent>
+                </Card>
               </Link>
             </div>
             
