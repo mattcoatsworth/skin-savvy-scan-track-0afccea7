@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Import product data (In a real app, this would come from an API)
 import { foodItems, productItems } from "@/data/products";
@@ -19,6 +20,7 @@ const ProductAITestPage = () => {
   useScrollToTop();
   
   const { type, id } = useParams<{ type: string; id: string }>();
+  const navigate = useNavigate();
   
   // States for AI-generated content
   const [overviewContent, setOverviewContent] = useState<string | null>(null);
@@ -41,6 +43,11 @@ const ProductAITestPage = () => {
   // Find the product from our data
   const products = type === "food" ? foodItems : productItems;
   const product = products.find(p => p.id === id);
+
+  // Function to navigate to normal product page
+  const switchToCurrent = () => {
+    navigate(`/product/${type}/${id}`);
+  };
 
   useEffect(() => {
     // Get AI content for each section when product changes
@@ -169,141 +176,149 @@ const ProductAITestPage = () => {
         <header className="mb-6 flex items-center">
           <BackButton />
           <div>
-            <h1 className="text-2xl font-bold">{product.name} (AI Test)</h1>
+            <h1 className="text-2xl font-bold">{product.name}</h1>
             <Badge variant="outline" className="mt-1">AI Generated Content</Badge>
           </div>
         </header>
         
-        {/* Overview Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Overview</h2>
-          <Card>
-            <CardContent className="p-6">
-              {isLoading.overview ? (
-                <LoadingIndicator />
-              ) : (
-                <div>
-                  <div className="flex items-center mb-4">
+        <Tabs defaultValue="ai" className="mb-6">
+          <TabsList className="w-full grid grid-cols-2">
+            <TabsTrigger value="current" onClick={switchToCurrent}>Current</TabsTrigger>
+            <TabsTrigger value="ai">AI</TabsTrigger>
+          </TabsList>
+          <TabsContent value="ai" className="mt-4">
+            {/* Overview Section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Overview</h2>
+              <Card>
+                <CardContent className="p-6">
+                  {isLoading.overview ? (
+                    <LoadingIndicator />
+                  ) : (
                     <div>
-                      <h2 className="text-xl font-semibold">{product.impact} Effect</h2>
-                      <p className="text-muted-foreground">{product.description}</p>
-                    </div>
-                  </div>
-
-                  <div className="mb-4 flex items-center">
-                    <BadgeInfo className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <div>
-                      <h3 className="text-base font-medium">Category</h3>
-                      <p>{type === "food" ? "Food" : "Skincare Product"}</p>
-                    </div>
-                  </div>
-                  
-                  {product.brand && (
-                    <div className="mb-4 flex items-center">
-                      <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
-                      <div>
-                        <h3 className="text-base font-medium">Brand</h3>
-                        <p>{product.brand}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {product.rating !== undefined && (
-                    <div className="mb-6">
-                      <div className="flex items-center mb-1">
-                        <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
-                        <h3 className="text-base font-medium">Effect Rating</h3>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="flex-1 mr-4">
-                          <Progress 
-                            value={product.rating} 
-                            className="h-3 bg-gray-100" 
-                            indicatorClassName={getProgressColor(product.rating)} 
-                          />
+                      <div className="flex items-center mb-4">
+                        <div>
+                          <h2 className="text-xl font-semibold">{product.impact} Effect</h2>
+                          <p className="text-muted-foreground">{product.description}</p>
                         </div>
-                        <div className="text-base font-semibold">{product.rating}/100</div>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(product.rating)}</p>
+
+                      <div className="mb-4 flex items-center">
+                        <BadgeInfo className="h-5 w-5 mr-2 text-muted-foreground" />
+                        <div>
+                          <h3 className="text-base font-medium">Category</h3>
+                          <p>{type === "food" ? "Food" : "Skincare Product"}</p>
+                        </div>
+                      </div>
+                      
+                      {product.brand && (
+                        <div className="mb-4 flex items-center">
+                          <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
+                          <div>
+                            <h3 className="text-base font-medium">Brand</h3>
+                            <p>{product.brand}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {product.rating !== undefined && (
+                        <div className="mb-6">
+                          <div className="flex items-center mb-1">
+                            <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
+                            <h3 className="text-base font-medium">Effect Rating</h3>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="flex-1 mr-4">
+                              <Progress 
+                                value={product.rating} 
+                                className="h-3 bg-gray-100" 
+                                indicatorClassName={getProgressColor(product.rating)} 
+                              />
+                            </div>
+                            <div className="text-base font-semibold">{product.rating}/100</div>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(product.rating)}</p>
+                        </div>
+                      )}
+
+                      <div>
+                        <h3 className="text-base font-medium mb-1">AI Generated Summary</h3>
+                        <div className="text-sm border-l-2 border-slate-200 pl-4 py-1">
+                          {overviewContent && <p>{overviewContent}</p>}
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        onClick={askAiAboutProduct}
+                        className="w-full mt-4 flex items-center justify-center gap-2"
+                        variant="outline"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        Ask AI about this product
+                      </Button>
                     </div>
                   )}
-
-                  <div>
-                    <h3 className="text-base font-medium mb-1">AI Generated Summary</h3>
-                    <div className="text-sm border-l-2 border-slate-200 pl-4 py-1">
-                      {overviewContent && <p>{overviewContent}</p>}
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Details Section - AI Generated */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Details</h2>
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold mb-3">AI Generated Details</h3>
+                  {isLoading.details ? (
+                    <LoadingIndicator />
+                  ) : (
+                    <div className="text-sm">
+                      {detailsContent && (
+                        <div dangerouslySetInnerHTML={{ __html: detailsContent.replace(/\n/g, '<br/>') }} />
+                      )}
                     </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={askAiAboutProduct}
-                    className="w-full mt-4 flex items-center justify-center gap-2"
-                    variant="outline"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    Ask AI about this product
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Details Section - AI Generated */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Details</h2>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-3">AI Generated Details</h3>
-              {isLoading.details ? (
-                <LoadingIndicator />
-              ) : (
-                <div className="text-sm">
-                  {detailsContent && (
-                    <div dangerouslySetInnerHTML={{ __html: detailsContent.replace(/\n/g, '<br/>') }} />
                   )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Science Section - AI Generated */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Science</h2>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-3">AI Generated Science Information</h3>
-              {isLoading.science ? (
-                <LoadingIndicator />
-              ) : (
-                <div className="text-sm">
-                  {scienceContent && (
-                    <div dangerouslySetInnerHTML={{ __html: scienceContent.replace(/\n/g, '<br/>') }} />
+            {/* Science Section - AI Generated */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Science</h2>
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold mb-3">AI Generated Science Information</h3>
+                  {isLoading.science ? (
+                    <LoadingIndicator />
+                  ) : (
+                    <div className="text-sm">
+                      {scienceContent && (
+                        <div dangerouslySetInnerHTML={{ __html: scienceContent.replace(/\n/g, '<br/>') }} />
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Disclaimer Section - AI Generated */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Disclaimer</h2>
-          <Card className="ios-card bg-slate-50 border-l-4 border-l-blue-500">
-            <CardContent className="p-6">
-              {isLoading.disclaimer ? (
-                <LoadingIndicator />
-              ) : (
-                <div className="text-sm">
-                  {disclaimerContent && (
-                    <div dangerouslySetInnerHTML={{ __html: disclaimerContent.replace(/\n/g, '<br/>') }} />
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Disclaimer Section - AI Generated */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Disclaimer</h2>
+              <Card className="ios-card bg-slate-50 border-l-4 border-l-blue-500">
+                <CardContent className="p-6">
+                  {isLoading.disclaimer ? (
+                    <LoadingIndicator />
+                  ) : (
+                    <div className="text-sm">
+                      {disclaimerContent && (
+                        <div dangerouslySetInnerHTML={{ __html: disclaimerContent.replace(/\n/g, '<br/>') }} />
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
         
         {/* View Scoring Method (always at bottom) */}
         <ViewScoringMethod />

@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity } from "lucide-react";
@@ -6,6 +7,9 @@ import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import useScrollToTop from "@/hooks/useScrollToTop";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { Badge } from "@/components/ui/badge";
 
 type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
@@ -342,6 +346,90 @@ const RecommendationsDetail = () => {
   
   // Find the recommendation data
   const recommendation = id ? recommendationsData[id as keyof typeof recommendationsData] : null;
+
+  // States for AI-generated content
+  const [aiOverview, setAiOverview] = useState<string | null>(null);
+  const [aiBenefits, setAiBenefits] = useState<string | null>(null);
+  const [aiImplementation, setAiImplementation] = useState<string | null>(null);
+  const [aiScience, setAiScience] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState({
+    overview: false,
+    benefits: false,
+    implementation: false,
+    science: false
+  });
+  
+  // Initialize the skin advice hook for different content types
+  const { getAdvice } = useSkinAdvice({ adviceType: "recommendation" });
+
+  useEffect(() => {
+    // Get AI content for each section when recommendation changes
+    const fetchAIContent = async () => {
+      if (!recommendation) return;
+      
+      try {
+        // Generate Overview content
+        setIsLoading(prev => ({ ...prev, overview: true }));
+        const overviewPrompt = `Write a detailed overview about ${recommendation.title} as a recommendation for skin health. 
+                                Include information about its impact (${recommendation.impact}), what it does, and why it's recommended. 
+                                Write this as if it's for a skincare app recommendation detail page. Keep it under 150 words.`;
+        
+        const overview = await getAdvice(overviewPrompt, { 
+          recommendationType: recommendation.type,
+          recommendationTitle: recommendation.title,
+          recommendationImpact: recommendation.impact
+        });
+        setAiOverview(overview);
+        setIsLoading(prev => ({ ...prev, overview: false }));
+        
+        // Generate Benefits content
+        setIsLoading(prev => ({ ...prev, benefits: true }));
+        const benefitsPrompt = `Create a detailed list of benefits for "${recommendation.title}" as a ${recommendation.type} recommendation.
+                              Format your response with clear bullet points.
+                              Include at least 5 potential benefits based on scientific research.
+                              Make it specific to skin health.`;
+        
+        const benefits = await getAdvice(benefitsPrompt, {
+          recommendationType: recommendation.type,
+          recommendationTitle: recommendation.title
+        });
+        setAiBenefits(benefits);
+        setIsLoading(prev => ({ ...prev, benefits: false }));
+        
+        // Generate Implementation content
+        setIsLoading(prev => ({ ...prev, implementation: true }));
+        const implementationPrompt = `Provide detailed practical implementation advice for "${recommendation.title}" as a ${recommendation.type} recommendation.
+                                    Include specific steps, frequency, and practical tips for incorporating this into a skincare routine.
+                                    Format as bullet points or numbered steps where appropriate.`;
+        
+        const implementation = await getAdvice(implementationPrompt, {
+          recommendationType: recommendation.type,
+          recommendationTitle: recommendation.title
+        });
+        setAiImplementation(implementation);
+        setIsLoading(prev => ({ ...prev, implementation: false }));
+        
+        // Generate Science content
+        setIsLoading(prev => ({ ...prev, science: true }));
+        const sciencePrompt = `Provide scientific information about "${recommendation.title}" as it relates to skin health. 
+                              Include information about key mechanisms of action, and reference relevant scientific findings.
+                              Keep it factual and educational but accessible to non-experts.
+                              End with appropriate disclaimers about individual variation and consulting healthcare providers.`;
+        
+        const science = await getAdvice(sciencePrompt, {
+          recommendationType: recommendation.type,
+          recommendationTitle: recommendation.title
+        });
+        setAiScience(science);
+        setIsLoading(prev => ({ ...prev, science: false }));
+        
+      } catch (error) {
+        console.error("Error generating AI content:", error);
+      }
+    };
+    
+    fetchAIContent();
+  }, [recommendation]);
   
   if (!recommendation) {
     return (
@@ -367,6 +455,17 @@ const RecommendationsDetail = () => {
     );
   }
 
+  // Loading indicator component
+  const LoadingIndicator = () => (
+    <div className="flex items-center justify-center py-4">
+      <div className="flex space-x-2">
+        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '600ms' }}></div>
+      </div>
+    </div>
+  );
+
   // Determine rating label and color
   const getRatingLabel = (rating: number) => {
     if (rating >= 80) return "Great";
@@ -390,213 +489,325 @@ const RecommendationsDetail = () => {
           <h1 className="text-2xl font-bold">{recommendation.title}</h1>
         </header>
         
-        {/* Overview Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Overview</h2>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center mb-4">
-                <div>
-                  <h2 className="text-xl font-semibold">{recommendation.impact} Effect</h2>
-                  <p className="text-muted-foreground">{recommendation.description}</p>
-                </div>
-              </div>
-
-              <div className="mb-4 flex items-center">
-                <BadgeInfo className="h-5 w-5 mr-2 text-muted-foreground" />
-                <div>
-                  <h3 className="text-base font-medium">Category</h3>
-                  <p>{recommendation.type.charAt(0).toUpperCase() + recommendation.type.slice(1)}</p>
-                </div>
-              </div>
-
-              {recommendation.rating !== undefined && (
-                <div className="mb-6">
-                  <div className="flex items-center mb-1">
-                    <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <h3 className="text-base font-medium">Recommendation Rating</h3>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-1 mr-4">
-                      <Progress 
-                        value={recommendation.rating} 
-                        className="h-3 bg-gray-100" 
-                        indicatorClassName={getProgressColor(recommendation.rating)} 
-                      />
+        <Tabs defaultValue="current" className="mb-6">
+          <TabsList className="w-full grid grid-cols-2">
+            <TabsTrigger value="current">Current</TabsTrigger>
+            <TabsTrigger value="ai">AI</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="current" className="mt-4">
+            {/* Overview Section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Overview</h2>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div>
+                      <h2 className="text-xl font-semibold">{recommendation.impact} Effect</h2>
+                      <p className="text-muted-foreground">{recommendation.description}</p>
                     </div>
-                    <div className="text-base font-semibold">{recommendation.rating}/100</div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(recommendation.rating)}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Benefits Section */}
-        {recommendation.benefits && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Benefits</h2>
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-3">
-                  {recommendation.benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                      <p>{benefit}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {/* Specific sections based on recommendation type */}
-        {isSkincare(recommendation) && recommendation.usage && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">How to Use</h2>
-            <Card>
-              <CardContent className="p-6">
-                <ol className="list-decimal pl-5 space-y-2">
-                  {recommendation.usage.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {isFood(recommendation) && recommendation.recommendations && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Recommended Sources</h2>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="list-disc pl-5 space-y-2">
-                  {recommendation.recommendations.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
-        {isFood(recommendation) && recommendation.sources && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Food Sources</h2>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="list-disc pl-5 space-y-2">
-                  {recommendation.sources.map((source, index) => (
-                    <li key={index}>{source}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {isFood(recommendation) && recommendation.alternatives && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Alternatives</h2>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="list-disc pl-5 space-y-2">
-                  {recommendation.alternatives.map((alternative, index) => (
-                    <li key={index}>{alternative}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {isSupplement(recommendation) && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Supplement Information</h2>
-            <Card>
-              <CardContent className="p-6">
-                {recommendation.dosage && (
-                  <div className="mb-4">
-                    <h3 className="text-lg font-semibold mb-2">Recommended Dosage</h3>
-                    <p>{recommendation.dosage}</p>
+                  <div className="mb-4 flex items-center">
+                    <BadgeInfo className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <div>
+                      <h3 className="text-base font-medium">Category</h3>
+                      <p>{recommendation.type.charAt(0).toUpperCase() + recommendation.type.slice(1)}</p>
+                    </div>
                   </div>
-                )}
-                
-                {recommendation.precautions && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Precautions</h3>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {recommendation.precautions.map((precaution, index) => (
-                        <li key={index}>{precaution}</li>
+
+                  {recommendation.rating !== undefined && (
+                    <div className="mb-6">
+                      <div className="flex items-center mb-1">
+                        <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
+                        <h3 className="text-base font-medium">Recommendation Rating</h3>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex-1 mr-4">
+                          <Progress 
+                            value={recommendation.rating} 
+                            className="h-3 bg-gray-100" 
+                            indicatorClassName={getProgressColor(recommendation.rating)} 
+                          />
+                        </div>
+                        <div className="text-base font-semibold">{recommendation.rating}/100</div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(recommendation.rating)}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Benefits Section */}
+            {recommendation.benefits && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Benefits</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="space-y-3">
+                      {recommendation.benefits.map((benefit, index) => (
+                        <div key={index} className="flex items-start">
+                          <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                          <p>{benefit}</p>
+                        </div>
                       ))}
-                    </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {isMakeup(recommendation) && recommendation.recommendations && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Product Tips</h2>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="list-disc pl-5 space-y-2">
-                  {recommendation.recommendations.map((tip, index) => (
-                    <li key={index}>{tip}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {isLifestyle(recommendation) && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Implementation</h2>
-            <Card>
-              <CardContent className="p-6">
-                {recommendation.techniques && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Recommended Techniques</h3>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {recommendation.techniques.map((technique, index) => (
-                        <li key={index}>{technique}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                
-                {recommendation.routine && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Daily Routine</h3>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {/* Specific sections based on recommendation type */}
+            {isSkincare(recommendation) && recommendation.usage && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">How to Use</h2>
+                <Card>
+                  <CardContent className="p-6">
                     <ol className="list-decimal pl-5 space-y-2">
-                      {recommendation.routine.map((step, index) => (
+                      {recommendation.usage.map((step, index) => (
                         <li key={index}>{step}</li>
                       ))}
                     </ol>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        
-        {/* Science Section - common to all recommendations */}
-        {recommendation.scienceInfo && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">The Science</h2>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-sm text-gray-600">{recommendation.scienceInfo}</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {isFood(recommendation) && recommendation.recommendations && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Recommended Sources</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    <ul className="list-disc pl-5 space-y-2">
+                      {recommendation.recommendations.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {isFood(recommendation) && recommendation.sources && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Food Sources</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    <ul className="list-disc pl-5 space-y-2">
+                      {recommendation.sources.map((source, index) => (
+                        <li key={index}>{source}</li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {isFood(recommendation) && recommendation.alternatives && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Alternatives</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    <ul className="list-disc pl-5 space-y-2">
+                      {recommendation.alternatives.map((alternative, index) => (
+                        <li key={index}>{alternative}</li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {isSupplement(recommendation) && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Supplement Information</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    {recommendation.dosage && (
+                      <div className="mb-4">
+                        <h3 className="text-lg font-semibold mb-2">Recommended Dosage</h3>
+                        <p>{recommendation.dosage}</p>
+                      </div>
+                    )}
+                    
+                    {recommendation.precautions && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Precautions</h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {recommendation.precautions.map((precaution, index) => (
+                            <li key={index}>{precaution}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {isMakeup(recommendation) && recommendation.recommendations && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Product Tips</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    <ul className="list-disc pl-5 space-y-2">
+                      {recommendation.recommendations.map((tip, index) => (
+                        <li key={index}>{tip}</li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {isLifestyle(recommendation) && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Implementation</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    {recommendation.techniques && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Recommended Techniques</h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {recommendation.techniques.map((technique, index) => (
+                            <li key={index}>{technique}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {recommendation.routine && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Daily Routine</h3>
+                        <ol className="list-decimal pl-5 space-y-2">
+                          {recommendation.routine.map((step, index) => (
+                            <li key={index}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {/* Science Section - common to all recommendations */}
+            {recommendation.scienceInfo && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">The Science</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    <p className="text-sm text-gray-600">{recommendation.scienceInfo}</p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="ai" className="mt-4">
+            <div>
+              <Badge variant="outline" className="mb-4">AI Generated Content</Badge>
+              
+              {/* AI Overview Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Overview</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    {isLoading.overview ? (
+                      <LoadingIndicator />
+                    ) : (
+                      <div>
+                        <div className="mb-4">
+                          <h3 className="text-lg font-semibold">{recommendation.impact} Effect</h3>
+                          <div className="text-sm border-l-2 border-slate-200 pl-4 py-1 mt-2">
+                            {aiOverview && <p>{aiOverview}</p>}
+                          </div>
+                        </div>
+
+                        <div className="mb-4">
+                          <h3 className="text-base font-medium">Category</h3>
+                          <p>{recommendation.type.charAt(0).toUpperCase() + recommendation.type.slice(1)}</p>
+                        </div>
+
+                        {recommendation.rating !== undefined && (
+                          <div>
+                            <h3 className="text-base font-medium mb-1">Recommendation Rating</h3>
+                            <div className="flex items-center">
+                              <div className="flex-1 mr-4">
+                                <Progress 
+                                  value={recommendation.rating} 
+                                  className="h-3 bg-gray-100" 
+                                  indicatorClassName={getProgressColor(recommendation.rating)} 
+                                />
+                              </div>
+                              <div className="text-base font-semibold">{recommendation.rating}/100</div>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(recommendation.rating)}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* AI Benefits Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Benefits</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    {isLoading.benefits ? (
+                      <LoadingIndicator />
+                    ) : (
+                      <div className="text-sm">
+                        {aiBenefits && (
+                          <div dangerouslySetInnerHTML={{ __html: aiBenefits.replace(/\n/g, '<br/>') }} />
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* AI Implementation Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Implementation</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    {isLoading.implementation ? (
+                      <LoadingIndicator />
+                    ) : (
+                      <div className="text-sm">
+                        {aiImplementation && (
+                          <div dangerouslySetInnerHTML={{ __html: aiImplementation.replace(/\n/g, '<br/>') }} />
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* AI Science Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">The Science</h2>
+                <Card>
+                  <CardContent className="p-6">
+                    {isLoading.science ? (
+                      <LoadingIndicator />
+                    ) : (
+                      <div className="text-sm">
+                        {aiScience && (
+                          <div dangerouslySetInnerHTML={{ __html: aiScience.replace(/\n/g, '<br/>') }} />
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
         
         {/* View Scoring Method (always at bottom) */}
         <ViewScoringMethod />
