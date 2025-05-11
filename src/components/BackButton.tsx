@@ -8,6 +8,12 @@ const BackButton: React.FC = () => {
   const navigate = useNavigate();
   
   const handleGoBack = () => {
+    // Special case for History page - always go to home
+    if (location.pathname === '/history') {
+      navigate('/home');
+      return;
+    }
+    
     // Check if we have state from the product card navigation
     if (location.state?.from) {
       return navigate(location.state.from);
