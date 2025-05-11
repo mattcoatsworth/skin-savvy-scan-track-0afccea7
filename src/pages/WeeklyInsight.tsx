@@ -26,7 +26,7 @@ const WeeklyInsight = () => {
   // AI analysis state
   const [aiLoading, setAiLoading] = React.useState(false);
   const [aiAdvice, setAiAdvice] = React.useState("");
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "insight" });
+  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "general" });
   
   // Generate AI advice on first render
   React.useEffect(() => {
