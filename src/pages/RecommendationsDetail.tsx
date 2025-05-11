@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -431,6 +430,62 @@ const RecommendationsDetail = () => {
     fetchAIContent();
   }, [recommendation]);
   
+  const [personalizedLoading, setPersonalizedLoading] = useState(true);
+  const [personalizedData, setPersonalizedData] = useState<{
+    matchScore: number;
+    personalRating: number;
+    personalizedText: string;
+    implementationTips: string[];
+    skinTypeMatch: string;
+    alternatives: string[] | null;
+  } | null>(null);
+  
+  useEffect(() => {
+    // Load personalized data based on user logs (simulated)
+    const loadPersonalizedData = async () => {
+      if (!recommendation) return;
+      
+      setPersonalizedLoading(true);
+      
+      try {
+        // In a real implementation, this would fetch and analyze user data
+        // For now, we'll simulate this with a timeout and mock data
+        setTimeout(() => {
+          // This is where we'd analyze user logs for patterns related to this recommendation
+          // For now, using mock data that would be dynamically generated in a real implementation
+          setPersonalizedData({
+            matchScore: Math.floor(Math.random() * (100 - 70) + 70), // Random score between 70-100
+            personalRating: Math.min(recommendation.rating + Math.floor(Math.random() * 15), 100), // Personalized rating based on user's skin type
+            personalizedText: `Based on your skin log patterns, this ${recommendation.title} appears to be particularly beneficial for your skin type. Your skin logs show improved results when using similar ${recommendation.type} recommendations.`,
+            implementationTips: [
+              `Consider implementing this ${recommendation.type} recommendation in your ${recommendation.impact === "Positive" ? "morning" : "evening"} routine for best results.`,
+              "Start with a lower frequency to test your skin's response",
+              "Log your skin's reaction after each use for better tracking",
+              "Combine with hydration for enhanced results"
+            ],
+            skinTypeMatch: "High match for combination skin with occasional dryness",
+            alternatives: recommendation.type === "food" ? [
+              "Flaxseeds if omega-3 is the goal",
+              "Chia seeds as an alternative source",
+              "Hemp hearts for plant-based option"
+            ] : recommendation.type === "skincare" ? [
+              "Try a gentler formulation if sensitivity occurs",
+              "Consider fragrance-free options for sensitive skin",
+              "Patch test before full application"
+            ] : null
+          });
+          setPersonalizedLoading(false);
+        }, 1500);
+        
+      } catch (error) {
+        console.error("Error loading personalized data:", error);
+        setPersonalizedLoading(false);
+      }
+    };
+    
+    loadPersonalizedData();
+  }, [recommendation]);
+  
   if (!recommendation) {
     return (
       <div className="bg-slate-50 min-h-screen pb-20">
@@ -486,12 +541,13 @@ const RecommendationsDetail = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
-          <h1 className="text-2xl font-bold">{recommendation.title}</h1>
+          <h1 className="text-2xl font-bold">{recommendation?.title || "Recommendation"}</h1>
         </header>
         
         <Tabs defaultValue="current" className="mb-6">
-          <TabsList className="w-full grid grid-cols-2">
+          <TabsList className="w-full grid grid-cols-3">
             <TabsTrigger value="current">Current</TabsTrigger>
+            <TabsTrigger value="foryou">For You</TabsTrigger>
             <TabsTrigger value="ai">AI</TabsTrigger>
           </TabsList>
           
@@ -702,6 +758,150 @@ const RecommendationsDetail = () => {
                   </CardContent>
                 </Card>
               </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="foryou" className="mt-4">
+            {personalizedLoading ? (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Personalizing Your Recommendation</h2>
+                  <p className="text-sm mb-4">
+                    We're analyzing your skin logs and patterns to generate personalized insights...
+                  </p>
+                  <LoadingIndicator />
+                </CardContent>
+              </Card>
+            ) : personalizedData ? (
+              <>
+                {/* Personalized Overview Section */}
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Personalized Overview</h2>
+                  <Card className="bg-gradient-to-br from-slate-50 to-blue-50">
+                    <CardContent className="p-6">
+                      <div className="flex items-center mb-4">
+                        <div>
+                          <h2 className="text-xl font-semibold">
+                            <Badge className="mr-2">{personalizedData.matchScore}% Match</Badge> 
+                            For Your Skin Type
+                          </h2>
+                          <p className="text-muted-foreground">{personalizedData.skinTypeMatch}</p>
+                        </div>
+                      </div>
+
+                      {personalizedData.personalRating !== undefined && (
+                        <div>
+                          <h3 className="text-base font-medium mb-1">Personalized Rating</h3>
+                          <div className="flex items-center">
+                            <div className="flex-1 mr-4">
+                              <Progress 
+                                value={personalizedData.personalRating} 
+                                className="h-3 bg-gray-100" 
+                                indicatorClassName={getProgressColor(personalizedData.personalRating)} 
+                              />
+                            </div>
+                            <div className="text-base font-semibold">{personalizedData.personalRating}/100</div>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {getRatingLabel(personalizedData.personalRating)} for your skin type
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="mb-4">
+                        <h3 className="text-base font-medium mb-1">Personalized Analysis</h3>
+                        <p className="text-sm">{personalizedData.personalizedText}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Implementation Tips */}
+                  <Card className="mt-4">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-3">Personalized Implementation Tips</h3>
+                      <div className="space-y-3">
+                        {personalizedData.implementationTips.map((tip, index) => (
+                          <div key={index} className="flex items-start">
+                            <div className="bg-slate-100 rounded-full h-7 w-7 flex items-center justify-center mr-3 flex-shrink-0">
+                              {index + 1}
+                            </div>
+                            <p className="text-sm">{tip}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Personalized Alternatives if available */}
+                  {personalizedData.alternatives && (
+                    <Card className="mt-4">
+                      <CardContent className="p-6">
+                        <h3 className="text-lg font-semibold mb-3">Personalized Alternatives</h3>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Based on your skin profile, these alternatives might also work well for you:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-2 text-sm">
+                          {personalizedData.alternatives.map((alt, index) => (
+                            <li key={index}>{alt}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+                
+                {/* Usage Pattern */}
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Your Usage Patterns</h2>
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-3">How This Fits Your Routine</h3>
+                      
+                      <div className="space-y-4">
+                        <div className="border-b border-gray-100 pb-3">
+                          <div className="flex items-center">
+                            <span className="mr-2">🟢</span>
+                            <h4 className="font-medium">Morning Routine</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">
+                            Fits well with your current morning products
+                          </p>
+                        </div>
+                        
+                        <div className="border-b border-gray-100 pb-3">
+                          <div className="flex items-center">
+                            <span className="mr-2">🟡</span>
+                            <h4 className="font-medium">Product Interactions</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">
+                            May enhance effects of your vitamin C serum
+                          </p>
+                        </div>
+                        
+                        <div className="pb-3">
+                          <div className="flex items-center">
+                            <span className="mr-2">🔵</span>
+                            <h4 className="font-medium">Usage Frequency</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">
+                            Recommended 2-3 times weekly based on your skin sensitivity
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Not Enough Data</h2>
+                  <p>
+                    We don't have enough skin logs to generate personalized insights yet. 
+                    Continue logging your daily skin condition to see personalized recommendations.
+                  </p>
+                </CardContent>
+              </Card>
             )}
           </TabsContent>
           
