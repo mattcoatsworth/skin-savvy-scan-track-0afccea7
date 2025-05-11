@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import { Calendar, Brain, AlertCircle, Lightbulb, ArrowRight } from "lucide-react";
@@ -24,9 +23,9 @@ const WeeklyInsight = () => {
   ];
   
   // AI analysis state 
-  const [aiLoading, setAiLoading] = React.useState(false);
-  const [aiRawAdvice, setAiRawAdvice] = React.useState("");
-  const [aiStructuredData, setAiStructuredData] = React.useState<any>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiRawAdvice, setAiRawAdvice] = useState("");
+  const [aiStructuredData, setAiStructuredData] = useState<any>(null);
   
   const { getAdvice: getRawAdvice, isLoading: isRawLoading } = useSkinAdvice({ 
     adviceType: "weekly-insight" 
@@ -423,12 +422,15 @@ const WeeklyInsight = () => {
                             </div>
                             <div>
                               <h3 className="font-medium">Key Observation</h3>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {aiStructuredData.patternAnalysis ? 
-                                  aiStructuredData.patternAnalysis.split('\n')[0] : 
-                                  "Your skin condition has shown notable patterns this week that may correlate with your habits and environment."
-                                }
-                              </p>
+                              {aiStructuredData.patternAnalysis ? (
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {aiStructuredData.patternAnalysis.split('\n')[0]}
+                                </p>
+                              ) : (
+                                <p className="text-sm text-gray-600 mt-1">
+                                  Your skin condition has shown notable patterns this week that may correlate with your habits and environment.
+                                </p>
+                              )}
                             </div>
                           </div>
                           
@@ -439,13 +441,16 @@ const WeeklyInsight = () => {
                             </div>
                             <div>
                               <h3 className="font-medium">Concern Area</h3>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {aiStructuredData.detectedPatterns && 
-                                 aiStructuredData.detectedPatterns.find((p: any) => p.correlation < 0) ?
-                                  aiStructuredData.detectedPatterns.find((p: any) => p.correlation < 0).description :
-                                  "Mid-week decline correlates with potential stressors or environmental factors that may require attention."
-                                }
-                              </p>
+                              {aiStructuredData.detectedPatterns && 
+                               aiStructuredData.detectedPatterns.find((p: any) => p.correlation < 0) ? (
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {aiStructuredData.detectedPatterns.find((p: any) => p.correlation < 0).description}
+                                </p>
+                              ) : (
+                                <p className="text-sm text-gray-600 mt-1">
+                                  Mid-week decline correlates with potential stressors or environmental factors that may require attention.
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -527,7 +532,7 @@ const WeeklyInsight = () => {
                       
                       {aiStructuredData.challenges ? 
                         aiStructuredData.challenges.map((challenge: any, index: number) => (
-                          <Link key={index} to={`/challenge/${challenge.title.toLowerCase().replace(/\s+/g, '-')}`} className="block transition-transform hover:scale-[1.01] active:scale-[0.99] mb-4">
+                          <Link key={index} to={`/challenge/${challenge.title.toLowerCase().replace(/\s+/g, '-')}`} className="block transition-transform hover:scale-[1.01] active:scale-[0.99] mb-4 last:mb-0">
                             <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
                               <CardContent className="p-4">
                                 <div className="flex justify-between items-center mb-1">
@@ -579,14 +584,14 @@ const WeeklyInsight = () => {
                       </Card>
                     </div>
                     
-                    {/* AI Analysis - Raw text version */}
+                    {/* AI Analysis - Raw text version with improved formatting */}
                     <Card className="ios-card">
                       <CardContent className="p-6">
                         <h2 className="text-xl font-semibold mb-4">Detailed AI Analysis</h2>
                         
                         <div className="prose prose-sm max-w-none">
                           {aiRawAdvice ? (
-                            <div dangerouslySetInnerHTML={{ __html: aiRawAdvice.replace(/\n/g, '<br/>') }} />
+                            <div dangerouslySetInnerHTML={{ __html: aiRawAdvice }} />
                           ) : (
                             <p>Unable to generate detailed analysis at this time. Please try again later.</p>
                           )}
@@ -608,7 +613,7 @@ const WeeklyInsight = () => {
                       
                       <div className="prose prose-sm max-w-none">
                         {aiRawAdvice ? (
-                          <div dangerouslySetInnerHTML={{ __html: aiRawAdvice.replace(/\n/g, '<br/>') }} />
+                          <div dangerouslySetInnerHTML={{ __html: aiRawAdvice }} />
                         ) : (
                           <p>Unable to generate AI analysis at this time. Please try again later.</p>
                         )}

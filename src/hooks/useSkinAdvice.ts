@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,6 +24,41 @@ export const useSkinAdvice = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // Format raw text with bullet points and sections
+  const formatTextContent = (text: string): string => {
+    if (!text) return "";
+    
+    // Add proper HTML for sections with headings
+    let formattedText = text
+      .replace(/\n\s*([A-Z][A-Za-z\s]+):\s*\n/g, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
+      .replace(/^([A-Z][A-Za-z\s]+):\s*\n/gm, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n');
+    
+    // Format lists
+    formattedText = formattedText
+      .replace(/(?:\n|^)(?:\d+\.\s+(.*?)(?:\n|$))+/gs, function(match) {
+        const items = match.trim().split(/\n\d+\.\s+/);
+        const listItems = items.filter(item => item).map(item => `<li>${item}</li>`).join('');
+        return `\n<ol class="list-decimal pl-5 space-y-1 my-2">${listItems}</ol>\n`;
+      })
+      .replace(/(?:\n|^)(?:\*\s+(.*?)(?:\n|$))+/gs, function(match) {
+        const items = match.trim().split(/\n\*\s+/);
+        const listItems = items.filter(item => item).map(item => `<li>${item}</li>`).join('');
+        return `\n<ul class="list-disc pl-5 space-y-1 my-2">${listItems}</ul>\n`;
+      })
+      .replace(/(?:\n|^)(?:-\s+(.*?)(?:\n|$))+/gs, function(match) {
+        const items = match.trim().split(/\n-\s+/);
+        const listItems = items.filter(item => item).map(item => `<li>${item}</li>`).join('');
+        return `\n<ul class="list-disc pl-5 space-y-1 my-2">${listItems}</ul>\n`;
+      });
+    
+    // Format paragraphs
+    formattedText = formattedText
+      .replace(/\n\n/g, '</p><p class="my-2">')
+      .replace(/\n(?!\s*<)/g, '<br/>');
+    
+    return `<p class="my-2">${formattedText}</p>`;
+  };
 
   // Get AI advice based on provided context
   const getAdvice = async (
@@ -86,6 +122,28 @@ export const useSkinAdvice = ({
           
           Be specific, actionable, and evidence-based. Format the response as valid parseable JSON without additional text.
         `;
+      } else if (adviceType === "weekly-insight") {
+        // For regular weekly insight, guide the AI to format content nicely
+        systemPrompt = `
+          You are a dermatological AI assistant specialized in analyzing skin health trends.
+          
+          For this weekly insight analysis:
+          - Format your analysis with clear section headings (like "Key Patterns", "Notable Improvements", etc.)
+          - Use bullet points for lists of observations
+          - Use numbered lists for recommendations
+          - Keep paragraphs concise (3-4 sentences max)
+          - Include specific data points when available
+          - Be specific and actionable in your recommendations
+          
+          Include these sections in your analysis:
+          1. Summary (2-3 sentences overview)
+          2. Key Patterns (bullet points of observed patterns)
+          3. Correlations (what factors seem connected)
+          4. Recommendations (numbered steps)
+          5. Focus Areas (what to prioritize next week)
+          
+          Be evidence-based and specific to the user's situation.
+        `;
       }
 
       // Create messages for the AI
@@ -143,7 +201,8 @@ export const useSkinAdvice = ({
         }
       }
 
-      return data.content;
+      // Format the text for better readability before returning
+      return formatTextContent(data.content);
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
       toast.error("Failed to get skin advice. Please try again.");

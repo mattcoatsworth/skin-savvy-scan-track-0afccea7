@@ -53,6 +53,11 @@ serve(async (req) => {
         break;
       case "weekly-insight":
         systemMessage += "You analyze weekly skin trends and provide personalized insights on patterns, correlations, and recommendations for improvement. " + corePrinciple;
+        
+        // Add formatting guidance for weekly insights
+        if (!structuredOutput) {
+          systemMessage += " Format your response with clear headers for each section, use bullet points for lists, and keep paragraphs concise (3-4 sentences max). Use markdown formatting.";
+        }
         break;
       default:
         systemMessage += corePrinciple;
