@@ -23,10 +23,19 @@ const WeeklyInsight = () => {
     { date: "Sun", value: 82 }
   ];
   
-  // AI analysis state
+  // AI analysis state 
   const [aiLoading, setAiLoading] = React.useState(false);
-  const [aiAdvice, setAiAdvice] = React.useState("");
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "general" });
+  const [aiRawAdvice, setAiRawAdvice] = React.useState("");
+  const [aiStructuredData, setAiStructuredData] = React.useState<any>(null);
+  
+  const { getAdvice: getRawAdvice, isLoading: isRawLoading } = useSkinAdvice({ 
+    adviceType: "weekly-insight" 
+  });
+  
+  const { getAdvice: getStructuredAdvice, isLoading: isStructuredLoading } = useSkinAdvice({ 
+    adviceType: "weekly-insight",
+    structuredOutput: true
+  });
   
   // Generate AI advice on first render
   React.useEffect(() => {
@@ -37,16 +46,46 @@ const WeeklyInsight = () => {
   const generateAiAdvice = async () => {
     setAiLoading(true);
     try {
-      const advice = await getAdvice(
+      // Get raw text advice for the prose section
+      const advice = await getRawAdvice(
         "Analyze my skin trends this week and provide insights on patterns and potential connections", 
         { weeklyTrendData }
       );
-      setAiAdvice(advice);
+      setAiRawAdvice(advice);
+      
+      // Get structured data for the formatted sections
+      const structuredData = await getStructuredAdvice(
+        "Analyze my weekly skin trends and provide structured insights on patterns, correlations, focus areas, metrics and challenges.", 
+        { weeklyTrendData }
+      );
+      setAiStructuredData(structuredData);
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
     } finally {
       setAiLoading(false);
     }
+  };
+  
+  // Helper function to render metrics with arrows
+  const renderMetric = (label: string, value: string) => {
+    const isPositive = value.startsWith('+');
+    const isNegative = value.startsWith('-');
+    
+    return (
+      <div className="flex justify-between items-center">
+        <span className="text-sm font-medium">{label}</span>
+        <div className="flex items-center">
+          <span className={`${isPositive ? 'text-green-500' : isNegative ? 'text-green-500' : 'text-gray-500'} text-sm font-medium`}>
+            {value}
+          </span>
+          <div className={`h-5 w-5 rounded-full ${isPositive ? 'bg-green-100' : isNegative ? 'bg-green-100' : 'bg-gray-100'} flex items-center justify-center ml-2`}>
+            <ArrowRight 
+              className={`h-3 w-3 ${isPositive ? 'text-green-500 rotate-45' : isNegative ? 'text-green-500 -rotate-45' : 'text-gray-500'}`} 
+            />
+          </div>
+        </div>
+      </div>
+    );
   };
   
   return (
@@ -353,55 +392,239 @@ const WeeklyInsight = () => {
           
           {/* AI Analysis Tab */}
           <TabsContent value="ai" className="space-y-6">
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">AI Weekly Analysis</h2>
-                
-                {aiLoading || isLoading ? (
-                  <div className="flex flex-col items-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
-                    <p className="text-muted-foreground">Generating your personalized weekly analysis...</p>
-                  </div>
-                ) : (
-                  <div className="prose prose-sm max-w-none">
-                    {aiAdvice ? (
-                      <div dangerouslySetInnerHTML={{ __html: aiAdvice.replace(/\n/g, '<br/>') }} />
-                    ) : (
-                      <p>Unable to generate AI analysis at this time. Please try again later.</p>
-                    )}
+            {aiLoading || isRawLoading || isStructuredLoading ? (
+              <div className="flex flex-col items-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
+                <p className="text-muted-foreground">Generating your personalized weekly analysis...</p>
+              </div>
+            ) : (
+              <>
+                {aiStructuredData ? (
+                  <>
+                    {/* Overview Card - Similar to Current tab */}
+                    <Card className="ios-card mb-6">
+                      <CardContent className="p-6">
+                        <h2 className="text-xl font-semibold mb-4">Weekly Overview</h2>
+                        
+                        <div className="mb-6">
+                          <p className="text-sm text-muted-foreground mb-3">Your skin trend this week:</p>
+                          <TrendChart 
+                            data={weeklyTrendData} 
+                            height={120}
+                            showLabels={true}
+                          />
+                        </div>
+                        
+                        <div className="space-y-4">
+                          {/* AI Generated Key Observation */}
+                          <div className="flex items-start">
+                            <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-500 mr-3 flex-shrink-0 mt-0.5">
+                              <Brain className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium">Key Observation</h3>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {aiStructuredData.patternAnalysis ? 
+                                  aiStructuredData.patternAnalysis.split('\n')[0] : 
+                                  "Your skin condition has shown notable patterns this week that may correlate with your habits and environment."
+                                }
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* AI Generated Concern Area */}
+                          <div className="flex items-start">
+                            <div className="h-6 w-6 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 mr-3 flex-shrink-0 mt-0.5">
+                              <AlertCircle className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium">Concern Area</h3>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {aiStructuredData.detectedPatterns && 
+                                 aiStructuredData.detectedPatterns.find((p: any) => p.correlation < 0) ?
+                                  aiStructuredData.detectedPatterns.find((p: any) => p.correlation < 0).description :
+                                  "Mid-week decline correlates with potential stressors or environmental factors that may require attention."
+                                }
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                     
-                    <button 
-                      onClick={generateAiAdvice} 
-                      className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
-                    >
-                      Regenerate Analysis
-                    </button>
-                  </div>
+                    {/* Detected Patterns - Similar to For You tab */}
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold mb-3">Detected Patterns</h2>
+                      <Card className="ios-card">
+                        <CardContent className="p-6">
+                          <div className="space-y-4">
+                            {aiStructuredData.detectedPatterns ? 
+                              aiStructuredData.detectedPatterns.map((pattern: any, index: number) => (
+                                <div key={index} className={index < aiStructuredData.detectedPatterns.length - 1 ? "pb-3 border-b border-gray-100" : ""}>
+                                  <h3 className="font-medium">{pattern.category || "Pattern"}</h3>
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    {pattern.description}
+                                    {pattern.correlation && (
+                                      <span className="ml-1 font-medium">
+                                        ({pattern.correlation > 0 ? '+' : ''}{pattern.correlation}% correlation)
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
+                              )) : (
+                                <p className="text-sm text-gray-600">
+                                  Pattern analysis requires more data. Continue logging regularly for improved insights.
+                                </p>
+                              )
+                            }
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    {/* Focus Areas - Similar to both tabs */}
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold mb-3">Week Ahead Focus</h2>
+                      <Card className="ios-card">
+                        <CardContent className="p-6">
+                          <div className="space-y-4">
+                            {aiStructuredData.focusAreas ? 
+                              aiStructuredData.focusAreas.map((focus: any, index: number) => (
+                                <div key={index} className="flex items-start">
+                                  <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3 flex-shrink-0 mt-0.5">
+                                    <Lightbulb className="h-4 w-4" />
+                                  </div>
+                                  <div>
+                                    <h3 className="font-medium">
+                                      {focus.priority === "primary" ? "Primary" : 
+                                       focus.priority === "secondary" ? "Secondary" : 
+                                       "Additional"} Focus: {focus.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                      {focus.description}
+                                    </p>
+                                    {focus.link && (
+                                      <Link to={focus.link} className="text-skin-teal text-xs flex items-center mt-1">
+                                        View recommendations <ArrowRight className="h-3 w-3 ml-1" />
+                                      </Link>
+                                    )}
+                                  </div>
+                                </div>
+                              )) : (
+                                <p className="text-sm text-gray-600">
+                                  Focus areas will be generated based on your skin patterns and data.
+                                </p>
+                              )
+                            }
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    {/* Weekly Challenges - Similar to For You tab */}
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold mb-3">Weekly Challenges</h2>
+                      
+                      {aiStructuredData.challenges ? 
+                        aiStructuredData.challenges.map((challenge: any, index: number) => (
+                          <Link key={index} to={`/challenge/${challenge.title.toLowerCase().replace(/\s+/g, '-')}`} className="block transition-transform hover:scale-[1.01] active:scale-[0.99] mb-4">
+                            <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
+                              <CardContent className="p-4">
+                                <div className="flex justify-between items-center mb-1">
+                                  <h3 className="font-medium text-lg">{challenge.title}</h3>
+                                  <div className="bg-skin-teal text-white text-xs rounded-full px-2 py-0.5">
+                                    {challenge.difficulty || "try this"}
+                                  </div>
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                  {challenge.description}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                        )) : (
+                          <Card className="ios-card">
+                            <CardContent className="p-4">
+                              <p className="text-sm text-gray-600 text-center py-4">
+                                Custom challenges will be generated based on your skin data and patterns.
+                              </p>
+                            </CardContent>
+                          </Card>
+                        )
+                      }
+                    </div>
+                    
+                    {/* Success Metrics - Similar to For You tab */}
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold mb-3">Success Metrics</h2>
+                      <Card className="ios-card">
+                        <CardContent className="p-6">
+                          <p className="text-sm mb-4">
+                            Here's how your skin metrics have changed from last week:
+                          </p>
+                          
+                          <div className="space-y-4">
+                            {aiStructuredData.metrics ? (
+                              <>
+                                {renderMetric("Overall score", aiStructuredData.metrics.overall)}
+                                {renderMetric("Hydration level", aiStructuredData.metrics.hydration)}
+                                {renderMetric("Inflammation", aiStructuredData.metrics.inflammation)}
+                                {renderMetric("Breakout frequency", aiStructuredData.metrics.breakouts)}
+                              </>
+                            ) : (
+                              <p className="text-sm text-center text-gray-600">Metrics will be calculated as you log more data.</p>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    {/* AI Analysis - Raw text version */}
+                    <Card className="ios-card">
+                      <CardContent className="p-6">
+                        <h2 className="text-xl font-semibold mb-4">Detailed AI Analysis</h2>
+                        
+                        <div className="prose prose-sm max-w-none">
+                          {aiRawAdvice ? (
+                            <div dangerouslySetInnerHTML={{ __html: aiRawAdvice.replace(/\n/g, '<br/>') }} />
+                          ) : (
+                            <p>Unable to generate detailed analysis at this time. Please try again later.</p>
+                          )}
+                          
+                          <button 
+                            onClick={generateAiAdvice} 
+                            className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
+                          >
+                            Regenerate Analysis
+                          </button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <Card className="ios-card">
+                    <CardContent className="p-6">
+                      <h2 className="text-xl font-semibold mb-4">AI Weekly Analysis</h2>
+                      
+                      <div className="prose prose-sm max-w-none">
+                        {aiRawAdvice ? (
+                          <div dangerouslySetInnerHTML={{ __html: aiRawAdvice.replace(/\n/g, '<br/>') }} />
+                        ) : (
+                          <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                        )}
+                        
+                        <button 
+                          onClick={generateAiAdvice} 
+                          className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
+                        >
+                          Regenerate Analysis
+                        </button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
-              </CardContent>
-            </Card>
-            
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h3 className="font-medium mb-2">AI Pattern Detection</h3>
-                <ul className="list-disc pl-5 space-y-2 text-sm">
-                  <li>Your skin appears most responsive to hydration changes, with water intake being the strongest single factor</li>
-                  <li>Weekend improvements suggest lifestyle factors are significantly impacting your skin health</li>
-                  <li>Your breakouts show cyclical patterns that may benefit from preventative treatment 2-3 days before expected occurrences</li>
-                  <li>Product efficacy analysis suggests your cleanser may be disrupting your barrier function</li>
-                </ul>
-                
-                <div className="mt-4 pt-4 border-t">
-                  <h3 className="font-medium mb-2">AI Recommendations</h3>
-                  <ul className="list-disc pl-5 space-y-2 text-sm">
-                    <li>Focus on maintaining your weekend hydration habits throughout the week</li>
-                    <li>Consider gentler cleansing options, especially on days with increased sensitivity</li>
-                    <li>Implement targeted stress management techniques for Wednesday-Thursday</li>
-                    <li>Continue dairy reduction while monitoring for improvements</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
+              </>
+            )}
           </TabsContent>
         </Tabs>
       </div>

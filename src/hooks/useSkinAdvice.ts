@@ -1,19 +1,20 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
 
-type AdviceType = "general" | "product" | "recommendation" | "action" | "supplement";
+type AdviceType = "general" | "product" | "recommendation" | "action" | "supplement" | "weekly-insight";
 
 interface UseSkinAdviceProps {
   adviceType?: AdviceType;
   model?: string;
+  structuredOutput?: boolean;
 }
 
 export const useSkinAdvice = ({
   adviceType = "general",
-  model = "gpt-4o-mini"
+  model = "gpt-4o-mini",
+  structuredOutput = false
 }: UseSkinAdviceProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
@@ -27,7 +28,7 @@ export const useSkinAdvice = ({
   const getAdvice = async (
     question: string, 
     context: Record<string, any> = {}
-  ): Promise<string> => {
+  ): Promise<string | any> => {
     try {
       setIsLoading(true);
 
@@ -71,6 +72,20 @@ export const useSkinAdvice = ({
           5. Mention potential side effects and interactions
           6. Clarify that individual responses may vary
         `;
+      } else if (adviceType === "weekly-insight" && structuredOutput) {
+        systemPrompt = `
+          You are a dermatological AI assistant specialized in analyzing skin health trends.
+          
+          For this weekly insight analysis, return a structured JSON response with these sections:
+          
+          1. "patternAnalysis": 2-3 paragraphs analyzing weekly skin patterns, connections between factors.
+          2. "detectedPatterns": Array of 3-4 patterns with "category" (e.g. "Food & Hydration", "Sleep & Stress"), "title", "description", and "correlation" (percentage).
+          3. "focusAreas": Array of 3 focus areas with "title", "description", "priority" (primary/secondary/tertiary), and "type" (product/habit/diet/lifestyle).
+          4. "metrics": Object with numerical metric changes: {"overall": +/-%, "hydration": +/-%, "inflammation": +/-%, "breakouts": +/-%}.
+          5. "challenges": Array of 2 recommended challenges with "title", "description", "difficulty" (easy/medium/hard).
+          
+          Be specific, actionable, and evidence-based. Format the response as valid parseable JSON without additional text.
+        `;
       }
 
       // Create messages for the AI
@@ -93,20 +108,48 @@ export const useSkinAdvice = ({
 
       // Call our Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('chat', {
-        body: { messages, model, adviceType }
+        body: { 
+          messages, 
+          model, 
+          adviceType,
+          structuredOutput 
+        }
       });
 
       if (error) {
         console.error("Error calling Edge Function:", error);
         toast.error("Failed to get AI skin advice. Please try again.");
-        return "I'm having trouble analyzing this skin information right now. Please try again in a moment.";
+        return structuredOutput 
+          ? { error: "Failed to get AI skin advice" }
+          : "I'm having trouble analyzing this skin information right now. Please try again in a moment.";
+      }
+
+      // If structured output is requested, try to parse the content as JSON
+      if (structuredOutput) {
+        try {
+          // If data.content is already an object, return it
+          if (typeof data.content === 'object' && data.content !== null) {
+            return data.content;
+          }
+          
+          // Otherwise try to parse it as JSON
+          return JSON.parse(data.content);
+        } catch (e) {
+          console.error("Error parsing structured output:", e);
+          return { 
+            error: "Failed to parse structured response", 
+            rawContent: data.content 
+          };
+        }
       }
 
       return data.content;
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
       toast.error("Failed to get skin advice. Please try again.");
-      return "I'm having trouble analyzing this skin information right now. Please try again in a moment.";
+      return structuredOutput 
+        ? { error: "Failed to get skin advice" }
+        : "I'm having trouble analyzing this skin information right now. Please try again in a moment.";
     } finally {
       setIsLoading(false);
     }

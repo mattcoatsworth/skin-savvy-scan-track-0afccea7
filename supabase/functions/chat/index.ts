@@ -20,7 +20,7 @@ serve(async (req) => {
       throw new Error('OpenAI API key not found in environment variables');
     }
 
-    const { messages, model = "gpt-4o-mini", adviceType = "general" } = await req.json();
+    const { messages, model = "gpt-4o-mini", adviceType = "general", structuredOutput = false } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
@@ -51,15 +51,22 @@ serve(async (req) => {
       case "action":
         systemMessage += "You suggest specific actions users can take to improve their skin health, like lifestyle changes, dietary adjustments, or routine modifications. " + corePrinciple;
         break;
+      case "weekly-insight":
+        systemMessage += "You analyze weekly skin trends and provide personalized insights on patterns, correlations, and recommendations for improvement. " + corePrinciple;
+        break;
       default:
         systemMessage += corePrinciple;
     }
 
-    // Prepend system message to the messages array
-    const messagesWithSystem = [
-      { role: "system", content: systemMessage },
-      ...messages
-    ];
+    // For structured output, add response format instructions if requested
+    const responseConfig = structuredOutput ? {
+      response_format: { type: "json_object" }
+    } : {};
+
+    // Prepend system message to the messages array or use the one provided
+    const messagesWithSystem = messages[0]?.role === "system" ? 
+      messages : 
+      [{ role: "system", content: systemMessage }, ...messages];
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -71,7 +78,8 @@ serve(async (req) => {
         model: model,
         messages: messagesWithSystem,
         temperature: 0.7,
-        max_tokens: 500,
+        max_tokens: 1500,
+        ...responseConfig
       }),
     });
 
