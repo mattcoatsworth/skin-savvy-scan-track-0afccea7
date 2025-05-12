@@ -200,7 +200,7 @@ const CategoryAnalysisDetail = () => {
   const [aiRecommendations, setAiRecommendations] = useState<string>("");
   
   // Initialize the skin advice hook
-  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice();
+  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice({});
   
   // Load category detail data
   useEffect(() => {
@@ -225,7 +225,9 @@ const CategoryAnalysisDetail = () => {
           { categoryData: data, category }
         );
         
-        setAiRecommendations(getTextContent(recommendationsResponse));
+        if (recommendationsResponse) {
+          setAiRecommendations(getTextContent(recommendationsResponse));
+        }
       } catch (error) {
         console.error("Error getting AI recommendations:", error);
       }
@@ -234,7 +236,7 @@ const CategoryAnalysisDetail = () => {
     if (data) {
       getRecommendations();
     }
-  }, [data, category]);
+  }, [data, category, getAdvice, getTextContent]);
 
   if (isLoading) {
     return (

@@ -37,7 +37,7 @@ const getRecommendationIcon = (type: string): React.ReactNode => {
   }
 };
 
-export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4" }) => {
+export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4", structuredOutput = false }: UseSkinAdviceProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
 
