@@ -17,6 +17,10 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true
+    },
+    realtime: {
+      // Enable realtime subscriptions
+      enabled: true,
     }
   }
 );

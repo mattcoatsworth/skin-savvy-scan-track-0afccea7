@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity, MessageSquare } from "lucide-react";
+import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity, MessageSquare, RefreshCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ const ProductAITestPage = () => {
   const { getAdvice: getDisclaimerAdvice } = useSkinAdvice({ adviceType: "general" });
   
   // Initialize content cache hook
-  const { getOrGenerate } = useAIContentCache();
+  const { getOrGenerate, forceRefresh, cacheStatus } = useAIContentCache();
   
   // Find the product from our data
   const products = type === "food" ? foodItems : productItems;
@@ -91,6 +91,73 @@ const ProductAITestPage = () => {
     }
     
     return result;
+  };
+
+  // Handle refresh of content
+  const handleRefreshContent = async (contentType: 'overview' | 'details' | 'disclaimer') => {
+    if (!product) return;
+    
+    setIsLoading(prev => ({ ...prev, [contentType]: true }));
+    
+    try {
+      let newContent;
+      
+      if (contentType === 'overview') {
+        const overviewPrompt = `Write a detailed overview about ${product.name} as a ${type} product and its effects on skin health. 
+                              Include information about its impact (${product.impact}), what it does, and a brief description. 
+                              Write this as if it's for a skincare app product detail page. Keep it under 200 words.`;
+        
+        newContent = await forceRefresh({
+          productId: id,
+          productType: type,
+          contentType: 'overview'
+        }, () => getOverviewAdvice(overviewPrompt, { 
+          productType: type, 
+          productName: product.name,
+          productImpact: product.impact
+        }));
+      } 
+      else if (contentType === 'details') {
+        const detailsPrompt = `Create a detailed list of benefits and concerns for ${product.name} as a ${type} product.
+                            Format your response with clear bullet points for both benefits and concerns.
+                            Include at least 4 potential benefits and 3 potential concerns based on scientific research.
+                            Make it specific to skin health.`;
+        
+        newContent = await forceRefresh({
+          productId: id,
+          productType: type,
+          contentType: 'details'
+        }, () => getDetailsAdvice(detailsPrompt, {
+          productType: type,
+          productName: product.name
+        }));
+      }
+      else if (contentType === 'disclaimer') {
+        const disclaimerPrompt = `Create a brief medical disclaimer about ${product.name} and skin health. Keep it under 50 words.
+                               Only include the essential disclaimer text - no analysis or other sections.`;
+        
+        newContent = await forceRefresh({
+          productId: id,
+          productType: type,
+          contentType: 'disclaimer'
+        }, () => getDisclaimerAdvice(disclaimerPrompt, {
+          productType: type,
+          productName: product.name
+        }));
+      }
+      
+      if (newContent) {
+        setAiContent(prev => ({
+          ...prev,
+          [contentType]: newContent
+        }));
+      }
+    } catch (error) {
+      console.error(`Error refreshing ${contentType}:`, error);
+      toast.error(`Failed to refresh ${contentType}`);
+    } finally {
+      setIsLoading(prev => ({ ...prev, [contentType]: false }));
+    }
   };
 
   useEffect(() => {
@@ -253,7 +320,18 @@ const ProductAITestPage = () => {
           <TabsContent value="ai" className="mt-4">
             {/* Overview Section */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Overview</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Overview</h2>
+                <Button 
+                  onClick={() => handleRefreshContent('overview')} 
+                  size="sm" 
+                  variant="ghost"
+                  disabled={isLoading.overview}
+                >
+                  <RefreshCcw className="h-4 w-4 mr-1" />
+                  Refresh
+                </Button>
+              </div>
               <Card>
                 <CardContent className="p-6">
                   {isLoading.overview ? (
@@ -334,7 +412,19 @@ const ProductAITestPage = () => {
             
             {/* Details Section - AI Generated */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Details</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Details</h2>
+                <Button 
+                  onClick={() => handleRefreshContent('details')} 
+                  size="sm" 
+                  variant="ghost"
+                  disabled={isLoading.details}
+                >
+                  <RefreshCcw className="h-4 w-4 mr-1" />
+                  Refresh
+                </Button>
+              </div>
+              
               {isLoading.details ? (
                 <Card>
                   <CardContent className="p-6">
@@ -393,6 +483,20 @@ const ProductAITestPage = () => {
             
             {/* Shortened Disclaimer Section - AI Generated */}
             <div className="mt-6">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-medium text-muted-foreground">Disclaimer</h3>
+                <Button 
+                  onClick={() => handleRefreshContent('disclaimer')} 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-6 text-xs"
+                  disabled={isLoading.disclaimer}
+                >
+                  <RefreshCcw className="h-3 w-3 mr-1" />
+                  Refresh
+                </Button>
+              </div>
+              
               <Card>
                 <CardContent className="p-4">
                   {isLoading.disclaimer ? (

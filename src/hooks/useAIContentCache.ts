@@ -12,13 +12,15 @@ interface ContentOptions {
 
 export const useAIContentCache = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [cacheStatus, setCacheStatus] = useState<"idle" | "fetching" | "caching" | "error">("idle");
 
   // Get cached content or return null if not found
   const getCachedContent = async ({ productId, productType, contentType }: ContentOptions) => {
     try {
+      setCacheStatus("fetching");
       const { data, error } = await supabase
         .from('ai_generated_content')
-        .select('content')
+        .select('content, updated_at')
         .eq('product_id', productId)
         .eq('product_type', productType)
         .eq('content_type', contentType)
@@ -26,12 +28,20 @@ export const useAIContentCache = () => {
       
       if (error) {
         console.error("Error fetching cached content:", error);
+        setCacheStatus("error");
         return null;
       }
+
+      // If data exists, log when it was last updated
+      if (data) {
+        console.log(`Found cached ${contentType} from ${new Date(data.updated_at).toLocaleString()}`);
+      }
       
+      setCacheStatus("idle");
       return data?.content || null;
     } catch (error) {
       console.error("Exception fetching cached content:", error);
+      setCacheStatus("error");
       return null;
     }
   };
@@ -43,6 +53,8 @@ export const useAIContentCache = () => {
     contentType 
   }: ContentOptions, content: any): Promise<boolean> => {
     try {
+      setCacheStatus("caching");
+      
       // Ensure content is JSON-serializable
       const jsonContent = JSON.parse(JSON.stringify(content));
       
@@ -60,12 +72,17 @@ export const useAIContentCache = () => {
       
       if (error) {
         console.error("Error caching content:", error);
+        setCacheStatus("error");
+        toast.error("Failed to cache AI content");
         return false;
       }
       
+      console.log(`Successfully cached ${contentType} for ${productType}/${productId}`);
+      setCacheStatus("idle");
       return true;
     } catch (error) {
       console.error("Exception caching content:", error);
+      setCacheStatus("error");
       return false;
     }
   };
@@ -87,7 +104,7 @@ export const useAIContentCache = () => {
       });
       
       if (cachedContent) {
-        console.log(`Found cached ${contentType} for ${productType}/${productId}`);
+        console.log(`Using cached ${contentType} for ${productType}/${productId}`);
         setIsLoading(false);
         return cachedContent;
       }
@@ -113,10 +130,41 @@ export const useAIContentCache = () => {
     }
   };
 
+  // Force refresh the content by regenerating and updating the cache
+  const forceRefresh = async ({
+    productId,
+    productType,
+    contentType
+  }: ContentOptions, generateFn: () => Promise<any>): Promise<any> => {
+    setIsLoading(true);
+    
+    try {
+      console.log(`Force refreshing ${contentType} for ${productType}/${productId}`);
+      const generatedContent = await generateFn();
+      
+      await cacheContent({
+        productId,
+        productType,
+        contentType
+      }, generatedContent);
+      
+      setIsLoading(false);
+      toast.success(`Refreshed ${contentType} content`);
+      return generatedContent;
+    } catch (error) {
+      console.error("Error in forceRefresh:", error);
+      toast.error(`Failed to refresh ${contentType}`);
+      setIsLoading(false);
+      return null;
+    }
+  };
+
   return {
     isLoading,
+    cacheStatus,
     getCachedContent,
     cacheContent,
-    getOrGenerate
+    getOrGenerate,
+    forceRefresh
   };
 };
