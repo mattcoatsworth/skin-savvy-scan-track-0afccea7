@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
 import { 
@@ -31,6 +31,7 @@ import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import useScrollToTop from "@/hooks/useScrollToTop";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import SkinIndexComparison from "@/components/SkinIndexComparison";
 
 // Types for the analysis data
 type AnalysisData = {
@@ -517,156 +518,424 @@ const WeeklySkinAnalysis = () => {
   const aiSections = processAIResponse(aiAdvice.sections || {});
 
   return (
-    <div className="bg-slate-50 min-h-screen">
-      <div className="max-w-md mx-auto px-4 py-6">
-        <header className="mb-6 flex items-center">
-          <BackButton />
-          <div>
-            <h1 className="text-2xl font-bold">Weekly Skin Analysis</h1>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4 mr-1" />
-              <span>
-                {format(parseISO(analysisData.startDate), "MMM d")} - {format(parseISO(analysisData.endDate), "MMM d, yyyy")}
-              </span>
+    <div className="pb-24">
+      <header className="mb-6 flex items-center">
+        <BackButton />
+        <h1 className="text-2xl font-bold">Weekly Skin Analysis</h1>
+      </header>
+      
+      {/* Add the SkinIndexComparison component */}
+      <div className="mt-6">
+        <SkinIndexComparison gender="female" age={25} />
+      </div>
+      
+      <Tabs defaultValue="current" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="current">Current</TabsTrigger>
+          <TabsTrigger value="for-you">For You</TabsTrigger>
+          <TabsTrigger value="ai">AI Analysis</TabsTrigger>
+        </TabsList>
+
+        {/* Current Tab - Original content */}
+        <TabsContent value="current" className="space-y-6">
+          {/* Overall Score Card */}
+          <Card className="ios-card mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">Skin Health</h2>
+                  <p className="text-sm text-muted-foreground">Week Average</p>
+                </div>
+                
+                {renderRatingCircle(analysisData.overallScore, "large")}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Daily Scores */}
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
+            <div className="overflow-x-auto pb-2">
+              <div className="flex justify-between min-w-full space-x-2">
+                {analysisData.dailyScores.map((day, index) => (
+                  <Link key={index} to={`/day-log/day-${6-index}`} className="flex flex-col items-center">
+                    <span className="text-sm font-medium">
+                      {format(parseISO(day.date), "EEE")}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {format(parseISO(day.date), "M/d")}
+                    </span>
+                    <div className="mt-2">
+                      <div className="relative w-12 h-12 flex items-center justify-center">
+                        {/* Background circle */}
+                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getBackgroundColor(day.score)}
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        
+                        {/* Foreground circle */}
+                        <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getProgressColor(day.score)}
+                            strokeWidth="4"
+                            strokeDasharray={`${day.score}, 100`}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        
+                        {/* Rating number */}
+                        <div className="text-sm font-semibold">
+                          {day.score}
+                        </div>
+                      </div>
+                      <span className="text-xs block text-center mt-1">
+                        {getRatingLabel(day.score)}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-        </header>
-        
-        <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="current">Current</TabsTrigger>
-            <TabsTrigger value="for-you">For You</TabsTrigger>
-            <TabsTrigger value="ai">AI Analysis</TabsTrigger>
-          </TabsList>
 
-          {/* Current Tab - Original content */}
-          <TabsContent value="current" className="space-y-6">
-            {/* Overall Score Card */}
-            <Card className="ios-card mb-6">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold">Skin Health</h2>
-                    <p className="text-sm text-muted-foreground">Week Average</p>
-                  </div>
-                  
-                  {renderRatingCircle(analysisData.overallScore, "large")}
+          {/* Category Analysis Section */}
+          <div className="space-y-6 mb-6">
+            <h2 className="text-lg font-semibold mb-3">Category Analysis</h2>
+            
+            {Object.entries(analysisData.categories).map(([category, data]) => (
+              <div key={category} className="mb-4">
+                <Link to={`/category-analysis/${category}`} className="block">
+                  <Card className="ios-card hover:shadow-md transition-all">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          {getCategoryIcon(category)}
+                          <h3 className="text-lg font-medium capitalize">{category}</h3>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="relative w-10 h-10 mr-2 flex items-center justify-center">
+                            <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                              <path
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke={getProgressColor(data.score)}
+                                strokeWidth="4"
+                                strokeDasharray={`${data.score}, 100`}
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            <div className="text-sm font-medium">{data.score}</div>
+                          </div>
+                          <span className="text-sm">{getRatingLabel(data.score)}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        {data.factors.map((factor, idx) => (
+                          <div key={idx} className={idx > 0 ? "border-t pt-3" : ""}>
+                            <div className="flex justify-between">
+                              <div>
+                                <span className="font-medium">{factor.name}</span>
+                                <p className="text-sm text-muted-foreground mt-1">{factor.details}</p>
+                              </div>
+                              <div className="ml-2 flex flex-shrink-0 items-center">
+                                <span className="text-sm font-medium">{factor.rating}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* Correlations Table */}
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-3">Key Correlations</h2>
+            <Link to="/correlations-detail" className="block">
+              <Card className="ios-card hover:shadow-md transition-all">
+                <CardContent className="p-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Factor</TableHead>
+                        <TableHead>Impact</TableHead>
+                        <TableHead className="text-right">Correlation</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">Dairy Consumption</TableCell>
+                        <TableCell>
+                          <span className="text-xs">
+                            Negative
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">92%</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Hydration</TableCell>
+                        <TableCell>
+                          <span className="text-xs">
+                            Positive
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">89%</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Stress Levels</TableCell>
+                        <TableCell>
+                          <span className="text-xs">
+                            Negative
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">78%</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Sunscreen Use</TableCell>
+                        <TableCell>
+                          <span className="text-xs">
+                            Positive
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">85%</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+
+          {/* Recommendations */}
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-3">Recommendations</h2>
+            <Link to="/recommendations-detail" className="block">
+              <Card className="ios-card hover:shadow-md transition-all">
+                <CardContent className="p-4">
+                  <ul className="space-y-2">
+                    {analysisData.recommendations.map((rec, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <span className="text-slate-500 mr-2">•</span>
+                        <span className="text-sm">{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </TabsContent>
+        
+        {/* For You Tab */}
+        <TabsContent value="for-you" className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold mb-3">Personalized Recommendations</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Based on your recent skin logs, here are some tailored recommendations to improve your skin health:
+            </p>
+            
+            <div className="space-y-4">
+              {skinRecommendations.map((recommendation, index) => (
+                <Link 
+                  key={index} 
+                  to={recommendation.linkTo}
+                  className="block transition-transform hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
+                    <CardContent className="p-4">
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <h3 className="font-medium text-lg">{recommendation.text}</h3>
+                          <div className="text-skin-teal text-xs">
+                            {recommendation.type}
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {recommendation.details}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            
+            <Link 
+              to="/weekly-insight"
+              className="block transition-transform hover:scale-[1.01] active:scale-[0.99] mt-8"
+            >
+              <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
+                <CardContent className="p-4">
+                  <h3 className="font-medium text-lg mb-2">Weekly Insight</h3>
+                  <p className="text-sm">
+                    Your skin shows consistent patterns with food intake and stress levels. 
+                    Focus on hydration and stress management this week for best results.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </TabsContent>
+        
+        {/* AI Analysis Tab */}
+        <TabsContent value="ai" className="space-y-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">AI Analysis</h2>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={() => generateAiAdvice(true)}
+              disabled={aiLoading || isLoading}
+            >
+              <RefreshCcw className="h-3 w-3" />
+              Refresh
+            </Button>
+          </div>
+          
+          {aiLoading || isLoading ? (
+            <Card className="ios-card">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
+                  <p className="text-muted-foreground">Generating your personalized weekly analysis...</p>
                 </div>
               </CardContent>
             </Card>
+          ) : (
+            <>
+              {/* Overall Score Card - WITHOUT BRIEF SUMMARY */}
+              <Card className="ios-card mb-6">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-semibold">Skin Health</h2>
+                      <p className="text-sm text-muted-foreground">Weekly Analysis</p>
+                    </div>
+                    
+                    {renderRatingCircle(analysisData.overallScore, "large")}
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Daily Scores */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
-              <div className="overflow-x-auto pb-2">
-                <div className="flex justify-between min-w-full space-x-2">
-                  {analysisData.dailyScores.map((day, index) => (
-                    <Link key={index} to={`/day-log/day-${6-index}`} className="flex flex-col items-center">
-                      <span className="text-sm font-medium">
-                        {format(parseISO(day.date), "EEE")}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {format(parseISO(day.date), "M/d")}
-                      </span>
-                      <div className="mt-2">
-                        <div className="relative w-12 h-12 flex items-center justify-center">
-                          {/* Background circle */}
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(day.score)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          {/* Foreground circle */}
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(day.score)}
-                              strokeWidth="4"
-                              strokeDasharray={`${day.score}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          {/* Rating number */}
-                          <div className="text-sm font-semibold">
-                            {day.score}
-                          </div>
-                        </div>
-                        <span className="text-xs block text-center mt-1">
-                          {getRatingLabel(day.score)}
+              {/* Daily Scores */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
+                <div className="overflow-x-auto pb-2">
+                  <div className="flex justify-between min-w-full space-x-2">
+                    {analysisData.dailyScores.map((day, index) => (
+                      <Link key={index} to={`/day-log/day-${6-index}`} className="flex flex-col items-center">
+                        <span className="text-sm font-medium">
+                          {format(parseISO(day.date), "EEE")}
                         </span>
-                      </div>
-                    </Link>
-                  ))}
+                        <span className="text-xs text-muted-foreground">
+                          {format(parseISO(day.date), "M/d")}
+                        </span>
+                        <div className="mt-2">
+                          <div className="relative w-12 h-12 flex items-center justify-center">
+                            {/* Background circle */}
+                            <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                              <path
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke={getBackgroundColor(day.score)}
+                                strokeWidth="4"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            
+                            {/* Foreground circle */}
+                            <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                              <path
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke={getProgressColor(day.score)}
+                                strokeWidth="4"
+                                strokeDasharray={`${day.score}, 100`}
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            
+                            {/* Rating number */}
+                            <div className="text-sm font-semibold">
+                              {day.score}
+                            </div>
+                          </div>
+                          <span className="text-xs block text-center mt-1">
+                            {getRatingLabel(day.score)}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Category Analysis Section */}
-            <div className="space-y-6 mb-6">
-              <h2 className="text-lg font-semibold mb-3">Category Analysis</h2>
-              
-              {Object.entries(analysisData.categories).map(([category, data]) => (
-                <div key={category} className="mb-4">
-                  <Link to={`/category-analysis/${category}`} className="block">
-                    <Card className="ios-card hover:shadow-md transition-all">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            {getCategoryIcon(category)}
-                            <h3 className="text-lg font-medium capitalize">{category}</h3>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="relative w-10 h-10 mr-2 flex items-center justify-center">
-                              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                                <path
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                  fill="none"
-                                  stroke={getProgressColor(data.score)}
-                                  strokeWidth="4"
-                                  strokeDasharray={`${data.score}, 100`}
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                              <div className="text-sm font-medium">{data.score}</div>
-                            </div>
-                            <span className="text-sm">{getRatingLabel(data.score)}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-4">
-                          {data.factors.map((factor, idx) => (
-                            <div key={idx} className={idx > 0 ? "border-t pt-3" : ""}>
-                              <div className="flex justify-between">
-                                <div>
-                                  <span className="font-medium">{factor.name}</span>
-                                  <p className="text-sm text-muted-foreground mt-1">{factor.details}</p>
+              {/* AI Sections with Circular Progress - MODIFIED to add circular rating */}
+              {aiSections.length > 0 && aiSections.map((section, index) => (
+                <div key={index} className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-semibold">{section.title}</h2>
+                    {renderRatingCircle(section.rating, "small")}
+                  </div>
+                  
+                  <Card className="ios-card">
+                    <CardContent className="p-4">
+                      <div className="space-y-4">
+                        {section.items.map((item, itemIdx) => {
+                          // Generate a rating for each item (in a real app would be data-driven)
+                          const itemRating = Math.max(30, Math.min(95, section.rating + (Math.floor(Math.random() * 21) - 10)));
+                          
+                          return (
+                            <div key={itemIdx} className={itemIdx > 0 ? "border-t pt-3 mt-3" : ""}>
+                              <Link to={item.linkTo}>
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <span className="font-medium">
+                                      {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                    </span>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {item.text.includes(":") 
+                                        ? item.text.split(":").slice(1).join(":").trim()
+                                        : item.text}
+                                    </p>
+                                  </div>
+                                  
+                                  <div className="ml-3">
+                                    <div className="text-sm font-medium">
+                                      {itemRating}
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="ml-2 flex flex-shrink-0 items-center">
-                                  <span className="text-sm font-medium">{factor.rating}</span>
-                                </div>
-                              </div>
+                              </Link>
                             </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               ))}
-            </div>
 
-            {/* Correlations Table */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Key Correlations</h2>
-              <Link to="/correlations-detail" className="block">
-                <Card className="ios-card hover:shadow-md transition-all">
+              {/* Correlations Table with Rating - MODIFIED to add circular rating */}
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-lg font-semibold">AI Correlations</h2>
+                  {renderRatingCircle(75, "small")}
+                </div>
+                
+                <Card className="ios-card">
                   <CardContent className="p-4">
                     <Table>
                       <TableHeader>
@@ -704,323 +973,50 @@ const WeeklySkinAnalysis = () => {
                           </TableCell>
                           <TableCell className="text-right">78%</TableCell>
                         </TableRow>
-                        <TableRow>
-                          <TableCell className="font-medium">Sunscreen Use</TableCell>
-                          <TableCell>
-                            <span className="text-xs">
-                              Positive
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">85%</TableCell>
-                        </TableRow>
                       </TableBody>
                     </Table>
                   </CardContent>
                 </Card>
-              </Link>
-            </div>
-
-            {/* Recommendations */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Recommendations</h2>
-              <Link to="/recommendations-detail" className="block">
-                <Card className="ios-card hover:shadow-md transition-all">
-                  <CardContent className="p-4">
-                    <ul className="space-y-2">
-                      {analysisData.recommendations.map((rec, idx) => (
-                        <li key={idx} className="flex items-start">
-                          <span className="text-slate-500 mr-2">•</span>
-                          <span className="text-sm">{rec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </TabsContent>
-          
-          {/* For You Tab */}
-          <TabsContent value="for-you" className="space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold mb-3">Personalized Recommendations</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                Based on your recent skin logs, here are some tailored recommendations to improve your skin health:
-              </p>
-              
-              <div className="space-y-4">
-                {skinRecommendations.map((recommendation, index) => (
-                  <Link 
-                    key={index} 
-                    to={recommendation.linkTo}
-                    className="block transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                  >
-                    <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
-                      <CardContent className="p-4">
-                        <div>
-                          <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-medium text-lg">{recommendation.text}</h3>
-                            <div className="text-skin-teal text-xs">
-                              {recommendation.type}
-                            </div>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            {recommendation.details}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
               </div>
               
-              <Link 
-                to="/weekly-insight"
-                className="block transition-transform hover:scale-[1.01] active:scale-[0.99] mt-8"
-              >
-                <Card className="ios-card hover:shadow-md transition-all border border-transparent hover:border-slate-200">
-                  <CardContent className="p-4">
-                    <h3 className="font-medium text-lg mb-2">Weekly Insight</h3>
-                    <p className="text-sm">
-                      Your skin shows consistent patterns with food intake and stress levels. 
-                      Focus on hydration and stress management this week for best results.
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </TabsContent>
-          
-          {/* AI Analysis Tab */}
-          <TabsContent value="ai" className="space-y-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">AI Analysis</h2>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex items-center gap-1"
-                onClick={() => generateAiAdvice(true)}
-                disabled={aiLoading || isLoading}
-              >
-                <RefreshCcw className="h-3 w-3" />
-                Refresh
-              </Button>
-            </div>
-            
-            {aiLoading || isLoading ? (
-              <Card className="ios-card">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
-                    <p className="text-muted-foreground">Generating your personalized weekly analysis...</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                {/* Overall Score Card - WITHOUT BRIEF SUMMARY */}
-                <Card className="ios-card mb-6">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h2 className="text-lg font-semibold">Skin Health</h2>
-                        <p className="text-sm text-muted-foreground">Weekly Analysis</p>
-                      </div>
-                      
-                      {renderRatingCircle(analysisData.overallScore, "large")}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Daily Scores */}
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
-                  <div className="overflow-x-auto pb-2">
-                    <div className="flex justify-between min-w-full space-x-2">
-                      {analysisData.dailyScores.map((day, index) => (
-                        <Link key={index} to={`/day-log/day-${6-index}`} className="flex flex-col items-center">
-                          <span className="text-sm font-medium">
-                            {format(parseISO(day.date), "EEE")}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {format(parseISO(day.date), "M/d")}
-                          </span>
-                          <div className="mt-2">
-                            <div className="relative w-12 h-12 flex items-center justify-center">
-                              {/* Background circle */}
-                              <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                                <path
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                  fill="none"
-                                  stroke={getBackgroundColor(day.score)}
-                                  strokeWidth="4"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                              
-                              {/* Foreground circle */}
-                              <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                                <path
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                  fill="none"
-                                  stroke={getProgressColor(day.score)}
-                                  strokeWidth="4"
-                                  strokeDasharray={`${day.score}, 100`}
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                              
-                              {/* Rating number */}
-                              <div className="text-sm font-semibold">
-                                {day.score}
-                              </div>
-                            </div>
-                            <span className="text-xs block text-center mt-1">
-                              {getRatingLabel(day.score)}
-                            </span>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI Sections with Circular Progress - MODIFIED to add circular rating */}
-                {aiSections.length > 0 && aiSections.map((section, index) => (
-                  <div key={index} className="mb-6">
-                    <div className="flex justify-between items-center mb-3">
-                      <h2 className="text-lg font-semibold">{section.title}</h2>
-                      {renderRatingCircle(section.rating, "small")}
-                    </div>
-                    
-                    <Card className="ios-card">
-                      <CardContent className="p-4">
-                        <div className="space-y-4">
-                          {section.items.map((item, itemIdx) => {
-                            // Generate a rating for each item (in a real app would be data-driven)
-                            const itemRating = Math.max(30, Math.min(95, section.rating + (Math.floor(Math.random() * 21) - 10)));
-                            
-                            return (
-                              <div key={itemIdx} className={itemIdx > 0 ? "border-t pt-3 mt-3" : ""}>
-                                <Link to={item.linkTo}>
-                                  <div className="flex justify-between items-start">
-                                    <div className="flex-1">
-                                      <span className="font-medium">
-                                        {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                      </span>
-                                      <p className="text-sm text-muted-foreground mt-1">
-                                        {item.text.includes(":") 
-                                          ? item.text.split(":").slice(1).join(":").trim()
-                                          : item.text}
-                                      </p>
-                                    </div>
-                                    
-                                    <div className="ml-3">
-                                      <div className="text-sm font-medium">
-                                        {itemRating}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </Link>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                ))}
-
-                {/* Correlations Table with Rating - MODIFIED to add circular rating */}
+              {/* If no structured sections but we have formatted HTML */}
+              {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3">
-                    <h2 className="text-lg font-semibold">AI Correlations</h2>
-                    {renderRatingCircle(75, "small")}
+                    <h2 className="text-lg font-semibold">AI Analysis</h2>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium">80</span>
+                      <span className="text-xs text-muted-foreground">Great</span>
+                    </div>
                   </div>
                   
                   <Card className="ios-card">
                     <CardContent className="p-4">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Factor</TableHead>
-                            <TableHead>Impact</TableHead>
-                            <TableHead className="text-right">Correlation</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell className="font-medium">Dairy Consumption</TableCell>
-                            <TableCell>
-                              <span className="text-xs">
-                                Negative
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">92%</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">Hydration</TableCell>
-                            <TableCell>
-                              <span className="text-xs">
-                                Positive
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">89%</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">Stress Levels</TableCell>
-                            <TableCell>
-                              <span className="text-xs">
-                                Negative
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">78%</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
+                      <div className="prose prose-sm max-w-none">
+                        <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} />
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
-                
-                {/* If no structured sections but we have formatted HTML */}
-                {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-3">
-                      <h2 className="text-lg font-semibold">AI Analysis</h2>
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm font-medium">80</span>
-                        <span className="text-xs text-muted-foreground">Great</span>
-                      </div>
-                    </div>
-                    
-                    <Card className="ios-card">
-                      <CardContent className="p-4">
-                        <div className="prose prose-sm max-w-none">
-                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-              </>
-            )}
-            
-            {/* View Scoring Method component */}
-            <ViewScoringMethod />
-            
-            {/* Add disclaimer card */}
-            <Card className="ios-card mt-6">
-              <CardContent className="p-4">
-                <h3 className="font-medium text-sm mb-2">Disclaimer</h3>
-                <p className="text-xs text-muted-foreground">
-                  AI analysis is based on the data you've provided and general skin health principles. 
-                  This is not medical advice. For persistent skin issues, please consult a dermatologist.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+              )}
+            </>
+          )}
+          
+          {/* View Scoring Method component */}
+          <ViewScoringMethod />
+          
+          {/* Add disclaimer card */}
+          <Card className="ios-card mt-6">
+            <CardContent className="p-4">
+              <h3 className="font-medium text-sm mb-2">Disclaimer</h3>
+              <p className="text-xs text-muted-foreground">
+                AI analysis is based on the data you've provided and general skin health principles. 
+                This is not medical advice. For persistent skin issues, please consult a dermatologist.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

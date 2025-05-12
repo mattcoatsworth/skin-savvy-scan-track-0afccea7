@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Camera, Image } from "lucide-react";
+import SkinIndexComparison from "@/components/SkinIndexComparison";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -147,6 +147,9 @@ const History = () => {
         
         {/* Add SkinHistory at the top with moderate margin */}
         <SkinHistory ratings={skinRatings} className="mb-6" />
+        
+        {/* Add the new SkinIndexComparison component */}
+        <SkinIndexComparison className="mb-6" gender="female" age={25} />
         
         {/* Use gap-y-6 for moderate spacing between cards to match scans page */}
         <div className="flex flex-col gap-y-6">
