@@ -1,102 +1,55 @@
 
-# Component Design Guidelines
+# Component Design Standards
 
-This document outlines the styling guidelines for common components used throughout the application.
-All components follow iOS-inspired design principles with a focus on accessibility and usability.
+## Selfie Section
 
-## Buttons
+The standardized selfie section should follow these guidelines:
 
-### Primary Button
-- Class: `ios-btn` or `bg-skin-black text-white px-6 py-3 rounded-full font-medium shadow-md`
-- Used for primary actions
-- High contrast, prominent placement
-- Example: Save, Continue, Submit
+1. **Layout**: Two-column grid with equal spacing between AM and PM selfies
+2. **Headers**: 
+   - Morning selfies use amber/orange color (#F59E0B)
+   - Evening selfies use indigo color (#818CF8)
+   - Font should be medium weight
+   - Headers are centered above their respective images
 
-### Secondary Button
-- Class: `bg-white text-skin-black border border-skin-black/20 px-6 py-3 rounded-full font-medium`
-- Used for secondary actions
-- Lower contrast than primary
-- Example: Cancel, Back, Alternative option
+3. **Image Containers**:
+   - Square aspect ratio (1:1)
+   - Light gray background (#F3F4F6)
+   - Rounded corners (lg = 0.5rem)
+   - Images should fill the container with object-fit: cover
 
-### Icon Button
-- Class: `p-2 rounded-full bg-white flex items-center justify-center`
-- Used for action buttons with icons
-- Square or circular
-- Example: Back, Close, Add
+4. **Empty State**:
+   - Show camera icon in gray (#D1D5DB)
+   - Display "No Photo" text below the icon
+   - Center both vertically and horizontally
 
-## Cards
+5. **Image Counter**:
+   - Show "X of Y images" text below each image container
+   - Use small, centered text in gray color (#6B7280)
+   - Where X is the current number of images and Y is the maximum allowed
 
-### Standard Card
-- Class: `ios-card` or `bg-white rounded-3xl shadow-sm p-5 border-0`
-- Container for related content
-- Clean white background with subtle shadow
-- Generous padding and rounded corners
+6. **Interactive Behavior**:
+   - Container should be clickable to add a new photo (unless in read-only mode)
+   - Open a dialog for photo capture or selection when clicked
 
-### Interactive Card
-- Class: `ios-card hover:shadow-md transition-shadow cursor-pointer`
-- Cards that are clickable/interactive
-- Includes hover effect
-- Example: Product items, selectable options
+### Example Usage
 
-## Form Elements
+```jsx
+<SelfieSection 
+  amImages={morningImages}
+  pmImages={eveningImages}
+  onAddImage={handleAddImage}
+  maxImages={4}
+  readOnly={false}
+  title="Selfies"
+/>
+```
 
-### Text Input
-- Class: `flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-base`
-- Clean, minimal styling
-- Clear focus states
-- Subtle border
+### Props
 
-### Textarea
-- Class: `min-h-[120px] rounded-md border border-input`
-- Multi-line text input
-- Consistent with other form elements
-
-### Checkbox/Radio
-- Simple, clean styling
-- Custom checked state with brand colors
-- Easy to tap target size
-
-## Tags/Badges
-
-### Standard Tag
-- Class: `factor-tag` or `inline-flex items-center text-sm rounded-full px-3 py-1`
-- Used for labels, categories, statuses
-- Small, compact
-- Various background colors based on meaning
-
-## Sections
-
-### Content Section
-- Class: `ios-section` or `mb-8`
-- Consistent spacing between sections
-- Clear headings
-
-### Chat Input Section
-- Class: `px-4 pb-16 pt-6 bg-slate-50 mt-[-4rem]`
-- Negative top margin to reduce space with section above
-- Extra bottom padding to prevent overlap with navigation bar
-- Consistent across all pages
-- Contains quick suggestions and input field
-
-## Typography
-
-### Headings
-- H1: `text-3xl font-bold text-skin-black tracking-tight`
-- H2: `text-2xl font-semibold text-skin-black`
-- H3: `text-xl font-medium text-skin-black`
-
-### Body Text
-- Standard: `text-base text-skin-black`
-- Muted: `text-base text-muted-foreground`
-
-### Small Text
-- Class: `text-sm text-muted-foreground`
-- Used for secondary information
-
-## Icons
-
-- Use icons from `lucide-react` 
-- Standard size: `h-5 w-5`
-- Consistent placement within components
-- Match color with surrounding text unless highlighting
-
+- `amImages`: Array of morning selfie image URLs (or null)
+- `pmImages`: Array of evening selfie image URLs (or null)
+- `onAddImage`: Function to call when adding an image (type, index) => void
+- `maxImages`: Maximum number of images allowed per type (default: 4)
+- `readOnly`: Whether the section should be interactive (default: false)
+- `title`: Section title (default: "Selfies")

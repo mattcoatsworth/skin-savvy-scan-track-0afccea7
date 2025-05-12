@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import SelfieSection from "./SelfieSection";
 
 interface SelfieImage {
   id: string;
@@ -44,33 +45,32 @@ const SelfieGrid: React.FC<SelfieGridProps> = ({ images }) => {
   };
   
   // Group images by date
-  const imagesByDate: Record<string, SelfieImage[]> = {};
+  const imagesByDate: Record<string, { am: (string | null)[], pm: (string | null)[] }> = {};
+  
   images.forEach(img => {
     if (!imagesByDate[img.date]) {
-      imagesByDate[img.date] = [];
+      imagesByDate[img.date] = { am: [], pm: [] };
     }
-    imagesByDate[img.date].push(img);
+    
+    if (img.type === "am") {
+      imagesByDate[img.date].am.push(img.url);
+    } else {
+      imagesByDate[img.date].pm.push(img.url);
+    }
   });
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-1">
-        {images.map((image, index) => (
-          <div 
-            key={image.id} 
-            className="aspect-square relative cursor-pointer"
-            onClick={() => handleOpenImage(image, index)}
-          >
-            <img 
-              src={image.url}
-              alt={`Selfie from ${image.date}`}
-              className="w-full h-full object-cover"
+      <div className="space-y-6">
+        {Object.entries(imagesByDate).map(([date, dateImages]) => (
+          <div key={date} className="mb-6">
+            <h3 className="font-semibold mb-2">{date}</h3>
+            <SelfieSection 
+              amImages={dateImages.am}
+              pmImages={dateImages.pm}
+              readOnly={true}
+              title="Selfies"
             />
-            <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 rounded px-1 py-0.5">
-              <span className="text-white text-xs">
-                {image.type === "am" ? "AM" : "PM"}: {image.rating}
-              </span>
-            </div>
           </div>
         ))}
       </div>

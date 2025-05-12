@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import SelfieCarousel from "./SelfieCarousel";
+import SelfieSection from "./SelfieSection";
 
 interface DailySkinSnapshotProps {
   title?: string;
@@ -67,23 +68,12 @@ const DailySkinSnapshot: React.FC<DailySkinSnapshotProps> = ({
       <h2 className="text-xl font-semibold mb-3">{title}</h2>
       <Card className="ios-card">
         <CardContent className="p-4">
-          <div className="grid grid-cols-2 gap-4">
-            {/* Morning selfie carousel */}
-            <SelfieCarousel
-              type="am"
-              label="Morning"
-              images={selfieImages.am}
-              onAddImage={handleAddSelfie}
-            />
-            
-            {/* Evening selfie carousel */}
-            <SelfieCarousel
-              type="pm"
-              label="Evening"
-              images={selfieImages.pm}
-              onAddImage={handleAddSelfie}
-            />
-          </div>
+          <SelfieSection 
+            amImages={selfieImages.am}
+            pmImages={selfieImages.pm}
+            onAddImage={handleAddSelfie}
+            maxImages={4}
+          />
         </CardContent>
       </Card>
     </div>
