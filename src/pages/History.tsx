@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useLocation } from "react-router-dom";
@@ -403,13 +404,13 @@ const History = () => {
     ];
 
     const weeklyTrendData = [
-      { date: "Mon", value: 65 },
-      { date: "Tue", value: 72 },
-      { date: "Wed", value: 78 },
-      { date: "Thu", value: 80 },
-      { date: "Fri", value: 85 },
-      { date: "Sat", value: 88 },
-      { date: "Sun", value: 82 }
+      { date: "Mon", value: 35 },
+      { date: "Tue", value: 40 },
+      { date: "Wed", value: 45 },
+      { date: "Thu", value: 60 },
+      { date: "Fri", value: 75 },
+      { date: "Sat", value: 80 },
+      { date: "Sun", value: 85 }
     ];
     
     // Check if we have cached advice in localStorage
@@ -686,7 +687,7 @@ const History = () => {
             {/* InsightsTrends component */}
             <InsightsTrends insights={insightData} className="mb-6" />
             
-            {/* AI Analysis Section */}
+            {/* AI Analysis Section - Added from SkinAnalysis page */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">AI Analysis</h2>
               
@@ -775,7 +776,7 @@ const History = () => {
               )}
             </div>
             
-            {/* Daily Log Cards - Updated to make selfie sections consistent */}
+            {/* Daily Log Cards - Updated to use SelfieCarousel */}
             <div className="flex flex-col gap-y-6">
               {dayLogs.map((log) => (
                 <Link key={log.id} to={`/day-log/${log.id}`}>
@@ -806,14 +807,14 @@ const History = () => {
                         </div>
                       </div>
                       
-                      {/* Updated consistent selfies section */}
+                      {/* Selfies section */}
                       <div className="mt-4 pt-3 border-t border-gray-100">
                         <h4 className="text-sm font-medium mb-2">Selfies</h4>
                         <div className="grid grid-cols-2 gap-4">
-                          {/* Morning Selfies Preview - Consistent styling */}
+                          {/* Morning Selfies Preview */}
                           <div className="flex flex-col items-center">
                             <span className="text-xs text-slate-500 mb-1">AM</span>
-                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
+                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                               {log.amSelfies?.[0] ? (
                                 <img 
                                   src={log.amSelfies[0]} 
@@ -821,10 +822,7 @@ const History = () => {
                                   className="object-cover w-full h-full"
                                 />
                               ) : (
-                                <div className="flex flex-col items-center">
-                                  <Camera className="h-6 w-6 mb-1" />
-                                  <span className="text-xs text-gray-400">No Photo</span>
-                                </div>
+                                <span className="text-xs text-gray-400">No Photo</span>
                               )}
                             </div>
                             {log.amSelfies && log.amSelfies.filter(img => img).length > 1 && (
@@ -834,10 +832,10 @@ const History = () => {
                             )}
                           </div>
                           
-                          {/* Evening Selfies Preview - Consistent styling */}
+                          {/* Evening Selfies Preview */}
                           <div className="flex flex-col items-center">
                             <span className="text-xs text-slate-500 mb-1">PM</span>
-                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
+                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                               {log.pmSelfies?.[0] ? (
                                 <img 
                                   src={log.pmSelfies[0]} 
@@ -845,10 +843,7 @@ const History = () => {
                                   className="object-cover w-full h-full"
                                 />
                               ) : (
-                                <div className="flex flex-col items-center">
-                                  <Camera className="h-6 w-6 mb-1" />
-                                  <span className="text-xs text-gray-400">No Photo</span>
-                                </div>
+                                <span className="text-xs text-gray-400">No Photo</span>
                               )}
                             </div>
                             {log.pmSelfies && log.pmSelfies.filter(img => img).length > 1 && (
