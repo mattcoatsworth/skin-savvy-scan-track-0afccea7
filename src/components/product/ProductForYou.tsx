@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, StarHalf, StarOff } from "lucide-react";
 import { toast } from "sonner";
 import LoadingIndicator from "./LoadingIndicator";
 import { supabase } from "@/integrations/supabase/client";
+import { Progress } from "@/components/ui/progress";
 
 interface ProductForYouProps {
   isLoading: boolean;
@@ -51,7 +51,7 @@ const ProductForYou = ({ isLoading, product, type, productId }: ProductForYouPro
         setPersonalInsight({
           recommendation: "We don't have enough data from your skin logs to provide a personalized recommendation.",
           reasoning: "Start logging your skin condition daily for personalized insights.",
-          rating: 3
+          rating: 50 // Default to middle rating when no data
         });
         return;
       }
@@ -72,6 +72,15 @@ const ProductForYou = ({ isLoading, product, type, productId }: ProductForYouPro
 
       if (error) throw error;
 
+      // Convert the 1-5 scale rating to 1-100 scale if needed
+      if (data && typeof data.rating === 'number') {
+        // If the rating is already on a 1-100 scale, use it directly
+        // Otherwise, convert from 1-5 scale to 1-100 scale
+        if (data.rating <= 5) {
+          data.rating = Math.round(data.rating * 20);
+        }
+      }
+
       setPersonalInsight(data);
     } catch (error) {
       console.error("Error generating insights:", error);
@@ -79,7 +88,7 @@ const ProductForYou = ({ isLoading, product, type, productId }: ProductForYouPro
       setPersonalInsight({
         recommendation: "Unable to analyze this product for your skin profile at the moment.",
         reasoning: "We encountered an issue when generating your personalized recommendation.",
-        rating: 3
+        rating: 50 // Default to middle rating on error
       });
     } finally {
       setLoadingInsight(false);
@@ -93,29 +102,19 @@ const ProductForYou = ({ isLoading, product, type, productId }: ProductForYouPro
     }
   }, [product, isLoading]);
 
-  // Render stars based on rating
-  const renderRatingStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    
-    // Add full stars
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={`star-${i}`} className="h-5 w-5 fill-yellow-400 text-yellow-400" />);
-    }
-    
-    // Add half star if needed
-    if (hasHalfStar) {
-      stars.push(<StarHalf key="half-star" className="h-5 w-5 fill-yellow-400 text-yellow-400" />);
-    }
-    
-    // Add empty stars
-    const emptyStars = 5 - stars.length;
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<StarOff key={`empty-${i}`} className="h-5 w-5 text-gray-400" />);
-    }
-    
-    return stars;
+  // Helper function to get color based on rating
+  const getRatingColor = (rating: number) => {
+    if (rating >= 70) return "bg-green-500";
+    if (rating >= 40) return "bg-amber-500";
+    return "bg-red-500";
+  };
+
+  const getRatingLabel = (rating: number) => {
+    if (rating >= 80) return "Great match";
+    if (rating >= 60) return "Good match";
+    if (rating >= 40) return "Moderate match";
+    if (rating >= 20) return "Poor match";
+    return "Not recommended";
   };
 
   return (
@@ -130,11 +129,19 @@ const ProductForYou = ({ isLoading, product, type, productId }: ProductForYouPro
             <LoadingIndicator />
           ) : personalInsight ? (
             <div>
-              <div className="flex items-center mb-3">
-                <p className="font-medium mr-2">Personal Match Rating:</p>
+              <div className="mb-4">
+                <p className="font-medium mb-1">Personal Match Rating</p>
                 <div className="flex items-center">
-                  {renderRatingStars(personalInsight.rating)}
+                  <div className="flex-1 mr-4">
+                    <Progress 
+                      value={personalInsight.rating} 
+                      className="h-3 bg-gray-100" 
+                      indicatorClassName={getRatingColor(personalInsight.rating)} 
+                    />
+                  </div>
+                  <div className="text-base font-semibold">{personalInsight.rating}/100</div>
                 </div>
+                <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(personalInsight.rating)}</p>
               </div>
               
               <div className="space-y-4">

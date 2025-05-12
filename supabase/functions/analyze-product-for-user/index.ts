@@ -39,7 +39,7 @@ serve(async (req) => {
 
     // Create OpenAI prompt
     const systemPrompt = `You are a skin health expert that can analyze a product and determine how suitable it would be for a user based on their skin logs. 
-      Use your expertise to provide a personalized rating from 1-5 stars (can use half stars) and explain why this product would or wouldn't work well for the user's skin condition.
+      Use your expertise to provide a personalized rating from 1-100 (where 1 is terrible match and 100 is perfect match) and explain why this product would or wouldn't work well for the user's skin condition.
       Focus on creating a concise, evidence-based recommendation.`;
     
     const userPrompt = `Based on these recent skin logs: ${JSON.stringify(userSkinConditions)}, 
@@ -47,7 +47,7 @@ serve(async (req) => {
       and provide a personalized recommendation. Format your response as a JSON with three fields:
       "recommendation" (a concise recommendation statement, 1-2 sentences),
       "reasoning" (why this product may or may not work for the user's skin condition, 2-3 sentences),
-      "rating" (a number from 1 to 5, can include half points like 3.5)`;
+      "rating" (a number from 1 to 100, where 1 is terrible match and 100 is perfect match)`;
 
     // Call OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
