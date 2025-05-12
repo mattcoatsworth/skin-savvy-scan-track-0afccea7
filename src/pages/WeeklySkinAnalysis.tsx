@@ -143,6 +143,72 @@ const cleanAiContent = (content: string | string[] | undefined, sectionName: str
   return text;
 };
 
+// Function to render a rating circle
+const renderRatingCircle = (rating: number, size: "small" | "medium" | "large" = "medium") => {
+  const sizeMap = {
+    small: {
+      wrapperSize: "w-12 h-12",
+      svgSize: "w-12 h-12",
+      textSize: "text-sm",
+      labelSize: "text-xs",
+      strokeWidth: "4"
+    },
+    medium: {
+      wrapperSize: "w-16 h-16",
+      svgSize: "w-16 h-16",
+      textSize: "text-base",
+      labelSize: "text-sm",
+      strokeWidth: "4"
+    },
+    large: {
+      wrapperSize: "w-20 h-20",
+      svgSize: "w-20 h-20",
+      textSize: "text-xl",
+      labelSize: "text-sm",
+      strokeWidth: "4"
+    }
+  };
+  
+  const { wrapperSize, svgSize, textSize, labelSize, strokeWidth } = sizeMap[size];
+  
+  return (
+    <div className="flex flex-col items-center">
+      <div className={`relative ${wrapperSize} flex items-center justify-center`}>
+        {/* Background circle */}
+        <svg className={`${svgSize} absolute`} viewBox="0 0 36 36">
+          <path
+            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+            fill="none"
+            stroke={getBackgroundColor(rating)}
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+          />
+        </svg>
+        
+        {/* Foreground circle - the actual progress */}
+        <svg className={`${svgSize} absolute`} viewBox="0 0 36 36">
+          <path
+            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+            fill="none"
+            stroke={getProgressColor(rating)}
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${rating}, 100`}
+            strokeLinecap="round"
+          />
+        </svg>
+        
+        {/* Rating number in the center */}
+        <div className={`font-semibold ${textSize}`}>
+          {rating}
+        </div>
+      </div>
+      <span className={`font-medium mt-1 ${labelSize}`}>
+        {getRatingLabel(rating)}
+      </span>
+    </div>
+  );
+};
+
 const WeeklySkinAnalysis = () => {
   // Apply the scroll to top hook
   useScrollToTop();
@@ -484,40 +550,7 @@ const WeeklySkinAnalysis = () => {
                     <p className="text-sm text-muted-foreground">Week Average</p>
                   </div>
                   
-                  <div className="flex flex-col items-center">
-                    <div className="relative w-20 h-20 flex items-center justify-center">
-                      {/* Background circle */}
-                      <svg className="w-20 h-20 absolute" viewBox="0 0 36 36">
-                        <path
-                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none"
-                          stroke={getBackgroundColor(analysisData.overallScore)}
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      
-                      {/* Foreground circle - the actual progress */}
-                      <svg className="w-20 h-20 absolute" viewBox="0 0 36 36">
-                        <path
-                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none"
-                          stroke={getProgressColor(analysisData.overallScore)}
-                          strokeWidth="4"
-                          strokeDasharray={`${analysisData.overallScore}, 100`}
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      
-                      {/* Rating number in the center */}
-                      <div className="text-xl font-semibold">
-                        {analysisData.overallScore}
-                      </div>
-                    </div>
-                    <span className="text-sm font-medium mt-1">
-                      {getRatingLabel(analysisData.overallScore)}
-                    </span>
-                  </div>
+                  {renderRatingCircle(analysisData.overallScore, "large")}
                 </div>
               </CardContent>
             </Card>
@@ -794,40 +827,7 @@ const WeeklySkinAnalysis = () => {
                         <p className="text-sm text-muted-foreground">Weekly Analysis</p>
                       </div>
                       
-                      <div className="flex flex-col items-center">
-                        <div className="relative w-20 h-20 flex items-center justify-center">
-                          {/* Background circle */}
-                          <svg className="w-20 h-20 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(analysisData.overallScore)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          {/* Foreground circle - the actual progress */}
-                          <svg className="w-20 h-20 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(analysisData.overallScore)}
-                              strokeWidth="4"
-                              strokeDasharray={`${analysisData.overallScore}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          {/* Rating number in the center */}
-                          <div className="text-xl font-semibold">
-                            {analysisData.overallScore}
-                          </div>
-                        </div>
-                        <span className="text-sm font-medium mt-1">
-                          {getRatingLabel(analysisData.overallScore)}
-                        </span>
-                      </div>
+                      {renderRatingCircle(analysisData.overallScore, "large")}
                     </div>
                   </CardContent>
                 </Card>
@@ -885,22 +885,16 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards with Ratings - MODIFIED to remove icons and titles */}
+                {/* AI Sections with Circular Progress - MODIFIED to add circular rating */}
                 {aiSections.length > 0 && aiSections.map((section, index) => (
                   <div key={index} className="mb-6">
                     <div className="flex justify-between items-center mb-3">
                       <h2 className="text-lg font-semibold">{section.title}</h2>
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm font-medium">{section.rating}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {getRatingLabel(section.rating)}
-                        </span>
-                      </div>
+                      {renderRatingCircle(section.rating, "small")}
                     </div>
                     
                     <Card className="ios-card">
                       <CardContent className="p-4">
-                        {/* Removed the header with icon and section title */}
                         <div className="space-y-4">
                           {section.items.map((item, itemIdx) => {
                             // Generate a rating for each item (in a real app would be data-driven)
@@ -921,9 +915,9 @@ const WeeklySkinAnalysis = () => {
                                       </p>
                                     </div>
                                     
-                                    <div className="ml-3 flex items-center">
-                                      <div className="text-xs inline-flex items-center">
-                                        <span className="font-medium">{itemRating}</span>
+                                    <div className="ml-3">
+                                      <div className="text-sm font-medium">
+                                        {itemRating}
                                       </div>
                                     </div>
                                   </div>
@@ -937,19 +931,15 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 ))}
 
-                {/* Correlations Table with Rating - MODIFIED to remove icon and title */}
+                {/* Correlations Table with Rating - MODIFIED to add circular rating */}
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3">
                     <h2 className="text-lg font-semibold">AI Correlations</h2>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-medium">75</span>
-                      <span className="text-xs text-muted-foreground">Good</span>
-                    </div>
+                    {renderRatingCircle(75, "small")}
                   </div>
                   
                   <Card className="ios-card">
                     <CardContent className="p-4">
-                      {/* Removed the header with icon and title */}
                       <Table>
                         <TableHeader>
                           <TableRow>
