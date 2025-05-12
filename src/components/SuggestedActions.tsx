@@ -10,7 +10,7 @@ type ActionType = {
   linkTo?: string;
   id?: string;
   supplementId?: string;
-  type?: string; // Add type for AI recommendations
+  type?: string; // Type for AI recommendations
 };
 
 type SuggestedActionsProps = {
@@ -35,6 +35,7 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
     
     // If we have an ID and type for AI recommendation, use the consistent testai format
     if (action.id && action.type) {
+      // Ensure we're using the format that AIRecommendationDetail expects
       return `/recommendations-detail/${action.type}/${action.id}/testai`;
     }
     

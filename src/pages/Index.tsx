@@ -157,23 +157,29 @@ const Index = () => {
     },
   ];
 
+  // Update suggested actions to use proper type and id format for AIRecommendationDetail
   const suggestedActions = [
     { 
       text: "Try logging your water intake today",
       linkTo: "/day-log/today", // Link directly to today's log
       id: "water-intake",
-      type: "action"
+      type: "action" // Explicit type for consistency
     },
     { 
       text: "Consider pausing this supplement to see if irritation decreases",
-      id: "supplement-irritation", 
       supplementId: "collagen", // Add supplementId to link directly to supplement page
-      type: "action"
+      id: "supplement-irritation", 
+      type: "factor" // Consistent with AI recommendation types
     },
     { 
       text: "Use SPF more consistently this week",
       id: "spf-consistency",
-      type: "action"
+      type: "action" // Consistent with AI recommendation types
+    },
+    { 
+      text: "Try a weekly exfoliation routine",
+      id: "exfoliation",
+      type: "factor", // Using factor type for testing
     },
   ];
 
