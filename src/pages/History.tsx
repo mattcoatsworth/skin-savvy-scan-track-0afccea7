@@ -615,7 +615,7 @@ const History = () => {
     return 'inline bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
   };
 
-  // Daily Log Cards - UPDATED to use the SelfieSection component
+  // Daily Log Cards - Updated to use the SelfieSection component properly
   const renderDayLogs = () => {
     return dayLogs.map((log) => (
       <Link key={log.id} to={`/day-log/${log.id}`}>
@@ -646,7 +646,7 @@ const History = () => {
               </div>
             </div>
             
-            {/* UPDATED: Using the standardized SelfieSection component */}
+            {/* Replace the old selfie section with the standardized SelfieSection component */}
             <div className="mt-4 pt-3 border-t border-gray-100">
               <SelfieSection 
                 amImages={log.amSelfies || []}
@@ -705,7 +705,7 @@ const History = () => {
             {/* SkinIndexComparison component */}
             <SkinIndexComparison className="mb-6" gender="female" age={25} />
             
-            {/* Today's Selfies Section */}
+            {/* Today's Selfies Section - Updated to use the standardized component */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
               <Card className="ios-card">
