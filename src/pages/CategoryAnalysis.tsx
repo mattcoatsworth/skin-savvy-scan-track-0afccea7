@@ -1,269 +1,181 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calendar, 
-  Apple, 
-  Pill, 
-  Moon, 
-  Activity, 
-  Droplet, 
-  Thermometer,
-  Eye
-} from "lucide-react";
 import BackButton from "@/components/BackButton";
-import useScrollToTop from "@/hooks/useScrollToTop";
+import AppNavigation from "@/components/AppNavigation";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Sample category data
+const categoryData = {
+  "hydration": {
+    title: "Hydration",
+    description: "Track your daily water intake and its effect on your skin.",
+    trend: "Improving",
+    averageScore: 75,
+    keyFactors: ["Water Intake", "Electrolyte Balance", "Humidifier Usage"],
+    recommendations: ["Drink more water", "Use a humidifier", "Eat hydrating foods"]
+  },
+  "diet": {
+    title: "Diet",
+    description: "Analyze how your dietary choices impact your skin health.",
+    trend: "Stable",
+    averageScore: 68,
+    keyFactors: ["Sugar Intake", "Dairy Consumption", "Antioxidant Foods"],
+    recommendations: ["Reduce sugar intake", "Increase antioxidant foods", "Consider dairy alternatives"]
+  },
+  "sleep": {
+    title: "Sleep",
+    description: "Monitor your sleep patterns and their correlation with skin condition.",
+    trend: "Declining",
+    averageScore: 62,
+    keyFactors: ["Sleep Duration", "Sleep Quality", "Bedtime Routine"],
+    recommendations: ["Improve sleep hygiene", "Establish a bedtime routine", "Aim for 7-8 hours of sleep"]
+  },
+  "stress": {
+    title: "Stress",
+    description: "Evaluate the impact of stress levels on your skin health.",
+    trend: "Worsening",
+    averageScore: 55,
+    keyFactors: ["Stress Level", "Mindfulness Practices", "Workload"],
+    recommendations: ["Practice mindfulness", "Reduce workload", "Engage in stress-reducing activities"]
+  },
+  "environment": {
+    title: "Environment",
+    description: "Assess how environmental factors affect your skin.",
+    trend: "Variable",
+    averageScore: 70,
+    keyFactors: ["UV Exposure", "Air Pollution", "Humidity"],
+    recommendations: ["Use sunscreen", "Avoid peak sun hours", "Protect skin from pollution"]
+  }
+};
 
 const CategoryAnalysis = () => {
   useScrollToTop();
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<string>("");
   
-  // AI analysis state
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiAdvice, setAiAdvice] = useState("");
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  // Initialize the skin advice hook
+  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice();
   
-  // Define our categories with their icons and scores
-  const categories = [
-    { name: "food", icon: <Apple className="h-6 w-6" />, score: 68 },
-    { name: "products", icon: <Pill className="h-6 w-6" />, score: 82 },
-    { name: "sleep", icon: <Moon className="h-6 w-6" />, score: 65 },
-    { name: "stress", icon: <Activity className="h-6 w-6" />, score: 55 },
-    { name: "hydration", icon: <Droplet className="h-6 w-6" />, score: 70 },
-    { name: "environment", icon: <Thermometer className="h-6 w-6" />, score: 78 },
-    { name: "skin", icon: <Eye className="h-6 w-6" />, score: 75 }
-  ];
-  
-  // For You personalized insights
-  const personalizedInsights = [
-    {
-      category: "food",
-      insight: "Your skin responds well to increased hydration and reduced dairy",
-      score: 85,
-      linkTo: "/category-analysis/food"
-    },
-    {
-      category: "sleep",
-      insight: "Consistent sleep schedule correlates with fewer breakouts",
-      score: 78,
-      linkTo: "/category-analysis/sleep"
-    },
-    {
-      category: "stress",
-      insight: "Meditation practices have improved your skin inflammation",
-      score: 72,
-      linkTo: "/category-analysis/stress"
-    }
-  ];
-
-  // Function to generate AI advice
-  const generateAiAdvice = async () => {
-    setAiLoading(true);
-    try {
-      const advice = await getAdvice(
-        "Provide a summary analysis of how different lifestyle categories affect my skin health", 
-        { categories }
-      );
-      setAiAdvice(advice);
-    } catch (error) {
-      console.error("Error getting AI skin advice:", error);
-    } finally {
-      setAiLoading(false);
-    }
-  };
-  
-  // Generate AI advice on first render
-  React.useEffect(() => {
-    generateAiAdvice();
+  // Load category data
+  useEffect(() => {
+    // In a real app, this would be from API
+    setTimeout(() => {
+      setData(categoryData);
+      setIsLoading(false);
+    }, 1000);
   }, []);
+  
+  // Get AI analysis when data loads
+  useEffect(() => {
+    const getAnalysis = async () => {
+      if (!data) return;
+      
+      try {
+        // Generate AI analysis for the category data
+        const analysisResponse = await getAdvice(
+          "Provide an overall analysis of trends across all categories",
+          { categoryData: data }
+        );
+        
+        setAiAnalysis(getTextContent(analysisResponse));
+      } catch (error) {
+        console.error("Error getting AI analysis:", error);
+      }
+    };
+    
+    if (data) {
+      getAnalysis();
+    }
+  }, [data]);
 
-  // Determine progress color based on rating
-  const getProgressColor = (rating: number) => {
-    if (rating >= 70) return "#4ADE80"; // Green for good ratings
-    if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
-    return "#F87171"; // Red for poor ratings
-  };
-  
-  // Get the lighter background color for the circle
-  const getBackgroundColor = (rating: number) => {
-    if (rating >= 70) return "#E6F8EA"; // Light green
-    if (rating >= 40) return "#FEF7CD"; // Light yellow
-    return "#FFDEE2"; // Light red
-  };
-  
-  // Determine label based on rating
-  const getRatingLabel = (rating: number) => {
-    if (rating >= 80) return "Great";
-    if (rating >= 60) return "Good";
-    if (rating >= 40) return "OK";
-    if (rating >= 20) return "Fair";
-    return "Poor";
-  };
-  
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
-          <div>
-            <h1 className="text-2xl font-bold">Category Analysis</h1>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4 mr-1" />
-              <span>Last 7 days</span>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold">Category Analysis</h1>
         </header>
         
-        <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="current">Current</TabsTrigger>
-            <TabsTrigger value="for-you">For You</TabsTrigger>
-            <TabsTrigger value="ai">AI Analysis</TabsTrigger>
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="details">Details</TabsTrigger>
           </TabsList>
-
-          {/* Current Tab - All Categories */}
-          <TabsContent value="current" className="space-y-6">
-            <h2 className="text-lg font-semibold mb-3">Categories Overview</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Tap on any category to view detailed analysis of how it affects your skin.
-            </p>
-            
-            <div className="grid grid-cols-1 gap-4">
-              {categories.map((category) => (
-                <Link key={category.name} to={`/category-analysis/${category.name}`} className="block">
-                  <Card className="ios-card hover:shadow-md transition-all">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {category.icon}
-                          <div>
-                            <h3 className="text-lg font-medium capitalize">{category.name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {getRatingLabel(category.score)} impact on skin
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="relative w-12 h-12 flex items-center justify-center">
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(category.score)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(category.score)}
-                              strokeWidth="4"
-                              strokeDasharray={`${category.score}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          <div className="text-sm font-semibold">{category.score}</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </TabsContent>
           
-          {/* For You Tab - Personalized Insights */}
-          <TabsContent value="for-you" className="space-y-6">
-            <h2 className="text-lg font-semibold mb-3">Personalized Insights</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Based on your data, these categories have the most significant impact on your skin:
-            </p>
-            
-            <div className="space-y-4">
-              {personalizedInsights.map((item, index) => (
-                <Link key={index} to={item.linkTo}>
-                  <Card className="ios-card hover:shadow-md transition-all">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-lg capitalize">{item.category}</h3>
-                        <div className="bg-skin-teal text-white text-xs rounded-full px-2 py-0.5">
-                          Top Impact
-                        </div>
-                      </div>
-                      <p className="text-sm mb-3">{item.insight}</p>
-                      <div className="flex items-center">
-                        <div className="w-full bg-slate-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-skin-teal h-2 rounded-full" 
-                            style={{ width: `${item.score}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-xs font-medium">{item.score}%</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-            
-            <Card className="ios-card mt-4">
-              <CardContent className="p-4">
-                <h3 className="font-medium text-lg mb-2">This Week's Focus</h3>
-                <p className="text-sm">
-                  Focus on maintaining your sleep schedule and hydration levels for continued improvement.
-                  Consider exploring the stress category for additional benefits.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* AI Analysis Tab */}
-          <TabsContent value="ai" className="space-y-6">
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">AI Category Analysis</h2>
+          <TabsContent value="overview" className="space-y-6">
+            {isLoading ? (
+              <Card className="ios-card">
+                <CardContent className="p-6">
+                  <p>Loading category data...</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <Card className="ios-card">
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Overall Trends</h2>
+                    <p className="text-muted-foreground">
+                      {aiAnalysis || "Analyzing trends across all categories..."}
+                    </p>
+                  </CardContent>
+                </Card>
                 
-                {aiLoading || isLoading ? (
-                  <div className="flex flex-col items-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
-                    <p className="text-muted-foreground">Generating your personalized category analysis...</p>
-                  </div>
-                ) : (
-                  <div className="prose prose-sm max-w-none">
-                    {aiAdvice ? (
-                      <div dangerouslySetInnerHTML={{ __html: aiAdvice.replace(/\n/g, '<br/>') }} />
-                    ) : (
-                      <p>Unable to generate AI analysis at this time. Please try again later.</p>
-                    )}
-                    
-                    <button 
-                      onClick={generateAiAdvice} 
-                      className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
-                    >
-                      Regenerate Analysis
-                    </button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-            
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h3 className="font-medium mb-2">Key Takeaways</h3>
-                <ul className="list-disc pl-5 space-y-2 text-sm">
-                  <li>Food and sleep have the strongest correlations with your skin health</li>
-                  <li>Environmental factors show less impact than expected</li>
-                  <li>Consistent skincare products show positive trends</li>
-                  <li>Consider tracking hydration more closely for better insights</li>
-                </ul>
-              </CardContent>
-            </Card>
+                <div className="space-y-3">
+                  {Object.entries(data).map(([category, details]: [string, any]) => (
+                    <Link to={`/category/${category}`} key={category}>
+                      <Card className="ios-card hover:shadow-md transition-all">
+                        <CardContent className="p-4">
+                          <h3 className="font-medium">{details.title}</h3>
+                          <p className="text-sm text-muted-foreground">{details.description}</p>
+                          <p className="text-sm mt-2">
+                            Trend: <span className="font-semibold">{details.trend}</span>
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="details" className="space-y-6">
+            {isLoading ? (
+              <Card className="ios-card">
+                <CardContent className="p-6">
+                  <p>Loading category data...</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {Object.entries(data).map(([category, details]: [string, any]) => (
+                  <Link to={`/category/${category}`} key={category}>
+                    <Card className="ios-card hover:shadow-md transition-all">
+                      <CardContent className="p-4">
+                        <h3 className="font-medium">{details.title}</h3>
+                        <p className="text-sm text-muted-foreground">{details.description}</p>
+                        <div className="mt-3">
+                          <h4 className="text-sm font-medium">Key Factors:</h4>
+                          <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                            {details.keyFactors.map((factor: string, index: number) => (
+                              <li key={index}>{factor}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
+        
+        <AppNavigation />
       </div>
     </div>
   );

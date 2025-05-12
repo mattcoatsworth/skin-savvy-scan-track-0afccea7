@@ -15,6 +15,8 @@ interface UseSkinAdviceProps {
 interface AIResponse {
   formattedHtml: string;
   sections: Record<string, string | string[]>;
+  error?: string;
+  rawContent?: string;
 }
 
 export const useSkinAdvice = ({
@@ -118,6 +120,17 @@ export const useSkinAdvice = ({
     
     // Wrap in a container
     return `<div class="my-2">${formattedText}</div>`;
+  };
+
+  // Helper method to extract text content from AIResponse for string states
+  const getTextContent = (response: AIResponse | null): string => {
+    if (!response) return "";
+    if (response.error) return response.error;
+    if (response.formattedHtml) {
+      // Basic stripping of HTML tags for plain text
+      return response.formattedHtml.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    return "";
   };
 
   // Get AI advice based on provided context
@@ -289,6 +302,7 @@ export const useSkinAdvice = ({
 
   return {
     getAdvice,
-    isLoading
+    isLoading,
+    getTextContent
   };
 };

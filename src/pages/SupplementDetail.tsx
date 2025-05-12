@@ -1,114 +1,95 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import BackButton from "@/components/BackButton";
 import { AlertTriangle, Check, X, Beaker, Calendar, Activity, UserCircle, PieChart, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
-import { useState, useEffect } from "react";
 
-type SupplementDetailsType = {
-  id: string;
-  name: string;
-  brand: string;
-  form: string;
-  dosage: string;
-  ingredients: string[];
-  startDate: string;
-  skinIrritationScore: number;
-  possibleIssues: string[];
-  benefits: string[];
-  usage: {
-    frequency: string;
-    duration: string;
-    notes: string;
-  };
-  scientificEvidence: {
-    level: "High" | "Moderate" | "Limited" | "Inconclusive";
-    summary: string;
-  };
-  recommendations: {
-    pause: boolean;
-    alternatives?: string[];
-    resumptionGuidance?: string;
-  };
+// Hypothetical supplement data (in a real app, this would come from an API or database)
+const supplementsData = {
+  "collagen": {
+    id: "collagen",
+    name: "Marine Collagen Peptides",
+    brand: "VitalSkin",
+    form: "Powder",
+    dosage: "10g daily",
+    ingredients: ["Hydrolyzed Marine Collagen", "Hyaluronic Acid", "Vitamin C", "Biotin", "Zinc"],
+    startDate: "2 weeks ago",
+    skinIrritationScore: 75,
+    possibleIssues: [
+      "Contains marine allergens that may trigger reactions in sensitive individuals",
+      "Biotin can cause skin breakouts in some people",
+      "High dosage may overwhelm skin's natural regulation",
+      "Potential interaction with other skincare products"
+    ],
+    benefits: [
+      "Improved skin elasticity in some users",
+      "Potential for better hydration when tolerated well",
+      "Supports nail and hair health"
+    ],
+    usage: {
+      frequency: "Once daily",
+      duration: "14 days so far",
+      notes: "Taken in morning coffee"
+    },
+    scientificEvidence: {
+      level: "Moderate",
+      summary: "Research shows mixed results with oral collagen supplements. Some studies indicate improvements in skin elasticity and hydration, while others show no significant difference versus placebo."
+    },
+    recommendations: {
+      pause: true,
+      alternatives?: ["Plant-based collagen boosters", "Targeted topical peptides", "Vitamin C serum"],
+      resumptionGuidance?: "If symptoms improve after 7-day pause, try reintroducing at half dose every other day."
+    }
+  }
 };
 
 const SupplementDetail = () => {
+  useScrollToTop();
   const { id } = useParams<{ id: string }>();
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
-  const [aiEnhancedInfo, setAiEnhancedInfo] = useState<string | null>(null);
+  const [supplement, setSupplement] = useState<any | null>(null);
+  const [aiSafetyInfo, setAiSafetyInfo] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Mock data for the supplements
-  const supplementsData: Record<string, SupplementDetailsType> = {
-    "collagen": {
-      id: "collagen",
-      name: "Marine Collagen Peptides",
-      brand: "VitalSkin",
-      form: "Powder",
-      dosage: "10g daily",
-      ingredients: ["Hydrolyzed Marine Collagen", "Hyaluronic Acid", "Vitamin C", "Biotin", "Zinc"],
-      startDate: "2 weeks ago",
-      skinIrritationScore: 75,
-      possibleIssues: [
-        "Contains marine allergens that may trigger reactions in sensitive individuals",
-        "Biotin can cause skin breakouts in some people",
-        "High dosage may overwhelm skin's natural regulation",
-        "Potential interaction with other skincare products"
-      ],
-      benefits: [
-        "Improved skin elasticity in some users",
-        "Potential for better hydration when tolerated well",
-        "Supports nail and hair health"
-      ],
-      usage: {
-        frequency: "Once daily",
-        duration: "14 days so far",
-        notes: "Taken in morning coffee"
-      },
-      scientificEvidence: {
-        level: "Moderate",
-        summary: "Research shows mixed results with oral collagen supplements. Some studies indicate improvements in skin elasticity and hydration, while others show no significant difference versus placebo."
-      },
-      recommendations: {
-        pause: true,
-        alternatives: ["Plant-based collagen boosters", "Targeted topical peptides", "Vitamin C serum"],
-        resumptionGuidance: "If symptoms improve after 7-day pause, try reintroducing at half dose every other day."
-      }
-    }
-  };
-
-  const supplement = id ? supplementsData[id] : null;
-
-  // Fetch AI-enhanced information when component loads
+  // Initialize the skin advice hook specifically for supplements
+  const { getAdvice, isLoading: isAdviceLoading, getTextContent } = useSkinAdvice({ 
+    adviceType: "supplement"
+  });
+  
+  // Load supplement data
   useEffect(() => {
-    const fetchAiInfo = async () => {
-      if (supplement) {
-        try {
-          const context = {
-            supplementName: supplement.name,
-            supplementType: supplement.form,
-            dosageInfo: supplement.dosage,
-            ingredients: supplement.ingredients,
-            scientificEvidence: supplement.scientificEvidence
-          };
-          
-          const aiResponse = await getAdvice(
-            "Please provide accurate, evidence-based information about this supplement with proper healthcare disclaimers. Include information about dosage considerations, precautions, and scientific evidence.", 
-            context
-          );
-          
-          setAiEnhancedInfo(aiResponse);
-        } catch (error) {
-          console.error("Error fetching AI supplement information:", error);
-        }
+    // In a real app, this would be an API call
+    setTimeout(() => {
+      setSupplement(supplementsData[id as keyof typeof supplementsData]);
+      setIsLoading(false);
+    }, 500);
+  }, [id]);
+  
+  // Generate AI-based safety information
+  useEffect(() => {
+    const getSafetyInfo = async () => {
+      if (!supplement) return;
+      
+      try {
+        // Get AI advice about safety considerations for this supplement
+        const advice = await getAdvice(
+          "Provide detailed safety information, interactions, and precautions", 
+          { supplementName: supplement.name, category: supplement.category }
+        );
+        
+        setAiSafetyInfo(getTextContent(advice));
+      } catch (error) {
+        console.error("Error getting supplement safety info:", error);
       }
     };
     
-    fetchAiInfo();
-  }, [supplement, getAdvice]);
+    if (supplement) {
+      getSafetyInfo();
+    }
+  }, [supplement]);
 
   if (!supplement) {
     return (
@@ -229,7 +210,7 @@ const SupplementDetail = () => {
         </section>
 
         {/* AI-Enhanced Information */}
-        {(aiEnhancedInfo || isLoading) && (
+        {(aiSafetyInfo || isLoading) && (
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
             <Card className="ios-card">
@@ -240,8 +221,8 @@ const SupplementDetail = () => {
                   </div>
                 ) : (
                   <div className="text-sm space-y-3">
-                    {aiEnhancedInfo && (
-                      <div dangerouslySetInnerHTML={{ __html: aiEnhancedInfo.replace(/\n/g, '<br/>') }} />
+                    {aiSafetyInfo && (
+                      <div dangerouslySetInnerHTML={{ __html: aiSafetyInfo.replace(/\n/g, '<br/>') }} />
                     )}
                   </div>
                 )}

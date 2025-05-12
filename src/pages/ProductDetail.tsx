@@ -23,7 +23,7 @@ const ProductDetail = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingPersonalized, setIsLoadingPersonalized] = useState(true);
   const [personalizedData, setPersonalizedData] = useState<{
@@ -35,7 +35,7 @@ const ProductDetail = () => {
   } | null>(null);
   
   // Initialize the skin advice hook for product analysis
-  const { getAdvice, isLoading: isAdviceLoading } = useSkinAdvice({
+  const { getAdvice, isLoading: isAdviceLoading, getTextContent } = useSkinAdvice({
     adviceType: "product"
   });
   
@@ -74,7 +74,7 @@ const ProductDetail = () => {
           concerns: product.concerns || []
         });
         
-        setAiAnalysis(advice);
+        setAiAnalysis(getTextContent(advice));
       } catch (error) {
         console.error("Error getting AI analysis:", error);
       } finally {

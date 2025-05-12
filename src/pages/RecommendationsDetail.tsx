@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -347,10 +348,10 @@ const RecommendationsDetail = () => {
   const recommendation = id ? recommendationsData[id as keyof typeof recommendationsData] : null;
 
   // States for AI-generated content
-  const [aiOverview, setAiOverview] = useState<string | null>(null);
-  const [aiBenefits, setAiBenefits] = useState<string | null>(null);
-  const [aiImplementation, setAiImplementation] = useState<string | null>(null);
-  const [aiScience, setAiScience] = useState<string | null>(null);
+  const [aiOverview, setAiOverview] = useState<string>("");
+  const [aiBenefits, setAiBenefits] = useState<string>("");
+  const [aiImplementation, setAiImplementation] = useState<string>("");
+  const [aiScience, setAiScience] = useState<string>("");
   const [isLoading, setIsLoading] = useState({
     overview: false,
     benefits: false,
@@ -359,7 +360,7 @@ const RecommendationsDetail = () => {
   });
   
   // Initialize the skin advice hook for different content types
-  const { getAdvice } = useSkinAdvice({ adviceType: "recommendation" });
+  const { getAdvice, getTextContent } = useSkinAdvice({ adviceType: "recommendation" });
 
   useEffect(() => {
     // Get AI content for each section when recommendation changes
@@ -378,7 +379,7 @@ const RecommendationsDetail = () => {
           recommendationTitle: recommendation.title,
           recommendationImpact: recommendation.impact
         });
-        setAiOverview(overview);
+        setAiOverview(getTextContent(overview));
         setIsLoading(prev => ({ ...prev, overview: false }));
         
         // Generate Benefits content
@@ -392,7 +393,7 @@ const RecommendationsDetail = () => {
           recommendationType: recommendation.type,
           recommendationTitle: recommendation.title
         });
-        setAiBenefits(benefits);
+        setAiBenefits(getTextContent(benefits));
         setIsLoading(prev => ({ ...prev, benefits: false }));
         
         // Generate Implementation content
@@ -405,7 +406,7 @@ const RecommendationsDetail = () => {
           recommendationType: recommendation.type,
           recommendationTitle: recommendation.title
         });
-        setAiImplementation(implementation);
+        setAiImplementation(getTextContent(implementation));
         setIsLoading(prev => ({ ...prev, implementation: false }));
         
         // Generate Science content
@@ -419,7 +420,7 @@ const RecommendationsDetail = () => {
           recommendationType: recommendation.type,
           recommendationTitle: recommendation.title
         });
-        setAiScience(science);
+        setAiScience(getTextContent(science));
         setIsLoading(prev => ({ ...prev, science: false }));
         
       } catch (error) {
