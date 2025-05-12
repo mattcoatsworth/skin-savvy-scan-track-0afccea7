@@ -12,6 +12,11 @@ export type Recommendation = {
   linkTo?: string;
 };
 
+// Type for the cached content structure
+interface RecommendationsContent {
+  recommendations: Recommendation[];
+}
+
 export const useRecommendations = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,12 +52,15 @@ export const useRecommendations = () => {
       const ONE_DAY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
       // If recommendations exist and are less than 24 hours old, use them
-      if (existingData && existingData.content?.recommendations) {
+      if (existingData && existingData.content) {
         const lastUpdated = new Date(existingData.updated_at).getTime();
         const now = new Date().getTime();
         
-        if (now - lastUpdated < ONE_DAY) {
-          setRecommendations(existingData.content.recommendations);
+        // Cast content to our typed interface to access recommendations properly
+        const typedContent = existingData.content as RecommendationsContent;
+        
+        if (now - lastUpdated < ONE_DAY && typedContent.recommendations) {
+          setRecommendations(typedContent.recommendations);
           setIsLoading(false);
           return;
         }
