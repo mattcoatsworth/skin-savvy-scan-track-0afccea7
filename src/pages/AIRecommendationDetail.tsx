@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,22 +13,31 @@ import AppNavigation from "@/components/AppNavigation";
 import Disclaimer from "@/components/Disclaimer";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
 
+// Define the content interface to match the one in useAIDetailCache
+interface DetailContent {
+  title: string;
+  overview: string;
+  details: string;
+  disclaimer: string;
+  recommendations: string[];
+}
+
 /**
  * Detail page for AI-generated recommendations
  * 
  * IMPORTANT: Content for this page is pre-generated when cards are created in the SkinAnalysis
- * component and stored in Supabase for fast loading when users click on the cards.
+ * component and stored in Supabase for fast loading when users click on them.
  */
 const AIRecommendationDetail = () => {
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [content, setContent] = useState({
+  const [content, setContent] = useState<DetailContent>({
     title: "",
     overview: "",
     details: "",
     disclaimer: "",
-    recommendations: [] as string[]
+    recommendations: []
   });
   
   const { getAdvice } = useSkinAdvice({ 
@@ -83,15 +91,8 @@ const AIRecommendationDetail = () => {
         
         if (cachedContent) {
           console.log("Using cached detail content from Supabase");
-          // Fix the TypeScript error by ensuring the cached content has the expected structure
-          const typedContent = {
-            title: cachedContent.title || "",
-            overview: cachedContent.overview || "",
-            details: cachedContent.details || "",
-            disclaimer: cachedContent.disclaimer || "",
-            recommendations: Array.isArray(cachedContent.recommendations) ? cachedContent.recommendations : []
-          };
-          setContent(typedContent);
+          // The cachedContent is already properly typed from our hook
+          setContent(cachedContent);
           setIsLoading(false);
           return;
         }
@@ -102,9 +103,22 @@ const AIRecommendationDetail = () => {
         
         if (localCachedContent) {
           console.log("Using cached detail content from localStorage");
-          setContent(JSON.parse(localCachedContent));
-          setIsLoading(false);
-          return;
+          try {
+            const parsedContent = JSON.parse(localCachedContent);
+            // Ensure local storage content has the expected structure
+            setContent({
+              title: parsedContent.title || "",
+              overview: parsedContent.overview || "",
+              details: parsedContent.details || "",
+              disclaimer: parsedContent.disclaimer || "",
+              recommendations: Array.isArray(parsedContent.recommendations) ? parsedContent.recommendations : []
+            });
+            setIsLoading(false);
+            return;
+          } catch (e) {
+            console.error("Failed to parse localStorage content", e);
+            // Continue to generate new content
+          }
         }
         
         // No cached content anywhere, we need to generate it
@@ -136,7 +150,7 @@ const AIRecommendationDetail = () => {
         
         if (response && response.sections) {
           // Parse the response sections
-          const newContent = {
+          const newContent: DetailContent = {
             title: response.sections["Title"] as string || baseTitle,
             overview: response.sections["Overview"] as string || "",
             details: response.sections["Details"] as string || "",

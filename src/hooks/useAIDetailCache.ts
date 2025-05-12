@@ -4,6 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { toast } from "sonner";
 
+// Define proper types for our content structure
+interface DetailContent {
+  title: string;
+  overview: string;
+  details: string;
+  disclaimer: string;
+  recommendations: string[];
+}
+
 /**
  * Hook that handles caching and pre-generating AI detail content for recommendation cards
  * IMPORTANT: This hook is designed to pre-generate detailed content as soon as cards are created
@@ -22,7 +31,7 @@ export const useAIDetailCache = () => {
   const cacheDetailContent = async (
     type: string,
     id: string, 
-    content: any
+    content: DetailContent
   ): Promise<boolean> => {
     try {
       // Format the cache key
@@ -59,7 +68,7 @@ export const useAIDetailCache = () => {
   /**
    * Fetches cached AI detail content from Supabase
    */
-  const getCachedDetail = async (type: string, id: string) => {
+  const getCachedDetail = async (type: string, id: string): Promise<DetailContent | null> => {
     try {
       const productId = `${type}-${id}`;
       const productType = "ai-recommendation";
@@ -78,9 +87,10 @@ export const useAIDetailCache = () => {
         return null;
       }
       
-      // Ensure content has all expected fields
-      if (data?.content) {
-        const content = data.content;
+      // Ensure content has all expected fields by properly type checking
+      if (data?.content && typeof data.content === 'object' && data.content !== null) {
+        const content = data.content as any;
+        
         return {
           title: content.title || "",
           overview: content.overview || "",
@@ -106,7 +116,7 @@ export const useAIDetailCache = () => {
     id: string, 
     text: string,
     contextData: any = {}
-  ) => {
+  ): Promise<DetailContent | null> => {
     try {
       setIsGenerating(true);
       
@@ -141,7 +151,7 @@ export const useAIDetailCache = () => {
       
       if (response && response.sections) {
         // Parse the response sections
-        const detailContent = {
+        const detailContent: DetailContent = {
           title: response.sections["Title"] as string || text.split(':')[0],
           overview: response.sections["Overview"] as string || "",
           details: response.sections["Details"] as string || "",
