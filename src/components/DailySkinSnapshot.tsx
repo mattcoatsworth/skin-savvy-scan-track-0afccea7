@@ -70,7 +70,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   className,
 }) => {
   return (
-    <Link to="/skin-analysis">
+    <Link to="/skin">
       <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
         <CardContent className="p-4">
           <div className="flex items-center mb-4">
