@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -216,7 +215,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     };
     
     fetchRecommendations();
-  }, [hasAttemptedFetch, preGenerateMultipleDetails]); // Only depend on hasAttemptedFetch to prevent infinite loop
+  }, [hasAttemptedFetch, preGenerateMultipleDetails, recommendations, factors, getAdvice]); // Only depend on hasAttemptedFetch to prevent infinite loop
   
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
