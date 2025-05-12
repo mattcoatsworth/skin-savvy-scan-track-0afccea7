@@ -100,3 +100,51 @@ All components follow iOS-inspired design principles with a focus on accessibili
 - Consistent placement within components
 - Match color with surrounding text unless highlighting
 
+## Selfie Section Template
+
+### SelfieCarousel Component
+- Used for displaying user selfies in morning or evening formats
+- Contains a carousel of images with empty states
+- Supports adding and viewing images
+
+### Implementation Guidelines
+- Always wrap in a Card for consistent appearance 
+- Use a two-column layout for morning/evening when both are needed
+- Always have a clear label (Morning/Evening or custom)
+- Use amber-500 for morning labels and indigo-400 for evening labels
+- Include counter showing "X of Y images" beneath each carousel
+- Support both interactive and readonly modes
+
+### Usage Example
+```jsx
+<Card className="ios-card">
+  <CardContent className="p-4">
+    <div className="grid grid-cols-2 gap-4">
+      {/* Morning Selfie Carousel */}
+      <SelfieCarousel
+        type="am"
+        images={images.am}
+        onAddImage={handleAddImage}
+      />
+      
+      {/* Evening Selfie Carousel */}
+      <SelfieCarousel
+        type="pm"
+        images={images.pm}
+        onAddImage={handleAddImage}
+      />
+    </div>
+  </CardContent>
+</Card>
+```
+
+### Props
+- `type`: "am" | "pm" - The type of selfie carousel (morning or evening)
+- `images`: (string | null)[] - Array of image URLs or null for empty slots
+- `onAddImage`: Function to handle image addition
+- `onDeleteImage`: Optional function to handle image deletion
+- `maxImages`: Optional number of maximum images (default: 4)
+- `label`: Optional custom label (default based on type)
+- `readonly`: Optional boolean to make carousel view-only (default: false)
+- `compact`: Optional boolean for smaller display (default: false)
+
