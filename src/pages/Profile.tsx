@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import ApiKeyInput from "@/components/ApiKeyInput";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle, Wine, Beer, Brush } from "lucide-react";
@@ -312,11 +311,6 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
-      
-        {/* API Key Input */}
-        <div className="mb-6">
-          <ApiKeyInput />
-        </div>
         
         {/* Selfie Grid - Always visible now with sample images */}
         <div className="mb-6">
