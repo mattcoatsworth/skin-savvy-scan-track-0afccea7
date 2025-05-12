@@ -31,16 +31,7 @@ const SelfieCarousel = ({
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Find the first empty slot or use the length if all slots are filled
-  const findFirstEmptySlot = () => {
-    for (let i = 0; i < maxImages; i++) {
-      if (!images[i]) {
-        return i;
-      }
-    }
-    return Math.min(images.length, maxImages - 1);
-  };
-
+  // Handle taking or selecting a photo
   const handleTakePhoto = () => {
     onAddImage(type, currentImageIndex);
     setIsPhotoDialogOpen(false);
@@ -93,7 +84,7 @@ const SelfieCarousel = ({
                 ) : (
                   <div className="flex flex-col items-center">
                     <Camera className="h-6 w-6 mb-1" />
-                    <span className="text-xs">Add Photo {index + 1}</span>
+                    <span className="text-xs">No Photo</span>
                   </div>
                 )}
               </div>
