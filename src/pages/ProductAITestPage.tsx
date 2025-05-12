@@ -23,10 +23,16 @@ const ProductAITestPage = () => {
   const navigate = useNavigate();
   
   // States for AI-generated content
-  const [overviewContent, setOverviewContent] = useState<string | null>(null);
-  const [detailsContent, setDetailsContent] = useState<string | null>(null);
-  const [scienceContent, setScienceContent] = useState<string | null>(null);
-  const [disclaimerContent, setDisclaimerContent] = useState<string | null>(null);
+  const [aiContent, setAiContent] = useState<Record<string, {
+    formattedHtml: string;
+    sections: Record<string, string | string[]>;
+  }>>({
+    overview: { formattedHtml: "", sections: {} },
+    details: { formattedHtml: "", sections: {} },
+    science: { formattedHtml: "", sections: {} },
+    disclaimer: { formattedHtml: "", sections: {} }
+  });
+  
   const [isLoading, setIsLoading] = useState({
     overview: true,
     details: true,
@@ -49,6 +55,37 @@ const ProductAITestPage = () => {
     navigate(`/product/${type}/${id}`);
   };
 
+  // Create sections for structured display
+  const processAIResponse = (sectionName: string, sections: Record<string, string | string[]>) => {
+    const result = [];
+    
+    for (const [key, content] of Object.entries(sections)) {
+      if (Array.isArray(content)) {
+        result.push({
+          title: key,
+          items: content.map((item, index) => ({
+            text: item,
+            type: sectionName,
+            category: key,
+            linkTo: `/recommendations-detail/ai-${sectionName}-${index + 1}`
+          }))
+        });
+      } else if (typeof content === 'string') {
+        result.push({
+          title: key,
+          items: [{
+            text: content,
+            type: sectionName,
+            category: key,
+            linkTo: `/recommendations-detail/ai-${sectionName}`
+          }]
+        });
+      }
+    }
+    
+    return result;
+  };
+
   useEffect(() => {
     // Get AI content for each section when product changes
     const fetchAIContent = async () => {
@@ -66,7 +103,7 @@ const ProductAITestPage = () => {
           productName: product.name,
           productImpact: product.impact
         });
-        setOverviewContent(overview);
+        setAiContent(prev => ({...prev, overview}));
         setIsLoading(prev => ({ ...prev, overview: false }));
         
         // Generate Details content
@@ -80,7 +117,7 @@ const ProductAITestPage = () => {
           productType: type,
           productName: product.name
         });
-        setDetailsContent(details);
+        setAiContent(prev => ({...prev, details}));
         setIsLoading(prev => ({ ...prev, details: false }));
         
         // Generate Science content
@@ -93,7 +130,7 @@ const ProductAITestPage = () => {
           productType: type,
           productName: product.name
         });
-        setScienceContent(science);
+        setAiContent(prev => ({...prev, science}));
         setIsLoading(prev => ({ ...prev, science: false }));
         
         // Generate Disclaimer content
@@ -106,7 +143,7 @@ const ProductAITestPage = () => {
           productType: type,
           productName: product.name
         });
-        setDisclaimerContent(disclaimer);
+        setAiContent(prev => ({...prev, disclaimer}));
         setIsLoading(prev => ({ ...prev, disclaimer: false }));
         
       } catch (error) {
@@ -169,6 +206,10 @@ const ProductAITestPage = () => {
     const initialMessage = `Can you tell me more about ${product.name} by ${product.brand || 'this brand'} and how it might affect my skin?`;
     window.location.href = `/chat?initial=${encodeURIComponent(initialMessage)}`;
   };
+
+  // Process AI sections
+  const detailsSections = processAIResponse("details", aiContent.details?.sections || {});
+  const scienceSections = processAIResponse("science", aiContent.science?.sections || {});
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -244,7 +285,13 @@ const ProductAITestPage = () => {
                       <div>
                         <h3 className="text-base font-medium mb-1">AI Generated Summary</h3>
                         <div className="text-sm border-l-2 border-slate-200 pl-4 py-1">
-                          {overviewContent && <p>{overviewContent}</p>}
+                          {aiContent.overview?.sections["Brief Summary"] && (
+                            <p>
+                              {typeof aiContent.overview.sections["Brief Summary"] === 'string' 
+                                ? aiContent.overview.sections["Brief Summary"]
+                                : "Summary of benefits and effects"}
+                            </p>
+                          )}
                         </div>
                       </div>
                       
@@ -265,39 +312,119 @@ const ProductAITestPage = () => {
             {/* Details Section - AI Generated */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Details</h2>
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-3">AI Generated Details</h3>
-                  {isLoading.details ? (
+              {isLoading.details ? (
+                <Card>
+                  <CardContent className="p-6">
                     <LoadingIndicator />
-                  ) : (
-                    <div className="text-sm">
-                      {detailsContent && (
-                        <div dangerouslySetInnerHTML={{ __html: detailsContent.replace(/\n/g, '<br/>') }} />
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ) : (
+                detailsSections.length > 0 ? (
+                  <div className="space-y-4">
+                    {detailsSections.map((section, idx) => (
+                      <div key={idx} className="ai-section">
+                        <h3 className="ai-section-title">{section.title}</h3>
+                        
+                        <div className="space-y-3">
+                          {section.items.map((item, itemIdx) => (
+                            <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
+                              <Card className="ai-data-point-card">
+                                <CardContent className="p-4">
+                                  <div className="ai-data-point-header">
+                                    <h3 className="ai-data-point-title">
+                                      {item.text.split(":")[0] || `Benefit ${itemIdx + 1}`}
+                                    </h3>
+                                    <span className="ai-data-point-category">
+                                      {section.title}
+                                    </span>
+                                  </div>
+                                  <p className="ai-data-point-content">
+                                    {item.text.includes(":") 
+                                      ? item.text.split(":").slice(1).join(":").trim()
+                                      : item.text}
+                                  </p>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-3">AI Generated Details</h3>
+                      <div className="text-sm">
+                        {aiContent.details?.formattedHtml ? (
+                          <div dangerouslySetInnerHTML={{ __html: aiContent.details.formattedHtml }} className="skin-advice-content" />
+                        ) : (
+                          <p>No details available for this product.</p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              )}
             </div>
 
             {/* Science Section - AI Generated */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Science</h2>
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-3">AI Generated Science Information</h3>
-                  {isLoading.science ? (
+              {isLoading.science ? (
+                <Card>
+                  <CardContent className="p-6">
                     <LoadingIndicator />
-                  ) : (
-                    <div className="text-sm">
-                      {scienceContent && (
-                        <div dangerouslySetInnerHTML={{ __html: scienceContent.replace(/\n/g, '<br/>') }} />
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ) : (
+                scienceSections.length > 0 ? (
+                  <div className="space-y-4">
+                    {scienceSections.map((section, idx) => (
+                      <div key={idx} className="ai-section">
+                        <h3 className="ai-section-title">{section.title}</h3>
+                        
+                        <div className="space-y-3">
+                          {section.items.map((item, itemIdx) => (
+                            <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
+                              <Card className="ai-data-point-card">
+                                <CardContent className="p-4">
+                                  <div className="ai-data-point-header">
+                                    <h3 className="ai-data-point-title">
+                                      {item.text.split(":")[0] || `Scientific Finding ${itemIdx + 1}`}
+                                    </h3>
+                                    <span className="ai-data-point-category">
+                                      {section.title}
+                                    </span>
+                                  </div>
+                                  <p className="ai-data-point-content">
+                                    {item.text.includes(":") 
+                                      ? item.text.split(":").slice(1).join(":").trim()
+                                      : item.text}
+                                  </p>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-3">AI Generated Science Information</h3>
+                      <div className="text-sm">
+                        {aiContent.science?.formattedHtml ? (
+                          <div dangerouslySetInnerHTML={{ __html: aiContent.science.formattedHtml }} className="skin-advice-content" />
+                        ) : (
+                          <p>No scientific information available for this product.</p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              )}
             </div>
             
             {/* Disclaimer Section - AI Generated */}
@@ -309,8 +436,14 @@ const ProductAITestPage = () => {
                     <LoadingIndicator />
                   ) : (
                     <div className="text-sm">
-                      {disclaimerContent && (
-                        <div dangerouslySetInnerHTML={{ __html: disclaimerContent.replace(/\n/g, '<br/>') }} />
+                      {aiContent.disclaimer?.formattedHtml ? (
+                        <div dangerouslySetInnerHTML={{ __html: aiContent.disclaimer.formattedHtml }} className="skin-advice-content" />
+                      ) : (
+                        <p>
+                          This information is provided for educational purposes only and is not intended as medical advice.
+                          Individual responses to products may vary. Always consult with a healthcare provider before making
+                          significant changes to your skincare routine.
+                        </p>
                       )}
                     </div>
                   )}

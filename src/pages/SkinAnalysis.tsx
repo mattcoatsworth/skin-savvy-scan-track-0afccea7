@@ -3,17 +3,47 @@ import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Salad, Pill, Palette, CloudSun, MoonStar, Activity, Smile, Droplet, Utensils, Circle, Wine, Beer, Brush } from "lucide-react";
+import { 
+  Salad, 
+  Pill, 
+  Palette, 
+  CloudSun, 
+  MoonStar, 
+  Activity, 
+  Smile, 
+  Droplet, 
+  Utensils, 
+  Circle, 
+  Wine, 
+  Beer, 
+  Brush,
+  Info,
+  Calendar,
+  Clock
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
+// Types for AI analysis
+interface AISection {
+  title: string;
+  items: {
+    text: string;
+    type: string;
+    linkTo: string;
+  }[];
+}
+
 const SkinAnalysis = () => {
   useScrollToTop();
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiAdvice, setAiAdvice] = useState("");
+  const [aiAdvice, setAiAdvice] = useState<{formattedHtml: string; sections: Record<string, string | string[]>}>({
+    formattedHtml: "",
+    sections: {}
+  });
   const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
   
   // Sample data
@@ -152,6 +182,12 @@ const SkinAnalysis = () => {
         return <Beer className="text-2xl mr-3" />;
       case "wine":
         return <Wine className="text-2xl mr-3" />;
+      case "info":
+        return <Info className="text-2xl mr-3" />;
+      case "calendar":
+        return <Calendar className="text-2xl mr-3" />;
+      case "clock":
+        return <Clock className="text-2xl mr-3" />;
       default:
         return null;
     }
@@ -168,6 +204,49 @@ const SkinAnalysis = () => {
 
   // Get categories in the desired order
   const categoryOrder = ["food", "drink", "supplements", "makeup", "lifestyle", "skincare"];
+
+  // Process AI response into clickable sections
+  const processAIResponse = (sections: Record<string, string | string[]>): AISection[] => {
+    const aiSections: AISection[] = [];
+    
+    // Map section names to display names and types
+    const sectionConfig: Record<string, {title: string, type: string, icon: string}> = {
+      "Brief Summary": { title: "Summary", type: "info", icon: "info" },
+      "Key Benefits/Observations": { title: "Key Observations", type: "observation", icon: "circle" },
+      "Contributing Factors": { title: "Contributing Factors", type: "factor", icon: "activity" },
+      "Recommended Actions": { title: "Recommendations", type: "action", icon: "droplet" },
+      "Expected Timeline": { title: "Timeline", type: "timeline", icon: "calendar" }
+    };
+    
+    // Process each section
+    Object.entries(sections).forEach(([key, content]) => {
+      const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
+      
+      if (Array.isArray(content)) {
+        // Create a section with items for array content
+        aiSections.push({
+          title: config.title,
+          items: content.map((item, index) => ({
+            text: item,
+            type: config.type,
+            linkTo: `/recommendations-detail/ai-${config.type}-${index + 1}`
+          }))
+        });
+      } else if (typeof content === 'string') {
+        // Create a section with a single item for string content
+        aiSections.push({
+          title: config.title,
+          items: [{
+            text: content,
+            type: config.type,
+            linkTo: `/recommendations-detail/ai-${config.type}`
+          }]
+        });
+      }
+    });
+    
+    return aiSections;
+  };
 
   // Function to generate AI advice using useSkinAdvice hook
   const generateAiAdvice = async () => {
@@ -189,6 +268,9 @@ const SkinAnalysis = () => {
   React.useEffect(() => {
     generateAiAdvice();
   }, []);
+  
+  // Process AI sections
+  const aiSections = processAIResponse(aiAdvice.sections);
   
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -302,50 +384,122 @@ const SkinAnalysis = () => {
           
           {/* AI Tab - AI-Generated Analysis */}
           <TabsContent value="ai" className="space-y-6">
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
-                  
-                  {/* Only show regenerate button if there is already advice */}
-                  {aiAdvice && !aiLoading && !isLoading && (
-                    <button 
-                      onClick={generateAiAdvice} 
-                      className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
-                    >
-                      Refresh
-                    </button>
-                  )}
-                </div>
-                
-                {aiLoading || isLoading ? (
+            {aiLoading || isLoading ? (
+              <Card className="ios-card">
+                <CardContent className="p-6">
                   <div className="flex flex-col items-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
                     <p className="text-muted-foreground">Generating your personalized skin analysis...</p>
                   </div>
-                ) : (
-                  <div className="prose prose-sm max-w-none">
-                    {aiAdvice ? (
-                      <div dangerouslySetInnerHTML={{ __html: aiAdvice }} className="skin-advice-content" />
-                    ) : (
-                      <p>Unable to generate AI analysis at this time. Please try again later.</p>
-                    )}
-                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Summary Card (if present) */}
+                {aiAdvice.sections["Brief Summary"] && (
+                  <Card className="ios-card">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
+                        {/* Regenerate button */}
+                        <button 
+                          onClick={generateAiAdvice} 
+                          className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                        >
+                          Refresh
+                        </button>
+                      </div>
+                      
+                      <div className="flex items-start">
+                        <Info className="h-5 w-5 mr-3 text-skin-teal mt-0.5" />
+                        <div>
+                          <h3 className="font-medium">Summary</h3>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {typeof aiAdvice.sections["Brief Summary"] === 'string' 
+                              ? aiAdvice.sections["Brief Summary"]
+                              : "Your skin analysis summary"}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
-              </CardContent>
-            </Card>
-            
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h3 className="font-medium mb-3">About This Analysis</h3>
-                <ul className="list-disc pl-5 space-y-2 text-sm">
-                  <li>This analysis is based on your recent skin logs and trends</li>
-                  <li>The AI considers various factors like diet, products, environment, and lifestyle</li>
-                  <li>Recommendations are personalized based on your specific skin patterns</li>
-                  <li>Update your logs regularly for increasingly accurate insights</li>
-                </ul>
-              </CardContent>
-            </Card>
+                
+                {/* Display AI sections in a structured format */}
+                {aiSections.map((section, index) => {
+                  if (section.title === "Summary") return null; // Skip summary as it's shown above
+                  
+                  return (
+                    <div key={index} className="ai-section">
+                      <h2 className="ai-section-title">{section.title}</h2>
+                      
+                      <div className="space-y-3">
+                        {section.items.map((item, itemIdx) => (
+                          <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
+                            <Card className="ai-data-point-card">
+                              <CardContent className="p-4">
+                                <div className="ai-data-point-header">
+                                  <h3 className="ai-data-point-title">
+                                    {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                  </h3>
+                                  <span className="ai-data-point-category">
+                                    {section.title}
+                                  </span>
+                                </div>
+                                <p className="ai-data-point-content">
+                                  {item.text.includes(":") 
+                                    ? item.text.split(":").slice(1).join(":").trim()
+                                    : item.text}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                {/* If there are no structured sections or sections parsing failed */}
+                {aiSections.length === 0 && (
+                  <Card className="ios-card">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
+                        {/* Regenerate button */}
+                        <button 
+                          onClick={generateAiAdvice} 
+                          className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                        >
+                          Refresh
+                        </button>
+                      </div>
+                      
+                      <div className="prose prose-sm max-w-none">
+                        {aiAdvice.formattedHtml ? (
+                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} className="skin-advice-content" />
+                        ) : (
+                          <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              
+                {/* About This Analysis card */}
+                <Card className="ios-card">
+                  <CardContent className="p-6">
+                    <h3 className="font-medium mb-3">About This Analysis</h3>
+                    <ul className="list-disc pl-5 space-y-2 text-sm">
+                      <li>This analysis is based on your recent skin logs and trends</li>
+                      <li>The AI considers various factors like diet, products, environment, and lifestyle</li>
+                      <li>Recommendations are personalized based on your specific skin patterns</li>
+                      <li>Update your logs regularly for increasingly accurate insights</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </TabsContent>
         </Tabs>
       </div>

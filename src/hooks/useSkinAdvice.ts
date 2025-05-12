@@ -25,6 +25,36 @@ export const useSkinAdvice = ({
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Parse the AI response to extract sections
+  const parseAIResponse = (text: string): Record<string, string | string[]> => {
+    if (!text) return {};
+    
+    const sections: Record<string, string | string[]> = {};
+    
+    // Extract sections using regex
+    const sectionMatches = text.matchAll(/###\s+([^:]+):\s*\n([\s\S]*?)(?=###\s+[^:]+:|$)/g);
+    
+    for (const match of sectionMatches) {
+      const sectionName = match[1].trim();
+      const sectionContent = match[2].trim();
+      
+      // For bullet points and numbered lists, convert to array
+      if (sectionContent.match(/^[\s]*[-*•]\s+/m) || sectionContent.match(/^[\s]*\d+\.\s+/m)) {
+        // Extract bullet points or numbered items
+        const items = sectionContent
+          .split(/\n+/)
+          .filter(item => item.trim().match(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/))
+          .map(item => item.replace(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/, '').trim());
+          
+        sections[sectionName] = items;
+      } else {
+        sections[sectionName] = sectionContent;
+      }
+    }
+    
+    return sections;
+  };
+
   // Format raw text with bullet points and sections
   const formatTextContent = (text: string): string => {
     if (!text) return "";
@@ -34,6 +64,7 @@ export const useSkinAdvice = ({
       // Format main headings (e.g., "Key Observations:")
       .replace(/\n\s*([A-Z][A-Za-z\s]+):\s*\n/g, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
       .replace(/^([A-Z][A-Za-z\s]+):\s*\n/gm, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
+      .replace(/###\s+([^:]+):\s*\n/g, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
       // Format subheadings (e.g., "1. Something Important")
       .replace(/\n\s*(\d+\.\s+[A-Z][A-Za-z\s]+):\s*/g, '<h4 class="font-medium mt-3 mb-1">$1</h4>\n')
       // Add a container for section content
@@ -59,11 +90,21 @@ export const useSkinAdvice = ({
         const items = match.trim().split(/\n-\s+/);
         const listItems = items.filter(item => item).map(item => `<li class="py-1">${item}</li>`).join('');
         return `\n<ul class="list-disc pl-5 space-y-1 my-3">${listItems}</ul>\n`;
+      })
+      // Bullet lists with bullets
+      .replace(/(?:\n|^)(?:•\s+(.*?)(?:\n|$))+/gs, function(match) {
+        const items = match.trim().split(/\n•\s+/);
+        const listItems = items.filter(item => item).map(item => `<li class="py-1">${item}</li>`).join('');
+        return `\n<ul class="list-disc pl-5 space-y-1 my-3">${listItems}</ul>\n`;
       });
     
     // Format key-value pairs (e.g., "Hydration: 85%")
     formattedText = formattedText
       .replace(/\n([A-Za-z\s]+):\s*([^\n]+)/g, '\n<div class="flex justify-between my-1"><span class="font-medium">$1:</span> <span>$2</span></div>');
+    
+    // Bold important terms
+    formattedText = formattedText
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
     // Format paragraphs
     formattedText = formattedText
@@ -143,19 +184,21 @@ export const useSkinAdvice = ({
           
           When formatting your response:
           - Use clear section headings with a title followed by colon (like "Key Benefits:", "Usage Instructions:")
+          - Use '###' before each main section heading (like "### Key Benefits:")
           - Use numbered lists (1. First item) for step-by-step instructions or priorities
-          - Use bullet points (* Item or - Item) for lists of features, benefits, or observations
+          - Use bullet points (- Item) for lists of features, benefits, or observations
           - Keep paragraphs short (2-3 sentences max)
           - Use key-value formatting for metrics or ratings (e.g., "Hydration: 85%")
           - Include specific data points when available
           - Be specific and actionable in your recommendations
+          - Use **bold** for important terms or concepts
           
           Organize your analysis into these types of sections:
-          1. Brief Summary (2-3 sentences overview)
-          2. Key Benefits/Observations (bullet points)
-          3. Usage Instructions or Application (numbered steps if relevant)
-          4. Potential Concerns (bullet points)
-          5. Recommendations (clear actionable advice)
+          1. "### Brief Summary:" (2-3 sentences overview)
+          2. "### Key Benefits/Observations:" (bullet points)
+          3. "### Contributing Factors:" (bullet points for skin analysis)
+          4. "### Usage Instructions:" or "### Recommended Actions:" (numbered steps)
+          5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)
           
           Be evidence-based and specific to the user's situation.
         `;
@@ -216,14 +259,23 @@ export const useSkinAdvice = ({
         }
       }
 
+      // Parse AI response into sections
+      const parsedResponse = parseAIResponse(data.content);
+
       // Format the text for better readability before returning
-      return formatTextContent(data.content);
+      return {
+        formattedHtml: formatTextContent(data.content),
+        sections: parsedResponse
+      };
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
       toast.error("Failed to get skin advice. Please try again.");
       return structuredOutput 
         ? { error: "Failed to get skin advice" }
-        : "I'm having trouble analyzing this skin information right now. Please try again in a moment.";
+        : {
+            formattedHtml: "I'm having trouble analyzing this skin information right now. Please try again in a moment.",
+            sections: {}
+          };
     } finally {
       setIsLoading(false);
     }

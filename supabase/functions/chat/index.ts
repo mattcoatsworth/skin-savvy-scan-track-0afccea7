@@ -76,6 +76,7 @@ serve(async (req) => {
         break;
       default:
         systemMessage += corePrinciple + " " + formattingGuidance;
+        systemMessage += " For skin analysis, divide your response into distinct sections with clear headings like: 'Brief Summary:', 'Key Benefits/Observations:', 'Contributing Factors:', 'Recommended Actions:', and 'Expected Timeline:'. For each bullet point or numbered step, provide specific, actionable advice that could reasonably be a separate recommendation.";
     }
 
     // For structured output, add response format instructions if requested

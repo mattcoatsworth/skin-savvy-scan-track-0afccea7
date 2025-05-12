@@ -108,7 +108,13 @@ const WeeklySkinAnalysis = () => {
   
   // AI analysis state
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiAdvice, setAiAdvice] = useState("");
+  const [aiAdvice, setAiAdvice] = useState<{
+    formattedHtml: string;
+    sections: Record<string, string | string[]>;
+  }>({
+    formattedHtml: "",
+    sections: {}
+  });
   const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "weekly-insight" });
   
   // In a real app, we would fetch this data from an API based on date range
@@ -293,6 +299,50 @@ const WeeklySkinAnalysis = () => {
   ];
 
   const analysisData = generateMockData();
+
+  // Process AI response into clickable sections
+  const processAIResponse = (sections: Record<string, string | string[]>) => {
+    const aiSections = [];
+    
+    // Map section names to display names and types
+    const sectionConfig: Record<string, {title: string, type: string, icon: string}> = {
+      "Weekly Summary": { title: "Summary", type: "summary", icon: "info" },
+      "Key Patterns": { title: "Patterns", type: "pattern", icon: "activity" },
+      "Correlations": { title: "Correlations", type: "correlation", icon: "activity" },
+      "Progress Metrics": { title: "Progress", type: "metric", icon: "activity" },
+      "Recommendations": { title: "Recommendations", type: "recommendation", icon: "droplet" },
+      "Focus Areas": { title: "Focus Areas", type: "focus", icon: "eye" }
+    };
+    
+    // Process each section
+    Object.entries(sections).forEach(([key, content]) => {
+      const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
+      
+      if (Array.isArray(content)) {
+        // Create a section with items for array content
+        aiSections.push({
+          title: config.title,
+          items: content.map((item, index) => ({
+            text: item,
+            type: config.type,
+            linkTo: `/recommendations-detail/weekly-${config.type}-${index + 1}`
+          }))
+        });
+      } else if (typeof content === 'string') {
+        // Create a section with a single item for string content
+        aiSections.push({
+          title: config.title,
+          items: [{
+            text: content,
+            type: config.type,
+            linkTo: `/recommendations-detail/weekly-${config.type}`
+          }]
+        });
+      }
+    });
+    
+    return aiSections;
+  };
   
   // Function to generate AI advice using useSkinAdvice hook
   const generateAiAdvice = async () => {
@@ -314,6 +364,9 @@ const WeeklySkinAnalysis = () => {
   React.useEffect(() => {
     generateAiAdvice();
   }, []);
+
+  // Process AI sections for structured display
+  const aiSections = processAIResponse(aiAdvice.sections);
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -625,53 +678,113 @@ const WeeklySkinAnalysis = () => {
           
           {/* AI Analysis Tab */}
           <TabsContent value="ai" className="space-y-6">
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold">AI Weekly Analysis</h2>
-                  
-                  {/* Only show regenerate button if there is already advice */}
-                  {aiAdvice && !aiLoading && !isLoading && (
-                    <button 
-                      onClick={generateAiAdvice} 
-                      className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
-                    >
-                      Refresh
-                    </button>
-                  )}
-                </div>
-                
-                {aiLoading || isLoading ? (
+            {aiLoading || isLoading ? (
+              <Card className="ios-card">
+                <CardContent className="p-6">
                   <div className="flex flex-col items-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4"></div>
                     <p className="text-muted-foreground">Generating your personalized weekly analysis...</p>
                   </div>
-                ) : (
-                  <div className="prose prose-sm max-w-none">
-                    {aiAdvice ? (
-                      <div dangerouslySetInnerHTML={{ __html: aiAdvice }} className="skin-advice-content" />
-                    ) : (
-                      <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <Card className="ios-card">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-semibold">AI Weekly Analysis</h2>
+                      
+                      {/* Only show regenerate button if there is already advice */}
+                      {aiAdvice.formattedHtml && (
+                        <button 
+                          onClick={generateAiAdvice} 
+                          className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                        >
+                          Refresh
+                        </button>
+                      )}
+                    </div>
+                    
+                    {/* If there's a summary section, show it first */}
+                    {aiAdvice.sections["Weekly Summary"] && (
+                      <div className="mb-6">
+                        <div className="bg-slate-50 rounded-md p-4">
+                          <h3 className="font-medium mb-2">Summary</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {typeof aiAdvice.sections["Weekly Summary"] === 'string' 
+                              ? aiAdvice.sections["Weekly Summary"] 
+                              : "Weekly summary of your skin health."}
+                          </p>
+                        </div>
+                      </div>
                     )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-            
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h3 className="font-medium mb-3">Weekly Patterns</h3>
-                <ul className="list-disc pl-5 space-y-2 text-sm">
-                  <li>Your skin health improved by 22% over the week</li>
-                  <li>Strongest correlation: Dairy consumption (92% negative)</li>
-                  <li>Most improved factor: Hydration (improved 18%)</li>
-                  <li>Suggested focus: Stress management and diet modifications</li>
-                </ul>
-              </CardContent>
-            </Card>
-            
-            {/* Add View Scoring Method component at the bottom */}
-            <ViewScoringMethod />
+                    
+                    {/* Display structured sections */}
+                    {aiSections.length > 0 ? (
+                      <div className="space-y-6">
+                        {aiSections.map((section, index) => {
+                          // Skip summary as it's displayed above
+                          if (section.title === "Summary") return null;
+                          
+                          return (
+                            <div key={index} className="ai-section">
+                              <h3 className="ai-section-title">{section.title}</h3>
+                              
+                              <div className="space-y-3">
+                                {section.items.map((item, itemIdx) => (
+                                  <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
+                                    <Card className="ai-data-point-card">
+                                      <CardContent className="p-4">
+                                        <div className="ai-data-point-header">
+                                          <h3 className="ai-data-point-title">
+                                            {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                          </h3>
+                                          <span className="ai-data-point-category">
+                                            {section.title}
+                                          </span>
+                                        </div>
+                                        <p className="ai-data-point-content">
+                                          {item.text.includes(":") 
+                                            ? item.text.split(":").slice(1).join(":").trim()
+                                            : item.text}
+                                        </p>
+                                      </CardContent>
+                                    </Card>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="prose prose-sm max-w-none">
+                        {aiAdvice.formattedHtml ? (
+                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} className="skin-advice-content" />
+                        ) : (
+                          <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                <Card className="ios-card">
+                  <CardContent className="p-6">
+                    <h3 className="font-medium mb-3">Weekly Patterns</h3>
+                    <ul className="list-disc pl-5 space-y-2 text-sm">
+                      <li>Your skin health improved by 22% over the week</li>
+                      <li>Strongest correlation: Dairy consumption (92% negative)</li>
+                      <li>Most improved factor: Hydration (improved 18%)</li>
+                      <li>Suggested focus: Stress management and diet modifications</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+                
+                {/* Add View Scoring Method component at the bottom */}
+                <ViewScoringMethod />
+              </>
+            )}
           </TabsContent>
         </Tabs>
       </div>
