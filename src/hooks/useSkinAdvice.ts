@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -44,24 +45,25 @@ export const useSkinAdvice = ({
       const sectionName = match[1].trim();
       const sectionContent = match[2].trim();
       
+      // Remove bold formatting
+      const cleanContent = sectionContent.replace(/\*\*(.*?)\*\*/g, '$1');
+      
       // For bullet points and numbered lists, convert to array
-      if (sectionContent.match(/^[\s]*[-*•]\s+/m) || sectionContent.match(/^[\s]*\d+\.\s+/m)) {
+      if (cleanContent.match(/^[\s]*[-*•]\s+/m) || cleanContent.match(/^[\s]*\d+\.\s+/m)) {
         // Extract bullet points or numbered items
-        const items = sectionContent
+        const items = cleanContent
           .split(/\n+/)
           .filter(item => item.trim().match(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/))
           .map(item => {
-            // Clean the item text, removing both formatting markers and asterisks for bold
+            // Clean the item text, removing formatting markers
             return item
               .replace(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/, '')
-              .replace(/\*\*(.*?)\*\*/g, '$1')
               .trim();
           });
           
         sections[sectionName] = items;
       } else {
-        // Remove bold formatting for regular section content too
-        sections[sectionName] = sectionContent.replace(/\*\*(.*?)\*\*/g, '$1');
+        sections[sectionName] = cleanContent;
       }
     }
     
@@ -72,7 +74,7 @@ export const useSkinAdvice = ({
   const formatTextContent = (text: string): string => {
     if (!text) return "";
     
-    // Remove any bold formatting before other transformations
+    // Remove any bold formatting
     let formattedText = text.replace(/\*\*(.*?)\*\*/g, '$1');
     
     // Add proper HTML for sections with headings
@@ -318,12 +320,15 @@ export const useSkinAdvice = ({
         }
       }
 
+      // Remove any bold formatting from the content
+      const cleanedContent = data.content.replace(/\*\*(.*?)\*\*/g, '$1');
+      
       // Parse AI response into sections
-      const parsedResponse = parseAIResponse(data.content);
+      const parsedResponse = parseAIResponse(cleanedContent);
       
       // Format the text for better readability
       const formattedResponse = {
-        formattedHtml: formatTextContent(data.content),
+        formattedHtml: formatTextContent(cleanedContent),
         sections: parsedResponse
       };
       

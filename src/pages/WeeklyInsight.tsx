@@ -111,50 +111,85 @@ const WeeklyInsight = () => {
           </Card>
         ) : (
           <>
-            <Card className="ios-card">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  Week of {insightData.weekStartDate} - {insightData.weekEndDate}
-                </h2>
-                
-                <div className="mb-4">
-                  <h3 className="text-lg font-medium">Overall Skin Health Score</h3>
-                  <p className="text-2xl font-semibold text-skin-teal">{insightData.overallScore}</p>
-                </div>
-                
-                <div className="mb-4">
-                  <h3 className="text-lg font-medium">Key Changes</h3>
-                  <ul className="list-disc pl-5 space-y-2">
-                    {insightData.keyChanges.map((change, index) => (
-                      <li key={index}>{change}</li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium">Recommendations</h3>
-                  <ul className="list-disc pl-5 space-y-2">
-                    {insightData.recommendations.map((recommendation, index) => (
-                      <li key={index}>{recommendation}</li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="ios-card mt-6">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">AI-Generated Summary</h2>
-                {isAiLoading ? (
-                  <div className="flex items-center justify-center py-4">
-                    <LoaderCircle className="animate-spin rounded-full h-6 w-6 border-b-2 border-skin-teal" />
-                    <span className="ml-2">Generating summary...</span>
+            {/* Week Information Section */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">Week of {insightData.weekStartDate} - {insightData.weekEndDate}</h2>
+              
+              <Card className="ios-card mb-3">
+                <CardContent className="p-4">
+                  <div className="flex items-start">
+                    <div className="text-2xl mr-3">📊</div>
+                    <div>
+                      <h3 className="font-medium">Overall Skin Health Score</h3>
+                      <p className="text-xl font-semibold text-skin-teal">{insightData.overallScore}</p>
+                    </div>
                   </div>
-                ) : (
-                  <p className="text-sm text-gray-600">{aiSummary}</p>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Key Changes Section */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">Key Changes</h2>
+              <div className="space-y-3">
+                {insightData.keyChanges.map((change, index) => (
+                  <Card key={index} className="ios-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-start">
+                        <div className="text-2xl mr-3">🔄</div>
+                        <div>
+                          <h3 className="font-medium">Change {index + 1}</h3>
+                          <p className="text-muted-foreground">{change}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+            
+            {/* Recommendations Section */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">Recommendations</h2>
+              <div className="space-y-3">
+                {insightData.recommendations.map((recommendation, index) => (
+                  <Card key={index} className="ios-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-start">
+                        <div className="text-2xl mr-3">💡</div>
+                        <div>
+                          <h3 className="font-medium">Recommendation {index + 1}</h3>
+                          <p className="text-muted-foreground">{recommendation}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+            
+            {/* AI Summary Section */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">AI-Generated Summary</h2>
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  {isAiLoading ? (
+                    <div className="flex items-center justify-center py-4">
+                      <LoaderCircle className="animate-spin rounded-full h-6 w-6 border-b-2 border-skin-teal" />
+                      <span className="ml-2">Generating summary...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-start">
+                      <div className="text-2xl mr-3">🤖</div>
+                      <div>
+                        <h3 className="font-medium">Analysis Summary</h3>
+                        <p className="text-sm text-gray-600">{aiSummary}</p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </>
         )}
       </div>
