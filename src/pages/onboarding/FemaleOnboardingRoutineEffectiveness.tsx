@@ -28,8 +28,8 @@ const FemaleOnboardingRoutineEffectiveness: React.FC = () => {
     <OnboardingTemplate
       title="On a scale from 1-10, is your current routine working?"
       description="Be honest! This helps us understand what needs improvement."
-      currentStep={10}
-      totalSteps={12}
+      currentStep={11}
+      totalSteps={13}
       onNext={handleNext}
     >
       <div className="flex-1 flex flex-col">

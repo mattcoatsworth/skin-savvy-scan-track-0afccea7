@@ -36,8 +36,8 @@ const FemaleOnboardingSkinGoals: React.FC = () => {
     // Save to localStorage for future reference
     localStorage.setItem("userSkinGoals", JSON.stringify(data.goals));
     
-    // Navigate to the next screen
-    navigate("/onboarding/female/food-allergies");
+    // Navigate to the next screen - now going to menstrual cycle screen
+    navigate("/onboarding/female/menstrual-cycle");
   };
 
   const handleNext = () => {

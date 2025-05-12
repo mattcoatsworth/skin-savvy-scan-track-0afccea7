@@ -120,6 +120,7 @@ const App = () => (
               <Route path="/onboarding/female/skin-type" element={<FemaleOnboardingSkinType />} />
               <Route path="/onboarding/female/skin-concerns" element={<FemaleOnboardingSkinConcerns />} />
               <Route path="/onboarding/female/skin-goals" element={<FemaleOnboardingSkinGoals />} />
+              <Route path="/onboarding/female/menstrual-cycle" element={<FemaleOnboardingMenstrualCycle />} />
               <Route path="/onboarding/female/food-allergies" element={<FemaleOnboardingFoodAllergies />} />
               <Route path="/onboarding/female/product-allergies" element={<FemaleOnboardingProductAllergies />} />
               <Route path="/onboarding/female/goal-timeline" element={<FemaleOnboardingGoalTimeline />} />
