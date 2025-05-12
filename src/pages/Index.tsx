@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -10,6 +11,7 @@ import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import SelfieCarousel from "@/components/SelfieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   // Sample data
@@ -28,34 +30,72 @@ const Index = () => {
     am: [] as (string | null)[],
     pm: [] as (string | null)[]
   });
+  
+  // User ID for storage - in a real app this would come from auth
+  const [userId] = useState("demo-user"); 
 
-  // Load selfies from localStorage on component mount
+  // Load selfies from localStorage and Supabase on component mount
   useEffect(() => {
     const date = new Date().toISOString().split('T')[0];
     const amKey = `am-selfies-${date}`;
     const pmKey = `pm-selfies-${date}`;
     
-    try {
-      const storedAmSelfies = localStorage.getItem(amKey);
-      const storedPmSelfies = localStorage.getItem(pmKey);
-      
-      if (storedAmSelfies) {
-        setTodaysSelfies(prev => ({
-          ...prev,
-          am: JSON.parse(storedAmSelfies)
-        }));
+    const loadSelfies = async () => {
+      try {
+        // Try to load from localStorage first (for backward compatibility)
+        const storedAmSelfies = localStorage.getItem(amKey);
+        const storedPmSelfies = localStorage.getItem(pmKey);
+        
+        const amSelfies = storedAmSelfies ? JSON.parse(storedAmSelfies) : [];
+        const pmSelfies = storedPmSelfies ? JSON.parse(storedPmSelfies) : [];
+        
+        setTodaysSelfies({
+          am: amSelfies,
+          pm: pmSelfies
+        });
+        
+        // Also try to load from Supabase if available
+        // In a real app with authentication, you would filter by the actual user ID
+        const { data: storageFiles, error } = await supabase.storage
+          .from('selfies')
+          .list(`${userId}-`, {
+            search: date
+          });
+          
+        if (!error && storageFiles) {
+          const amFiles = storageFiles.filter(file => file.name.includes('-am-'));
+          const pmFiles = storageFiles.filter(file => file.name.includes('-pm-'));
+          
+          // Update state with Supabase URLs if files exist
+          if (amFiles.length > 0 || pmFiles.length > 0) {
+            const updatedSelfies = { ...todaysSelfies };
+            
+            amFiles.forEach(file => {
+              const index = parseInt(file.name.split('-').pop() || '0', 10);
+              const { data } = supabase.storage.from('selfies').getPublicUrl(file.name);
+              if (data.publicUrl) {
+                updatedSelfies.am[index] = data.publicUrl;
+              }
+            });
+            
+            pmFiles.forEach(file => {
+              const index = parseInt(file.name.split('-').pop() || '0', 10);
+              const { data } = supabase.storage.from('selfies').getPublicUrl(file.name);
+              if (data.publicUrl) {
+                updatedSelfies.pm[index] = data.publicUrl;
+              }
+            });
+            
+            setTodaysSelfies(updatedSelfies);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading selfies:", error);
       }
-      
-      if (storedPmSelfies) {
-        setTodaysSelfies(prev => ({
-          ...prev,
-          pm: JSON.parse(storedPmSelfies)
-        }));
-      }
-    } catch (error) {
-      console.error("Error loading selfies from localStorage:", error);
-    }
-  }, []);
+    };
+    
+    loadSelfies();
+  }, [userId]);
 
   // Add toast functionality
   const { toast } = useToast();
@@ -338,7 +378,7 @@ const Index = () => {
                   images={todaysSelfies.am}
                   onAddImage={handleAddSelfie}
                   onDeleteImage={handleDeleteSelfie}
-                  userId="current-user" // In a real app, you'd use the authenticated user ID
+                  userId={userId}
                 />
                 
                 {/* Evening Selfie Carousel with Supabase storage */}
@@ -347,7 +387,7 @@ const Index = () => {
                   images={todaysSelfies.pm}
                   onAddImage={handleAddSelfie}
                   onDeleteImage={handleDeleteSelfie}
-                  userId="current-user" // In a real app, you'd use the authenticated user ID
+                  userId={userId}
                 />
               </div>
             </CardContent>
