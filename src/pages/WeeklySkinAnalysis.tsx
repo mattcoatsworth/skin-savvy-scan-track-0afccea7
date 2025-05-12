@@ -10,6 +10,7 @@ import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIContentCache } from "@/hooks/useAIContentCache";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import Disclaimer from "@/components/Disclaimer";
+import { Badge } from "@/components/ui/badge";
 
 const WeeklySkinAnalysis = () => {
   useScrollToTop();
@@ -147,6 +148,25 @@ const WeeklySkinAnalysis = () => {
     ]
   };
 
+  // Helper function to get the badge styling based on difficulty
+  const getDifficultyBadgeClass = (difficulty: string) => {
+    switch(difficulty) {
+      case 'easy':
+        return 'bg-green-100 text-green-800 px-3 py-1';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 px-3 py-1';
+      case 'hard':
+        return 'bg-red-100 text-red-800 px-3 py-1';
+      default:
+        return 'bg-slate-100 text-slate-800 px-3 py-1';
+    }
+  };
+
+  // Helper function to get the category badge styling
+  const getCategoryBadgeClass = () => {
+    return 'bg-slate-200 text-slate-700 px-3 py-1';
+  };
+
   return (
     <div className="pb-20">
       <header className="mb-6 flex items-center">
@@ -273,15 +293,11 @@ const WeeklySkinAnalysis = () => {
                     <div className="flex justify-between">
                       <div className="flex items-center space-x-2">
                         <h4 className="font-medium">{challenge.title}</h4>
-                        <span className="text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-700">
+                        <span className={`text-xs rounded ${getCategoryBadgeClass()}`}>
                           {challenge.category}
                         </span>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        challenge.difficulty === 'easy' ? 'bg-green-100 text-green-800' : 
-                        challenge.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`text-xs rounded ${getDifficultyBadgeClass(challenge.difficulty)}`}>
                         {challenge.difficulty}
                       </span>
                     </div>
