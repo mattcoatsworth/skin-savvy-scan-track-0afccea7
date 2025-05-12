@@ -476,7 +476,7 @@ const WeeklySkinAnalysis = () => {
               </CardContent>
             </Card>
 
-            {/* Daily Breakdown */}
+            {/* Daily Scores - Added to match Current tab */}
             <div className="mb-6">
               <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
               <div className="overflow-x-auto pb-2">
@@ -712,7 +712,7 @@ const WeeklySkinAnalysis = () => {
             </div>
           </TabsContent>
           
-          {/* AI Analysis Tab */}
+          {/* AI Analysis Tab - Updated to match Current tab visual style */}
           <TabsContent value="ai" className="space-y-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">AI Analysis</h2>
@@ -799,7 +799,60 @@ const WeeklySkinAnalysis = () => {
                   </CardContent>
                 </Card>
 
-                {/* Key Patterns - similar style to Category Analysis */}
+                {/* Daily Scores - Added to match Current tab */}
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
+                  <div className="overflow-x-auto pb-2">
+                    <div className="flex justify-between min-w-full space-x-2">
+                      {analysisData.dailyScores.map((day, index) => (
+                        <Link key={index} to={`/day-log/day-${6-index}`} className="flex flex-col items-center">
+                          <span className="text-sm font-medium">
+                            {format(parseISO(day.date), "EEE")}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {format(parseISO(day.date), "M/d")}
+                          </span>
+                          <div className="mt-2">
+                            <div className="relative w-12 h-12 flex items-center justify-center">
+                              {/* Background circle */}
+                              <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                                <path
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                  fill="none"
+                                  stroke={getBackgroundColor(day.score)}
+                                  strokeWidth="4"
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              
+                              {/* Foreground circle */}
+                              <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                                <path
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                  fill="none"
+                                  stroke={getProgressColor(day.score)}
+                                  strokeWidth="4"
+                                  strokeDasharray={`${day.score}, 100`}
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              
+                              {/* Rating number */}
+                              <div className="text-sm font-semibold">
+                                {day.score}
+                              </div>
+                            </div>
+                            <span className="text-xs block text-center mt-1">
+                              {getRatingLabel(day.score)}
+                            </span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Sections in Formatted Cards - Matching Current tab style */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
@@ -839,7 +892,7 @@ const WeeklySkinAnalysis = () => {
                   );
                 })}
 
-                {/* Correlations Table - similar to Current tab */}
+                {/* Correlations Table */}
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold mb-3">AI Correlations</h2>
                   <Card className="ios-card hover:shadow-md transition-all">
@@ -885,10 +938,36 @@ const WeeklySkinAnalysis = () => {
                     </CardContent>
                   </Card>
                 </div>
-
-                {/* ... keep existing code (formatted HTML section) */}
+                
+                {/* If no structured sections but we have formatted HTML */}
+                {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold mb-3">AI Analysis</h2>
+                    <Card className="ios-card">
+                      <CardContent className="p-4">
+                        <div className="prose prose-sm max-w-none">
+                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
               </>
             )}
+            
+            {/* Add View Scoring Method component outside of the loading check */}
+            <ViewScoringMethod />
+            
+            {/* Add disclaimer card */}
+            <Card className="ios-card mt-6">
+              <CardContent className="p-4">
+                <h3 className="font-medium text-sm mb-2">Disclaimer</h3>
+                <p className="text-xs text-muted-foreground">
+                  AI analysis is based on the data you've provided and general skin health principles. 
+                  This is not medical advice. For persistent skin issues, please consult a dermatologist.
+                </p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
