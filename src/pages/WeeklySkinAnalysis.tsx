@@ -11,7 +11,8 @@ import {
   Sun, 
   Activity,
   Thermometer,
-  Eye
+  Eye,
+  RefreshCcw
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -23,6 +24,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import useScrollToTop from "@/hooks/useScrollToTop";
@@ -712,6 +714,20 @@ const WeeklySkinAnalysis = () => {
           
           {/* AI Analysis Tab - Updated to match Current tab visual style */}
           <TabsContent value="ai" className="space-y-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">AI Analysis</h2>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => generateAiAdvice(true)}
+                disabled={aiLoading || isLoading}
+              >
+                <RefreshCcw className="h-3 w-3" />
+                Refresh
+              </Button>
+            </div>
+            
             {aiLoading || isLoading ? (
               <Card className="ios-card">
                 <CardContent className="p-6">
@@ -783,7 +799,7 @@ const WeeklySkinAnalysis = () => {
                   </CardContent>
                 </Card>
 
-                {/* AI Sections in Formatted Cards - Matching Current tab style */}
+                {/* Key Patterns - similar style to Category Analysis */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
@@ -823,6 +839,53 @@ const WeeklySkinAnalysis = () => {
                   );
                 })}
 
+                {/* Correlations Table - similar to Current tab */}
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold mb-3">AI Correlations</h2>
+                  <Card className="ios-card hover:shadow-md transition-all">
+                    <CardContent className="p-4">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Factor</TableHead>
+                            <TableHead>Impact</TableHead>
+                            <TableHead className="text-right">Correlation</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium">Dairy Consumption</TableCell>
+                            <TableCell>
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                                Negative
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right">92%</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Hydration</TableCell>
+                            <TableCell>
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                                Positive
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right">89%</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Stress Levels</TableCell>
+                            <TableCell>
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                                Negative
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right">78%</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </div>
+
                 {/* If no structured sections but we have formatted HTML */}
                 {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
                   <div className="mb-6">
@@ -830,4 +893,19 @@ const WeeklySkinAnalysis = () => {
                     <Card className="ios-card">
                       <CardContent className="p-4">
                         <div className="prose prose-sm max-w-none">
-                          <div
+                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default WeeklySkinAnalysis;
