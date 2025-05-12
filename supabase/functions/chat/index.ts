@@ -72,11 +72,17 @@ serve(async (req) => {
         // Add formatting guidance for weekly insights
         if (!structuredOutput) {
           systemMessage += " Format your response with clear headers for each section, use bullet points for lists, and keep paragraphs concise (3-4 sentences max). Structure your analysis with these sections: 'Weekly Summary:', 'Key Patterns:', 'Correlations:', 'Progress Metrics:', 'Recommendations:', and 'Focus Areas:'.";
+          
+          // Add specific instruction to avoid duplicating the header in the content
+          systemMessage += " IMPORTANT: In your content, do not repeat the section header (e.g. 'Weekly Summary:') as part of the paragraph text. Start each section's content directly without repeating its title.";
         }
         break;
       default:
         systemMessage += corePrinciple + " " + formattingGuidance;
         systemMessage += " For skin analysis, divide your response into distinct sections with clear headings like: 'Brief Summary:', 'Key Benefits/Observations:', 'Contributing Factors:', 'Recommended Actions:', and 'Expected Timeline:'. For each bullet point or numbered step, provide specific, actionable advice that could reasonably be a separate recommendation.";
+        
+        // Add instruction to avoid duplicating headers in all cases
+        systemMessage += " IMPORTANT: In your content, do not repeat the section header as part of the paragraph text. Start each section's content directly without repeating its title.";
     }
 
     // For structured output, add response format instructions if requested

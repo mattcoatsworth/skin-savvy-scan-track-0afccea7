@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -786,14 +785,14 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary - Only showing the non-bold paragraph without any duplicate */}
+                    {/* Weekly Summary - Only showing the content without any heading/title */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
                           {typeof aiAdvice.sections["Weekly Summary"] === 'string' 
-                            ? aiAdvice.sections["Weekly Summary"] 
+                            ? aiAdvice.sections["Weekly Summary"].replace(/^(?:Weekly Summary|Summary):\s*/i, '') 
                             : Array.isArray(aiAdvice.sections["Weekly Summary"])
-                              ? aiAdvice.sections["Weekly Summary"].join(" ")
+                              ? aiAdvice.sections["Weekly Summary"].map(item => item.replace(/^(?:Weekly Summary|Summary):\s*/i, '')).join(" ")
                               : "Weekly summary of your skin health."}
                         </p>
                       </div>
