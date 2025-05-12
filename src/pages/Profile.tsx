@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ApiKeyInput from "@/components/ApiKeyInput";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import SelfieGrid from "@/components/SelfieGrid";
 
 const Profile = () => {
   // Add scroll to top functionality
@@ -33,6 +34,75 @@ const Profile = () => {
     { date: "Sat", value: 80 },
     { date: "Sun", value: 85 }
   ];
+
+  // Retrieve selfie images from localStorage
+  const [selfieImages, setSelfieImages] = useState<{
+    id: string;
+    url: string;
+    date: string;
+    type: "am" | "pm";
+    rating: number;
+  }[]>([]);
+  
+  useEffect(() => {
+    // Get all keys from localStorage that contain selfie data
+    const selfieKeys = Object.keys(localStorage).filter(
+      key => key.includes('-selfies-')
+    );
+    
+    const images: {
+      id: string;
+      url: string;
+      date: string;
+      type: "am" | "pm";
+      rating: number;
+    }[] = [];
+    
+    // Process each key to extract selfies
+    selfieKeys.forEach(key => {
+      try {
+        // Extract date and type from the key
+        const keyParts = key.split('-');
+        const type = keyParts[0] as "am" | "pm";
+        const dateId = keyParts[2]; // This will be like "day-1" or "today"
+        
+        // Convert dateId to a display date
+        let displayDate = "Today";
+        if (dateId !== "today") {
+          const dayNumber = parseInt(dateId.replace('day-', ''), 10);
+          if (!isNaN(dayNumber)) {
+            const date = new Date();
+            date.setDate(date.getDate() - dayNumber);
+            displayDate = date.toLocaleDateString();
+          }
+        }
+        
+        // Get selfies from localStorage
+        const storedSelfies = localStorage.getItem(key);
+        if (storedSelfies) {
+          const selfies = JSON.parse(storedSelfies) as (string | null)[];
+          
+          // Add each valid selfie to the images array
+          selfies.forEach((url, index) => {
+            if (url) {
+              const rating = Math.floor(Math.random() * (95 - 60 + 1)) + 60; // Random rating between 60-95
+              images.push({
+                id: `${key}-${index}`,
+                url,
+                date: displayDate,
+                type,
+                rating
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error(`Error processing selfie key ${key}:`, error);
+      }
+    });
+    
+    setSelfieImages(images);
+  }, []);
 
   // For You Recommendations 
   const skinRecommendations = [
@@ -198,6 +268,14 @@ const Profile = () => {
         <div className="mb-6">
           <ApiKeyInput />
         </div>
+        
+        {/* Selfie Grid */}
+        {selfieImages.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-3">Your Skin Photos</h2>
+            <SelfieGrid images={selfieImages} />
+          </div>
+        )}
         
         {/* Weekly Trend */}
         <div>

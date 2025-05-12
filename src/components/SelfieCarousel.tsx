@@ -1,19 +1,16 @@
 
 import React, { useState } from "react";
-import { Camera, Image, ArrowLeft, ArrowRight } from "lucide-react";
+import { Camera } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { 
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 
 interface SelfieCarouselProps {
@@ -44,11 +41,6 @@ const SelfieCarousel = ({
     return Math.min(images.length, maxImages - 1);
   };
 
-  const handleAddPhoto = () => {
-    setCurrentImageIndex(findFirstEmptySlot());
-    setIsPhotoDialogOpen(true);
-  };
-
   const handleTakePhoto = () => {
     onAddImage(type, currentImageIndex);
     setIsPhotoDialogOpen(false);
@@ -70,12 +62,10 @@ const SelfieCarousel = ({
       <div className="flex items-center mb-2">
         {type === "am" ? (
           <div className="flex items-center text-amber-500">
-            {/* Sun icon is part of the original component */}
             <h3 className="font-medium text-sm">{label}</h3>
           </div>
         ) : (
           <div className="flex items-center text-indigo-400">
-            {/* Moon icon is part of the original component */}
             <h3 className="font-medium text-sm">{label}</h3>
           </div>
         )}
@@ -110,23 +100,12 @@ const SelfieCarousel = ({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <div className="flex justify-between items-center mt-2">
-          <CarouselPrevious className="relative left-0 right-auto translate-y-0" />
+        <div className="flex justify-center mt-2">
           <div className="text-xs text-center">
             {images.filter(img => img).length} of {maxImages} images
           </div>
-          <CarouselNext className="relative left-auto right-0 translate-y-0" />
         </div>
       </Carousel>
-
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="mt-2 w-full"
-        onClick={handleAddPhoto}
-      >
-        Add {label} Photo
-      </Button>
 
       {/* Photo selection dialog */}
       <Dialog open={isPhotoDialogOpen} onOpenChange={setIsPhotoDialogOpen}>
@@ -137,23 +116,21 @@ const SelfieCarousel = ({
           </DialogDescription>
           
           <div className="grid grid-cols-2 gap-4 py-4">
-            <Button 
+            <div 
               onClick={handleTakePhoto}
-              className="flex flex-col items-center justify-center h-24 gap-2"
-              variant="outline"
+              className="flex flex-col items-center justify-center h-24 gap-2 border rounded-md p-4 cursor-pointer hover:bg-gray-50"
             >
               <Camera className="h-8 w-8" />
               <span>Take Picture</span>
-            </Button>
+            </div>
             
-            <Button 
+            <div 
               onClick={handleSelectFromGallery}
-              className="flex flex-col items-center justify-center h-24 gap-2"
-              variant="outline"
+              className="flex flex-col items-center justify-center h-24 gap-2 border rounded-md p-4 cursor-pointer hover:bg-gray-50"
             >
-              <Image className="h-8 w-8" />
+              <Camera className="h-8 w-8" />
               <span>Photo Gallery</span>
-            </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
