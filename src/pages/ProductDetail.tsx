@@ -11,7 +11,7 @@ import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import SuggestedActions from "@/components/SuggestedActions";
-import { supabase } from "@/integrations/supabase/client";
+import { useAIContentCache } from "@/hooks/useAIContentCache";
 import { toast } from "sonner";
 
 // Import product data (In a real app, this would come from an API)
@@ -40,6 +40,9 @@ const ProductDetail = () => {
     adviceType: "product"
   });
   
+  // Initialize content cache hook
+  const { getOrGenerate } = useAIContentCache();
+  
   // First try to get product from location state
   const productFromState = location.state?.product;
   
@@ -57,62 +60,6 @@ const ProductDetail = () => {
     navigate(`/product/${type}/${id}/personalized`);
   };
 
-  // Function to fetch AI analysis from cache or generate new
-  const getOrGenerateAnalysis = async () => {
-    if (!product) return "";
-    
-    try {
-      // Check if we have cached analysis content
-      const { data: cachedContent, error } = await supabase
-        .from('ai_generated_content')
-        .select('content')
-        .eq('product_id', id)
-        .eq('product_type', type)
-        .eq('content_type', 'analysis')
-        .single();
-      
-      // If we have cached content, use it
-      if (cachedContent && !error) {
-        console.log(`Found cached analysis for ${type}/${id}`);
-        return getTextContent(cachedContent.content);
-      }
-      
-      // Otherwise generate new content
-      console.log(`Generating new analysis for ${type}/${id}`);
-      
-      const advice = await getAdvice("Analyze this product for skin health", { 
-        productType: type,
-        productName: product.name,
-        productBrand: product.brand,
-        productDescription: product.description,
-        productImpact: product.impact,
-        benefits: product.benefits || [],
-        concerns: product.concerns || []
-      });
-      
-      // Cache the generated content
-      const { error: insertError } = await supabase
-        .from('ai_generated_content')
-        .upsert({
-          product_id: id,
-          product_type: type,
-          content_type: 'analysis',
-          content: advice
-        }, {
-          onConflict: 'product_id, product_type, content_type'
-        });
-      
-      if (insertError) {
-        console.error("Error caching AI content:", insertError);
-      }
-      
-      return getTextContent(advice);
-    } catch (error) {
-      console.error("Error getting AI analysis:", error);
-      return "";
-    }
-  };
-
   useEffect(() => {
     // Get AI analysis when product changes
     const loadAiAnalysis = async () => {
@@ -121,8 +68,27 @@ const ProductDetail = () => {
       setIsLoadingAnalysis(true);
       
       try {
-        const analysisText = await getOrGenerateAnalysis();
-        setAiAnalysis(analysisText);
+        const result = await getOrGenerate({
+          productId: id,
+          productType: type,
+          contentType: 'analysis'
+        }, () => getAdvice("Analyze this product for skin health", { 
+          productType: type,
+          productName: product.name,
+          productBrand: product.brand,
+          productDescription: product.description,
+          productImpact: product.impact,
+          benefits: product.benefits || [],
+          concerns: product.concerns || []
+        }));
+        
+        if (result) {
+          // The result is the cached or freshly-generated content
+          const textContent = typeof result === 'string' 
+            ? result 
+            : getTextContent(result);
+          setAiAnalysis(textContent);
+        }
       } catch (error) {
         console.error("Error getting AI analysis:", error);
         toast.error("Failed to load AI analysis");

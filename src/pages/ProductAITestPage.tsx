@@ -10,7 +10,7 @@ import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { supabase } from "@/integrations/supabase/client";
+import { useAIContentCache } from "@/hooks/useAIContentCache";
 import { toast } from "sonner";
 
 // Import product data (In a real app, this would come from an API)
@@ -43,6 +43,9 @@ const ProductAITestPage = () => {
   const { getAdvice: getOverviewAdvice } = useSkinAdvice({ adviceType: "general" });
   const { getAdvice: getDetailsAdvice } = useSkinAdvice({ adviceType: "product" });
   const { getAdvice: getDisclaimerAdvice } = useSkinAdvice({ adviceType: "general" });
+  
+  // Initialize content cache hook
+  const { getOrGenerate } = useAIContentCache();
   
   // Find the product from our data
   const products = type === "food" ? foodItems : productItems;
@@ -90,59 +93,6 @@ const ProductAITestPage = () => {
     return result;
   };
 
-  // Function to fetch cached content from Supabase or generate new content
-  const getOrGenerateContent = async (contentType: string, generatePrompt: string, generateContext: any) => {
-    if (!product) return null;
-    
-    try {
-      // First, check if we have cached content
-      const { data: cachedContent, error } = await supabase
-        .from('ai_generated_content')
-        .select('content')
-        .eq('product_id', id)
-        .eq('product_type', type)
-        .eq('content_type', contentType)
-        .single();
-      
-      // If we have cached content, use it
-      if (cachedContent && !error) {
-        console.log(`Found cached ${contentType} for ${type}/${id}`);
-        return cachedContent.content;
-      }
-      
-      // Otherwise generate new content
-      console.log(`Generating new ${contentType} for ${type}/${id}`);
-      const getAdviceFunction = 
-        contentType === 'overview' ? getOverviewAdvice : 
-        contentType === 'details' ? getDetailsAdvice : 
-        getDisclaimerAdvice;
-      
-      const generatedContent = await getAdviceFunction(generatePrompt, generateContext);
-      
-      // Cache the generated content
-      const { error: insertError } = await supabase
-        .from('ai_generated_content')
-        .upsert({
-          product_id: id,
-          product_type: type,
-          content_type: contentType,
-          content: generatedContent
-        }, {
-          onConflict: 'product_id, product_type, content_type'
-        });
-      
-      if (insertError) {
-        console.error("Error caching AI content:", insertError);
-        // Still return the generated content even if caching fails
-      }
-      
-      return generatedContent;
-    } catch (error) {
-      console.error(`Error in getOrGenerateContent for ${contentType}:`, error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     // Get AI content for each section when product changes
     const fetchAIContent = async () => {
@@ -155,14 +105,21 @@ const ProductAITestPage = () => {
                                 Include information about its impact (${product.impact}), what it does, and a brief description. 
                                 Write this as if it's for a skincare app product detail page. Keep it under 200 words.`;
         
-        const overview = await getOrGenerateContent('overview', overviewPrompt, { 
+        const overview = await getOrGenerate({
+          productId: id,
+          productType: type,
+          contentType: 'overview'
+        }, () => getOverviewAdvice(overviewPrompt, { 
           productType: type,
           productName: product.name,
           productImpact: product.impact
-        });
+        }));
         
         if (overview) {
-          setAiContent(prev => ({...prev, overview}));
+          setAiContent(prev => ({
+            ...prev, 
+            overview: overview as { formattedHtml: string; sections: Record<string, string | string[]> }
+          }));
         }
         setIsLoading(prev => ({ ...prev, overview: false }));
         
@@ -173,13 +130,20 @@ const ProductAITestPage = () => {
                               Include at least 4 potential benefits and 3 potential concerns based on scientific research.
                               Make it specific to skin health.`;
         
-        const details = await getOrGenerateContent('details', detailsPrompt, {
+        const details = await getOrGenerate({
+          productId: id,
+          productType: type,
+          contentType: 'details'
+        }, () => getDetailsAdvice(detailsPrompt, {
           productType: type,
           productName: product.name
-        });
+        }));
         
         if (details) {
-          setAiContent(prev => ({...prev, details}));
+          setAiContent(prev => ({
+            ...prev, 
+            details: details as { formattedHtml: string; sections: Record<string, string | string[]> }
+          }));
         }
         setIsLoading(prev => ({ ...prev, details: false }));
         
@@ -188,13 +152,20 @@ const ProductAITestPage = () => {
         const disclaimerPrompt = `Create a brief medical disclaimer about ${product.name} and skin health. Keep it under 50 words.
                                  Only include the essential disclaimer text - no analysis or other sections.`;
         
-        const disclaimer = await getOrGenerateContent('disclaimer', disclaimerPrompt, {
+        const disclaimer = await getOrGenerate({
+          productId: id,
+          productType: type,
+          contentType: 'disclaimer'
+        }, () => getDisclaimerAdvice(disclaimerPrompt, {
           productType: type,
           productName: product.name
-        });
+        }));
         
         if (disclaimer) {
-          setAiContent(prev => ({...prev, disclaimer}));
+          setAiContent(prev => ({
+            ...prev, 
+            disclaimer: disclaimer as { formattedHtml: string; sections: Record<string, string | string[]> }
+          }));
         }
         setIsLoading(prev => ({ ...prev, disclaimer: false }));
         

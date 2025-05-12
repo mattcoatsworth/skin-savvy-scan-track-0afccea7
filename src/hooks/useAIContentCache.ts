@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 interface ContentOptions {
   productId: string;
@@ -42,13 +43,16 @@ export const useAIContentCache = () => {
     contentType 
   }: ContentOptions, content: any): Promise<boolean> => {
     try {
+      // Ensure content is JSON-serializable
+      const jsonContent = JSON.parse(JSON.stringify(content));
+      
       const { error } = await supabase
         .from('ai_generated_content')
         .upsert({
           product_id: productId,
           product_type: productType,
           content_type: contentType,
-          content,
+          content: jsonContent as Json,
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'product_id, product_type, content_type'
