@@ -201,7 +201,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
   
-  // CRITICAL FIX: Show 8 recommendations by default instead of 5
+  // FIXED: Show 8 recommendations by default instead of 5
   const displayedRecommendations = showAllRecommendations 
     ? displayRecommendations 
     : displayRecommendations.slice(0, 8);  // Changed from 5 to 8
