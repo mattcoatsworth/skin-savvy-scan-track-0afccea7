@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,6 +25,8 @@ import BackButton from "@/components/BackButton";
 import TrendChart from "@/components/TrendChart";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useAIDetailCache } from "@/hooks/useAIDetailCache";
+import { toast } from "sonner";
 
 // Types for AI analysis
 interface AISection {
@@ -50,6 +52,7 @@ const SkinAnalysis = () => {
   });
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
   const { getAdvice, isLoading, getTextContent } = useSkinAdvice({ adviceType: "recommendation" });
+  const { preGenerateMultipleDetails, isGenerating } = useAIDetailCache();
   
   // Sample data
   const skinFactors = [
@@ -325,6 +328,44 @@ const SkinAnalysis = () => {
           localStorage.setItem(cacheKey, JSON.stringify(advice));
         } catch (storageError) {
           console.error("Error saving to localStorage:", storageError);
+        }
+        
+        // IMPORTANT: After generating AI advice, pre-generate detail pages for each item
+        // This is the key part that ensures detail pages are created as soon as cards are created,
+        // not when the user clicks on them
+        const aiSections = processAIResponse(advice.sections || {});
+        const detailsToGenerate: Array<{type: string; id: string; text: string; contextData?: any}> = [];
+        
+        // Collect all items that need detail pages
+        aiSections.forEach(section => {
+          section.items.forEach((item, index) => {
+            // Extract the type and id from the linkTo URL
+            const match = item.linkTo.match(/\/recommendations-detail\/ai-([^-]+)-(\d+)/);
+            if (match) {
+              const [_, type, id] = match;
+              detailsToGenerate.push({
+                type,
+                id,
+                text: item.text,
+                contextData: { skinFactors, weeklyTrendData }
+              });
+            }
+          });
+        });
+        
+        // Pre-generate all detail pages in the background
+        if (detailsToGenerate.length > 0) {
+          console.log(`Pre-generating ${detailsToGenerate.length} detail pages in the background`);
+          
+          // Don't await this - let it run in the background while user browses
+          preGenerateMultipleDetails(detailsToGenerate).then(({ generatedCount }) => {
+            if (generatedCount > 0) {
+              toast.success(`${generatedCount} new recommendation details prepared`, {
+                duration: 3000,
+                position: "bottom-center"
+              });
+            }
+          });
         }
       } else {
         setAiAdvice({ formattedHtml: "", sections: {} });

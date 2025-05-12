@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +11,14 @@ import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import BackButton from "@/components/BackButton";
 import AppNavigation from "@/components/AppNavigation";
 import Disclaimer from "@/components/Disclaimer";
+import { useAIDetailCache } from "@/hooks/useAIDetailCache";
 
+/**
+ * Detail page for AI-generated recommendations
+ * 
+ * IMPORTANT: Content for this page is pre-generated when cards are created in the SkinAnalysis
+ * component and stored in Supabase for fast loading when users click on the cards.
+ */
 const AIRecommendationDetail = () => {
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -29,6 +35,8 @@ const AIRecommendationDetail = () => {
     adviceType: "general",
     model: "gpt-4o-mini" 
   });
+  
+  const { getCachedDetail, preGenerateDetailContent } = useAIDetailCache();
   
   // Extract recommendation type from the ID
   const recommendationType = id?.split('-')[0] || "recommendation";
@@ -65,19 +73,33 @@ const AIRecommendationDetail = () => {
   };
 
   useEffect(() => {
-    const generateContent = async () => {
+    const fetchContent = async () => {
       setIsLoading(true);
       
       try {
-        // Try to get cached content from localStorage first
-        const cacheKey = `ai-recommendation-detail-${id}`;
-        const cachedContent = localStorage.getItem(cacheKey);
+        // First try to get the cached content from Supabase
+        const cachedContent = await getCachedDetail(recommendationType, recommendationNumber);
         
         if (cachedContent) {
-          setContent(JSON.parse(cachedContent));
+          console.log("Using cached detail content from Supabase");
+          setContent(cachedContent);
           setIsLoading(false);
           return;
         }
+        
+        // If no cached content in Supabase, fall back to legacy localStorage cache
+        const cacheKey = `ai-recommendation-detail-${id}`;
+        const localCachedContent = localStorage.getItem(cacheKey);
+        
+        if (localCachedContent) {
+          console.log("Using cached detail content from localStorage");
+          setContent(JSON.parse(localCachedContent));
+          setIsLoading(false);
+          return;
+        }
+        
+        // No cached content anywhere, we need to generate it
+        console.log("No cached content found, generating new content");
         
         // Build the base title from the ID
         const baseTitle = formatTitle(id);
@@ -118,7 +140,10 @@ const AIRecommendationDetail = () => {
           // Save to state
           setContent(newContent);
           
-          // Cache in localStorage
+          // Cache in Supabase for future use
+          preGenerateDetailContent(recommendationType, recommendationNumber, baseTitle, newContent);
+          
+          // Legacy cache in localStorage
           try {
             localStorage.setItem(cacheKey, JSON.stringify(newContent));
           } catch (error) {
@@ -148,8 +173,8 @@ const AIRecommendationDetail = () => {
       }
     };
     
-    generateContent();
-  }, [id, getAdvice]);
+    fetchContent();
+  }, [id, getAdvice, getCachedDetail, preGenerateDetailContent, recommendationType, recommendationNumber]);
 
   const recommendationTypeDisplay = formatType(recommendationType);
   const displayTitle = content.title || formatTitle(id);

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useAIDetailCache } from "@/hooks/useAIDetailCache";
 import { toast } from "sonner";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
@@ -92,10 +93,11 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   const [aiRecommendations, setAiRecommendations] = useState<Recommendation[]>([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
   const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  const { preGenerateMultipleDetails } = useAIDetailCache();
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(true);
-  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false); // Add this to prevent infinite loop
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
   
-  // Fetch AI recommendations on component mount - fixed to prevent infinite loop
+  // Fetch AI recommendations on component mount
   useEffect(() => {
     // Only run once to prevent infinite loop
     if (hasAttemptedFetch) return;
@@ -103,7 +105,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     const fetchRecommendations = async () => {
       try {
         setIsLoadingRecommendations(true);
-        setHasAttemptedFetch(true); // Mark that we've attempted to fetch
+        setHasAttemptedFetch(true);
         
         // Try to get cached recommendations from localStorage first
         const today = new Date().toISOString().split('T')[0];
@@ -177,6 +179,20 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
           // Save processed recommendations in state
           setAiRecommendations(processedRecommendations);
           
+          // Pre-generate detail pages for all recommendations in the background
+          // IMPORTANT: This ensures detail pages are created as soon as recommendations are generated
+          const detailsToGenerate = processedRecommendations.map((rec, index) => ({
+            type: "action",
+            id: `${index + 1}`,
+            text: rec.text,
+            contextData: { factors }
+          }));
+          
+          // Run in the background without awaiting
+          preGenerateMultipleDetails(detailsToGenerate).then(({ generatedCount }) => {
+            console.log(`Pre-generated ${generatedCount} new recommendation details`);
+          });
+          
           // Cache the recommendations in localStorage
           try {
             localStorage.setItem(cacheKey, JSON.stringify(processedRecommendations));
@@ -195,7 +211,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     };
     
     fetchRecommendations();
-  }, [hasAttemptedFetch]); // Only depend on hasAttemptedFetch to prevent infinite loop
+  }, [hasAttemptedFetch, preGenerateMultipleDetails]); // Only depend on hasAttemptedFetch to prevent infinite loop
   
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
