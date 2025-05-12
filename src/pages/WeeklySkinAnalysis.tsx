@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -9,6 +8,8 @@ import SkinIndexComparison from "@/components/SkinIndexComparison";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIContentCache } from "@/hooks/useAIContentCache";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
+import Disclaimer from "@/components/Disclaimer";
 
 const WeeklySkinAnalysis = () => {
   useScrollToTop();
@@ -196,7 +197,7 @@ const WeeklySkinAnalysis = () => {
         </div>
       </div>
       
-      {/* 3. Skin Index Comparison - Keeping only this instance */}
+      {/* 3. Skin Index Comparison */}
       <div className="mb-6">
         <SkinIndexComparison gender="female" age={28} />
       </div>
@@ -351,7 +352,7 @@ const WeeklySkinAnalysis = () => {
       </div>
       
       {/* 6. Monthly Analysis Link */}
-      <div>
+      <div className="mb-6">
         <Link 
           to="/monthly-analysis"
           className="block bg-slate-100 hover:bg-slate-200 transition-colors p-4 rounded-lg text-center"
@@ -359,6 +360,12 @@ const WeeklySkinAnalysis = () => {
           View Monthly Analysis
         </Link>
       </div>
+      
+      {/* 7. View Scoring Method */}
+      <ViewScoringMethod />
+      
+      {/* 8. Disclaimer */}
+      <Disclaimer />
     </div>
   );
 };
