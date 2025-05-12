@@ -12,6 +12,11 @@ interface UseSkinAdviceProps {
   structuredOutput?: boolean;
 }
 
+interface AIResponse {
+  formattedHtml: string;
+  sections: Record<string, string | string[]>;
+}
+
 export const useSkinAdvice = ({
   adviceType = "general",
   model = "gpt-4o-mini",
@@ -119,7 +124,7 @@ export const useSkinAdvice = ({
   const getAdvice = async (
     question: string, 
     context: Record<string, any> = {}
-  ): Promise<string | any> => {
+  ): Promise<AIResponse | null> => {
     try {
       setIsLoading(true);
 
@@ -235,9 +240,10 @@ export const useSkinAdvice = ({
       if (error) {
         console.error("Error calling Edge Function:", error);
         toast.error("Failed to get AI skin advice. Please try again.");
-        return structuredOutput 
-          ? { error: "Failed to get AI skin advice" }
-          : "I'm having trouble analyzing this skin information right now. Please try again in a moment.";
+        return {
+          formattedHtml: "I'm having trouble analyzing this skin information right now. Please try again in a moment.",
+          sections: {}
+        };
       }
 
       // If structured output is requested, try to parse the content as JSON
@@ -253,6 +259,8 @@ export const useSkinAdvice = ({
         } catch (e) {
           console.error("Error parsing structured output:", e);
           return { 
+            formattedHtml: "Failed to parse structured response", 
+            sections: {},
             error: "Failed to parse structured response", 
             rawContent: data.content 
           };
@@ -270,12 +278,10 @@ export const useSkinAdvice = ({
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
       toast.error("Failed to get skin advice. Please try again.");
-      return structuredOutput 
-        ? { error: "Failed to get skin advice" }
-        : {
-            formattedHtml: "I'm having trouble analyzing this skin information right now. Please try again in a moment.",
-            sections: {}
-          };
+      return {
+        formattedHtml: "I'm having trouble analyzing this skin information right now. Please try again in a moment.",
+        sections: {}
+      };
     } finally {
       setIsLoading(false);
     }

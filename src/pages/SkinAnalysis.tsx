@@ -37,10 +37,15 @@ interface AISection {
   }[];
 }
 
+interface AIAdvice {
+  formattedHtml: string;
+  sections: Record<string, string | string[]>;
+}
+
 const SkinAnalysis = () => {
   useScrollToTop();
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiAdvice, setAiAdvice] = useState<{formattedHtml: string; sections: Record<string, string | string[]>}>({
+  const [aiAdvice, setAiAdvice] = useState<AIAdvice>({
     formattedHtml: "",
     sections: {}
   });
@@ -263,7 +268,13 @@ const SkinAnalysis = () => {
         "Provide personalized analysis of my skin condition based on recent logs and factors. Include specific sections for: current status, key observations, contributing factors, recommended actions, and expected timeline.", 
         { skinFactors, weeklyTrendData }
       );
-      setAiAdvice(advice || { formattedHtml: "", sections: {} });
+      
+      // Make sure advice is not null or undefined before setting state
+      if (advice) {
+        setAiAdvice(advice);
+      } else {
+        setAiAdvice({ formattedHtml: "", sections: {} });
+      }
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
       // Set default empty values on error
@@ -426,7 +437,9 @@ const SkinAnalysis = () => {
                           <p className="text-sm text-muted-foreground mt-1">
                             {typeof aiAdvice.sections["Brief Summary"] === 'string' 
                               ? aiAdvice.sections["Brief Summary"]
-                              : "Your skin analysis summary"}
+                              : Array.isArray(aiAdvice.sections["Brief Summary"]) 
+                                ? aiAdvice.sections["Brief Summary"].join(" ")
+                                : "Your skin analysis summary"}
                           </p>
                         </div>
                       </div>
@@ -486,7 +499,14 @@ const SkinAnalysis = () => {
                       
                       <div className="prose prose-sm max-w-none">
                         {aiAdvice?.formattedHtml ? (
-                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} className="skin-advice-content" />
+                          <div 
+                            dangerouslySetInnerHTML={{ 
+                              __html: typeof aiAdvice.formattedHtml === 'string' 
+                                ? aiAdvice.formattedHtml 
+                                : '' 
+                            }} 
+                            className="skin-advice-content" 
+                          />
                         ) : (
                           <p>Unable to generate AI analysis at this time. Please try again later.</p>
                         )}
