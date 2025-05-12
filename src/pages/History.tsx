@@ -40,6 +40,8 @@ type DayLogType = {
     products: string[];
     skin: string[];
   };
+  amSelfie?: string | null;
+  pmSelfie?: string | null;
 };
 
 // Determine label based on rating
@@ -57,6 +59,11 @@ const History = () => {
     const date = subDays(new Date(), index);
     const rating = Math.floor(Math.random() * 100) + 1; // Random rating between 1-100
     
+    // Randomly determine if this log has selfies (for demo purposes)
+    // In a real app, this would come from user data
+    const hasAmSelfie = Math.random() > 0.7;
+    const hasPmSelfie = Math.random() > 0.7;
+    
     return {
       id: `day-${index}`,
       date,
@@ -70,7 +77,9 @@ const History = () => {
         food: getRandomFactors(["Avocado", "Nuts", "Water", "Green Tea", "Dairy", "Sugar", "Processed Foods"], 2),
         products: getRandomFactors(["Retinol", "Vitamin C Serum", "Moisturizer", "Sunscreen", "Cleanser"], 2),
         skin: getRandomFactors(["Hydrated", "Dry", "Oily", "Irritated", "Calm", "Breakout"], 1),
-      }
+      },
+      amSelfie: hasAmSelfie ? null : undefined, // null means placeholder, undefined means no selfie block
+      pmSelfie: hasPmSelfie ? null : undefined, // this is just for demo - in real app all would have placeholders
     };
   });
 
@@ -118,6 +127,38 @@ const History = () => {
                       <span className="text-xs text-muted-foreground">
                         {getRatingLabel(log.rating)}
                       </span>
+                    </div>
+                  </div>
+                  
+                  {/* Add Selfies section to each card */}
+                  <div className="mt-4 pt-3 border-t border-gray-100">
+                    <h4 className="text-sm font-medium mb-2">Selfies</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* AM Photo */}
+                      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                        {log.amSelfie ? (
+                          <img 
+                            src={log.amSelfie} 
+                            alt="AM Selfie" 
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <span>AM Photo</span>
+                        )}
+                      </div>
+                      
+                      {/* PM Photo */}
+                      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                        {log.pmSelfie ? (
+                          <img 
+                            src={log.pmSelfie} 
+                            alt="PM Selfie" 
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <span>PM Photo</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardContent>
