@@ -11,7 +11,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Camera, Image, Smile, Sun, Moon } from "lucide-react";
+import { Camera, Image, Smile, Sun, Moon, LoaderCircle } from "lucide-react";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
 import InsightsTrends from "@/components/InsightsTrends";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
@@ -108,7 +108,7 @@ const History = () => {
   const [activeTab, setActiveTab] = useState("daily");
   
   // Use the skin advice hook for AI analysis
-  const { getAdvice } = useSkinAdvice({ adviceType: "general" });
+  const { getAdvice, isLoading: isAdviceLoading, getTextContent } = useSkinAdvice({ adviceType: "general" });
   
   // Generate 7 days of mock data
   const dayLogs: DayLogType[] = Array.from({ length: 7 }).map((_, index) => {
@@ -302,10 +302,154 @@ const History = () => {
     }
   };
   
-  // Fetch skin logs and analyze on component mount
+  // Add new state for AI analysis
+  const [aiAdvice, setAiAdvice] = useState<any>({
+    formattedHtml: "",
+    sections: {}
+  });
+  const [aiLoading, setAiLoading] = useState(false);
+  
+  // Process AI response into clickable sections
+  const processAIResponse = (sections: Record<string, string | string[]> = {}): any[] => {
+    if (!sections) {
+      return [];
+    }
+    
+    const aiSections: any[] = [];
+    
+    // Map section names to display names and types
+    const sectionConfig: Record<string, {title: string, type: string, icon: string, labelPrefix: string}> = {
+      "Key Benefits/Observations": { title: "Key Observations", type: "observation", icon: "circle", labelPrefix: "Observation" },
+      "Contributing Factors": { title: "Contributing Factors", type: "factor", icon: "activity", labelPrefix: "Factor" },
+      "Recommended Actions": { title: "Recommendations", type: "action", icon: "droplet", labelPrefix: "Recommendation" },
+      "Expected Timeline": { title: "Timeline", type: "timeline", icon: "calendar", labelPrefix: "Timeline" }
+    };
+    
+    // Process each section
+    Object.entries(sections).forEach(([key, content]) => {
+      // Skip Brief Summary section
+      if (key === "Brief Summary") return;
+      
+      if (!content) return; // Skip if content is null/undefined
+      
+      const config = sectionConfig[key] || { title: key, type: "info", icon: "info", labelPrefix: "Item" };
+      
+      if (Array.isArray(content)) {
+        // Create a section with items for array content
+        aiSections.push({
+          title: config.title,
+          items: content.map((item, index) => {
+            // Parse the item to separate title and details if it contains a colon
+            const hasColon = item.includes(":");
+            const title = hasColon ? item.split(":")[0].trim() : `${config.labelPrefix} ${index + 1}`;
+            const details = hasColon ? item.split(":").slice(1).join(":").trim() : item;
+            
+            return {
+              text: item, // Keep the full text for processing
+              type: config.type,
+              linkTo: `/recommendations-detail/ai-${config.type}-${index + 1}`
+            };
+          })
+        });
+      } else if (typeof content === 'string') {
+        // Create a section with a single item for string content
+        const hasColon = content.includes(":");
+        const title = hasColon ? content.split(":")[0].trim() : `${config.labelPrefix} 1`;
+        const details = hasColon ? content.split(":").slice(1).join(":").trim() : content;
+        
+        aiSections.push({
+          title: config.title,
+          items: [{
+            text: content,
+            type: config.type,
+            linkTo: `/recommendations-detail/ai-${config.type}`
+          }]
+        });
+      }
+    });
+    
+    return aiSections;
+  };
+
+  // Function to generate AI advice
+  const generateAiAdvice = async (forceRefresh = false) => {
+    // Sample data needed for AI analysis (similar to what's in SkinAnalysis page)
+    const skinFactors = [
+      { type: "Food", status: "Hydrating", details: "Increased water-rich foods and avoided dairy this week" },
+      { type: "Supplement", status: "New", details: "Started collagen supplement 3 days ago" },
+      { type: "Makeup", status: "Same as usual", details: "Using the same foundation and concealer" },
+      { type: "Weather", status: "Dry + Cold", details: "Low humidity affecting skin hydration" },
+      { type: "Sleep", status: "Improved", details: "Getting 7+ hours consistently this week" },
+      { type: "Stress", status: "Moderate", details: "Work deadline approaching" },
+    ];
+
+    const weeklyTrendData = [
+      { date: "Mon", value: 35 },
+      { date: "Tue", value: 40 },
+      { date: "Wed", value: 45 },
+      { date: "Thu", value: 60 },
+      { date: "Fri", value: 75 },
+      { date: "Sat", value: 80 },
+      { date: "Sun", value: 85 }
+    ];
+    
+    // Check if we have cached advice in localStorage
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const cacheKey = `skin-history-advice-${today}`;
+    
+    // If not forcing a refresh, try to get data from localStorage first
+    if (!forceRefresh) {
+      try {
+        const cachedAdvice = localStorage.getItem(cacheKey);
+        if (cachedAdvice) {
+          const parsedAdvice = JSON.parse(cachedAdvice);
+          setAiAdvice(parsedAdvice);
+          return; // Exit early if we have cached data
+        }
+      } catch (error) {
+        console.error("Error reading from cache:", error);
+        // Continue with API request if cache read fails
+      }
+    }
+    
+    // If no cache or we need a refresh, proceed with API request
+    setAiLoading(true);
+    try {
+      const advice = await getAdvice(
+        "Provide personalized analysis of my skin condition based on recent logs and factors. Include specific sections for: current status, key observations, contributing factors, recommended actions, and expected timeline.", 
+        { skinFactors, weeklyTrendData }
+      );
+      
+      // Make sure advice is not null or undefined before setting state
+      if (advice) {
+        setAiAdvice(advice);
+        
+        // Save to localStorage for future use
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(advice));
+        } catch (storageError) {
+          console.error("Error saving to localStorage:", storageError);
+        }
+      } else {
+        setAiAdvice({ formattedHtml: "", sections: {} });
+      }
+    } catch (error) {
+      console.error("Error getting AI skin advice:", error);
+      // Set default empty values on error
+      setAiAdvice({ formattedHtml: "", sections: {} });
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  
+  // Fetch skin logs and analyze on component mount & generate AI advice
   useEffect(() => {
     fetchSkinLogsAndAnalyze();
+    generateAiAdvice();
   }, []);
+  
+  // Process AI sections
+  const aiSections = processAIResponse(aiAdvice?.sections || {});
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -412,6 +556,95 @@ const History = () => {
             
             {/* InsightsTrends component */}
             <InsightsTrends insights={insightData} className="mb-6" />
+            
+            {/* AI Analysis Section - Added from SkinAnalysis page */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">AI Analysis</h2>
+              
+              {aiLoading || isAdviceLoading ? (
+                <Card className="ios-card">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col items-center py-8">
+                      <LoaderCircle className="animate-spin rounded-full h-8 w-8 border-b-2 border-skin-teal mb-4" />
+                      <p className="text-muted-foreground">Generating your personalized skin analysis...</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  {/* Display AI sections in a structured format */}
+                  {aiSections.map((section, index) => (
+                    <div key={index} className="ai-section mb-4">
+                      <h2 className="text-lg font-semibold mb-3">{section.title}</h2>
+                      
+                      <div className="space-y-3">
+                        {section.items.map((item, itemIdx) => {
+                          // Parse item text to extract title and details
+                          const hasColon = item.text.includes(":");
+                          const sectionConfig = {
+                            "Key Observations": "Observation",
+                            "Recommendations": "Recommendation",
+                            "Contributing Factors": "Factor",
+                            "Timeline": "Timeline"
+                          };
+                          const sectionPrefix = sectionConfig[section.title] || "Item";
+                          const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
+                          const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+
+                          return (
+                            <Link to={item.linkTo} key={itemIdx} className="block">
+                              <Card className="ios-card hover:shadow-md transition-all">
+                                <CardContent className="p-4">
+                                  <div>
+                                    <h3 className="font-medium">{title}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                      {details}
+                                    </p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* If there are no structured sections or sections parsing failed */}
+                  {(!aiSections || aiSections.length === 0) && (
+                    <Card className="ios-card">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-xl font-semibold">AI Analysis</h2>
+                          {/* Regenerate button */}
+                          <button 
+                            onClick={() => generateAiAdvice(true)} 
+                            className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                          >
+                            Refresh
+                          </button>
+                        </div>
+                        
+                        <div className="prose prose-sm max-w-none">
+                          {aiAdvice?.formattedHtml ? (
+                            <div 
+                              dangerouslySetInnerHTML={{ 
+                                __html: typeof aiAdvice.formattedHtml === 'string' 
+                                  ? aiAdvice.formattedHtml 
+                                  : '' 
+                              }} 
+                              className="skin-advice-content" 
+                            />
+                          ) : (
+                            <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              )}
+            </div>
             
             {/* Daily Log Cards */}
             <div className="flex flex-col gap-y-6">
