@@ -740,7 +740,7 @@ const WeeklySkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                {/* Overall Score Card */}
+                {/* Overall Score Card with Brief Summary */}
                 <Card className="ios-card mb-6">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -785,7 +785,7 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary - removed the redundant bold paragraph */}
+                    {/* Weekly Summary - keeping only the non-bold paragraph */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
