@@ -76,6 +76,21 @@
   }
 }
 
+/* iOS-inspired design components */
+@layer components {
+  .ios-card {
+    @apply bg-white rounded-3xl shadow-sm p-5 border-0;
+  }
+  
+  .ios-section {
+    @apply mb-8;
+  }
+  
+  .ios-btn {
+    @apply bg-skin-black text-white px-6 py-3 rounded-full font-medium shadow-md;
+  }
+}
+
 /* Skin advice content styling */
 .skin-advice-content h3 {
   @apply text-lg font-medium mt-4 mb-2;
