@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { CalendarCheck } from "lucide-react";
+import { Camera } from "lucide-react";
 
 const ScanButton: React.FC = () => {
   return (
@@ -13,7 +13,7 @@ const ScanButton: React.FC = () => {
         asChild
       >
         <Link to="/log-skin-condition" className="flex items-center justify-center gap-2">
-          <CalendarCheck className="h-4 w-4" />
+          <Camera className="h-4 w-4" />
           Log Today's Skin Condition
         </Link>
       </Button>
