@@ -790,25 +790,27 @@ const History = () => {
                   </CardContent>
                 </Card>
               ) : (
-                // ... keep existing code (AI analysis display logic)
                 <>
                   {/* Display AI sections in a structured format */}
                   {aiSections.map((section, index) => (
-                    // ... keep existing code (AI sections rendering)
                     <div key={index} className="ai-section mb-4">
                       <h2 className="text-lg font-semibold mb-3">{section.title}</h2>
                       
                       <div className="space-y-3">
                         {section.items.map((item: any, itemIdx: number) => {
-                          // ... keep existing code (item parsing and display)
+                          // Parse the item text to separate title and details
+                          const hasColon = item.text.includes(":");
+                          const itemTitle = hasColon ? item.text.split(":")[0].trim() : `Item ${itemIdx + 1}`;
+                          const itemDetails = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+                          
                           return (
                             <Link to={item.linkTo} key={itemIdx} className="block">
                               <Card className="ios-card hover:shadow-md transition-all">
                                 <CardContent className="p-4">
                                   <div>
-                                    <h3 className="font-medium">{title}</h3>
+                                    <h3 className="font-medium">{itemTitle}</h3>
                                     <p className="text-sm text-muted-foreground">
-                                      {details}
+                                      {itemDetails}
                                     </p>
                                   </div>
                                 </CardContent>
@@ -823,35 +825,6 @@ const History = () => {
                   {/* If there are no structured sections or sections parsing failed */}
                   {(!aiSections || aiSections.length === 0) && (
                     // ... keep existing code (fallback AI analysis display)
-                    <Card className="ios-card">
-                      <CardContent className="p-6">
-                        <div className="flex justify-between items-center mb-4">
-                          <h2 className="text-xl font-semibold">AI Analysis</h2>
-                          {/* Regenerate button */}
-                          <button 
-                            onClick={() => generateAiAdvice(true)} 
-                            className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
-                          >
-                            Refresh
-                          </button>
-                        </div>
-                        
-                        <div className="prose prose-sm max-w-none">
-                          {aiAdvice?.formattedHtml ? (
-                            <div 
-                              dangerouslySetInnerHTML={{ 
-                                __html: typeof aiAdvice.formattedHtml === 'string' 
-                                  ? aiAdvice.formattedHtml 
-                                  : '' 
-                              }} 
-                              className="skin-advice-content" 
-                            />
-                          ) : (
-                            <p>Unable to generate AI analysis at this time. Please try again later.</p>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
                   )}
                 </>
               )}
