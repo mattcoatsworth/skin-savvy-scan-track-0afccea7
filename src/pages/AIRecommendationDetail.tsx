@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,32 +51,46 @@ const AIRecommendationDetail = () => {
   
   const { getCachedDetail, preGenerateDetailContent } = useAIDetailCache();
   
-  // Parse the route parameter to extract recommendation type and number
-  // Handle both formats: /recommendations-detail/ai-factor-1 and /recommendations-detail/factor/1
-  let recommendationType, recommendationNumber;
-  
-  if (fullId.includes('-')) {
-    // Format: ai-factor-1 or factor-1
-    const parts = fullId.split('-');
-    if (parts[0] === 'ai' && parts.length > 2) {
-      recommendationType = parts[1];
-      recommendationNumber = parts.slice(2).join('-');
-    } else {
+  // Enhanced parsing that handles all known URL formats
+  const parseRecommendationId = (fullId: string) => {
+    console.log("Parsing recommendation ID:", fullId);
+    
+    // Default values
+    let recommendationType = "recommendation";
+    let recommendationNumber = "1";
+    
+    // For URLs like /recommendations-detail/ai-timeline-1
+    if (fullId.startsWith("ai-")) {
+      // Format: ai-timeline-1
+      const parts = fullId.substring(3).split('-');
+      if (parts.length >= 2) {
+        recommendationType = parts[0];
+        recommendationNumber = parts.slice(1).join('-');
+      }
+    } 
+    // For URLs like /recommendations-detail/timeline-1
+    else if (fullId.includes('-')) {
+      // Format: timeline-1
+      const parts = fullId.split('-');
       recommendationType = parts[0];
       recommendationNumber = parts.slice(1).join('-');
+    } 
+    // For URLs like /recommendations-detail/timeline/1
+    else if (fullId.includes('/')) {
+      // Format: timeline/1
+      const parts = fullId.split('/');
+      recommendationType = parts[0];
+      recommendationNumber = parts[1];
     }
-  } else if (fullId.includes('/')) {
-    // Format: factor/1
-    const parts = fullId.split('/');
-    recommendationType = parts[0];
-    recommendationNumber = parts[1];
-  } else {
-    // Default fallback if the format doesn't match expected patterns
-    recommendationType = "recommendation";
-    recommendationNumber = fullId;
-  }
+    // For any other format, treat the whole ID as the number with default type
+    
+    console.log(`Parsed route: type=${recommendationType}, number=${recommendationNumber}, fullId=${fullId}`);
+    
+    return { recommendationType, recommendationNumber };
+  };
   
-  console.log(`Parsed route: type=${recommendationType}, number=${recommendationNumber}, fullId=${fullId}`);
+  // Parse the recommendation ID from the URL
+  const { recommendationType, recommendationNumber } = parseRecommendationId(fullId);
   
   // Format the type for display
   const formatType = (type: string): string => {
@@ -118,65 +133,75 @@ const AIRecommendationDetail = () => {
       setIsLoading(true);
       
       try {
-        console.log(`Fetching content for type=${recommendationType}, number=${recommendationNumber}`);
+        console.log(`Attempting to fetch content for: ${recommendationType}-${recommendationNumber}`);
         
-        // First try to get the cached content from Supabase
-        let cachedContent = await getCachedDetail(recommendationType, recommendationNumber);
+        // Try different variations of the type and ID to maximize chance of finding content
+        const variants = [
+          { type: recommendationType, id: recommendationNumber }, 
+          { type: `ai-${recommendationType}`, id: recommendationNumber },
+          { type: "ai", id: `${recommendationType}-${recommendationNumber}` },
+          // Try the full ID as a last resort
+          { type: fullId.split('-')[0], id: fullId.split('-').slice(1).join('-') }
+        ];
         
-        if (!cachedContent && recommendationType === "factor") {
-          // Try alternative format (e.g., "ai-factor-1")
-          console.log("Trying alternative format with ai- prefix");
-          cachedContent = await getCachedDetail("ai-" + recommendationType, recommendationNumber);
-        }
+        let cachedContent = null;
         
-        if (!cachedContent && fullId.includes('-')) {
-          // Try using the full ID as a fallback
-          console.log("Trying full ID as fallback");
+        // Try each variant until we find content
+        for (const variant of variants) {
+          if (!variant.type || !variant.id) continue;
           
-          const parts = fullId.split('-');
-          if (parts.length >= 2) {
-            const altType = parts[0];
-            const altId = parts.slice(1).join('-');
-            cachedContent = await getCachedDetail(altType, altId);
+          console.log(`Trying to fetch with type=${variant.type}, id=${variant.id}`);
+          cachedContent = await getCachedDetail(variant.type, variant.id);
+          
+          if (cachedContent) {
+            console.log(`Found content with type=${variant.type}, id=${variant.id}`);
+            break;
           }
         }
         
+        // If still not found, check local storage with various keys
+        if (!cachedContent) {
+          const possibleCacheKeys = [
+            `ai-recommendation-detail-${fullId}`,
+            `ai-recommendation-detail-ai-${recommendationType}-${recommendationNumber}`,
+            `ai-recommendation-detail-${recommendationType}-${recommendationNumber}`
+          ];
+          
+          for (const cacheKey of possibleCacheKeys) {
+            const localCachedContent = localStorage.getItem(cacheKey);
+            if (localCachedContent) {
+              console.log(`Found in localStorage with key: ${cacheKey}`);
+              try {
+                const parsedContent = JSON.parse(localCachedContent);
+                // Ensure local storage content has the expected structure
+                cachedContent = {
+                  title: parsedContent.title || "",
+                  overview: parsedContent.overview || "",
+                  details: parsedContent.details || "",
+                  disclaimer: parsedContent.disclaimer || "",
+                  recommendations: Array.isArray(parsedContent.recommendations) ? parsedContent.recommendations : []
+                };
+                break;
+              } catch (e) {
+                console.error("Failed to parse localStorage content", e);
+                // Continue to next cache key
+              }
+            }
+          }
+        }
+        
+        // If we found cached content, use it
         if (cachedContent) {
-          console.log("Using cached detail content from Supabase", cachedContent);
-          // The cachedContent is already properly typed from our hook
+          console.log("Using cached content", cachedContent);
           setContent(cachedContent);
           setIsLoading(false);
           return;
         }
         
-        // If no cached content in Supabase, fall back to legacy localStorage cache
-        const cacheKey = `ai-recommendation-detail-${fullId}`;
-        const localCachedContent = localStorage.getItem(cacheKey);
-        
-        if (localCachedContent) {
-          console.log("Using cached detail content from localStorage");
-          try {
-            const parsedContent = JSON.parse(localCachedContent);
-            // Ensure local storage content has the expected structure
-            setContent({
-              title: parsedContent.title || "",
-              overview: parsedContent.overview || "",
-              details: parsedContent.details || "",
-              disclaimer: parsedContent.disclaimer || "",
-              recommendations: Array.isArray(parsedContent.recommendations) ? parsedContent.recommendations : []
-            });
-            setIsLoading(false);
-            return;
-          } catch (e) {
-            console.error("Failed to parse localStorage content", e);
-            // Continue to generate new content
-          }
-        }
-        
-        // No cached content anywhere, we need to generate it
+        // No cached content anywhere, generate new content
         console.log("No cached content found, generating new content");
         
-        // Build the base title from the ID
+        // Build the base title from the ID for the prompt
         const baseTitle = formatTitle(fullId);
         
         // Generate detailed content using AI
@@ -215,12 +240,17 @@ const AIRecommendationDetail = () => {
           // Save to state
           setContent(newContent);
           
-          // Cache in Supabase for future use
-          preGenerateDetailContent(recommendationType, recommendationNumber, baseTitle, newContent);
+          // Cache in Supabase for future use with both variants to maximize findability
+          await preGenerateDetailContent(recommendationType, recommendationNumber, baseTitle);
+          if (recommendationType !== "ai") {
+            await preGenerateDetailContent(`ai-${recommendationType}`, recommendationNumber, baseTitle);
+          }
           
-          // Legacy cache in localStorage
+          // Legacy cache in localStorage with multiple keys for better findability
           try {
-            localStorage.setItem(cacheKey, JSON.stringify(newContent));
+            const contentStr = JSON.stringify(newContent);
+            localStorage.setItem(`ai-recommendation-detail-${fullId}`, contentStr);
+            localStorage.setItem(`ai-recommendation-detail-${recommendationType}-${recommendationNumber}`, contentStr);
           } catch (error) {
             console.error("Failed to cache AI content:", error);
           }
@@ -253,6 +283,39 @@ const AIRecommendationDetail = () => {
 
   const recommendationTypeDisplay = formatType(recommendationType);
   const displayTitle = content.title || formatTitle(fullId);
+  
+  // If content is empty after loading is done, show the "Not Found" message
+  const showNotFoundMessage = !isLoading && 
+                              (!content || !content.overview || content.overview.trim() === "");
+
+  if (showNotFoundMessage) {
+    return (
+      <div className="bg-slate-50 min-h-screen pb-20">
+        <div className="max-w-md mx-auto px-4 py-6">
+          <header className="mb-6">
+            <BackButton />
+            <h1 className="text-2xl font-bold">Recommendation Not Found</h1>
+          </header>
+          
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-lg mb-4">
+                Sorry, the recommendation you're looking for couldn't be found.
+              </p>
+              <Button 
+                variant="link" 
+                className="text-blue-500 p-0" 
+                onClick={() => navigate(-1)}
+              >
+                Return to Previous Page
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <AppNavigation />
+      </div>
+    );
+  }
   
   return (
     <div className="bg-slate-50 min-h-screen pb-20">

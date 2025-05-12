@@ -40,7 +40,7 @@ export const useAIDetailCache = () => {
       const productType = "ai-recommendation";
       const contentType = "detail";
       
-      // Convert DetailContent to a plain JSON object for storage
+      // Convert DetailContent to a properly typed JSON object for storage
       const jsonContent = {
         title: content.title,
         overview: content.overview,
@@ -48,6 +48,8 @@ export const useAIDetailCache = () => {
         disclaimer: content.disclaimer,
         recommendations: content.recommendations
       } as unknown as Json;
+      
+      console.log(`Attempting to cache content for ${productId}`);
       
       // Insert or update the content in Supabase
       const { error } = await supabase
@@ -80,6 +82,11 @@ export const useAIDetailCache = () => {
    */
   const getCachedDetail = async (type: string, id: string): Promise<DetailContent | null> => {
     try {
+      if (!type || !id) {
+        console.log("Invalid type or id provided to getCachedDetail");
+        return null;
+      }
+      
       const productId = `${type}-${id}`;
       console.log(`Attempting to fetch cached content for ${productId}`);
       const productType = "ai-recommendation";
@@ -133,6 +140,11 @@ export const useAIDetailCache = () => {
     contextData: any = {}
   ): Promise<DetailContent | null> => {
     try {
+      if (!type || !id) {
+        console.error("Invalid type or id provided to preGenerateDetailContent");
+        return null;
+      }
+      
       setIsGenerating(true);
       
       // Check if we already have cached content
@@ -179,6 +191,11 @@ export const useAIDetailCache = () => {
         // Cache the content in Supabase
         await cacheDetailContent(type, id, detailContent);
         
+        // Also cache with alternative format for better findability
+        if (!type.startsWith('ai-') && type !== 'ai') {
+          await cacheDetailContent(`ai-${type}`, id, detailContent);
+        }
+        
         return detailContent;
       }
       
@@ -212,6 +229,11 @@ export const useAIDetailCache = () => {
       
       // Process each batch in parallel
       await Promise.all(batch.map(async (item) => {
+        if (!item.type || !item.id) {
+          console.log("Skipping item with invalid type or id");
+          return;
+        }
+        
         // Check if already cached
         const cached = await getCachedDetail(item.type, item.id);
         if (cached) {
