@@ -614,7 +614,7 @@ const History = () => {
     return 'inline bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
   };
 
-  // Daily Log Cards - UPDATING to make selfie sections consistent with the requested design
+  // Daily Log Cards - UPDATING to make selfie sections consistent
   const renderDayLogs = () => {
     return dayLogs.map((log) => (
       <Link key={log.id} to={`/day-log/${log.id}`}>
@@ -645,63 +645,53 @@ const History = () => {
               </div>
             </div>
             
-            {/* UPDATED SELFIES SECTION to match the reference image */}
+            {/* CONSISTENT SELFIES SECTION */}
             <div className="mt-4 pt-3 border-t border-gray-100">
               <h4 className="text-sm font-medium mb-2">Selfies</h4>
               <div className="grid grid-cols-2 gap-4">
-                {/* Morning Selfies */}
-                <div className="flex flex-col">
-                  <span className="text-sm text-center text-slate-400 mb-2">AM</span>
-                  <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                {/* Morning Selfies - Consistent styling */}
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-slate-500 mb-1">AM</span>
+                  <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
                     {log.amSelfies?.[0] ? (
-                      <div className="relative w-full h-full">
-                        <img 
-                          src={log.amSelfies[0]} 
-                          alt="Morning Selfie" 
-                          className="object-cover w-full h-full" 
-                        />
-                        <div className="absolute top-0 left-0 w-full p-2 bg-white bg-opacity-90">
-                          <span className="text-black text-sm">Morning Selfie</span>
-                        </div>
-                      </div>
+                      <img 
+                        src={log.amSelfies[0]} 
+                        alt="Morning Selfie" 
+                        className="object-cover w-full h-full" 
+                      />
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full w-full">
-                        <Camera className="h-10 w-10 text-gray-300" />
-                        <span className="text-gray-400 mt-2">No Photo</span>
+                      <div className="flex flex-col items-center">
+                        <Camera className="h-6 w-6 mb-1" />
+                        <span className="text-xs text-gray-400">No Photo</span>
                       </div>
                     )}
                   </div>
                   {log.amSelfies && log.amSelfies.filter(img => img).length > 1 && (
-                    <span className="text-sm text-center text-slate-500 mt-2">
+                    <span className="text-xs mt-1 text-slate-500">
                       +{log.amSelfies.filter(img => img).length - 1} more photos
                     </span>
                   )}
                 </div>
                 
-                {/* Evening Selfies */}
-                <div className="flex flex-col">
-                  <span className="text-sm text-center text-slate-400 mb-2">PM</span>
-                  <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                {/* Evening Selfies - Consistent styling */}
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-slate-500 mb-1">PM</span>
+                  <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
                     {log.pmSelfies?.[0] ? (
-                      <div className="relative w-full h-full">
-                        <img 
-                          src={log.pmSelfies[0]} 
-                          alt="Evening Selfie" 
-                          className="object-cover w-full h-full" 
-                        />
-                        <div className="absolute top-0 left-0 w-full p-2 bg-white bg-opacity-90">
-                          <span className="text-black text-sm">Evening Selfie</span>
-                        </div>
-                      </div>
+                      <img 
+                        src={log.pmSelfies[0]} 
+                        alt="Evening Selfie" 
+                        className="object-cover w-full h-full" 
+                      />
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full w-full">
-                        <Camera className="h-10 w-10 text-gray-300" />
-                        <span className="text-gray-400 mt-2">No Photo</span>
+                      <div className="flex flex-col items-center">
+                        <Camera className="h-6 w-6 mb-1" />
+                        <span className="text-xs text-gray-400">No Photo</span>
                       </div>
                     )}
                   </div>
                   {log.pmSelfies && log.pmSelfies.filter(img => img).length > 1 && (
-                    <span className="text-sm text-center text-slate-500 mt-2">
+                    <span className="text-xs mt-1 text-slate-500">
                       +{log.pmSelfies.filter(img => img).length - 1} more photos
                     </span>
                   )}
