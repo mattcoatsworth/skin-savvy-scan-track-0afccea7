@@ -206,7 +206,12 @@ const SkinAnalysis = () => {
   const categoryOrder = ["food", "drink", "supplements", "makeup", "lifestyle", "skincare"];
 
   // Process AI response into clickable sections
-  const processAIResponse = (sections: Record<string, string | string[]>): AISection[] => {
+  const processAIResponse = (sections: Record<string, string | string[]> = {}): AISection[] => {
+    // Add null/undefined check
+    if (!sections) {
+      return [];
+    }
+    
     const aiSections: AISection[] = [];
     
     // Map section names to display names and types
@@ -220,6 +225,8 @@ const SkinAnalysis = () => {
     
     // Process each section
     Object.entries(sections).forEach(([key, content]) => {
+      if (!content) return; // Skip if content is null/undefined
+      
       const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
       
       if (Array.isArray(content)) {
@@ -256,9 +263,11 @@ const SkinAnalysis = () => {
         "Provide personalized analysis of my skin condition based on recent logs and factors. Include specific sections for: current status, key observations, contributing factors, recommended actions, and expected timeline.", 
         { skinFactors, weeklyTrendData }
       );
-      setAiAdvice(advice);
+      setAiAdvice(advice || { formattedHtml: "", sections: {} });
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
+      // Set default empty values on error
+      setAiAdvice({ formattedHtml: "", sections: {} });
     } finally {
       setAiLoading(false);
     }
@@ -269,8 +278,8 @@ const SkinAnalysis = () => {
     generateAiAdvice();
   }, []);
   
-  // Process AI sections
-  const aiSections = processAIResponse(aiAdvice.sections);
+  // Process AI sections - add null check to provide fallback value
+  const aiSections = processAIResponse(aiAdvice?.sections || {});
   
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -396,7 +405,7 @@ const SkinAnalysis = () => {
             ) : (
               <>
                 {/* Summary Card (if present) */}
-                {aiAdvice.sections["Brief Summary"] && (
+                {aiAdvice?.sections && aiAdvice.sections["Brief Summary"] && (
                   <Card className="ios-card">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-center mb-4">
@@ -461,7 +470,7 @@ const SkinAnalysis = () => {
                 })}
                 
                 {/* If there are no structured sections or sections parsing failed */}
-                {aiSections.length === 0 && (
+                {(!aiSections || aiSections.length === 0) && (
                   <Card className="ios-card">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-center mb-4">
@@ -476,7 +485,7 @@ const SkinAnalysis = () => {
                       </div>
                       
                       <div className="prose prose-sm max-w-none">
-                        {aiAdvice.formattedHtml ? (
+                        {aiAdvice?.formattedHtml ? (
                           <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} className="skin-advice-content" />
                         ) : (
                           <p>Unable to generate AI analysis at this time. Please try again later.</p>
