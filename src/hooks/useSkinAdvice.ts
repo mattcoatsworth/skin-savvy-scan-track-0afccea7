@@ -167,7 +167,19 @@ export const useSkinAdvice = ({
       
       if (cachedResponse) {
         const parsedCache = JSON.parse(cachedResponse);
-        return parsedCache;
+        
+        // Check if the cached response has enough recommendations
+        if (parsedCache.sections && parsedCache.sections["Recommended Actions"]) {
+          const recommendations = parsedCache.sections["Recommended Actions"];
+          if (Array.isArray(recommendations) && recommendations.length < 8) {
+            console.log("Cached recommendations had fewer than 8 items, not using cache");
+            // Don't use the cache if it has fewer than 8 recommendations
+          } else {
+            return parsedCache;
+          }
+        } else {
+          return parsedCache;
+        }
       }
     } catch (cacheError) {
       console.error("Error reading from cache:", cacheError);
@@ -249,13 +261,14 @@ export const useSkinAdvice = ({
           - Be specific and actionable in your recommendations
           - DO NOT use bold text with asterisks (no ** formatting)
           - IMPORTANT: Ensure you provide only ONE of each section type (e.g., one "Brief Summary", one "Key Benefits", etc.)
-          - CRUCIAL: If asked for 8-10 recommendations, you MUST provide at least 8 distinct recommendations in a bullet list
+          - CRUCIAL: You MUST provide AT LEAST 8 DISTINCT recommendations in a bullet list format under the "### Recommended Actions:" section
+          - If asked for recommendations, you MUST ensure there are AT LEAST 8 distinct, specific recommendations
           
           Organize your analysis into these types of sections:
           1. "### Brief Summary:" (2-3 sentences overview)
           2. "### Key Benefits/Observations:" (bullet points)
           3. "### Contributing Factors:" (bullet points for skin analysis)
-          4. "### Recommended Actions:" or "### Usage Instructions:" (numbered steps or bullet points, at least 8 items when requested)
+          4. "### Recommended Actions:" or "### Usage Instructions:" (numbered steps or bullet points, AT LEAST 8 items when requested)
           5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)
           
           Be evidence-based and specific to the user's situation.
@@ -276,6 +289,7 @@ export const useSkinAdvice = ({
             Question/Topic: ${question}
             
             Please provide personalized skin advice based on this information.
+            ${adviceType === "recommendation" ? "IMPORTANT: Please provide AT LEAST 8 distinct, specific recommendations." : ""}
           `
         }
       ];
@@ -347,6 +361,12 @@ export const useSkinAdvice = ({
         sections: parsedResponse
       };
       
+      // Log the recommendations count to help debug
+      console.log("Parsed recommendations count:", 
+        Array.isArray(parsedResponse["Recommended Actions"]) ? 
+        parsedResponse["Recommended Actions"].length : 
+        "Not an array");
+      
       // Ensure we have recommendations (fallback if none are found)
       if (!parsedResponse["Recommended Actions"] || 
           (Array.isArray(parsedResponse["Recommended Actions"]) && 
@@ -382,6 +402,12 @@ export const useSkinAdvice = ({
         // Update the response with our supplemented recommendations
         formattedResponse.sections = parsedResponse;
       }
+      
+      // Log the final recommendations count after potential additions
+      console.log("Final recommendations count:", 
+        Array.isArray(formattedResponse.sections["Recommended Actions"]) ? 
+        formattedResponse.sections["Recommended Actions"].length : 
+        "Not an array");
       
       // Cache the result before returning
       try {

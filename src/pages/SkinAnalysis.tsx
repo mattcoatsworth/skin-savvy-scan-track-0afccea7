@@ -352,14 +352,15 @@ const SkinAnalysis = () => {
   // Check if we have AI recommendations
   const hasAiRecommendations = recommendationsSection && recommendationsSection.items.length > 0;
   
-  // Display count for recommendations - changed from 8 to showing all by default
+  // Display count for recommendations - fixed at 8 to ensure we show all 8
   const displayCount = 8;
-
-  // Get the items to display - this ensures we show 8 if available
-  const displayedItems = hasAiRecommendations 
-    ? (showAllRecommendations ? recommendationsSection.items : recommendationsSection.items.slice(0, displayCount)) 
-    : [];
   
+  console.log("Recommendations section:", recommendationsSection);
+  console.log("Has AI recommendations:", hasAiRecommendations);
+  if (recommendationsSection) {
+    console.log("Total recommendations:", recommendationsSection.items.length);
+  }
+
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
@@ -491,44 +492,49 @@ const SkinAnalysis = () => {
                   // Determine if this is the recommendations section
                   const isRecommendations = section.title === "Recommendations";
                   
-                  console.log(`Section: ${section.title}, Items: ${section.items.length}, Is Recommendations: ${isRecommendations}`);
+                  console.log(`Rendering Section: ${section.title}, Items: ${section.items.length}, Is Recommendations: ${isRecommendations}`);
+                  
+                  // Force showing all 8 recommendations for the Recommendations section
+                  const itemsToDisplay = isRecommendations ? 
+                    (showAllRecommendations ? section.items : section.items.slice(0, displayCount))
+                    : section.items;
+                  
+                  console.log(`Items to display for ${section.title}:`, itemsToDisplay.length);
                   
                   return (
                     <div key={index} className="ai-section">
                       <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
                       
                       <div className="space-y-3">
-                        {/* For all sections, show the appropriate number of items */}
-                        {(isRecommendations 
-                          ? (showAllRecommendations ? section.items : section.items.slice(0, displayCount))
-                          : section.items).map((item, itemIdx) => {
-                            // Parse item text to extract title and details
-                            const hasColon = item.text.includes(":");
-                            const sectionConfig = {
-                              "Key Observations": "Observation",
-                              "Recommendations": "Recommendation",
-                              "Contributing Factors": "Factor",
-                              "Timeline": "Timeline"
-                            };
-                            const sectionPrefix = sectionConfig[section.title] || "Item";
-                            const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
-                            const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+                        {/* Display the appropriate items for this section */}
+                        {itemsToDisplay.map((item, itemIdx) => {
+                          // Parse item text to extract title and details
+                          const hasColon = item.text.includes(":");
+                          const sectionConfig = {
+                            "Key Observations": "Observation",
+                            "Recommendations": "Recommendation",
+                            "Contributing Factors": "Factor",
+                            "Timeline": "Timeline"
+                          };
+                          const sectionPrefix = sectionConfig[section.title] || "Item";
+                          const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
+                          const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
 
-                            return (
-                              <Link to={item.linkTo} key={itemIdx} className="block">
-                                <Card className="ios-card hover:shadow-md transition-all">
-                                  <CardContent className="p-4">
-                                    <div>
-                                      <h3 className="font-medium">{title}</h3>
-                                      <p className="text-sm text-muted-foreground">
-                                        {details}
-                                      </p>
-                                    </div>
-                                  </CardContent>
-                                </Card>
-                              </Link>
-                            );
-                          })}
+                          return (
+                            <Link to={item.linkTo} key={itemIdx} className="block">
+                              <Card className="ios-card hover:shadow-md transition-all">
+                                <CardContent className="p-4">
+                                  <div>
+                                    <h3 className="font-medium">{title}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                      {details}
+                                    </p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          );
+                        })}
                       </div>
                       
                       {/* Show more/less button for recommendations section */}

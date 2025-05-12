@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -95,101 +95,104 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(true);
   
-  // Fetch AI recommendations on component mount
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      try {
-        setIsLoadingRecommendations(true);
-        
-        // Try to get cached recommendations from localStorage first
-        const today = new Date().toISOString().split('T')[0];
-        const cacheKey = `home-recommendations-${today}`;
-        const cachedRecommendations = localStorage.getItem(cacheKey);
-        
-        if (cachedRecommendations) {
-          const parsed = JSON.parse(cachedRecommendations);
-          setAiRecommendations(parsed);
-          setIsLoadingRecommendations(false);
-          return;
-        }
-        
-        // If no cache, fetch from AI
-        const aiResponse = await getAdvice(
-          "Based on my recent skin logs, provide personalized recommendations for improving my skin health. Focus on actionable suggestions spanning skincare products, diet, supplements, and lifestyle changes.",
-          { factors }
-        );
-        
-        if (aiResponse) {
-          // Extract recommended actions from AI response
-          const recommendedActions = aiResponse.sections["Recommended Actions"];
-          
-          // Process recommendations based on the format they come in (string or string[])
-          const processedRecommendations: Recommendation[] = [];
-          
-          if (Array.isArray(recommendedActions)) {
-            // Process array of recommendations
-            recommendedActions.forEach((action, index) => {
-              // Check if the action contains classification hints
-              const typeMatches = {
-                "skincare": ["serum", "cleanser", "moisturizer", "exfoliant", "spf", "sunscreen", "face", "skin"],
-                "food": ["food", "diet", "eat", "dairy", "meal", "nutrition", "fruit", "vegetable", "omega", "antioxidant"],
-                "supplements": ["supplement", "vitamin", "mineral", "zinc", "collagen", "primrose"],
-                "makeup": ["makeup", "foundation", "concealer", "cosmetic"],
-                "lifestyle": ["sleep", "stress", "hydration", "water", "exercise", "routine", "habit"]
-              };
-              
-              // Determine the type based on keywords in the action
-              let determinedType: RecommendationType = "skincare"; // Default
-              for (const [type, keywords] of Object.entries(typeMatches)) {
-                if (keywords.some(keyword => action.toLowerCase().includes(keyword))) {
-                  determinedType = type as RecommendationType;
-                  break;
-                }
-              }
-              
-              // Clean up the recommendation text (extract only the key part)
-              const cleanText = action.replace(/^(Try|Use|Add|Increase|Consider|Limit|Avoid|Switch to|Incorporate)\s+/i, "");
-              
-              // Create a sanitized recommendation object
-              processedRecommendations.push({
-                type: determinedType,
-                text: cleanText,
-                icon: getRecommendationIcon(determinedType),
-                linkTo: `/recommendations-detail/ai-recommendation-${index + 1}`
-              });
-            });
-          } else if (typeof recommendedActions === 'string') {
-            // If it's just a single string, add it as one recommendation
-            processedRecommendations.push({
-              type: "skincare", 
-              text: recommendedActions,
-              icon: <Droplet className="h-4 w-4" />,
-              linkTo: "/recommendations-detail/ai-recommendation"
-            });
-          }
-          
-          // Save processed recommendations in state
-          setAiRecommendations(processedRecommendations);
-          
-          // Cache the recommendations in localStorage
-          try {
-            localStorage.setItem(cacheKey, JSON.stringify(processedRecommendations));
-          } catch (error) {
-            console.error("Failed to cache recommendations:", error);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching AI recommendations:", error);
-        // Fallback to provided static recommendations if AI fetch fails
-        setAiRecommendations(recommendations);
-        toast.error("Could not load personalized recommendations");
-      } finally {
+  // Fetch AI recommendations on component mount - using useCallback to prevent infinite loop
+  const fetchRecommendations = useCallback(async () => {
+    try {
+      setIsLoadingRecommendations(true);
+      
+      // Try to get cached recommendations from localStorage first
+      const today = new Date().toISOString().split('T')[0];
+      const cacheKey = `home-recommendations-${today}`;
+      const cachedRecommendations = localStorage.getItem(cacheKey);
+      
+      if (cachedRecommendations) {
+        const parsed = JSON.parse(cachedRecommendations);
+        setAiRecommendations(parsed);
         setIsLoadingRecommendations(false);
+        return;
       }
-    };
-    
+      
+      // If no cache, fetch from AI
+      const aiResponse = await getAdvice(
+        "Based on my recent skin logs, provide personalized recommendations for improving my skin health. Focus on actionable suggestions spanning skincare products, diet, supplements, and lifestyle changes. PROVIDE AT LEAST 8 distinct recommendations.",
+        { factors }
+      );
+      
+      if (aiResponse) {
+        // Extract recommended actions from AI response
+        const recommendedActions = aiResponse.sections["Recommended Actions"];
+        
+        // Process recommendations based on the format they come in (string or string[])
+        const processedRecommendations: Recommendation[] = [];
+        
+        if (Array.isArray(recommendedActions)) {
+          // Process array of recommendations
+          recommendedActions.forEach((action, index) => {
+            // Check if the action contains classification hints
+            const typeMatches = {
+              "skincare": ["serum", "cleanser", "moisturizer", "exfoliant", "spf", "sunscreen", "face", "skin"],
+              "food": ["food", "diet", "eat", "dairy", "meal", "nutrition", "fruit", "vegetable", "omega", "antioxidant"],
+              "supplements": ["supplement", "vitamin", "mineral", "zinc", "collagen", "primrose"],
+              "makeup": ["makeup", "foundation", "concealer", "cosmetic"],
+              "lifestyle": ["sleep", "stress", "hydration", "water", "exercise", "routine", "habit"]
+            };
+            
+            // Determine the type based on keywords in the action
+            let determinedType: RecommendationType = "skincare"; // Default
+            for (const [type, keywords] of Object.entries(typeMatches)) {
+              if (keywords.some(keyword => action.toLowerCase().includes(keyword))) {
+                determinedType = type as RecommendationType;
+                break;
+              }
+            }
+            
+            // Clean up the recommendation text (extract only the key part)
+            const cleanText = action.replace(/^(Try|Use|Add|Increase|Consider|Limit|Avoid|Switch to|Incorporate)\s+/i, "");
+            
+            // Create a sanitized recommendation object
+            processedRecommendations.push({
+              type: determinedType,
+              text: cleanText,
+              icon: getRecommendationIcon(determinedType),
+              linkTo: `/recommendations-detail/ai-recommendation-${index + 1}`
+            });
+          });
+        } else if (typeof recommendedActions === 'string') {
+          // If it's just a single string, add it as one recommendation
+          processedRecommendations.push({
+            type: "skincare", 
+            text: recommendedActions,
+            icon: <Droplet className="h-4 w-4" />,
+            linkTo: "/recommendations-detail/ai-recommendation"
+          });
+        }
+        
+        console.log(`Processed ${processedRecommendations.length} recommendations`);
+        
+        // Save processed recommendations in state
+        setAiRecommendations(processedRecommendations);
+        
+        // Cache the recommendations in localStorage
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(processedRecommendations));
+        } catch (error) {
+          console.error("Failed to cache recommendations:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching AI recommendations:", error);
+      // Fallback to provided static recommendations if AI fetch fails
+      setAiRecommendations(recommendations);
+      toast.error("Could not load personalized recommendations");
+    } finally {
+      setIsLoadingRecommendations(false);
+    }
+  }, [getAdvice, factors, recommendations]);
+  
+  // Use useEffect with proper dependency array to avoid infinite loop
+  useEffect(() => {
     fetchRecommendations();
-  }, [getAdvice]);
+  }, [fetchRecommendations]);
   
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
@@ -242,6 +245,10 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                       key={index} 
                       to={recommendation.linkTo}
                       className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
+                      onClick={(e) => {
+                        // Prevent parent link navigation when clicking on a recommendation
+                        e.stopPropagation();
+                      }}
                     >
                       <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
                     </Link>
