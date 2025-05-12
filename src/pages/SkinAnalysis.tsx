@@ -73,7 +73,7 @@ const SkinAnalysis = () => {
     { date: "Sun", value: 85 }
   ];
 
-  // For You Recommendations - Expanded to 10 items
+  // For You Recommendations - Expanded to 10+ items
   const skinRecommendations = [
     { 
       type: "food" as const, 
@@ -313,7 +313,7 @@ const SkinAnalysis = () => {
     setAiLoading(true);
     try {
       const advice = await getAdvice(
-        "Provide personalized analysis of my skin condition based on recent logs and factors. Include specific sections for: current status, key observations, contributing factors, recommended actions, and expected timeline.", 
+        "Provide personalized analysis of my skin condition based on recent logs and factors. Include specific sections for: current status, key observations, contributing factors, recommended actions, and expected timeline. Provide at least 8-10 detailed recommendations.", 
         { skinFactors, weeklyTrendData }
       );
       
@@ -353,9 +353,12 @@ const SkinAnalysis = () => {
   // Check if we have AI recommendations or should use our static ones
   const hasAiRecommendations = recommendationsSection && recommendationsSection.items.length > 0;
   
+  // Display count for recommendations - show 8 by default
+  const displayCount = 8;
+  
   // Show the AI recommendations or fall back to our static ones
   const displayedItems = hasAiRecommendations 
-    ? (showAllRecommendations ? recommendationsSection.items : recommendationsSection.items.slice(0, 8)) 
+    ? (showAllRecommendations ? recommendationsSection.items : recommendationsSection.items.slice(0, displayCount)) 
     : [];
   
   return (
@@ -489,55 +492,83 @@ const SkinAnalysis = () => {
                   // Determine if this is the recommendations section
                   const isRecommendations = section.title === "Recommendations";
                   
-                  // For recommendations section, implement the show more/less functionality
-                  const displayItems = isRecommendations && !showAllRecommendations && section.items.length > 8
-                    ? section.items.slice(0, 8)
-                    : section.items;
-                  
                   return (
                     <div key={index} className="ai-section">
                       <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
                       
                       <div className="space-y-3">
-                        {displayItems.map((item, itemIdx) => {
-                          // Parse item text to extract title and details
-                          const hasColon = item.text.includes(":");
-                          const sectionConfig = {
-                            "Key Observations": "Observation",
-                            "Recommendations": "Recommendation",
-                            "Contributing Factors": "Factor",
-                            "Timeline": "Timeline"
-                          };
-                          const sectionPrefix = sectionConfig[section.title] || "Item";
-                          const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
-                          const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+                        {isRecommendations ? (
+                          // For recommendations section, implement the show more/less functionality
+                          (showAllRecommendations ? section.items : section.items.slice(0, displayCount)).map((item, itemIdx) => {
+                            // Parse item text to extract title and details
+                            const hasColon = item.text.includes(":");
+                            const sectionConfig = {
+                              "Key Observations": "Observation",
+                              "Recommendations": "Recommendation",
+                              "Contributing Factors": "Factor",
+                              "Timeline": "Timeline"
+                            };
+                            const sectionPrefix = sectionConfig[section.title] || "Item";
+                            const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
+                            const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
 
-                          return (
-                            <Link to={item.linkTo} key={itemIdx} className="block">
-                              <Card className="ios-card hover:shadow-md transition-all">
-                                <CardContent className="p-4">
-                                  <div>
-                                    <h3 className="font-medium">{title}</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                      {details}
-                                    </p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </Link>
-                          );
-                        })}
+                            return (
+                              <Link to={item.linkTo} key={itemIdx} className="block">
+                                <Card className="ios-card hover:shadow-md transition-all">
+                                  <CardContent className="p-4">
+                                    <div>
+                                      <h3 className="font-medium">{title}</h3>
+                                      <p className="text-sm text-muted-foreground">
+                                        {details}
+                                      </p>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </Link>
+                            );
+                          })
+                        ) : (
+                          // For non-recommendations sections, show all items
+                          section.items.map((item, itemIdx) => {
+                            // Parse item text to extract title and details
+                            const hasColon = item.text.includes(":");
+                            const sectionConfig = {
+                              "Key Observations": "Observation",
+                              "Recommendations": "Recommendation",
+                              "Contributing Factors": "Factor",
+                              "Timeline": "Timeline"
+                            };
+                            const sectionPrefix = sectionConfig[section.title] || "Item";
+                            const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
+                            const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+
+                            return (
+                              <Link to={item.linkTo} key={itemIdx} className="block">
+                                <Card className="ios-card hover:shadow-md transition-all">
+                                  <CardContent className="p-4">
+                                    <div>
+                                      <h3 className="font-medium">{title}</h3>
+                                      <p className="text-sm text-muted-foreground">
+                                        {details}
+                                      </p>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </Link>
+                            );
+                          })
+                        )}
                       </div>
                       
                       {/* Show more/less button for recommendations section */}
-                      {isRecommendations && section.items.length > 8 && (
+                      {isRecommendations && section.items.length > displayCount && (
                         <button 
                           onClick={() => setShowAllRecommendations(!showAllRecommendations)}
                           className="mt-4 text-skin-teal text-sm font-medium flex items-center"
                         >
                           {showAllRecommendations 
                             ? "Show less" 
-                            : `Show ${section.items.length - 8} more recommendations`
+                            : `Show ${section.items.length - displayCount} more recommendations`
                           }
                         </button>
                       )}
