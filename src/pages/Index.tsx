@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -228,7 +227,7 @@ const Index = () => {
         {/* Move SkinHistory to the top, right after the header */}
         <SkinHistory ratings={skinHistory} />
         
-        {/* Move ScanButton below SkinHistory */}
+        {/* ScanButton with improved spacing */}
         <div>
           <ScanButton />
         </div>
