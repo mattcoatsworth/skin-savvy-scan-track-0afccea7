@@ -22,6 +22,55 @@ const dailyScores = [
   { day: "Sun", rating: 84, date: "May 12" },
 ];
 
+// Mock actions for suggestions
+const suggestedActions = [
+  {
+    id: "hydration",
+    title: "Stay Hydrated",
+    description: "Drink 8 glasses of water daily",
+    icon: "💧",
+    category: "Lifestyle"
+  },
+  {
+    id: "sunscreen",
+    title: "Apply Sunscreen",
+    description: "Use SPF 30+ even indoors",
+    icon: "☀️",
+    category: "Protection"
+  },
+  {
+    id: "sleep",
+    title: "Get Enough Sleep",
+    description: "Aim for 7-8 hours nightly",
+    icon: "😴",
+    category: "Wellness"
+  }
+];
+
+// Mock items for explore section
+const exploreItems = [
+  {
+    title: "Acne Solutions",
+    subtitle: "Tips for clearer skin",
+    id: "acne"
+  },
+  {
+    title: "Anti-Aging",
+    subtitle: "Preventative care",
+    id: "aging"
+  },
+  {
+    title: "Sensitive Skin",
+    subtitle: "Gentle routines",
+    id: "sensitive"
+  },
+  {
+    title: "Product Guide",
+    subtitle: "Top recommendations",
+    id: "products"
+  }
+];
+
 const Index = () => {
   useScrollToTop();
   
@@ -39,10 +88,10 @@ const Index = () => {
         <DailySkinSnapshot title="Today's Selfies" />
         
         {/* Suggested Action Cards */}
-        <SuggestedActions />
+        <SuggestedActions actions={suggestedActions} />
         
         {/* Explore Section */}
-        <ExploreSection />
+        <ExploreSection items={exploreItems} />
       </main>
       
       <AppNavigation />
