@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -16,6 +17,15 @@ import SkinAuth from "@/components/SkinAuth";
 import Onboarding from "@/pages/Onboarding";
 import FemaleOnboardingBirthdate from "@/pages/onboarding/FemaleOnboardingBirthdate";
 import FemaleOnboardingPreviousApps from "@/pages/onboarding/FemaleOnboardingPreviousApps";
+import FemaleOnboardingSkinType from "@/pages/onboarding/FemaleOnboardingSkinType";
+import FemaleOnboardingSkinConcerns from "@/pages/onboarding/FemaleOnboardingSkinConcerns";
+import FemaleOnboardingSkinGoals from "@/pages/onboarding/FemaleOnboardingSkinGoals";
+import FemaleOnboardingFoodAllergies from "@/pages/onboarding/FemaleOnboardingFoodAllergies";
+import FemaleOnboardingProductAllergies from "@/pages/onboarding/FemaleOnboardingProductAllergies";
+import FemaleOnboardingGoalTimeline from "@/pages/onboarding/FemaleOnboardingGoalTimeline";
+import FemaleOnboardingCurrentRoutine from "@/pages/onboarding/FemaleOnboardingCurrentRoutine";
+import FemaleOnboardingRoutineEffectiveness from "@/pages/onboarding/FemaleOnboardingRoutineEffectiveness";
+import FemaleOnboardingFamilyHistory from "@/pages/onboarding/FemaleOnboardingFamilyHistory";
 import SplashScreen from "@/pages/SplashScreen";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
@@ -107,7 +117,15 @@ const App = () => (
               {/* Female onboarding flow */}
               <Route path="/onboarding/female/birthdate" element={<FemaleOnboardingBirthdate />} />
               <Route path="/onboarding/female/previous-apps" element={<FemaleOnboardingPreviousApps />} />
-              {/* Will add more female onboarding steps here later */}
+              <Route path="/onboarding/female/skin-type" element={<FemaleOnboardingSkinType />} />
+              <Route path="/onboarding/female/skin-concerns" element={<FemaleOnboardingSkinConcerns />} />
+              <Route path="/onboarding/female/skin-goals" element={<FemaleOnboardingSkinGoals />} />
+              <Route path="/onboarding/female/food-allergies" element={<FemaleOnboardingFoodAllergies />} />
+              <Route path="/onboarding/female/product-allergies" element={<FemaleOnboardingProductAllergies />} />
+              <Route path="/onboarding/female/goal-timeline" element={<FemaleOnboardingGoalTimeline />} />
+              <Route path="/onboarding/female/current-routine" element={<FemaleOnboardingCurrentRoutine />} />
+              <Route path="/onboarding/female/routine-effectiveness" element={<FemaleOnboardingRoutineEffectiveness />} />
+              <Route path="/onboarding/female/family-history" element={<FemaleOnboardingFamilyHistory />} />
               
               {/* Male onboarding flow */}
               {/* Will add male onboarding steps here later */}

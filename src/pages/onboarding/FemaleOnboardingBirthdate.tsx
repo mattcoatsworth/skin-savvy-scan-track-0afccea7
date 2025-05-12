@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar } from "@/components/ui/calendar";
@@ -27,7 +28,7 @@ const FemaleOnboardingBirthdate: React.FC = () => {
       localStorage.setItem("userBirthdate", date.toISOString());
       
       // Navigate to the next step in the female onboarding flow
-      navigate("/onboarding/female/previous-apps");
+      navigate("/onboarding/female/skin-type");
     }
   };
 
@@ -43,7 +44,7 @@ const FemaleOnboardingBirthdate: React.FC = () => {
       title="When were you born?"
       description="Your age helps us provide more accurate skin care recommendations."
       currentStep={2}
-      totalSteps={4}
+      totalSteps={12}
       onNext={handleNext}
       nextDisabled={!date}
     >

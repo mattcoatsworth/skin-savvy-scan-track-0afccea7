@@ -47,7 +47,7 @@ const Onboarding: React.FC = () => {
       title="Welcome to Skin Savvy"
       description="Let's get to know you better to personalize your skin care journey."
       currentStep={1}
-      totalSteps={4}
+      totalSteps={12}
       onNext={handleNext}
       showBackButton={false}
       nextDisabled={!form.watch("gender")}
