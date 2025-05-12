@@ -109,7 +109,7 @@ const WeeklySkinAnalysis = () => {
   // AI analysis state
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAdvice, setAiAdvice] = useState("");
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "weekly-insight" });
   
   // In a real app, we would fetch this data from an API based on date range
   // For now, we'll use mock data
@@ -299,7 +299,7 @@ const WeeklySkinAnalysis = () => {
     setAiLoading(true);
     try {
       const advice = await getAdvice(
-        "Provide a comprehensive analysis of my skin health over the past week based on my logs", 
+        "Provide a comprehensive weekly analysis of my skin health with clear sections for patterns, correlations, recommendations, and focus areas. Include metrics and comparative insights based on my logs.", 
         { analysisData, skinRecommendations }
       );
       setAiAdvice(advice);
@@ -627,7 +627,19 @@ const WeeklySkinAnalysis = () => {
           <TabsContent value="ai" className="space-y-6">
             <Card className="ios-card">
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">AI Weekly Analysis</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">AI Weekly Analysis</h2>
+                  
+                  {/* Only show regenerate button if there is already advice */}
+                  {aiAdvice && !aiLoading && !isLoading && (
+                    <button 
+                      onClick={generateAiAdvice} 
+                      className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                    >
+                      Refresh
+                    </button>
+                  )}
+                </div>
                 
                 {aiLoading || isLoading ? (
                   <div className="flex flex-col items-center py-8">
@@ -637,17 +649,10 @@ const WeeklySkinAnalysis = () => {
                 ) : (
                   <div className="prose prose-sm max-w-none">
                     {aiAdvice ? (
-                      <div dangerouslySetInnerHTML={{ __html: aiAdvice.replace(/\n/g, '<br/>') }} />
+                      <div dangerouslySetInnerHTML={{ __html: aiAdvice }} className="skin-advice-content" />
                     ) : (
                       <p>Unable to generate AI analysis at this time. Please try again later.</p>
                     )}
-                    
-                    <button 
-                      onClick={generateAiAdvice} 
-                      className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
-                    >
-                      Regenerate Analysis
-                    </button>
                   </div>
                 )}
               </CardContent>
@@ -655,7 +660,7 @@ const WeeklySkinAnalysis = () => {
             
             <Card className="ios-card">
               <CardContent className="p-6">
-                <h3 className="font-medium mb-2">Weekly Patterns</h3>
+                <h3 className="font-medium mb-3">Weekly Patterns</h3>
                 <ul className="list-disc pl-5 space-y-2 text-sm">
                   <li>Your skin health improved by 22% over the week</li>
                   <li>Strongest correlation: Dairy consumption (92% negative)</li>

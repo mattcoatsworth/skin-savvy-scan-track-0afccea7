@@ -31,33 +31,47 @@ export const useSkinAdvice = ({
     
     // Add proper HTML for sections with headings
     let formattedText = text
+      // Format main headings (e.g., "Key Observations:")
       .replace(/\n\s*([A-Z][A-Za-z\s]+):\s*\n/g, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
-      .replace(/^([A-Z][A-Za-z\s]+):\s*\n/gm, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n');
+      .replace(/^([A-Z][A-Za-z\s]+):\s*\n/gm, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
+      // Format subheadings (e.g., "1. Something Important")
+      .replace(/\n\s*(\d+\.\s+[A-Z][A-Za-z\s]+):\s*/g, '<h4 class="font-medium mt-3 mb-1">$1</h4>\n')
+      // Add a container for section content
+      .replace(/<h3 class="text-lg font-medium mt-4 mb-2">(.*?)<\/h3>/g, 
+        '<div class="mt-4 mb-3"><h3 class="text-lg font-medium mb-2">$1</h3>');
     
     // Format lists
     formattedText = formattedText
+      // Numbered lists
       .replace(/(?:\n|^)(?:\d+\.\s+(.*?)(?:\n|$))+/gs, function(match) {
         const items = match.trim().split(/\n\d+\.\s+/);
-        const listItems = items.filter(item => item).map(item => `<li>${item}</li>`).join('');
-        return `\n<ol class="list-decimal pl-5 space-y-1 my-2">${listItems}</ol>\n`;
+        const listItems = items.filter(item => item).map(item => `<li class="py-1">${item}</li>`).join('');
+        return `\n<ol class="list-decimal pl-5 space-y-1 my-3">${listItems}</ol>\n`;
       })
+      // Bullet lists with asterisks
       .replace(/(?:\n|^)(?:\*\s+(.*?)(?:\n|$))+/gs, function(match) {
         const items = match.trim().split(/\n\*\s+/);
-        const listItems = items.filter(item => item).map(item => `<li>${item}</li>`).join('');
-        return `\n<ul class="list-disc pl-5 space-y-1 my-2">${listItems}</ul>\n`;
+        const listItems = items.filter(item => item).map(item => `<li class="py-1">${item}</li>`).join('');
+        return `\n<ul class="list-disc pl-5 space-y-1 my-3">${listItems}</ul>\n`;
       })
+      // Bullet lists with dashes
       .replace(/(?:\n|^)(?:-\s+(.*?)(?:\n|$))+/gs, function(match) {
         const items = match.trim().split(/\n-\s+/);
-        const listItems = items.filter(item => item).map(item => `<li>${item}</li>`).join('');
-        return `\n<ul class="list-disc pl-5 space-y-1 my-2">${listItems}</ul>\n`;
+        const listItems = items.filter(item => item).map(item => `<li class="py-1">${item}</li>`).join('');
+        return `\n<ul class="list-disc pl-5 space-y-1 my-3">${listItems}</ul>\n`;
       });
+    
+    // Format key-value pairs (e.g., "Hydration: 85%")
+    formattedText = formattedText
+      .replace(/\n([A-Za-z\s]+):\s*([^\n]+)/g, '\n<div class="flex justify-between my-1"><span class="font-medium">$1:</span> <span>$2</span></div>');
     
     // Format paragraphs
     formattedText = formattedText
-      .replace(/\n\n/g, '</p><p class="my-2">')
+      .replace(/\n\n/g, '</div><div class="mt-4 mb-3">')
       .replace(/\n(?!\s*<)/g, '<br/>');
     
-    return `<p class="my-2">${formattedText}</p>`;
+    // Wrap in a container
+    return `<div class="my-2">${formattedText}</div>`;
   };
 
   // Get AI advice based on provided context
@@ -122,25 +136,26 @@ export const useSkinAdvice = ({
           
           Be specific, actionable, and evidence-based. Format the response as valid parseable JSON without additional text.
         `;
-      } else if (adviceType === "weekly-insight") {
-        // For regular weekly insight, guide the AI to format content nicely
+      } else {
+        // For all pages, guide the AI to format content nicely with clear structure
         systemPrompt = `
-          You are a dermatological AI assistant specialized in analyzing skin health trends.
+          You are a dermatological AI assistant providing personalized skin advice.
           
-          For this weekly insight analysis:
-          - Format your analysis with clear section headings (like "Key Patterns", "Notable Improvements", etc.)
-          - Use bullet points for lists of observations
-          - Use numbered lists for recommendations
-          - Keep paragraphs concise (3-4 sentences max)
+          When formatting your response:
+          - Use clear section headings with a title followed by colon (like "Key Benefits:", "Usage Instructions:")
+          - Use numbered lists (1. First item) for step-by-step instructions or priorities
+          - Use bullet points (* Item or - Item) for lists of features, benefits, or observations
+          - Keep paragraphs short (2-3 sentences max)
+          - Use key-value formatting for metrics or ratings (e.g., "Hydration: 85%")
           - Include specific data points when available
           - Be specific and actionable in your recommendations
           
-          Include these sections in your analysis:
-          1. Summary (2-3 sentences overview)
-          2. Key Patterns (bullet points of observed patterns)
-          3. Correlations (what factors seem connected)
-          4. Recommendations (numbered steps)
-          5. Focus Areas (what to prioritize next week)
+          Organize your analysis into these types of sections:
+          1. Brief Summary (2-3 sentences overview)
+          2. Key Benefits/Observations (bullet points)
+          3. Usage Instructions or Application (numbered steps if relevant)
+          4. Potential Concerns (bullet points)
+          5. Recommendations (clear actionable advice)
           
           Be evidence-based and specific to the user's situation.
         `;

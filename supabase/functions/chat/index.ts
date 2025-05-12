@@ -32,13 +32,22 @@ serve(async (req) => {
     // Core skincare guidance principle - this is applied to all advice types
     const corePrinciple = "Always approach every question through the lens of helping users achieve clear, healthy facial skin. Base your advice on scientific evidence and dermatological best practices. Be empathetic but prioritize skin health above all else.";
     
+    // Formatting guidance - applied to all types
+    const formattingGuidance = "Format your response with clear structure: use headings with colons (like 'Key Benefits:'), use bullet points for lists, use numbered steps for instructions, keep paragraphs short (2-3 sentences), and organize information in logical sections.";
+    
     // Customize system message based on advice type
     switch (adviceType) {
       case "product":
-        systemMessage += "You analyze skincare products and provide insights on their ingredients, potential benefits, and whether they're suitable for different skin types. " + corePrinciple;
+        systemMessage += "You analyze skincare products and provide insights on their ingredients, potential benefits, and whether they're suitable for different skin types. " + corePrinciple + " " + formattingGuidance;
+        
+        // Add product-specific formatting
+        systemMessage += " When analyzing products, structure your response with these sections: 'Key Ingredients:', 'Potential Benefits:', 'Best For:', 'Use With Caution If:', and 'Usage Instructions:'.";
         break;
       case "recommendation":
-        systemMessage += "You provide personalized product and routine recommendations based on skin concerns, type, and history. " + corePrinciple;
+        systemMessage += "You provide personalized product and routine recommendations based on skin concerns, type, and history. " + corePrinciple + " " + formattingGuidance;
+        
+        // Add recommendation-specific formatting
+        systemMessage += " Structure your recommendations with: 'Current Skin Status:', 'Recommended Solutions:', 'Usage Instructions:', 'Expected Results:', and 'Alternative Options:'.";
         
         // Add supplement disclaimers for recommendation types
         if (messages.some(m => m.content && m.content.includes("supplement"))) {
@@ -46,21 +55,27 @@ serve(async (req) => {
         }
         break;
       case "supplement":
-        systemMessage += "You provide information about dietary supplements related to skin health. Always include proper medical disclaimers. Never make direct dosage recommendations; instead reference commonly reported dosage ranges from scientific literature. Always emphasize consulting healthcare providers. Discuss evidence levels objectively. Mention potential side effects and interactions. Clarify that individual responses may vary. " + corePrinciple;
+        systemMessage += "You provide information about dietary supplements related to skin health. Always include proper medical disclaimers. Never make direct dosage recommendations; instead reference commonly reported dosage ranges from scientific literature. Always emphasize consulting healthcare providers. Discuss evidence levels objectively. Mention potential side effects and interactions. Clarify that individual responses may vary. " + corePrinciple + " " + formattingGuidance;
+        
+        // Add supplement-specific formatting
+        systemMessage += " Structure your response with: 'Overview:', 'Evidence Level:', 'Common Usage:', 'Potential Benefits:', 'Possible Side Effects:', and 'Important Considerations:'.";
         break;
       case "action":
-        systemMessage += "You suggest specific actions users can take to improve their skin health, like lifestyle changes, dietary adjustments, or routine modifications. " + corePrinciple;
+        systemMessage += "You suggest specific actions users can take to improve their skin health, like lifestyle changes, dietary adjustments, or routine modifications. " + corePrinciple + " " + formattingGuidance;
+        
+        // Add action-specific formatting
+        systemMessage += " Structure your suggestions with: 'Recommended Actions:', 'Implementation Steps:', 'Expected Benefits:', 'Timeframe:', and 'Progress Tracking:'.";
         break;
       case "weekly-insight":
         systemMessage += "You analyze weekly skin trends and provide personalized insights on patterns, correlations, and recommendations for improvement. " + corePrinciple;
         
         // Add formatting guidance for weekly insights
         if (!structuredOutput) {
-          systemMessage += " Format your response with clear headers for each section, use bullet points for lists, and keep paragraphs concise (3-4 sentences max). Use markdown formatting.";
+          systemMessage += " Format your response with clear headers for each section, use bullet points for lists, and keep paragraphs concise (3-4 sentences max). Structure your analysis with these sections: 'Weekly Summary:', 'Key Patterns:', 'Correlations:', 'Progress Metrics:', 'Recommendations:', and 'Focus Areas:'.";
         }
         break;
       default:
-        systemMessage += corePrinciple;
+        systemMessage += corePrinciple + " " + formattingGuidance;
     }
 
     // For structured output, add response format instructions if requested

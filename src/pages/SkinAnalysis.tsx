@@ -174,7 +174,7 @@ const SkinAnalysis = () => {
     setAiLoading(true);
     try {
       const advice = await getAdvice(
-        "Provide personalized analysis of my skin condition based on recent logs and factors", 
+        "Provide personalized analysis of my skin condition based on recent logs and factors. Include specific sections for: current status, key observations, contributing factors, recommended actions, and expected timeline.", 
         { skinFactors, weeklyTrendData }
       );
       setAiAdvice(advice);
@@ -304,7 +304,19 @@ const SkinAnalysis = () => {
           <TabsContent value="ai" className="space-y-6">
             <Card className="ios-card">
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">AI Skin Analysis</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
+                  
+                  {/* Only show regenerate button if there is already advice */}
+                  {aiAdvice && !aiLoading && !isLoading && (
+                    <button 
+                      onClick={generateAiAdvice} 
+                      className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                    >
+                      Refresh
+                    </button>
+                  )}
+                </div>
                 
                 {aiLoading || isLoading ? (
                   <div className="flex flex-col items-center py-8">
@@ -314,17 +326,10 @@ const SkinAnalysis = () => {
                 ) : (
                   <div className="prose prose-sm max-w-none">
                     {aiAdvice ? (
-                      <div dangerouslySetInnerHTML={{ __html: aiAdvice.replace(/\n/g, '<br/>') }} />
+                      <div dangerouslySetInnerHTML={{ __html: aiAdvice }} className="skin-advice-content" />
                     ) : (
                       <p>Unable to generate AI analysis at this time. Please try again later.</p>
                     )}
-                    
-                    <button 
-                      onClick={generateAiAdvice} 
-                      className="mt-6 px-4 py-2 bg-skin-teal text-white rounded-md hover:bg-skin-teal-dark transition-colors"
-                    >
-                      Regenerate Analysis
-                    </button>
                   </div>
                 )}
               </CardContent>
@@ -332,12 +337,12 @@ const SkinAnalysis = () => {
             
             <Card className="ios-card">
               <CardContent className="p-6">
-                <h3 className="font-medium mb-2">Key Points</h3>
+                <h3 className="font-medium mb-3">About This Analysis</h3>
                 <ul className="list-disc pl-5 space-y-2 text-sm">
                   <li>This analysis is based on your recent skin logs and trends</li>
-                  <li>Consider tracking additional factors to improve accuracy</li>
-                  <li>Recommendations are personalized based on your data</li>
-                  <li>Update your logs regularly for better insights</li>
+                  <li>The AI considers various factors like diet, products, environment, and lifestyle</li>
+                  <li>Recommendations are personalized based on your specific skin patterns</li>
+                  <li>Update your logs regularly for increasingly accurate insights</li>
                 </ul>
               </CardContent>
             </Card>
