@@ -29,18 +29,16 @@ const getRatingLabel = (rating: number) => {
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
   const navigate = useNavigate();
   
-  // Function to handle card click with manual scroll to top and navigate to weekly tab
-  const handleCardClick = (event: React.MouseEvent) => {
+  // Function to handle navigation to skin page with weekly tab selected
+  const navigateToWeeklyAnalysis = (event: React.MouseEvent) => {
     // Prevent default link behavior
     event.preventDefault();
     
     // First scroll to top
     window.scrollTo(0, 0);
     
-    // Wait a tiny bit before navigation to allow the scroll to happen
-    setTimeout(() => {
-      navigate('/skin?tab=weekly');
-    }, 10);
+    // Navigate to the skin page with tab=weekly query parameter
+    navigate('/skin?tab=weekly');
   };
   
   // Determine progress color based on rating
@@ -68,11 +66,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
         <Link 
           to="/skin?tab=weekly" 
           className="text-skin-teal text-sm font-medium flex items-center"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo(0, 0);
-            setTimeout(() => navigate('/skin?tab=weekly'), 10);
-          }}
+          onClick={navigateToWeeklyAnalysis}
         >
           View Report <ArrowRight className="h-4 w-4 ml-1" />
         </Link>
@@ -80,7 +74,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
       
       <Card 
         className="ios-card p-1 hover:shadow-md transition-all cursor-pointer" 
-        onClick={handleCardClick}
+        onClick={navigateToWeeklyAnalysis}
       >
         <CardContent className="p-1">
           <div className="flex justify-between items-center px-1">
