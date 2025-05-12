@@ -435,7 +435,7 @@ const WeeklySkinAnalysis = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold">Overall Skin Health</h2>
+                    <h2 className="text-lg font-semibold">Skin Health</h2>
                     <p className="text-sm text-muted-foreground">Week Average</p>
                   </div>
                   
@@ -745,7 +745,7 @@ const WeeklySkinAnalysis = () => {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h2 className="text-lg font-semibold">AI Overall Assessment</h2>
+                        <h2 className="text-lg font-semibold">Skin Health</h2>
                         <p className="text-sm text-muted-foreground">Weekly Analysis</p>
                       </div>
                       
@@ -853,7 +853,7 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards - MODIFYING THIS SECTION */}
+                {/* AI Sections in Formatted Cards */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
