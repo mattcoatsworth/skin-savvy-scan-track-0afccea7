@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -224,11 +225,8 @@ const Index = () => {
       </header>
       
       <main className="space-y-6">
-        {/* Move SkinHistory to the top, right after the header */}
-        <SkinHistory ratings={skinHistory} />
-        
-        {/* ScanButton with improved spacing */}
-        <div>
+        {/* Move ScanButton to the top, below the header */}
+        <div className="mb-6">
           <ScanButton />
         </div>
         
@@ -238,6 +236,8 @@ const Index = () => {
           factors={skinFactors}
           recommendations={skinRecommendations}
         />
+        
+        <SkinHistory ratings={skinHistory} />
         
         <RecentLogsCarousel logs={recentLogs} />
         
