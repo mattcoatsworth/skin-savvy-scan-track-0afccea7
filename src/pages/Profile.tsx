@@ -1,3 +1,4 @@
+
 import React from "react";
 import ApiKeyInput from "@/components/ApiKeyInput";
 import AppNavigation from "@/components/AppNavigation";
@@ -172,12 +173,7 @@ const Profile = () => {
       </header>
       
       <main className="space-y-6">
-        {/* API Key Input */}
-        <div className="mb-6">
-          <ApiKeyInput />
-        </div>
-        
-        {/* Today's Skin Card */}
+        {/* Today's Skin Card - Added at the top */}
         <Card className="ios-card">
           <CardContent className="p-4">
             <div className="flex items-center mb-4">
@@ -197,6 +193,11 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
+      
+        {/* API Key Input */}
+        <div className="mb-6">
+          <ApiKeyInput />
+        </div>
         
         {/* Weekly Trend */}
         <div>
