@@ -126,7 +126,7 @@ const App = () => (
             {/* Main app routes */}
             <Route element={<AppLayout />}>
               <Route path="/home" element={<Index />} />
-              <Route path="/history" element={<History />} />
+              <Route path="/skin" element={<History />} />
               <Route path="/products" element={<Insights />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/skin-analysis" element={<SkinAnalysis />} />
@@ -179,3 +179,4 @@ const App = () => (
 );
 
 export default App;
+

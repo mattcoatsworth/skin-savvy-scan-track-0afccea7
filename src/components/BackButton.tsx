@@ -8,8 +8,8 @@ const BackButton: React.FC = () => {
   const navigate = useNavigate();
   
   const handleGoBack = () => {
-    // Special case for History page - always go to home
-    if (location.pathname === '/history') {
+    // Special case for Skin page - always go to home
+    if (location.pathname === '/skin') {
       navigate('/home');
       return;
     }
@@ -78,3 +78,4 @@ const BackButton: React.FC = () => {
 };
 
 export default BackButton;
+

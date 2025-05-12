@@ -25,7 +25,7 @@ const AppNavigation: React.FC = () => {
   
   const navItems: NavItem[] = [
     { icon: Home, label: "Home", path: "/home" },
-    { icon: Smile, label: "Skin", path: "/history" },
+    { icon: Smile, label: "Skin", path: "/skin" },
     { icon: Scan, label: "Products", path: "/products" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
@@ -114,3 +114,4 @@ const AppNavigation: React.FC = () => {
 };
 
 export default AppNavigation;
+
