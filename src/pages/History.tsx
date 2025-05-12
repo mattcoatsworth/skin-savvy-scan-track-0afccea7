@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -12,7 +11,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Camera, Image } from "lucide-react";
+import { Camera, Image, Smile } from "lucide-react";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
 import InsightsTrends from "@/components/InsightsTrends";
 
@@ -166,7 +165,27 @@ const History = () => {
           <h1 className="text-2xl font-bold">Skin</h1>
         </header>
         
-        {/* Add SkinHistory at the top with moderate margin */}
+        {/* Today's Skin Card - Added at the top */}
+        <Card className="ios-card mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-start mb-4">
+              <Smile className="h-8 w-8 mr-4 mt-1" />
+              <div>
+                <h2 className="text-2xl font-bold mb-1">Today's Skin</h2>
+                <p className="text-2xl font-semibold mb-4">Balanced</p>
+                
+                <p className="font-medium text-base mb-2">Detailed Analysis:</p>
+                <p className="text-slate-600">
+                  Your skin appears balanced today with good hydration levels. 
+                  Inflammation is minimal and there's an improvement in overall 
+                  tone compared to yesterday.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Add SkinHistory with moderate margin */}
         <SkinHistory ratings={skinRatings} className="mb-6" />
         
         {/* Add the SkinIndexComparison component */}
