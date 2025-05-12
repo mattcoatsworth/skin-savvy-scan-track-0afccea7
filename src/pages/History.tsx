@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useLocation } from "react-router-dom";
@@ -707,7 +708,7 @@ const History = () => {
                       <h2 className="text-lg font-semibold mb-3">{section.title}</h2>
                       
                       <div className="space-y-3">
-                        {section.items.map((item, itemIdx) => {
+                        {section.items.map((item: any, itemIdx: number) => {
                           // Parse item text to extract title and details
                           const hasColon = item.text.includes(":");
                           const sectionConfig = {
@@ -816,4 +817,269 @@ const History = () => {
                             <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                               {log.amSelfies?.[0] ? (
                                 <img 
-                                  src={log.amSelfies
+                                  src={log.amSelfies[0]} 
+                                  alt="Morning Selfie" 
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <span className="text-xs text-gray-400">No Photo</span>
+                              )}
+                            </div>
+                            {log.amSelfies && log.amSelfies.filter(img => img).length > 1 && (
+                              <span className="text-xs mt-1 text-slate-500">
+                                +{log.amSelfies.filter(img => img).length - 1} more photos
+                              </span>
+                            )}
+                          </div>
+                          
+                          {/* Evening Selfies Preview */}
+                          <div className="flex flex-col items-center">
+                            <span className="text-xs text-slate-500 mb-1">PM</span>
+                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                              {log.pmSelfies?.[0] ? (
+                                <img 
+                                  src={log.pmSelfies[0]} 
+                                  alt="Evening Selfie" 
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <span className="text-xs text-gray-400">No Photo</span>
+                              )}
+                            </div>
+                            {log.pmSelfies && log.pmSelfies.filter(img => img).length > 1 && (
+                              <span className="text-xs mt-1 text-slate-500">
+                                +{log.pmSelfies.filter(img => img).length - 1} more photos
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            
+            {/* Add ViewScoringMethod and Disclaimer components */}
+            <ViewScoringMethod />
+            <Disclaimer />
+          </TabsContent>
+          
+          {/* Weekly Analysis Tab Content */}
+          <TabsContent value="weekly" className="px-4">
+            {/* 1. Skin Health Overview (at the top) */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-3">Skin Health</h2>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-end mb-1">
+                        <span className="text-3xl font-bold">{weeklyRating}</span>
+                        <span className="text-green-600 text-sm">+{weeklyRating - previousWeekRating} from last week</span>
+                      </div>
+                      <Progress value={weeklyRating} className="h-2" />
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-3">Weekly Trend</p>
+                      <TrendChart data={weeklyTrendData} height={100} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* 2. Daily Scores */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
+              <div className="space-y-3">
+                {dailyScores.map((day, index) => (
+                  <Card key={index}>
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="font-medium">{day.day}</h3>
+                          <p className="text-sm text-muted-foreground">{day.note}</p>
+                        </div>
+                        <div className="text-lg font-semibold">{day.score}</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+            
+            {/* 3. Skin Index Comparison */}
+            <div className="mb-6">
+              <SkinIndexComparison gender="female" age={28} />
+            </div>
+            
+            {/* AI Analysis Section */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-3">AI Skin Analysis</h2>
+              <Card className="mb-4">
+                <CardContent className="p-4 space-y-4">
+                  <div>
+                    <h3 className="font-medium text-base mb-2">Weekly Pattern Analysis</h3>
+                    <p className="text-sm text-muted-foreground">{aiAnalysis.patternAnalysis}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium text-base mb-2">Detected Patterns</h3>
+                    <div className="space-y-3">
+                      {aiAnalysis.detectedPatterns.map((pattern, index) => (
+                        <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-slate-500">{pattern.category}</span>
+                            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded">
+                              {pattern.correlation}% correlation
+                            </span>
+                          </div>
+                          <h4 className="font-medium my-1">{pattern.title}</h4>
+                          <p className="text-sm text-muted-foreground">{pattern.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium text-base mb-2">Focus Areas</h3>
+                    <div className="space-y-3">
+                      {aiAnalysis.focusAreas.map((area, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <div className={`mt-1 w-2 h-2 rounded-full ${
+                            area.priority === 'primary' ? 'bg-green-500' : 
+                            area.priority === 'secondary' ? 'bg-blue-500' : 'bg-purple-500'
+                          }`}></div>
+                          <div>
+                            <h4 className="font-medium">{area.title}</h4>
+                            <p className="text-sm text-muted-foreground">{area.description}</p>
+                            <span className="text-xs bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">
+                              {area.type}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium text-base mb-2">Weekly Metrics</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {Object.entries(aiAnalysis.metrics).map(([key, value]) => (
+                        <div key={key} className="bg-slate-50 p-3 rounded-lg">
+                          <p className="text-xs text-slate-500 capitalize">{key}</p>
+                          <p className={`text-lg font-medium ${value.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                            {value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium text-base mb-2">Weekly Challenges</h3>
+                    <div className="space-y-3">
+                      {aiAnalysis.challenges.map((challenge, index) => (
+                        <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center space-x-2">
+                              <h4 className="font-medium">{challenge.title}</h4>
+                              <span className={getCategoryBadgeClass()}>
+                                {challenge.category}
+                              </span>
+                            </div>
+                            <span className={getDifficultyBadgeClass(challenge.difficulty)}>
+                              {challenge.difficulty}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* 4. Skin Parameters */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-3">Skin Parameters</h2>
+              <Card className="mb-4">
+                <CardContent className="p-4 space-y-3">
+                  {skinParameters.map((param, index) => (
+                    <div key={index}>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm font-medium">{param.name}</span>
+                        <span className="text-sm text-green-600">
+                          +{param.current - param.previous}%
+                        </span>
+                      </div>
+                      <Progress value={param.current} className="h-2" />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* 5. Influential Factors */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-3">What Influenced Your Skin</h2>
+              
+              <div className="space-y-4">
+                {/* Positive Factors */}
+                <Card>
+                  <CardContent className="p-4">
+                    <h3 className="font-medium text-green-600 mb-2">Positive Impact</h3>
+                    <ul className="space-y-2">
+                      {positiveFactors.map((factor, index) => (
+                        <li key={index} className="flex justify-between text-sm">
+                          <span>{factor.name}</span>
+                          <span className="font-medium text-green-600">{factor.impact}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+                
+                {/* Negative Factors */}
+                <Card>
+                  <CardContent className="p-4">
+                    <h3 className="font-medium text-red-600 mb-2">Negative Impact</h3>
+                    <ul className="space-y-2">
+                      {negativeFactors.map((factor, index) => (
+                        <li key={index} className="flex justify-between text-sm">
+                          <span>{factor.name}</span>
+                          <span className="font-medium text-red-600">{factor.impact}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            
+            {/* 6. Monthly Analysis Link */}
+            <div className="mb-6">
+              <Link 
+                to="/monthly-analysis"
+                className="block bg-slate-100 hover:bg-slate-200 transition-colors p-4 rounded-lg text-center"
+              >
+                View Monthly Analysis
+              </Link>
+            </div>
+            
+            {/* 7. View Scoring Method */}
+            <ViewScoringMethod />
+            
+            {/* 8. Disclaimer */}
+            <Disclaimer />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default History;
