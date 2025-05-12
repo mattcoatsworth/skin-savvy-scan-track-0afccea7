@@ -225,9 +225,9 @@ const Index = () => {
       
       <main className="space-y-6">
         {/* Moved SkinHistory to the top, below the header */}
-        <SkinHistory ratings={skinHistory} className="mb-6" />
+        <SkinHistory ratings={skinHistory} />
         
-        {/* ScanButton is now below SkinHistory */}
+        {/* ScanButton is now below SkinHistory with proper spacing */}
         <ScanButton />
         
         <DailySkinSnapshot 
