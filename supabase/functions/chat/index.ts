@@ -75,6 +75,9 @@ serve(async (req) => {
           
           // STRONGER instruction to avoid duplicating the header in the content
           systemMessage += " CRITICALLY IMPORTANT: NEVER repeat the section name in the content of that section. For example, in the 'Weekly Summary' section, DO NOT start with 'Weekly Summary:' or 'Summary:' - instead start directly with your analysis. DO NOT DUPLICATE CONTENT between sections. Each piece of information should appear EXACTLY ONCE in your response.";
+          
+          // Add rating instructions for weekly insights
+          systemMessage += " For each section and insight, assign a quantitative rating between 0-100 that represents the health/improvement status or importance of that element. Present this information in a way that can be parsed into a numeric rating for display. For example, 'Hydration efforts have shown excellent results (Rating: 85)'.";
         }
         break;
       default:
@@ -83,6 +86,9 @@ serve(async (req) => {
         
         // STRONGER instruction to avoid duplicating headers in all cases
         systemMessage += " CRITICALLY IMPORTANT: NEVER repeat the section name in the content of that section. For example, in the 'Brief Summary' section, DO NOT start with 'Brief Summary:' or 'Summary:' - instead start directly with your analysis. DO NOT DUPLICATE CONTENT between sections. Each piece of information should appear EXACTLY ONCE in your response.";
+        
+        // Add rating instructions for general responses
+        systemMessage += " Where appropriate, assign a quantitative rating between 0-100 that represents the health/improvement status or importance of key elements in your response.";
     }
 
     // For structured output, add response format instructions if requested

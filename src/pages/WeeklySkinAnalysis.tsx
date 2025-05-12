@@ -14,9 +14,11 @@ import {
   Thermometer,
   Eye,
   RefreshCcw,
-  Info
+  Info,
+  Star 
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
   Table, 
   TableBody, 
@@ -103,6 +105,45 @@ const getCategoryIcon = (category: string) => {
     default:
       return <Sun className="h-5 w-5" />;
   }
+};
+
+// Get random rating for AI sections (would be actual values in real app)
+const getAiSectionRating = (section: string) => {
+  // In a real app, these would be calculated based on data
+  // For now, using a deterministic approach based on section name
+  const sectionMap: Record<string, number> = {
+    "Summary": 78,
+    "Patterns": 85,
+    "Correlations": 72,
+    "Progress": 65,
+    "Recommendations": 92,
+    "Focus Areas": 88
+  };
+  
+  return sectionMap[section] || Math.floor(Math.random() * (95 - 65 + 1)) + 65;
+};
+
+// Clean AI content to remove duplications and prefixes
+const cleanAiContent = (content: string | string[] | undefined, sectionName: string): string => {
+  if (!content) return "";
+  
+  let text = Array.isArray(content) ? content.join(" ") : content;
+  
+  // Remove section name prefix if it exists (case insensitive)
+  const sectionRegex = new RegExp(`^(?:${sectionName}|${sectionName.replace(/\s+/g, '')}|${sectionName.replace(/\s+/g, '-')})[:;.\\s-]*`, 'i');
+  text = text.replace(sectionRegex, '');
+  
+  // Detect and remove duplicate content
+  const textLowerCase = text.toLowerCase().replace(/\s+/g, ' ').trim();
+  const firstFewWords = textLowerCase.substring(0, 20);
+  const duplicationIndex = textLowerCase.indexOf(firstFewWords, 20);
+  
+  if (duplicationIndex > 0 && duplicationIndex < text.length / 2) {
+    // If duplication is detected, take just the first part
+    text = text.substring(0, duplicationIndex).trim();
+  }
+  
+  return text;
 };
 
 const WeeklySkinAnalysis = () => {
@@ -327,6 +368,8 @@ const WeeklySkinAnalysis = () => {
         // Create a section with items for array content
         aiSections.push({
           title: config.title,
+          type: config.type,
+          rating: getAiSectionRating(config.title), // Add rating for the section
           items: content.map((item, index) => ({
             text: item,
             type: config.type,
@@ -337,6 +380,8 @@ const WeeklySkinAnalysis = () => {
         // Create a section with a single item for string content
         aiSections.push({
           title: config.title,
+          type: config.type,
+          rating: getAiSectionRating(config.title), // Add rating for the section
           items: [{
             text: content,
             type: config.type,
@@ -741,7 +786,7 @@ const WeeklySkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                {/* Overall Score Card with Brief Summary - COMPLETELY REFACTORED */}
+                {/* Overall Score Card with Brief Summary */}
                 <Card className="ios-card mb-6">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -786,31 +831,11 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary - COMPLETELY CHANGED APPROACH */}
+                    {/* Weekly Summary */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
-                          {(() => {
-                            // Get the raw content
-                            let content = typeof aiAdvice.sections["Weekly Summary"] === 'string' 
-                              ? aiAdvice.sections["Weekly Summary"] 
-                              : Array.isArray(aiAdvice.sections["Weekly Summary"])
-                                ? aiAdvice.sections["Weekly Summary"].join(" ")
-                                : "Weekly summary of your skin health.";
-                                
-                            // Remove any "Weekly Summary:" or "Summary:" prefix
-                            content = content.replace(/^(?:Weekly\s+Summary|Summary)[:]\s*/i, '');
-                            
-                            // Remove duplicate paragraphs - THIS IS THE KEY FIX
-                            // If the same text appears twice (even with different formatting), only show it once
-                            const textWithoutFormatting = content.toLowerCase().replace(/\s+/g, ' ').trim();
-                            if (textWithoutFormatting.indexOf(textWithoutFormatting.substring(0, 20), 1) > 0) {
-                              // If we detect the same content duplicated, just take the first half
-                              content = content.substring(0, content.length / 2).trim();
-                            }
-                            
-                            return content;
-                          })()}
+                          {cleanAiContent(aiAdvice.sections["Weekly Summary"], "Weekly Summary")}
                         </p>
                       </div>
                     )}
@@ -870,34 +895,94 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards - Modified to skip the Summary section entirely in this loop */}
+                {/* AI Sections in Formatted Cards with Ratings */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
                   return (
                     <div key={index} className="mb-6">
-                      <h2 className="text-lg font-semibold mb-3">{section.title}</h2>
+                      <div className="flex justify-between items-center mb-3">
+                        <h2 className="text-lg font-semibold">{section.title}</h2>
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm font-medium">{section.rating}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {getRatingLabel(section.rating)}
+                          </span>
+                        </div>
+                      </div>
+                      
                       <Card className="ios-card">
                         <CardContent className="p-4">
-                          <div className="space-y-4">
-                            {section.items.map((item, itemIdx) => (
-                              <div key={itemIdx} className={itemIdx > 0 ? "border-t pt-3 mt-3" : ""}>
-                                <Link to={item.linkTo}>
-                                  <div className="flex justify-between items-start">
-                                    <div>
-                                      <span className="font-medium">
-                                        {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                      </span>
-                                      <p className="text-sm text-muted-foreground mt-1">
-                                        {item.text.includes(":") 
-                                          ? item.text.split(":").slice(1).join(":").trim()
-                                          : item.text}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Link>
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              {section.type === "pattern" && <Activity className="h-5 w-5" />}
+                              {section.type === "correlation" && <Activity className="h-5 w-5" />}
+                              {section.type === "recommendation" && <Droplet className="h-5 w-5" />}
+                              {section.type === "focus" && <Eye className="h-5 w-5" />}
+                              {section.type === "metric" && <Activity className="h-5 w-5" />}
+                              {section.type === "info" && <Info className="h-5 w-5" />}
+                              <h3 className="text-md font-medium">{section.title} Overview</h3>
+                            </div>
+                            
+                            <div className="relative w-10 h-10 flex items-center justify-center">
+                              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                                <path
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                  fill="none"
+                                  stroke={getBackgroundColor(section.rating)}
+                                  strokeWidth="4"
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              
+                              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                                <path
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                  fill="none"
+                                  stroke={getProgressColor(section.rating)}
+                                  strokeWidth="4"
+                                  strokeDasharray={`${section.rating}, 100`}
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              
+                              <div className="text-sm font-semibold">
+                                {section.rating}
                               </div>
-                            ))}
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            {section.items.map((item, itemIdx) => {
+                              // Generate a rating for each item (in a real app would be data-driven)
+                              const itemRating = Math.max(30, Math.min(95, section.rating + (Math.floor(Math.random() * 21) - 10)));
+                              
+                              return (
+                                <div key={itemIdx} className={itemIdx > 0 ? "border-t pt-3 mt-3" : ""}>
+                                  <Link to={item.linkTo}>
+                                    <div className="flex justify-between items-start">
+                                      <div className="flex-1">
+                                        <span className="font-medium">
+                                          {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                        </span>
+                                        <p className="text-sm text-muted-foreground mt-1">
+                                          {item.text.includes(":") 
+                                            ? item.text.split(":").slice(1).join(":").trim()
+                                            : item.text}
+                                        </p>
+                                      </div>
+                                      
+                                      <div className="ml-3 flex items-center">
+                                        <div className="text-xs inline-flex items-center">
+                                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
+                                          <span className="font-medium">{itemRating}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Link>
+                                </div>
+                              );
+                            })}
                           </div>
                         </CardContent>
                       </Card>
@@ -905,11 +990,52 @@ const WeeklySkinAnalysis = () => {
                   );
                 })}
 
-                {/* Correlations Table */}
+                {/* Correlations Table with Rating */}
                 <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-3">AI Correlations</h2>
-                  <Card className="ios-card hover:shadow-md transition-all">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-semibold">AI Correlations</h2>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium">75</span>
+                      <span className="text-xs text-muted-foreground">Good</span>
+                    </div>
+                  </div>
+                  
+                  <Card className="ios-card">
                     <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Activity className="h-5 w-5" />
+                          <h3 className="text-md font-medium">Key Correlations</h3>
+                        </div>
+                        
+                        <div className="relative w-10 h-10 flex items-center justify-center">
+                          <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getBackgroundColor(75)}
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          
+                          <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getProgressColor(75)}
+                              strokeWidth="4"
+                              strokeDasharray={`${75}, 100`}
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          
+                          <div className="text-sm font-semibold">
+                            75
+                          </div>
+                        </div>
+                      </div>
+                      
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -955,7 +1081,14 @@ const WeeklySkinAnalysis = () => {
                 {/* If no structured sections but we have formatted HTML */}
                 {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
                   <div className="mb-6">
-                    <h2 className="text-lg font-semibold mb-3">AI Analysis</h2>
+                    <div className="flex justify-between items-center mb-3">
+                      <h2 className="text-lg font-semibold">AI Analysis</h2>
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm font-medium">80</span>
+                        <span className="text-xs text-muted-foreground">Great</span>
+                      </div>
+                    </div>
+                    
                     <Card className="ios-card">
                       <CardContent className="p-4">
                         <div className="prose prose-sm max-w-none">
