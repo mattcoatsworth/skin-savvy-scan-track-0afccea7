@@ -120,8 +120,8 @@ const Insights = () => {
       
       <Tabs defaultValue="used" className="mb-6" onValueChange={setActiveTab}>
         <TabsList className="w-full grid grid-cols-3 mb-4">
-          <TabsTrigger value="used" className="px-4 py-2.5 text-base">Products Used</TabsTrigger>
-          <TabsTrigger value="scanned" className="px-4 py-2.5 text-base">Scanned Products</TabsTrigger>
+          <TabsTrigger value="used" className="px-4 py-2.5 text-base">My Products</TabsTrigger>
+          <TabsTrigger value="scanned" className="px-4 py-2.5 text-base">Scanned</TabsTrigger>
           <TabsTrigger value="trending" className="px-4 py-2.5 text-base">Trending</TabsTrigger>
         </TabsList>
         
