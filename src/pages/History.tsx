@@ -824,7 +824,35 @@ const History = () => {
                   
                   {/* If there are no structured sections or sections parsing failed */}
                   {(!aiSections || aiSections.length === 0) && (
-                    // ... keep existing code (fallback AI analysis display)
+                    <Card className="ios-card">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-xl font-semibold">AI Analysis</h2>
+                          {/* Regenerate button */}
+                          <button 
+                            onClick={() => generateAiAdvice(true)} 
+                            className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
+                          >
+                            Refresh
+                          </button>
+                        </div>
+                        
+                        <div className="prose prose-sm max-w-none">
+                          {aiAdvice?.formattedHtml ? (
+                            <div 
+                              dangerouslySetInnerHTML={{ 
+                                __html: typeof aiAdvice.formattedHtml === 'string' 
+                                  ? aiAdvice.formattedHtml 
+                                  : '' 
+                              }} 
+                              className="skin-advice-content" 
+                            />
+                          ) : (
+                            <p>Unable to generate AI analysis at this time. Please try again later.</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
                 </>
               )}
