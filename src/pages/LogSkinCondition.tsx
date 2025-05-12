@@ -11,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
 import AppNavigation from "@/components/AppNavigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const LogSkinCondition = () => {
   const { toast } = useToast();
@@ -24,6 +26,9 @@ const LogSkinCondition = () => {
     menstrualCycle: [],
     stressors: [] // Add stressors to the state
   });
+  
+  // Add state for personalized skin plan
+  const [wantsPersonalizedPlan, setWantsPersonalizedPlan] = useState<string>("yes");
   
   const [sleepHours, setSleepHours] = useState<number>(7);
   const [stressLevel, setStressLevel] = useState<number>(3);
@@ -64,6 +69,12 @@ const LogSkinCondition = () => {
     if (savedWaterIntake) {
       setWaterIntake(Number(savedWaterIntake));
     }
+    
+    // Load personalized plan preference if saved
+    const savedPersonalizedPlan = localStorage.getItem(`personalized-plan-${currentDate}`);
+    if (savedPersonalizedPlan) {
+      setWantsPersonalizedPlan(savedPersonalizedPlan);
+    }
   }, []);
 
   // Save notes to localStorage
@@ -83,6 +94,13 @@ const LogSkinCondition = () => {
     setWaterIntake(intake);
     const currentDate = new Date().toISOString().split('T')[0];
     localStorage.setItem(`water-intake-${currentDate}`, intake.toString());
+  };
+  
+  // Save personalized plan preference to localStorage
+  const handlePersonalizedPlanChange = (value: string) => {
+    setWantsPersonalizedPlan(value);
+    const currentDate = new Date().toISOString().split('T')[0];
+    localStorage.setItem(`personalized-plan-${currentDate}`, value);
   };
   
   // Get water intake rating feedback
@@ -240,6 +258,7 @@ const LogSkinCondition = () => {
     localStorage.setItem(`skin-mood-${currentDate}`, selectedMood || '');
     localStorage.setItem(`skin-sleep-${currentDate}`, sleepHours.toString());
     localStorage.setItem(`skin-stress-${currentDate}`, stressLevel.toString());
+    localStorage.setItem(`personalized-plan-${currentDate}`, wantsPersonalizedPlan);
     
     // Already saving notes and water intake in their respective handlers
     
@@ -456,6 +475,29 @@ const LogSkinCondition = () => {
             </div>
           </div>
           
+          {/* Personalized Skin Plan Section */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4 text-skin-black">Do you want a personalized skin plan?</h2>
+            <Card className="ios-card">
+              <CardContent className="p-4">
+                <RadioGroup 
+                  value={wantsPersonalizedPlan} 
+                  onValueChange={handlePersonalizedPlanChange}
+                  className="flex flex-col space-y-2"
+                >
+                  <div className="flex items-center space-x-3">
+                    <RadioGroupItem value="yes" id="yes" />
+                    <Label htmlFor="yes" className="font-medium text-skin-black">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <RadioGroupItem value="no" id="no" />
+                    <Label htmlFor="no" className="font-medium text-skin-black">No</Label>
+                  </div>
+                </RadioGroup>
+              </CardContent>
+            </Card>
+          </div>
+          
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Additional factors</h2>
             <div className="space-y-3">
@@ -560,7 +602,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Stressors Card - Modified to integrate + button into the input field */}
+              {/* Stressors Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
@@ -602,7 +644,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Weather Card - Updated to match the button style of Food, Supplements, and Makeup */}
+              {/* Weather Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center">
@@ -624,7 +666,7 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Menstrual Cycle Card - Updated to match the button style of Food, Supplements, and Makeup */}
+              {/* Menstrual Cycle Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2 text-skin-black flex items-center">
