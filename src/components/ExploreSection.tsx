@@ -16,9 +16,10 @@ type ExploreItemType = {
 type ExploreSectionProps = {
   items: ExploreItemType[];
   className?: string;
+  expanded?: boolean; // Add expanded prop to control display mode
 };
 
-const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => {
+const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className, expanded = false }) => {
   const navigate = useNavigate();
   
   // Function to determine where each explore item should link to
@@ -50,6 +51,38 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
     navigate(getExploreLink(item), { state: { item } });
   };
   
+  // If expanded is true, display all items in a grid
+  if (expanded) {
+    return (
+      <div className={cn("ios-section", className)}>
+        <div className="grid grid-cols-2 gap-4">
+          {items.map((item, index) => (
+            <div 
+              key={index} 
+              className="cursor-pointer"
+              onClick={() => handleExploreItemClick(item)}
+            >
+              <Card className="ios-card overflow-hidden hover:shadow-md transition-all h-full">
+                <div className="h-24 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
+                  {item.image ? (
+                    <img src={item.image} alt={item.title} className="object-cover w-full h-full" />
+                  ) : (
+                    <div className="text-xl font-semibold text-white">✨</div>
+                  )}
+                </div>
+                <CardContent className="p-3">
+                  <h3 className="font-medium text-sm">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground">{item.subtitle}</p>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  
+  // Default horizontal scrollable view
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">

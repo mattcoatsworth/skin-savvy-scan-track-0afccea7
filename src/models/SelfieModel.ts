@@ -139,7 +139,11 @@ export const getSelfiesByDate = async (userId: string, date: string): Promise<Se
       throw error;
     }
     
-    return data || [];
+    // Cast to ensure 'type' is of correct type 'am' | 'pm'
+    return (data || []).map(item => ({
+      ...item,
+      type: item.type as 'am' | 'pm'
+    })) as SelfieMetadata[];
   } catch (error) {
     console.error('Error in getSelfiesByDate:', error);
     throw error;
@@ -159,7 +163,11 @@ export const getAllSelfies = async (userId: string): Promise<SelfieMetadata[]> =
       throw error;
     }
     
-    return data || [];
+    // Cast to ensure 'type' is of correct type 'am' | 'pm'
+    return (data || []).map(item => ({
+      ...item,
+      type: item.type as 'am' | 'pm'
+    })) as SelfieMetadata[];
   } catch (error) {
     console.error('Error in getAllSelfies:', error);
     throw error;

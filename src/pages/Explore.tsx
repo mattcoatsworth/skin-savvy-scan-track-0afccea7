@@ -39,7 +39,7 @@ const Explore = () => {
         </header>
 
         <div className="mb-6">
-          <ExploreSection items={exploreItems} expanded />
+          <ExploreSection items={exploreItems} expanded={true} />
         </div>
       </div>
       <AppNavigation />
