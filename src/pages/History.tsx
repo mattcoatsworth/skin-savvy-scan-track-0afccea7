@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -13,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Camera, Image } from "lucide-react";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
+import InsightsTrends from "@/components/InsightsTrends";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -36,6 +38,25 @@ const generatePastWeekData = () => {
 
 // Data for skin history chart
 const skinRatings = generatePastWeekData();
+
+// Mock data for insights
+const insightData = [
+  {
+    title: "Hydration Effect",
+    description: "Drinking 8+ glasses of water improved skin moisture by 30%",
+    iconName: "droplet"
+  },
+  {
+    title: "Vitamin C Serum",
+    description: "Regular use has helped with brightening and texture",
+    iconName: "star"
+  },
+  {
+    title: "Sleep Quality",
+    description: "Nights with 7+ hours sleep show 40% better skin clarity",
+    iconName: "activity"
+  }
+];
 
 // Define the type for a day log
 type DayLogType = {
@@ -148,8 +169,11 @@ const History = () => {
         {/* Add SkinHistory at the top with moderate margin */}
         <SkinHistory ratings={skinRatings} className="mb-6" />
         
-        {/* Add the new SkinIndexComparison component */}
+        {/* Add the SkinIndexComparison component */}
         <SkinIndexComparison className="mb-6" gender="female" age={25} />
+        
+        {/* Add the InsightsTrends component under SkinIndexComparison */}
+        <InsightsTrends insights={insightData} className="mb-6" />
         
         {/* Use gap-y-6 for moderate spacing between cards to match scans page */}
         <div className="flex flex-col gap-y-6">
