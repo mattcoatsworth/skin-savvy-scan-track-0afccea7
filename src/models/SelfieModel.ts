@@ -53,7 +53,7 @@ export const saveSelfie = async ({ userId, file, type, index }: SaveSelfieOption
       .getPublicUrl(filePath);
     
     // Store metadata in the database
-    const selfieMetadata: Omit<SelfieMetadata, 'id'> = {
+    const selfieMetadata = {
       user_id: userId,
       filename: file.name,
       file_path: filePath,
@@ -67,7 +67,7 @@ export const saveSelfie = async ({ userId, file, type, index }: SaveSelfieOption
     const { data: metadataData, error: metadataError } = await supabase
       .from('selfies_metadata')
       .insert(selfieMetadata)
-      .select()
+      .select('*')
       .single();
       
     if (metadataError) {
@@ -75,7 +75,7 @@ export const saveSelfie = async ({ userId, file, type, index }: SaveSelfieOption
       throw metadataError;
     }
     
-    return metadataData;
+    return metadataData as SelfieMetadata;
   } catch (error) {
     console.error('Error in saveSelfie:', error);
     throw error;

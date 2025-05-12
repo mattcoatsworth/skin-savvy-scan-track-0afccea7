@@ -53,7 +53,7 @@ export const saveWeeklyRating = async ({ userId, weekStartDate, weekEndDate, rat
         throw updateError;
       }
       
-      return updatedRating;
+      return updatedRating as WeeklyRating;
     } else {
       // Create a new rating
       const { data: newRating, error: insertError } = await supabase
@@ -73,7 +73,7 @@ export const saveWeeklyRating = async ({ userId, weekStartDate, weekEndDate, rat
         throw insertError;
       }
       
-      return newRating;
+      return newRating as WeeklyRating;
     }
   } catch (error) {
     console.error('Error in saveWeeklyRating:', error);
@@ -120,7 +120,7 @@ export const getWeeklyRatingByDate = async (userId: string, date: string): Promi
       throw error;
     }
     
-    return data;
+    return data as WeeklyRating;
   } catch (error) {
     console.error('Error in getWeeklyRatingByDate:', error);
     throw error;
