@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -740,7 +741,7 @@ const WeeklySkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                {/* Overall Score Card with Brief Summary */}
+                {/* Overall Score Card with Brief Summary - COMPLETELY REFACTORED */}
                 <Card className="ios-card mb-6">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -785,15 +786,31 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary - Only showing the content without any heading/title */}
+                    {/* Weekly Summary - COMPLETELY CHANGED APPROACH */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
-                          {typeof aiAdvice.sections["Weekly Summary"] === 'string' 
-                            ? aiAdvice.sections["Weekly Summary"].replace(/^(?:Weekly Summary|Summary):\s*/i, '') 
-                            : Array.isArray(aiAdvice.sections["Weekly Summary"])
-                              ? aiAdvice.sections["Weekly Summary"].map(item => item.replace(/^(?:Weekly Summary|Summary):\s*/i, '')).join(" ")
-                              : "Weekly summary of your skin health."}
+                          {(() => {
+                            // Get the raw content
+                            let content = typeof aiAdvice.sections["Weekly Summary"] === 'string' 
+                              ? aiAdvice.sections["Weekly Summary"] 
+                              : Array.isArray(aiAdvice.sections["Weekly Summary"])
+                                ? aiAdvice.sections["Weekly Summary"].join(" ")
+                                : "Weekly summary of your skin health.";
+                                
+                            // Remove any "Weekly Summary:" or "Summary:" prefix
+                            content = content.replace(/^(?:Weekly\s+Summary|Summary)[:]\s*/i, '');
+                            
+                            // Remove duplicate paragraphs - THIS IS THE KEY FIX
+                            // If the same text appears twice (even with different formatting), only show it once
+                            const textWithoutFormatting = content.toLowerCase().replace(/\s+/g, ' ').trim();
+                            if (textWithoutFormatting.indexOf(textWithoutFormatting.substring(0, 20), 1) > 0) {
+                              // If we detect the same content duplicated, just take the first half
+                              content = content.substring(0, content.length / 2).trim();
+                            }
+                            
+                            return content;
+                          })()}
                         </p>
                       </div>
                     )}

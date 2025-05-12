@@ -69,20 +69,20 @@ serve(async (req) => {
       case "weekly-insight":
         systemMessage += "You analyze weekly skin trends and provide personalized insights on patterns, correlations, and recommendations for improvement. " + corePrinciple;
         
-        // Add formatting guidance for weekly insights
+        // Add formatting guidance for weekly insights with STRONG anti-duplication instructions
         if (!structuredOutput) {
           systemMessage += " Format your response with clear headers for each section, use bullet points for lists, and keep paragraphs concise (3-4 sentences max). Structure your analysis with these sections: 'Weekly Summary:', 'Key Patterns:', 'Correlations:', 'Progress Metrics:', 'Recommendations:', and 'Focus Areas:'.";
           
-          // Add specific instruction to avoid duplicating the header in the content
-          systemMessage += " IMPORTANT: In your content, do not repeat the section header (e.g. 'Weekly Summary:') as part of the paragraph text. Start each section's content directly without repeating its title.";
+          // STRONGER instruction to avoid duplicating the header in the content
+          systemMessage += " CRITICALLY IMPORTANT: NEVER repeat the section name in the content of that section. For example, in the 'Weekly Summary' section, DO NOT start with 'Weekly Summary:' or 'Summary:' - instead start directly with your analysis. DO NOT DUPLICATE CONTENT between sections. Each piece of information should appear EXACTLY ONCE in your response.";
         }
         break;
       default:
         systemMessage += corePrinciple + " " + formattingGuidance;
         systemMessage += " For skin analysis, divide your response into distinct sections with clear headings like: 'Brief Summary:', 'Key Benefits/Observations:', 'Contributing Factors:', 'Recommended Actions:', and 'Expected Timeline:'. For each bullet point or numbered step, provide specific, actionable advice that could reasonably be a separate recommendation.";
         
-        // Add instruction to avoid duplicating headers in all cases
-        systemMessage += " IMPORTANT: In your content, do not repeat the section header as part of the paragraph text. Start each section's content directly without repeating its title.";
+        // STRONGER instruction to avoid duplicating headers in all cases
+        systemMessage += " CRITICALLY IMPORTANT: NEVER repeat the section name in the content of that section. For example, in the 'Brief Summary' section, DO NOT start with 'Brief Summary:' or 'Summary:' - instead start directly with your analysis. DO NOT DUPLICATE CONTENT between sections. Each piece of information should appear EXACTLY ONCE in your response.";
     }
 
     // For structured output, add response format instructions if requested
