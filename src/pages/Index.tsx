@@ -225,8 +225,11 @@ const Index = () => {
       </header>
       
       <main className="space-y-6">
-        {/* Move ScanButton to the top, below the header */}
-        <div className="mb-6">
+        {/* Move SkinHistory to the top, right after the header */}
+        <SkinHistory ratings={skinHistory} />
+        
+        {/* Move ScanButton below SkinHistory */}
+        <div>
           <ScanButton />
         </div>
         
@@ -236,8 +239,6 @@ const Index = () => {
           factors={skinFactors}
           recommendations={skinRecommendations}
         />
-        
-        <SkinHistory ratings={skinHistory} />
         
         <RecentLogsCarousel logs={recentLogs} />
         
