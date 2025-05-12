@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
@@ -39,16 +40,16 @@ export const useAIDetailCache = () => {
       const productType = "ai-recommendation";
       const contentType = "detail";
       
-      // Convert DetailContent to a properly typed JSON object for storage
-      const jsonContent = {
+      console.log(`Attempting to cache content for ${productId}`);
+      
+      // Properly cast the content object to the Json type expected by Supabase
+      const jsonContent: Json = {
         title: content.title,
         overview: content.overview,
         details: content.details,
         disclaimer: content.disclaimer,
         recommendations: content.recommendations
-      } as Json;
-      
-      console.log(`Attempting to cache content for ${productId}`);
+      };
       
       // Insert or update the content in Supabase
       const { error } = await supabase
@@ -104,13 +105,15 @@ export const useAIDetailCache = () => {
         return null;
       }
       
-      // Ensure content has all expected fields by properly type checking
+      // Debug the raw data from Supabase
+      console.log("Raw data from Supabase:", data);
+      
+      // Ensure content has all expected fields
       if (data?.content && typeof data.content === 'object' && data.content !== null) {
         const content = data.content as any;
+        console.log("Content object from Supabase:", content);
         
-        // Type-safely extract content fields with extensive logging
-        console.log("Retrieved content from Supabase:", content);
-        
+        // Type-safely extract content fields
         const detailContent: DetailContent = {
           title: typeof content.title === 'string' ? content.title : "",
           overview: typeof content.overview === 'string' ? content.overview : "",

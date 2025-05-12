@@ -144,9 +144,16 @@ const App = () => (
               <Route path="/category-analysis" element={<CategoryAnalysis />} />
               <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
               <Route path="/correlations-detail" element={<CorrelationsDetail />} />
-              <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
               
-              {/* AI Recommendation routes - ensuring all possible patterns are covered */}
+              {/* Static recommendation detail pages */}
+              <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
+              <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />
+              <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerum />} />
+              <Route path="/recommendations-detail/meditation" element={<Meditation />} />
+              <Route path="/recommendations-detail/zinc" element={<Zinc />} />
+              <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
+              
+              {/* AI Recommendation routes - all possible formats */}
               <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />
@@ -155,14 +162,9 @@ const App = () => (
               <Route path="/recommendations-detail/ai-:type-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/:type-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/:type/:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/action-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/factor-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/*" element={<AIRecommendationDetail />} />
-              
-              {/* Specific recommendation detail pages */}
-              <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />
-              <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerum />} />
-              <Route path="/recommendations-detail/meditation" element={<Meditation />} />
-              <Route path="/recommendations-detail/zinc" element={<Zinc />} />
-              <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
               
               <Route path="/supplement/:id" element={<SupplementDetail />} />
             </Route>

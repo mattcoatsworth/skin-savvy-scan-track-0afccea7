@@ -156,12 +156,16 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               // Clean up the recommendation text (extract only the key part)
               const cleanText = action.replace(/^(Try|Use|Add|Increase|Consider|Limit|Avoid|Switch to|Incorporate)\s+/i, "");
               
+              // Create ID with consistent format that matches our router paths
+              const recId = `${index + 1}`;
+              
               // Create a sanitized recommendation object
               processedRecommendations.push({
                 type: determinedType,
                 text: cleanText,
                 icon: getRecommendationIcon(determinedType),
-                linkTo: `/recommendations-detail/ai-action-${index + 1}`
+                // Use consistent URL path format /recommendations-detail/action-1 for all recommendations
+                linkTo: `/recommendations-detail/action-${recId}`
               });
             });
           } else if (typeof recommendedActions === 'string') {
@@ -170,7 +174,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               type: "skincare", 
               text: recommendedActions,
               icon: <Droplet className="h-4 w-4" />,
-              linkTo: "/recommendations-detail/ai-action-1"
+              linkTo: "/recommendations-detail/action-1"
             });
           }
           
@@ -182,8 +186,8 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
           // Pre-generate detail pages for all recommendations in the background
           // IMPORTANT: This ensures detail pages are created as soon as recommendations are generated
           const detailsToGenerate = processedRecommendations.map((rec, index) => ({
-            type: "action",
-            id: `${index + 1}`,
+            type: "action",  // Use consistent "action" type
+            id: `${index + 1}`, // Use numeric IDs
             text: rec.text,
             contextData: { factors }
           }));
