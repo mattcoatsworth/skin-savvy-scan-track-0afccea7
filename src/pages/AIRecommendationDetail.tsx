@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import BackButton from "@/components/BackButton";
 import AppNavigation from "@/components/AppNavigation";
 import Disclaimer from "@/components/Disclaimer";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
+import { useRecommendationIdParser } from "@/hooks/useRecommendationIdParser";
 
 // Define the content interface to match the one in useAIDetailCache
 interface DetailContent {
@@ -49,48 +49,8 @@ const AIRecommendationDetail = () => {
     model: "gpt-4o-mini" 
   });
   
-  const { getCachedDetail, preGenerateDetailContent } = useAIDetailCache();
-  
-  // Enhanced parsing that handles all known URL formats
-  const parseRecommendationId = (fullId: string) => {
-    console.log("Parsing recommendation ID:", fullId);
-    
-    // Default values
-    let recommendationType = "recommendation";
-    let recommendationNumber = "1";
-    
-    // For URLs like /recommendations-detail/ai-timeline-1
-    if (fullId.startsWith("ai-")) {
-      // Format: ai-timeline-1
-      const parts = fullId.substring(3).split('-');
-      if (parts.length >= 2) {
-        recommendationType = parts[0];
-        recommendationNumber = parts.slice(1).join('-');
-      }
-    } 
-    // For URLs like /recommendations-detail/timeline-1
-    else if (fullId.includes('-')) {
-      // Format: timeline-1
-      const parts = fullId.split('-');
-      recommendationType = parts[0];
-      recommendationNumber = parts.slice(1).join('-');
-    } 
-    // For URLs like /recommendations-detail/timeline/1
-    else if (fullId.includes('/')) {
-      // Format: timeline/1
-      const parts = fullId.split('/');
-      recommendationType = parts[0];
-      recommendationNumber = parts[1];
-    }
-    // For any other format, treat the whole ID as the number with default type
-    
-    console.log(`Parsed route: type=${recommendationType}, number=${recommendationNumber}, fullId=${fullId}`);
-    
-    return { recommendationType, recommendationNumber };
-  };
-  
-  // Parse the recommendation ID from the URL
-  const { recommendationType, recommendationNumber } = parseRecommendationId(fullId);
+  const { getCachedDetail, preGenerateDetailContent, cacheDetailContent } = useAIDetailCache();
+  const { parseRecommendationId, getRecommendationIdVariants } = useRecommendationIdParser();
   
   // Format the type for display
   const formatType = (type: string): string => {
@@ -122,10 +82,15 @@ const AIRecommendationDetail = () => {
       .join(' ');
   };
 
+  // Parse the recommendation ID from the URL
+  const { recommendationType, recommendationNumber } = parseRecommendationId(fullId);
+
+  console.log(`AIRecommendationDetail: Received fullId=${fullId}, parsed to type=${recommendationType}, number=${recommendationNumber}`);
+
   useEffect(() => {
     const fetchContent = async () => {
-      if (!recommendationType || !recommendationNumber) {
-        console.error("Invalid recommendation ID format");
+      if (!fullId) {
+        console.error("Invalid recommendation ID: empty");
         setIsLoading(false);
         return;
       }
@@ -133,20 +98,14 @@ const AIRecommendationDetail = () => {
       setIsLoading(true);
       
       try {
-        console.log(`Attempting to fetch content for: ${recommendationType}-${recommendationNumber}`);
+        console.log(`Attempting to fetch content for: ${fullId}`);
         
-        // Try different variations of the type and ID to maximize chance of finding content
-        const variants = [
-          { type: recommendationType, id: recommendationNumber }, 
-          { type: `ai-${recommendationType}`, id: recommendationNumber },
-          { type: "ai", id: `${recommendationType}-${recommendationNumber}` },
-          // Try the full ID as a last resort
-          { type: fullId.split('-')[0], id: fullId.split('-').slice(1).join('-') }
-        ];
+        // Generate variants for lookup to maximize chance of finding content
+        const variants = getRecommendationIdVariants(recommendationType, recommendationNumber, fullId);
         
         let cachedContent = null;
         
-        // Try each variant until we find content
+        // Try each variant until we find content in Supabase
         for (const variant of variants) {
           if (!variant.type || !variant.id) continue;
           
@@ -154,7 +113,7 @@ const AIRecommendationDetail = () => {
           cachedContent = await getCachedDetail(variant.type, variant.id);
           
           if (cachedContent) {
-            console.log(`Found content with type=${variant.type}, id=${variant.id}`);
+            console.log(`Found content in Supabase with type=${variant.type}, id=${variant.id}`, cachedContent);
             break;
           }
         }
@@ -164,7 +123,8 @@ const AIRecommendationDetail = () => {
           const possibleCacheKeys = [
             `ai-recommendation-detail-${fullId}`,
             `ai-recommendation-detail-ai-${recommendationType}-${recommendationNumber}`,
-            `ai-recommendation-detail-${recommendationType}-${recommendationNumber}`
+            `ai-recommendation-detail-${recommendationType}-${recommendationNumber}`,
+            `${recommendationType}-${recommendationNumber}` // Simpler key
           ];
           
           for (const cacheKey of possibleCacheKeys) {
@@ -181,6 +141,10 @@ const AIRecommendationDetail = () => {
                   disclaimer: parsedContent.disclaimer || "",
                   recommendations: Array.isArray(parsedContent.recommendations) ? parsedContent.recommendations : []
                 };
+                
+                // Also cache this in Supabase for future use
+                await cacheDetailContent(recommendationType, recommendationNumber, cachedContent);
+                
                 break;
               } catch (e) {
                 console.error("Failed to parse localStorage content", e);
@@ -204,82 +168,94 @@ const AIRecommendationDetail = () => {
         // Build the base title from the ID for the prompt
         const baseTitle = formatTitle(fullId);
         
-        // Generate detailed content using AI
-        const detailPrompt = `
-          Create detailed information about the skin care topic: "${baseTitle}".
-          
-          Please provide:
-          1. A clear title for this topic (just the key concept, 2-5 words)
-          2. A concise overview paragraph explaining the concept
-          3. Detailed information including benefits, how to implement, and expected results
-          4. 3-5 specific recommendations related to this topic
-          5. A brief medical disclaimer appropriate for skin care advice
-          
-          Format your response with the following sections:
-          ### Title: [Your Title]
-          ### Overview: [Single paragraph overview]
-          ### Details: [Several paragraphs of detailed information]
-          ### Recommendations: [Bulleted list of specific recommendations]
-          ### Disclaimer: [Brief appropriate medical disclaimer]
-        `;
+        // Use a test content first to ensure the UI works
+        const testContent: DetailContent = {
+          title: baseTitle,
+          overview: "This is a temporary overview while we generate detailed content. This explains the basics of this recommendation and its importance for your skin health.",
+          details: "The details section will contain more in-depth information about this recommendation, including how to implement it, what to expect, and scientific background.",
+          disclaimer: "This information is for educational purposes only and is not medical advice. Consult with a healthcare professional before making changes to your skincare routine.",
+          recommendations: [
+            "First implementation step would go here",
+            "Second implementation step would go here",
+            "Third implementation step would go here"
+          ]
+        };
         
-        const response = await getAdvice(detailPrompt);
+        // Set the test content to make the UI responsive while we generate real content
+        setContent(testContent);
+        setIsLoading(false);
         
-        if (response && response.sections) {
-          // Parse the response sections
-          const newContent: DetailContent = {
-            title: response.sections["Title"] as string || baseTitle,
-            overview: response.sections["Overview"] as string || "",
-            details: response.sections["Details"] as string || "",
-            disclaimer: response.sections["Disclaimer"] as string || "",
-            recommendations: Array.isArray(response.sections["Recommendations"]) 
-              ? response.sections["Recommendations"] as string[] 
-              : []
-          };
+        try {
+          // Generate detailed content using AI in background
+          const detailPrompt = `
+            Create detailed information about the skin care topic: "${baseTitle}".
+            
+            Please provide:
+            1. A clear title for this topic (just the key concept, 2-5 words)
+            2. A concise overview paragraph explaining the concept
+            3. Detailed information including benefits, how to implement, and expected results
+            4. 3-5 specific recommendations related to this topic
+            5. A brief medical disclaimer appropriate for skin care advice
+            
+            Format your response with the following sections:
+            ### Title: [Your Title]
+            ### Overview: [Single paragraph overview]
+            ### Details: [Several paragraphs of detailed information]
+            ### Recommendations: [Bulleted list of specific recommendations]
+            ### Disclaimer: [Brief appropriate medical disclaimer]
+          `;
           
-          // Save to state
-          setContent(newContent);
+          const response = await getAdvice(detailPrompt);
           
-          // Cache in Supabase for future use with both variants to maximize findability
-          await preGenerateDetailContent(recommendationType, recommendationNumber, baseTitle);
-          if (recommendationType !== "ai") {
-            await preGenerateDetailContent(`ai-${recommendationType}`, recommendationNumber, baseTitle);
+          if (response && response.sections) {
+            // Parse the response sections
+            const newContent: DetailContent = {
+              title: response.sections["Title"] as string || baseTitle,
+              overview: response.sections["Overview"] as string || testContent.overview,
+              details: response.sections["Details"] as string || testContent.details,
+              disclaimer: response.sections["Disclaimer"] as string || testContent.disclaimer,
+              recommendations: Array.isArray(response.sections["Recommendations"]) 
+                ? response.sections["Recommendations"] as string[] 
+                : testContent.recommendations
+            };
+            
+            // Save to state
+            setContent(newContent);
+            
+            // Cache in Supabase for future use with both variants to maximize findability
+            await cacheDetailContent(recommendationType, recommendationNumber, newContent);
+            
+            // Also cache with alternative formats for better findability
+            if (recommendationType !== "ai") {
+              await cacheDetailContent(`ai-${recommendationType}`, recommendationNumber, newContent);
+            }
+            
+            // Save in localStorage with multiple keys for better findability
+            try {
+              const contentStr = JSON.stringify(newContent);
+              localStorage.setItem(`ai-recommendation-detail-${fullId}`, contentStr);
+              localStorage.setItem(`ai-recommendation-detail-${recommendationType}-${recommendationNumber}`, contentStr);
+              localStorage.setItem(`${recommendationType}-${recommendationNumber}`, contentStr); // Simpler key
+            } catch (error) {
+              console.error("Failed to cache AI content in localStorage:", error);
+            }
+            
+            console.log("Generated and cached new content successfully");
           }
-          
-          // Legacy cache in localStorage with multiple keys for better findability
-          try {
-            const contentStr = JSON.stringify(newContent);
-            localStorage.setItem(`ai-recommendation-detail-${fullId}`, contentStr);
-            localStorage.setItem(`ai-recommendation-detail-${recommendationType}-${recommendationNumber}`, contentStr);
-          } catch (error) {
-            console.error("Failed to cache AI content:", error);
-          }
-        } else {
-          // Fallback content if API fails
-          setContent({
-            title: baseTitle,
-            overview: "This recommendation focuses on improving your skin health through targeted approaches specific to your skin condition.",
-            details: "We're currently unable to load detailed information. Please check back later.",
-            disclaimer: "This information is for educational purposes only and is not medical advice. Consult with a healthcare professional before making changes to your skincare routine.",
-            recommendations: [
-              "Maintain consistent skincare routine",
-              "Monitor your skin's response to changes",
-              "Stay hydrated and maintain a balanced diet"
-            ]
-          });
-          
-          toast.error("Could not generate detailed content");
+        } catch (aiError) {
+          console.error("Error generating AI content:", aiError);
+          // The test content will still be displayed, so UI won't be broken
+          toast.error("Could not generate detailed content, showing preview content");
         }
       } catch (error) {
-        console.error("Error generating content:", error);
+        console.error("Error fetching content:", error);
         toast.error("Error loading recommendation details");
-      } finally {
         setIsLoading(false);
       }
     };
     
     fetchContent();
-  }, [fullId, getAdvice, getCachedDetail, preGenerateDetailContent, recommendationType, recommendationNumber]);
+  }, [fullId, getAdvice, getCachedDetail, preGenerateDetailContent, cacheDetailContent, recommendationType, recommendationNumber]);
 
   const recommendationTypeDisplay = formatType(recommendationType);
   const displayTitle = content.title || formatTitle(fullId);
@@ -301,6 +277,11 @@ const AIRecommendationDetail = () => {
             <CardContent className="p-6">
               <p className="text-lg mb-4">
                 Sorry, the recommendation you're looking for couldn't be found.
+              </p>
+              <p className="text-sm mb-4 text-gray-600">
+                URL ID: {fullId}<br />
+                Parsed Type: {recommendationType}<br />
+                Parsed Number: {recommendationNumber}
               </p>
               <Button 
                 variant="link" 

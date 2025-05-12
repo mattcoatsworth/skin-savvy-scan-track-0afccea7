@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -146,10 +145,17 @@ const App = () => (
               <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
               <Route path="/correlations-detail" element={<CorrelationsDetail />} />
               <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
+              
+              {/* AI Recommendation routes - ensuring all possible patterns are covered */}
               <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-timeline-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/ai/:type/:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/ai-:type-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/:type-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/:type/:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/*" element={<AIRecommendationDetail />} />
               
               {/* Specific recommendation detail pages */}
               <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />

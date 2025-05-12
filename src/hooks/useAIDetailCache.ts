@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
@@ -47,7 +46,7 @@ export const useAIDetailCache = () => {
         details: content.details,
         disclaimer: content.disclaimer,
         recommendations: content.recommendations
-      } as unknown as Json;
+      } as Json;
       
       console.log(`Attempting to cache content for ${productId}`);
       
@@ -109,7 +108,9 @@ export const useAIDetailCache = () => {
       if (data?.content && typeof data.content === 'object' && data.content !== null) {
         const content = data.content as any;
         
-        // Type-safely extract content fields
+        // Type-safely extract content fields with extensive logging
+        console.log("Retrieved content from Supabase:", content);
+        
         const detailContent: DetailContent = {
           title: typeof content.title === 'string' ? content.title : "",
           overview: typeof content.overview === 'string' ? content.overview : "",
