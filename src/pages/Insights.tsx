@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
 import { foodItems, productItems } from "@/data/products";
 import BackButton from "@/components/BackButton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Mock data for insights
 const insightData = [
@@ -66,8 +67,47 @@ const trendingProductItems = [
   }
 ];
 
+// Mock products used data
+const productsUsedFoodItems = [
+  { 
+    id: "avocado", 
+    name: "Avocado", 
+    brand: "Fresh Foods",
+    rating: 91, 
+    impact: "Positive" as const, 
+    description: "Rich in healthy fats that improve skin elasticity"
+  },
+  { 
+    id: "almonds", 
+    name: "Almonds", 
+    brand: "Nutty Farms",
+    rating: 85, 
+    impact: "Positive" as const, 
+    description: "Contains vitamin E for skin repair"
+  }
+];
+
+const productsUsedItems = [
+  { 
+    id: "moisturizer", 
+    name: "Daily Moisturizer", 
+    brand: "CeraVe",
+    rating: 90, 
+    impact: "Positive" as const, 
+    description: "Provides 24-hour hydration and strengthens skin barrier"
+  },
+  { 
+    id: "sunscreen", 
+    name: "SPF 50 Sunscreen", 
+    brand: "La Roche-Posay",
+    rating: 94, 
+    impact: "Positive" as const, 
+    description: "Broad spectrum protection against UV damage"
+  }
+];
+
 const Insights = () => {
-  const [activeTab, setActiveTab] = useState("scanned");
+  const [activeTab, setActiveTab] = useState("used");
   
   return (
     <div className="pb-24">
@@ -78,29 +118,50 @@ const Insights = () => {
       
       <InsightsTrends insights={insightData} className="mb-6" />
       
-      {/* Tab navigation */}
-      <div className="flex rounded-lg overflow-hidden border mb-6 shadow-sm">
-        <button 
-          className={`flex-1 py-3 text-center font-medium ${activeTab === "scanned" 
-            ? "bg-white text-skin-black" 
-            : "bg-gray-50 text-gray-500"}`}
-          onClick={() => setActiveTab("scanned")}
-        >
-          Scanned Products
-        </button>
-        <button 
-          className={`flex-1 py-3 text-center font-medium ${activeTab === "trending" 
-            ? "bg-white text-skin-black" 
-            : "bg-gray-50 text-gray-500"}`}
-          onClick={() => setActiveTab("trending")}
-        >
-          Trending
-        </button>
-      </div>
-      
-      {/* Scanned products content */}
-      {activeTab === "scanned" && (
-        <>
+      <Tabs defaultValue="used" className="mb-6" onValueChange={setActiveTab}>
+        <TabsList className="w-full grid grid-cols-3">
+          <TabsTrigger value="used">Products Used</TabsTrigger>
+          <TabsTrigger value="scanned">Scanned Products</TabsTrigger>
+          <TabsTrigger value="trending">Trending</TabsTrigger>
+        </TabsList>
+        
+        {/* Products Used content */}
+        <TabsContent value="used">
+          {/* Food impacts section */}
+          <div className="ios-section mb-6">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-xl font-semibold">Food Impacts</h2>
+              <Link to="/used-foods" className="text-sm text-skin-teal flex items-center">
+                View all <ArrowRight className="h-4 w-4 ml-1" />
+              </Link>
+            </div>
+            
+            <div className="space-y-3">
+              {productsUsedFoodItems.map((food) => (
+                <ProductCard key={food.id} product={food} type="food" />
+              ))}
+            </div>
+          </div>
+          
+          {/* Products impact section */}
+          <div className="ios-section mb-6">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-xl font-semibold">Product Effects</h2>
+              <Link to="/used-products" className="text-sm text-skin-teal flex items-center">
+                View all <ArrowRight className="h-4 w-4 ml-1" />
+              </Link>
+            </div>
+            
+            <div className="space-y-3">
+              {productsUsedItems.map((product) => (
+                <ProductCard key={product.id} product={product} type="skincare" />
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+        
+        {/* Scanned products content */}
+        <TabsContent value="scanned">
           {/* Food impacts section */}
           <div className="ios-section mb-6">
             <div className="flex justify-between items-center mb-3">
@@ -132,12 +193,10 @@ const Insights = () => {
               ))}
             </div>
           </div>
-        </>
-      )}
-      
-      {/* Trending products content */}
-      {activeTab === "trending" && (
-        <>
+        </TabsContent>
+        
+        {/* Trending products content */}
+        <TabsContent value="trending">
           {/* Trending Food impacts section */}
           <div className="ios-section mb-6">
             <div className="flex justify-between items-center mb-3">
@@ -169,8 +228,8 @@ const Insights = () => {
               ))}
             </div>
           </div>
-        </>
-      )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
