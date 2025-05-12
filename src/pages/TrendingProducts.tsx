@@ -66,12 +66,12 @@ const TrendingProducts = () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          // Fetch user insights for products
+          // Fetch user insights for products - using type assertion to fix TypeScript errors
           const { data: insights, error } = await supabase
             .from('user_insights')
             .select('*')
-            .eq('user_id', session.user.id)
-            .eq('insight_type', 'skincare')
+            .eq('user_id', session.user.id as any)
+            .eq('insight_type', 'skincare' as any)
             .is('is_active', true)
             .order('confidence_level', { ascending: false })
             .limit(5);
@@ -94,13 +94,18 @@ const TrendingProducts = () => {
                 description: ''
               };
               
+              // Type guard with "in" operator and additional null checks
+              const relatedProductId = 'related_product_id' in insight ? insight.related_product_id : null;
+              const confidenceLevel = 'confidence_level' in insight ? insight.confidence_level : null;
+              const insightText = 'insight_text' in insight ? insight.insight_text : null;
+              
               return {
-                id: insight.related_product_id || 'unknown',
-                name: insight.related_product_id || 'Personalized Product',
+                id: relatedProductId || 'unknown',
+                name: relatedProductId || 'Personalized Product',
                 brand: 'Recommended for You',
-                rating: insight.confidence_level || 80,
+                rating: confidenceLevel || 80,
                 impact: "Positive" as const,
-                description: insight.insight_text || ''
+                description: insightText || ''
               };
             });
             

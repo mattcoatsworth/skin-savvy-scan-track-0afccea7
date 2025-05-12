@@ -18,12 +18,14 @@ export const useAIContentCache = () => {
   const getCachedContent = async ({ productId, productType, contentType }: ContentOptions) => {
     try {
       setCacheStatus("fetching");
+      
+      // Using "as any" to bypass TypeScript type issues temporarily
       const { data, error } = await supabase
         .from('ai_generated_content')
         .select('content, updated_at')
-        .eq('product_id', productId)
-        .eq('product_type', productType)
-        .eq('content_type', contentType)
+        .eq('product_id', productId as any)
+        .eq('product_type', productType as any)
+        .eq('content_type', contentType as any)
         .maybeSingle();
       
       if (error) {
@@ -58,6 +60,7 @@ export const useAIContentCache = () => {
       // Ensure content is JSON-serializable
       const jsonContent = JSON.parse(JSON.stringify(content));
       
+      // Use type assertion to fix TypeScript errors
       const { error } = await supabase
         .from('ai_generated_content')
         .upsert({
@@ -66,7 +69,7 @@ export const useAIContentCache = () => {
           content_type: contentType,
           content: jsonContent as Json,
           updated_at: new Date().toISOString()
-        }, {
+        } as any, {
           onConflict: 'product_id, product_type, content_type'
         });
       

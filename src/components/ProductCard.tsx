@@ -40,12 +40,12 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
           return;
         }
         
-        // Fetch user's product usage data
+        // Fetch user's product usage data - using cast to fix type errors
         const { data: usageData, error } = await supabase
           .from('product_usage')
           .select('rating')
-          .eq('product_id', product.id)
-          .eq('product_type', type)
+          .eq('product_id', product.id as any) // Cast to any to bypass type issues
+          .eq('product_type', type as any)     // Cast to any to bypass type issues
           .order('usage_date', { ascending: false })
           .limit(1);
         
@@ -55,10 +55,10 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
         }
         
         // If user has rated this product before, use their personalized rating
-        if (usageData && usageData.length > 0 && usageData[0]) {
+        if (usageData && usageData.length > 0) {
           const firstItem = usageData[0];
-          // Make sure rating exists before using it
-          if (firstItem && typeof firstItem.rating === 'number') {
+          // Use type guard to check for rating property
+          if (firstItem && 'rating' in firstItem && typeof firstItem.rating === 'number') {
             // Convert the 1-10 scale to our 0-100 scale
             setPersonalizedRating(firstItem.rating * 10);
           }

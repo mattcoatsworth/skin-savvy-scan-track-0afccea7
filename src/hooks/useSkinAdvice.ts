@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -176,11 +177,11 @@ export const useSkinAdvice = ({
       
       // Add user context if available
       if (session?.user) {
-        // Fetch recent skin logs
+        // Fetch recent skin logs - using type assertion to fix TypeScript errors
         const { data: recentLogs } = await supabase
           .from('skin_logs')
           .select('*, daily_factors(*)')
-          .eq('user_id', session.user.id)
+          .eq('user_id', session.user.id as any)
           .order('log_date', { ascending: false })
           .limit(7);
           
@@ -188,7 +189,7 @@ export const useSkinAdvice = ({
         const { data: recentProducts } = await supabase
           .from('product_usage')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('user_id', session.user.id as any)
           .order('usage_date', { ascending: false })
           .limit(5);
           

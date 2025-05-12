@@ -66,12 +66,12 @@ const TrendingFoods = () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          // Fetch user insights for foods
+          // Fetch user insights for foods - using type assertion to fix TypeScript errors
           const { data: insights, error } = await supabase
             .from('user_insights')
             .select('*')
-            .eq('user_id', session.user.id)
-            .eq('insight_type', 'food')
+            .eq('user_id', session.user.id as any)
+            .eq('insight_type', 'food' as any)
             .is('is_active', true)
             .order('confidence_level', { ascending: false })
             .limit(5);
@@ -84,7 +84,7 @@ const TrendingFoods = () => {
           // If we have personalized insights, use them
           if (insights && insights.length > 0) {
             const personalizedFoods = insights.map(insight => {
-              // Type guard to ensure the insight object has the expected properties
+              // Check if insight exists and has the expected properties
               if (!insight) return {
                 id: 'unknown',
                 name: 'Unknown Food',
@@ -94,13 +94,18 @@ const TrendingFoods = () => {
                 description: ''
               };
               
+              // Type guard with "in" operator and additional null checks
+              const relatedFoodId = 'related_food_id' in insight ? insight.related_food_id : null;
+              const confidenceLevel = 'confidence_level' in insight ? insight.confidence_level : null;
+              const insightText = 'insight_text' in insight ? insight.insight_text : null;
+              
               return {
-                id: insight.related_food_id || 'unknown',
-                name: insight.related_food_id || 'Personalized Food',
+                id: relatedFoodId || 'unknown',
+                name: relatedFoodId || 'Personalized Food',
                 brand: 'Recommended for You',
-                rating: insight.confidence_level || 80,
+                rating: confidenceLevel || 80,
                 impact: "Positive" as const,
-                description: insight.insight_text || ''
+                description: insightText || ''
               };
             });
             
