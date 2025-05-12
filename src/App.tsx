@@ -20,6 +20,7 @@ import FemaleOnboardingPreviousApps from "@/pages/onboarding/FemaleOnboardingPre
 import FemaleOnboardingSkinType from "@/pages/onboarding/FemaleOnboardingSkinType";
 import FemaleOnboardingSkinConcerns from "@/pages/onboarding/FemaleOnboardingSkinConcerns";
 import FemaleOnboardingSkinGoals from "@/pages/onboarding/FemaleOnboardingSkinGoals";
+import FemaleOnboardingMenstrualCycle from "@/pages/onboarding/FemaleOnboardingMenstrualCycle";
 import FemaleOnboardingFoodAllergies from "@/pages/onboarding/FemaleOnboardingFoodAllergies";
 import FemaleOnboardingProductAllergies from "@/pages/onboarding/FemaleOnboardingProductAllergies";
 import FemaleOnboardingGoalTimeline from "@/pages/onboarding/FemaleOnboardingGoalTimeline";

@@ -49,7 +49,7 @@ const FemaleOnboardingSkinGoals: React.FC = () => {
       title="What are your skin goals?"
       description="Select all goals you'd like to achieve."
       currentStep={5}
-      totalSteps={12}
+      totalSteps={13}
       onNext={handleNext}
       nextDisabled={form.watch("goals").length === 0}
     >
