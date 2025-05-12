@@ -109,7 +109,10 @@ const History = () => {
     
     // Only open dialog if the photo is null or undefined (not uploaded yet)
     const dayLog = dayLogs.find(log => log.id === dayId);
-    const photoExists = photoType === "am" ? dayLog?.amSelfie instanceof Blob : dayLog?.pmSelfie instanceof Blob;
+    // Fix: changed the instanceof check to a more appropriate type check
+    const photoExists = photoType === "am" 
+      ? typeof dayLog?.amSelfie === 'string' && dayLog.amSelfie !== null
+      : typeof dayLog?.pmSelfie === 'string' && dayLog.pmSelfie !== null;
     
     if (!photoExists) {
       setCurrentDayId(dayId);

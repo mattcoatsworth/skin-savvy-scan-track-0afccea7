@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -576,7 +575,7 @@ const WeeklySkinAnalysis = () => {
               </div>
             </div>
 
-            {/* Category Analysis - MODIFYING THIS SECTION */}
+            {/* Category Analysis Section */}
             <div className="space-y-6 mb-6">
               <h2 className="text-lg font-semibold mb-3">Category Analysis</h2>
               
@@ -886,7 +885,7 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards with Ratings */}
+                {/* AI Sections in Formatted Cards with Ratings - MODIFIED to remove icons and titles */}
                 {aiSections.length > 0 && aiSections.map((section, index) => (
                   <div key={index} className="mb-6">
                     <div className="flex justify-between items-center mb-3">
@@ -901,45 +900,7 @@ const WeeklySkinAnalysis = () => {
                     
                     <Card className="ios-card">
                       <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            {section.type === "pattern" && <Activity className="h-5 w-5" />}
-                            {section.type === "correlation" && <Activity className="h-5 w-5" />}
-                            {section.type === "recommendation" && <Droplet className="h-5 w-5" />}
-                            {section.type === "focus" && <Eye className="h-5 w-5" />}
-                            {section.type === "metric" && <Activity className="h-5 w-5" />}
-                            {section.type === "info" && <Info className="h-5 w-5" />}
-                            <h3 className="text-md font-medium">{section.title} Overview</h3>
-                          </div>
-                          
-                          <div className="relative w-10 h-10 flex items-center justify-center">
-                            <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                              <path
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none"
-                                stroke={getBackgroundColor(section.rating)}
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                              />
-                            </svg>
-                            
-                            <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                              <path
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none"
-                                stroke={getProgressColor(section.rating)}
-                                strokeWidth="4"
-                                strokeDasharray={`${section.rating}, 100`}
-                                strokeLinecap="round"
-                              />
-                            </svg>
-                            
-                            <div className="text-sm font-semibold">
-                              {section.rating}
-                            </div>
-                          </div>
-                        </div>
-                        
+                        {/* Removed the header with icon and section title */}
                         <div className="space-y-4">
                           {section.items.map((item, itemIdx) => {
                             // Generate a rating for each item (in a real app would be data-driven)
@@ -976,7 +937,7 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 ))}
 
-                {/* Correlations Table with Rating */}
+                {/* Correlations Table with Rating - MODIFIED to remove icon and title */}
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3">
                     <h2 className="text-lg font-semibold">AI Correlations</h2>
@@ -988,40 +949,7 @@ const WeeklySkinAnalysis = () => {
                   
                   <Card className="ios-card">
                     <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <Activity className="h-5 w-5" />
-                          <h3 className="text-md font-medium">Key Correlations</h3>
-                        </div>
-                        
-                        <div className="relative w-10 h-10 flex items-center justify-center">
-                          <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(75)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(75)}
-                              strokeWidth="4"
-                              strokeDasharray={`${75}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <div className="text-sm font-semibold">
-                            75
-                          </div>
-                        </div>
-                      </div>
-                      
+                      {/* Removed the header with icon and title */}
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -1108,4 +1036,3 @@ const WeeklySkinAnalysis = () => {
 };
 
 export default WeeklySkinAnalysis;
-
