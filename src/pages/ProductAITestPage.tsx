@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -327,22 +326,19 @@ const ProductAITestPage = () => {
                         
                         <div className="space-y-3">
                           {section.items.map((item, itemIdx) => (
-                            <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
-                              <Card className="ai-data-point-card">
-                                <CardContent className="p-4">
-                                  <div className="ai-data-point-header">
-                                    <h3 className="ai-data-point-title">
-                                      {item.text.split(":")[0] || `Benefit ${itemIdx + 1}`}
+                            <Link to={item.linkTo} key={itemIdx} className="block">
+                              <Card className="ios-card mb-4 hover:shadow-md transition-shadow">
+                                <CardContent className="p-4 flex items-center justify-between">
+                                  <div>
+                                    <h3 className="font-medium text-base">
+                                      {item.text.split(":")[0] || `Point ${itemIdx + 1}`}
                                     </h3>
-                                    <span className="ai-data-point-category">
-                                      {section.title}
-                                    </span>
+                                    <p className="text-sm text-muted-foreground">
+                                      {item.text.includes(":") 
+                                        ? item.text.split(":").slice(1).join(":").trim()
+                                        : item.text}
+                                    </p>
                                   </div>
-                                  <p className="ai-data-point-content">
-                                    {item.text.includes(":") 
-                                      ? item.text.split(":").slice(1).join(":").trim()
-                                      : item.text}
-                                  </p>
                                 </CardContent>
                               </Card>
                             </Link>
@@ -386,22 +382,19 @@ const ProductAITestPage = () => {
                         
                         <div className="space-y-3">
                           {section.items.map((item, itemIdx) => (
-                            <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
-                              <Card className="ai-data-point-card">
-                                <CardContent className="p-4">
-                                  <div className="ai-data-point-header">
-                                    <h3 className="ai-data-point-title">
-                                      {item.text.split(":")[0] || `Scientific Finding ${itemIdx + 1}`}
+                            <Link to={item.linkTo} key={itemIdx} className="block">
+                              <Card className="ios-card mb-4 hover:shadow-md transition-shadow">
+                                <CardContent className="p-4 flex items-center justify-between">
+                                  <div>
+                                    <h3 className="font-medium text-base">
+                                      {item.text.split(":")[0] || `Finding ${itemIdx + 1}`}
                                     </h3>
-                                    <span className="ai-data-point-category">
-                                      {section.title}
-                                    </span>
+                                    <p className="text-sm text-muted-foreground">
+                                      {item.text.includes(":") 
+                                        ? item.text.split(":").slice(1).join(":").trim()
+                                        : item.text}
+                                    </p>
                                   </div>
-                                  <p className="ai-data-point-content">
-                                    {item.text.includes(":") 
-                                      ? item.text.split(":").slice(1).join(":").trim()
-                                      : item.text}
-                                  </p>
                                 </CardContent>
                               </Card>
                             </Link>
