@@ -12,7 +12,8 @@ import {
   Activity,
   Thermometer,
   Eye,
-  RefreshCcw
+  RefreshCcw,
+  Info
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -784,7 +785,7 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Add Weekly Summary - if available */}
+                    {/* Weekly Summary - removed the redundant bold paragraph */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
