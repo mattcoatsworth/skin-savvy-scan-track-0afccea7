@@ -710,7 +710,7 @@ const WeeklySkinAnalysis = () => {
             </div>
           </TabsContent>
           
-          {/* AI Analysis Tab */}
+          {/* AI Analysis Tab - Updated to match Current tab visual style */}
           <TabsContent value="ai" className="space-y-6">
             {aiLoading || isLoading ? (
               <Card className="ios-card">
@@ -723,116 +723,111 @@ const WeeklySkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                <Card className="ios-card">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-xl font-semibold">AI Weekly Analysis</h2>
+                {/* Overall Score Card - similar to Current tab */}
+                <Card className="ios-card mb-6">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-lg font-semibold">AI Overall Assessment</h2>
+                        <p className="text-sm text-muted-foreground">Weekly Analysis</p>
+                      </div>
                       
-                      {/* Only show regenerate button if there is already advice */}
-                      {aiAdvice.formattedHtml && (
-                        <button 
-                          onClick={() => generateAiAdvice(true)} 
-                          className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
-                        >
-                          Refresh
-                        </button>
-                      )}
+                      <div className="flex flex-col items-center">
+                        <div className="relative w-20 h-20 flex items-center justify-center">
+                          {/* Background circle */}
+                          <svg className="w-20 h-20 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getBackgroundColor(analysisData.overallScore)}
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          
+                          {/* Foreground circle - the actual progress */}
+                          <svg className="w-20 h-20 absolute" viewBox="0 0 36 36">
+                            <path
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              fill="none"
+                              stroke={getProgressColor(analysisData.overallScore)}
+                              strokeWidth="4"
+                              strokeDasharray={`${analysisData.overallScore}, 100`}
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          
+                          {/* Rating number in the center */}
+                          <div className="text-xl font-semibold">
+                            {analysisData.overallScore}
+                          </div>
+                        </div>
+                        <span className="text-sm font-medium mt-1">
+                          {getRatingLabel(analysisData.overallScore)}
+                        </span>
+                      </div>
                     </div>
                     
-                    {/* If there's a summary section, show it first */}
+                    {/* Add Weekly Summary - if available */}
                     {aiAdvice.sections["Weekly Summary"] && (
-                      <div className="mb-6">
-                        <div className="bg-slate-50 rounded-md p-4">
-                          <h3 className="font-medium mb-2">Summary</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {typeof aiAdvice.sections["Weekly Summary"] === 'string' 
-                              ? aiAdvice.sections["Weekly Summary"] 
-                              : Array.isArray(aiAdvice.sections["Weekly Summary"])
-                                ? aiAdvice.sections["Weekly Summary"].join(" ")
-                                : "Weekly summary of your skin health."}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Display structured sections */}
-                    {aiSections.length > 0 ? (
-                      <div className="space-y-6">
-                        {aiSections.map((section, index) => {
-                          // Skip summary as it's displayed above
-                          if (section.title === "Summary") return null;
-                          
-                          return (
-                            <div key={index} className="ai-section">
-                              <h3 className="ai-section-title">{section.title}</h3>
-                              
-                              <div className="space-y-3">
-                                {section.items.map((item, itemIdx) => (
-                                  <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
-                                    <Card className="ai-data-point-card">
-                                      <CardContent className="p-4">
-                                        <div className="ai-data-point-header">
-                                          <h3 className="ai-data-point-title">
-                                            {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                          </h3>
-                                          <span className="ai-data-point-category">
-                                            {section.title}
-                                          </span>
-                                        </div>
-                                        <p className="ai-data-point-content">
-                                          {item.text.includes(":") 
-                                            ? item.text.split(":").slice(1).join(":").trim()
-                                            : item.text}
-                                        </p>
-                                      </CardContent>
-                                    </Card>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="prose prose-sm max-w-none">
-                        {aiAdvice.formattedHtml ? (
-                          <div 
-                            dangerouslySetInnerHTML={{ 
-                              __html: typeof aiAdvice.formattedHtml === 'string' 
-                                ? aiAdvice.formattedHtml 
-                                : '' 
-                            }} 
-                            className="skin-advice-content" 
-                          />
-                        ) : (
-                          <p>Unable to generate AI analysis at this time. Please try again later.</p>
-                        )}
+                      <div className="mt-4 pt-4 border-t border-slate-100">
+                        <p className="text-sm text-muted-foreground">
+                          {typeof aiAdvice.sections["Weekly Summary"] === 'string' 
+                            ? aiAdvice.sections["Weekly Summary"] 
+                            : Array.isArray(aiAdvice.sections["Weekly Summary"])
+                              ? aiAdvice.sections["Weekly Summary"].join(" ")
+                              : "Weekly summary of your skin health."}
+                        </p>
                       </div>
                     )}
                   </CardContent>
                 </Card>
-                
-                <Card className="ios-card">
-                  <CardContent className="p-6">
-                    <h3 className="font-medium mb-3">Weekly Patterns</h3>
-                    <ul className="list-disc pl-5 space-y-2 text-sm">
-                      <li>Your skin health improved by 22% over the week</li>
-                      <li>Strongest correlation: Dairy consumption (92% negative)</li>
-                      <li>Most improved factor: Hydration (improved 18%)</li>
-                      <li>Suggested focus: Stress management and diet modifications</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                {/* Add View Scoring Method component at the bottom */}
-                <ViewScoringMethod />
-              </>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  );
-};
 
-export default WeeklySkinAnalysis;
+                {/* AI Sections in Formatted Cards - Matching Current tab style */}
+                {aiSections.length > 0 && aiSections.map((section, index) => {
+                  if (section.title === "Summary") return null; // Skip summary as it's displayed above
+                  
+                  return (
+                    <div key={index} className="mb-6">
+                      <h2 className="text-lg font-semibold mb-3">{section.title}</h2>
+                      <Card className="ios-card">
+                        <CardContent className="p-4">
+                          <div className="space-y-4">
+                            {section.items.map((item, itemIdx) => (
+                              <div key={itemIdx} className={itemIdx > 0 ? "border-t pt-3 mt-3" : ""}>
+                                <Link to={item.linkTo}>
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <span className="font-medium">
+                                        {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                      </span>
+                                      <p className="text-sm text-muted-foreground mt-1">
+                                        {item.text.includes(":") 
+                                          ? item.text.split(":").slice(1).join(":").trim()
+                                          : item.text}
+                                      </p>
+                                    </div>
+                                    <div className="ml-2 text-muted-foreground">
+                                      <span className="text-xs bg-slate-100 px-2 py-1 rounded">
+                                        {section.title}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </Link>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })}
+
+                {/* If no structured sections but we have formatted HTML */}
+                {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold mb-3">AI Analysis</h2>
+                    <Card className="ios-card">
+                      <CardContent className="p-4">
+                        <div className="prose prose-sm max-w-none">
+                          <div
