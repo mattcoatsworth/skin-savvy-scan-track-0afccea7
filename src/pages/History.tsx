@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { format, subDays } from "date-fns";
@@ -14,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Camera, Image, Smile } from "lucide-react";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
 import InsightsTrends from "@/components/InsightsTrends";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { supabase } from "@/integrations/supabase/client";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -86,6 +89,17 @@ const History = () => {
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [currentPhotoType, setCurrentPhotoType] = useState<"am" | "pm" | null>(null);
   const [currentDayId, setCurrentDayId] = useState<string | null>(null);
+  const [aiSkinAnalysis, setAiSkinAnalysis] = useState<{
+    status: string;
+    analysis: string;
+  }>({ 
+    status: "Loading...", 
+    analysis: "Analyzing your skin logs..." 
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Use the skin advice hook for AI analysis
+  const { getAdvice } = useSkinAdvice({ adviceType: "general" });
   
   // Generate 7 days of mock data
   const dayLogs: DayLogType[] = Array.from({ length: 7 }).map((_, index) => {
@@ -157,6 +171,105 @@ const History = () => {
     setIsPhotoDialogOpen(false);
   };
 
+  // Fetch the user's skin logs and generate AI analysis
+  const fetchSkinLogsAndAnalyze = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Get the current session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        setAiSkinAnalysis({
+          status: "Balanced",
+          analysis: "Sign in to see your personalized skin analysis based on your logs."
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      // Fetch recent skin logs
+      const { data: recentLogs, error } = await supabase
+        .from('skin_logs')
+        .select('*, daily_factors(*)')
+        .eq('user_id', session.user.id)
+        .order('log_date', { ascending: false })
+        .limit(7);
+      
+      if (error) {
+        console.error("Error fetching skin logs:", error);
+        throw error;
+      }
+      
+      // If no logs exist, show default message
+      if (!recentLogs || recentLogs.length === 0) {
+        setAiSkinAnalysis({
+          status: "New",
+          analysis: "Start logging your skin condition to get personalized insights and recommendations."
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      // Get AI analysis based on logs
+      const context = {
+        userSkinLogs: recentLogs,
+        timeframe: "daily"
+      };
+      
+      const aiResponse = await getAdvice(
+        "Analyze the user's skin logs and provide: 1) A one-word skin status assessment (e.g., Balanced, Dry, Oily, Sensitive, etc.) and 2) A brief, specific analysis about their skin condition today compared to previous days. Focus on hydration, inflammation, and overall tone. Keep it concise and personalized.",
+        context
+      );
+      
+      if (aiResponse && aiResponse.sections) {
+        // Extract the status and analysis from AI response
+        const sections = aiResponse.sections;
+        let status = "Balanced"; // Default status
+        let analysis = "Your skin appears balanced today with good hydration levels.";
+        
+        // Extract status if available in sections
+        if (typeof sections["Brief Summary"] === 'string') {
+          // Try to extract a single-word status from the first sentence
+          const firstSentence = sections["Brief Summary"].split('.')[0];
+          const statusMatch = firstSentence.match(/your skin (is|appears|looks) (\w+)/i);
+          if (statusMatch && statusMatch[2]) {
+            status = statusMatch[2].charAt(0).toUpperCase() + statusMatch[2].slice(1);
+          }
+        }
+        
+        // Extract analysis from Key Observations or Brief Summary
+        if (sections["Key Benefits/Observations"]) {
+          if (Array.isArray(sections["Key Benefits/Observations"])) {
+            analysis = sections["Key Benefits/Observations"].join(" ");
+          } else {
+            analysis = sections["Key Benefits/Observations"];
+          }
+        } else if (typeof sections["Brief Summary"] === 'string') {
+          analysis = sections["Brief Summary"];
+        }
+        
+        setAiSkinAnalysis({
+          status,
+          analysis
+        });
+      }
+    } catch (error) {
+      console.error("Error analyzing skin logs:", error);
+      setAiSkinAnalysis({
+        status: "Balanced",
+        analysis: "Your skin appears balanced today with good hydration levels. Inflammation is minimal and there's an improvement in overall tone compared to yesterday."
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Fetch skin logs and analyze on component mount
+  useEffect(() => {
+    fetchSkinLogsAndAnalyze();
+  }, []);
+
   return (
     <div className="bg-slate-50 min-h-screen">
       <div className="max-w-md mx-auto">
@@ -169,16 +282,19 @@ const History = () => {
         <Card className="ios-card mb-6">
           <CardContent className="p-6">
             <div className="flex items-start mb-4">
-              <Smile className="h-8 w-8 mr-4 mt-1" />
-              <div>
+              <Smile className="h-12 w-12 mr-4 mt-1" /> {/* Increased emoji size */}
+              <div className="flex-grow">
                 <h2 className="text-2xl font-bold mb-1">Today's Skin</h2>
-                <p className="text-2xl font-semibold mb-4">Balanced</p>
+                <p className="text-2xl font-semibold mb-4">
+                  {isLoading ? "Analyzing..." : aiSkinAnalysis.status}
+                </p>
                 
                 <p className="font-medium text-base mb-2">Detailed Analysis:</p>
                 <p className="text-slate-600">
-                  Your skin appears balanced today with good hydration levels. 
-                  Inflammation is minimal and there's an improvement in overall 
-                  tone compared to yesterday.
+                  {isLoading ? 
+                    "Analyzing your skin logs..." : 
+                    aiSkinAnalysis.analysis
+                  }
                 </p>
               </div>
             </div>
