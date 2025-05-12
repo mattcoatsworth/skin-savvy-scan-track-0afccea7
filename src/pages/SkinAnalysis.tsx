@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -239,14 +240,25 @@ const SkinAnalysis = () => {
         // Create a section with items for array content
         aiSections.push({
           title: config.title,
-          items: content.map((item, index) => ({
-            text: item,
-            type: config.type,
-            linkTo: `/recommendations-detail/ai-${config.type}-${index + 1}`
-          }))
+          items: content.map((item, index) => {
+            // Parse the item to separate title and details if it contains a colon
+            const hasColon = item.includes(":");
+            const title = hasColon ? item.split(":")[0].trim() : `Item ${index + 1}`;
+            const details = hasColon ? item.split(":").slice(1).join(":").trim() : item;
+            
+            return {
+              text: item, // Keep the full text for processing
+              type: config.type,
+              linkTo: `/recommendations-detail/ai-${config.type}-${index + 1}`
+            };
+          })
         });
       } else if (typeof content === 'string') {
         // Create a section with a single item for string content
+        const hasColon = content.includes(":");
+        const title = hasColon ? content.split(":")[0].trim() : config.title;
+        const details = hasColon ? content.split(":").slice(1).join(":").trim() : content;
+        
         aiSections.push({
           title: config.title,
           items: [{
@@ -449,24 +461,27 @@ const SkinAnalysis = () => {
                     <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
                     
                     <div className="space-y-3">
-                      {section.items.map((item, itemIdx) => (
-                        <Link to={item.linkTo} key={itemIdx} className="block">
-                          <Card className="ios-card hover:shadow-md transition-all">
-                            <CardContent className="p-4">
-                              <div>
-                                <h3 className="font-medium">
-                                  {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                </h3>
-                                <p className="text-sm text-muted-foreground">
-                                  {item.text.includes(":") 
-                                    ? item.text.split(":").slice(1).join(":").trim()
-                                    : item.text}
-                                </p>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      ))}
+                      {section.items.map((item, itemIdx) => {
+                        // Parse item text to extract title and details
+                        const hasColon = item.text.includes(":");
+                        const title = hasColon ? item.text.split(":")[0].trim() : `Item ${itemIdx + 1}`;
+                        const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+
+                        return (
+                          <Link to={item.linkTo} key={itemIdx} className="block">
+                            <Card className="ios-card hover:shadow-md transition-all">
+                              <CardContent className="p-4">
+                                <div>
+                                  <h3 className="font-medium">{title}</h3>
+                                  <p className="text-sm text-muted-foreground">
+                                    {details}
+                                  </p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
