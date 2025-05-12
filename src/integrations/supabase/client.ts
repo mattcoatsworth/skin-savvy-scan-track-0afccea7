@@ -19,8 +19,8 @@ export const supabase = createClient<Database>(
       autoRefreshToken: true
     },
     realtime: {
-      // Enable realtime subscriptions
-      enabled: true,
+      // Configure realtime subscriptions
+      autoConnect: true
     }
   }
 );

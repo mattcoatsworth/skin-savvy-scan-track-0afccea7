@@ -70,8 +70,8 @@ const TrendingFoods = () => {
           const { data: insights, error } = await supabase
             .from('user_insights')
             .select('*')
-            .eq('user_id', session.user.id)
-            .eq('insight_type', 'food')
+            .eq('user_id', session.user.id as any)
+            .eq('insight_type', 'food' as any)
             .is('is_active', true)
             .order('confidence_level', { ascending: false })
             .limit(5);
@@ -84,12 +84,12 @@ const TrendingFoods = () => {
           // If we have personalized insights, use them
           if (insights && insights.length > 0) {
             const personalizedFoods = insights.map(insight => ({
-              id: insight.related_food_id || 'unknown',
-              name: insight.related_food_id || 'Personalized Food',
+              id: insight?.related_food_id || 'unknown',
+              name: insight?.related_food_id || 'Personalized Food',
               brand: 'Recommended for You',
-              rating: insight.confidence_level || 80,
+              rating: insight?.confidence_level || 80,
               impact: "Positive" as const,
-              description: insight.insight_text
+              description: insight?.insight_text || ''
             }));
             
             // If we don't have enough personalized foods, mix with trending

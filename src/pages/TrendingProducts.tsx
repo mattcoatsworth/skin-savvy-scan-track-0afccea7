@@ -70,8 +70,8 @@ const TrendingProducts = () => {
           const { data: insights, error } = await supabase
             .from('user_insights')
             .select('*')
-            .eq('user_id', session.user.id)
-            .eq('insight_type', 'skincare')
+            .eq('user_id', session.user.id as any)
+            .eq('insight_type', 'skincare' as any)
             .is('is_active', true)
             .order('confidence_level', { ascending: false })
             .limit(5);
@@ -84,12 +84,12 @@ const TrendingProducts = () => {
           // If we have personalized insights, use them
           if (insights && insights.length > 0) {
             const personalizedProducts = insights.map(insight => ({
-              id: insight.related_product_id || 'unknown',
-              name: insight.related_product_id || 'Personalized Product',
+              id: insight?.related_product_id || 'unknown',
+              name: insight?.related_product_id || 'Personalized Product',
               brand: 'Recommended for You',
-              rating: insight.confidence_level || 80,
+              rating: insight?.confidence_level || 80,
               impact: "Positive" as const,
-              description: insight.insight_text
+              description: insight?.insight_text || ''
             }));
             
             // If we don't have enough personalized products, mix with trending
