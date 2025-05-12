@@ -194,10 +194,10 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
   
-  // Only show a limited number by default, or all if expanded
+  // Show 5 recommendations by default, or all if expanded
   const displayedRecommendations = showAllRecommendations 
     ? displayRecommendations 
-    : displayRecommendations.slice(0, 3);
+    : displayRecommendations.slice(0, 5);
   
   return (
     <Link to="/skin">
@@ -253,7 +253,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                 )
               )}
               
-              {displayRecommendations.length > 3 && (
+              {displayRecommendations.length > 5 && (
                 <button 
                   onClick={(e) => {
                     e.preventDefault();
@@ -261,7 +261,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                   }}
                   className="mt-2 text-skin-teal text-sm font-medium flex items-center"
                 >
-                  {showAllRecommendations ? "Show less" : `Show ${displayRecommendations.length - 3} more recommendations`}
+                  {showAllRecommendations ? "Show less" : `Show ${displayRecommendations.length - 5} more recommendations`}
                 </button>
               )}
             </div>

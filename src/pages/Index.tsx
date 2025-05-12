@@ -37,6 +37,36 @@ const Index = () => {
       icon: <CloudSun className="h-4 w-4" />,
       linkTo: "/recommendations-detail/meditation"
     },
+    { 
+      type: "skincare" as const, 
+      text: "Try vitamin C serum", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/vitamin-c-serum" 
+    },
+    { 
+      type: "food" as const, 
+      text: "Add antioxidant foods", 
+      icon: <Salad className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/antioxidants"
+    },
+    { 
+      type: "lifestyle" as const, 
+      text: "Morning hydration", 
+      icon: <CloudSun className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/hydration"
+    },
+    { 
+      type: "skincare" as const, 
+      text: "SPF reapplication", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/spf" 
+    },
+    { 
+      type: "supplements" as const, 
+      text: "Add zinc", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/zinc"
+    },
   ];
 
   // We no longer need to define static recommendations here as they'll be dynamically generated

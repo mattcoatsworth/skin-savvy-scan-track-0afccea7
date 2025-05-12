@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -72,7 +71,7 @@ const SkinAnalysis = () => {
     { date: "Sun", value: 85 }
   ];
 
-  // For You Recommendations 
+  // For You Recommendations - Expanded to 10 items
   const skinRecommendations = [
     { 
       type: "food" as const, 
@@ -157,6 +156,20 @@ const SkinAnalysis = () => {
       iconName: "droplet",
       linkTo: "/recommendations-detail/ceramide-moisturizer",
       details: "Would strengthen your skin barrier which shows signs of damage"
+    },
+    { 
+      type: "skincare" as const, 
+      text: "Niacinamide serum", 
+      iconName: "droplet",
+      linkTo: "/recommendations-detail/niacinamide-serum",
+      details: "For minimizing pores and balancing oil production"
+    },
+    { 
+      type: "skincare" as const, 
+      text: "SPF reapplication", 
+      iconName: "droplet",
+      linkTo: "/recommendations-detail/spf-reapplication",
+      details: "Important for continued protection throughout the day"
     }
   ];
 
