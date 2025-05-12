@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -476,7 +477,7 @@ const WeeklySkinAnalysis = () => {
               </CardContent>
             </Card>
 
-            {/* Daily Scores - Added to match Current tab */}
+            {/* Daily Scores */}
             <div className="mb-6">
               <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
               <div className="overflow-x-auto pb-2">
@@ -529,7 +530,7 @@ const WeeklySkinAnalysis = () => {
               </div>
             </div>
 
-            {/* Category Analysis */}
+            {/* Category Analysis - MODIFIED: Removed section titles from inside cards */}
             <div className="space-y-6 mb-6">
               <h2 className="text-lg font-semibold mb-3">Category Analysis</h2>
               
@@ -712,7 +713,7 @@ const WeeklySkinAnalysis = () => {
             </div>
           </TabsContent>
           
-          {/* AI Analysis Tab - Updated to match Current tab visual style */}
+          {/* AI Analysis Tab */}
           <TabsContent value="ai" className="space-y-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">AI Analysis</h2>
@@ -739,7 +740,7 @@ const WeeklySkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                {/* Overall Score Card - similar to Current tab */}
+                {/* Overall Score Card */}
                 <Card className="ios-card mb-6">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -799,7 +800,7 @@ const WeeklySkinAnalysis = () => {
                   </CardContent>
                 </Card>
 
-                {/* Daily Scores - Added to match Current tab */}
+                {/* Daily Scores */}
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
                   <div className="overflow-x-auto pb-2">
@@ -852,7 +853,7 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards - Matching Current tab style */}
+                {/* AI Sections in Formatted Cards - MODIFIED: Removed section titles from cards */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
@@ -955,7 +956,7 @@ const WeeklySkinAnalysis = () => {
               </>
             )}
             
-            {/* Add View Scoring Method component outside of the loading check */}
+            {/* View Scoring Method component */}
             <ViewScoringMethod />
             
             {/* Add disclaimer card */}
