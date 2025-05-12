@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -350,13 +349,13 @@ const SkinAnalysis = () => {
   // Get recommendations section specifically
   const recommendationsSection = aiSections.find(section => section.title === "Recommendations");
   
-  // Check if we have AI recommendations or should use our static ones
+  // Check if we have AI recommendations
   const hasAiRecommendations = recommendationsSection && recommendationsSection.items.length > 0;
   
-  // Display count for recommendations - show 8 by default
+  // Display count for recommendations - changed from 8 to showing all by default
   const displayCount = 8;
-  
-  // Show the AI recommendations or fall back to our static ones
+
+  // Get the items to display - this ensures we show 8 if available
   const displayedItems = hasAiRecommendations 
     ? (showAllRecommendations ? recommendationsSection.items : recommendationsSection.items.slice(0, displayCount)) 
     : [];
@@ -487,19 +486,22 @@ const SkinAnalysis = () => {
                 {/* Display AI sections in a structured format */}
                 {aiSections.map((section, index) => {
                   // Skip empty sections
-                  if (section.items.length === 0) return null;
+                  if (!section.items || section.items.length === 0) return null;
                   
                   // Determine if this is the recommendations section
                   const isRecommendations = section.title === "Recommendations";
+                  
+                  console.log(`Section: ${section.title}, Items: ${section.items.length}, Is Recommendations: ${isRecommendations}`);
                   
                   return (
                     <div key={index} className="ai-section">
                       <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
                       
                       <div className="space-y-3">
-                        {isRecommendations ? (
-                          // For recommendations section, implement the show more/less functionality
-                          (showAllRecommendations ? section.items : section.items.slice(0, displayCount)).map((item, itemIdx) => {
+                        {/* For all sections, show the appropriate number of items */}
+                        {(isRecommendations 
+                          ? (showAllRecommendations ? section.items : section.items.slice(0, displayCount))
+                          : section.items).map((item, itemIdx) => {
                             // Parse item text to extract title and details
                             const hasColon = item.text.includes(":");
                             const sectionConfig = {
@@ -526,38 +528,7 @@ const SkinAnalysis = () => {
                                 </Card>
                               </Link>
                             );
-                          })
-                        ) : (
-                          // For non-recommendations sections, show all items
-                          section.items.map((item, itemIdx) => {
-                            // Parse item text to extract title and details
-                            const hasColon = item.text.includes(":");
-                            const sectionConfig = {
-                              "Key Observations": "Observation",
-                              "Recommendations": "Recommendation",
-                              "Contributing Factors": "Factor",
-                              "Timeline": "Timeline"
-                            };
-                            const sectionPrefix = sectionConfig[section.title] || "Item";
-                            const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
-                            const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
-
-                            return (
-                              <Link to={item.linkTo} key={itemIdx} className="block">
-                                <Card className="ios-card hover:shadow-md transition-all">
-                                  <CardContent className="p-4">
-                                    <div>
-                                      <h3 className="font-medium">{title}</h3>
-                                      <p className="text-sm text-muted-foreground">
-                                        {details}
-                                      </p>
-                                    </div>
-                                  </CardContent>
-                                </Card>
-                              </Link>
-                            );
-                          })
-                        )}
+                          })}
                       </div>
                       
                       {/* Show more/less button for recommendations section */}

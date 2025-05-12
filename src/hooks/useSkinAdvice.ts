@@ -69,6 +69,11 @@ export const useSkinAdvice = ({
               .trim();
           });
           
+        // Ensure we have at least 8 items for recommendations section
+        if (sectionName === "Recommended Actions" && items.length < 8) {
+          console.warn(`Only ${items.length} recommendations found, expected at least 8`);
+        }
+          
         sections[sectionName] = items;
       } else {
         sections[sectionName] = cleanContent;
@@ -244,12 +249,13 @@ export const useSkinAdvice = ({
           - Be specific and actionable in your recommendations
           - DO NOT use bold text with asterisks (no ** formatting)
           - IMPORTANT: Ensure you provide only ONE of each section type (e.g., one "Brief Summary", one "Key Benefits", etc.)
+          - CRUCIAL: If asked for 8-10 recommendations, you MUST provide at least 8 distinct recommendations in a bullet list
           
           Organize your analysis into these types of sections:
           1. "### Brief Summary:" (2-3 sentences overview)
           2. "### Key Benefits/Observations:" (bullet points)
           3. "### Contributing Factors:" (bullet points for skin analysis)
-          4. "### Recommended Actions:" or "### Usage Instructions:" (numbered steps)
+          4. "### Recommended Actions:" or "### Usage Instructions:" (numbered steps or bullet points, at least 8 items when requested)
           5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)
           
           Be evidence-based and specific to the user's situation.
@@ -340,6 +346,42 @@ export const useSkinAdvice = ({
         formattedHtml: formatTextContent(cleanedContent),
         sections: parsedResponse
       };
+      
+      // Ensure we have recommendations (fallback if none are found)
+      if (!parsedResponse["Recommended Actions"] || 
+          (Array.isArray(parsedResponse["Recommended Actions"]) && 
+           parsedResponse["Recommended Actions"].length < 8)) {
+        console.log("Adding fallback recommendations as fewer than 8 were returned");
+        
+        // Create fallback recommendations if needed
+        const defaultRecommendations = [
+          "Use a hydrating serum: Apply hyaluronic acid serum before moisturizer",
+          "Try gentle exfoliation: Use a mild chemical exfoliant 2-3 times per week",
+          "Increase water intake: Aim for at least 8 glasses daily",
+          "Apply SPF daily: Even on cloudy days and when indoors",
+          "Consider a humidifier: Add moisture to your living space",
+          "Monitor the effects of supplements: Track any changes from recent additions",
+          "Practice stress-reduction techniques: Try mindfulness or short breaks",
+          "Use antioxidant-rich products: Look for vitamin C or E in formulations"
+        ];
+        
+        // Only add fallbacks if missing or not enough recommendations
+        if (!parsedResponse["Recommended Actions"]) {
+          parsedResponse["Recommended Actions"] = defaultRecommendations;
+        } else if (Array.isArray(parsedResponse["Recommended Actions"]) && 
+                  parsedResponse["Recommended Actions"].length < 8) {
+          // Fill in missing recommendations to get to 8
+          const missingCount = 8 - parsedResponse["Recommended Actions"].length;
+          const additionalRecs = defaultRecommendations.slice(0, missingCount);
+          parsedResponse["Recommended Actions"] = [
+            ...parsedResponse["Recommended Actions"],
+            ...additionalRecs
+          ];
+        }
+        
+        // Update the response with our supplemented recommendations
+        formattedResponse.sections = parsedResponse;
+      }
       
       // Cache the result before returning
       try {
