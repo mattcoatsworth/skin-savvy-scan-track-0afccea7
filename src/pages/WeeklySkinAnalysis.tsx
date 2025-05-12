@@ -346,7 +346,26 @@ const WeeklySkinAnalysis = () => {
   };
   
   // Function to generate AI advice using useSkinAdvice hook
-  const generateAiAdvice = async () => {
+  const generateAiAdvice = async (forceRefresh = false) => {
+    // Check if we have cached advice in localStorage
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const cacheKey = `weekly-skin-analysis-advice-${today}`;
+    
+    // If not forcing a refresh, try to get data from localStorage first
+    if (!forceRefresh) {
+      try {
+        const cachedAdvice = localStorage.getItem(cacheKey);
+        if (cachedAdvice) {
+          const parsedAdvice = JSON.parse(cachedAdvice);
+          setAiAdvice(parsedAdvice);
+          return; // Exit early if we have cached data
+        }
+      } catch (error) {
+        console.error("Error reading from cache:", error);
+        // Continue with API request if cache read fails
+      }
+    }
+    
     setAiLoading(true);
     try {
       const analysisData = generateMockData();
@@ -357,6 +376,13 @@ const WeeklySkinAnalysis = () => {
       
       if (advice) {
         setAiAdvice(advice);
+        
+        // Save to localStorage for future use
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(advice));
+        } catch (storageError) {
+          console.error("Error saving to localStorage:", storageError);
+        }
       } else {
         setAiAdvice({ formattedHtml: "", sections: {} });
       }
@@ -705,7 +731,7 @@ const WeeklySkinAnalysis = () => {
                       {/* Only show regenerate button if there is already advice */}
                       {aiAdvice.formattedHtml && (
                         <button 
-                          onClick={generateAiAdvice} 
+                          onClick={() => generateAiAdvice(true)} 
                           className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
                         >
                           Refresh

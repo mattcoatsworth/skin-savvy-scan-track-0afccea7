@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -51,11 +50,18 @@ export const useSkinAdvice = ({
         const items = sectionContent
           .split(/\n+/)
           .filter(item => item.trim().match(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/))
-          .map(item => item.replace(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/, '').trim());
+          .map(item => {
+            // Clean the item text, removing both formatting markers and asterisks for bold
+            return item
+              .replace(/^[\s]*[-*•]\s+|^[\s]*\d+\.\s+/, '')
+              .replace(/\*\*(.*?)\*\*/g, '$1')
+              .trim();
+          });
           
         sections[sectionName] = items;
       } else {
-        sections[sectionName] = sectionContent;
+        // Remove bold formatting for regular section content too
+        sections[sectionName] = sectionContent.replace(/\*\*(.*?)\*\*/g, '$1');
       }
     }
     
@@ -66,8 +72,11 @@ export const useSkinAdvice = ({
   const formatTextContent = (text: string): string => {
     if (!text) return "";
     
+    // Remove any bold formatting before other transformations
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '$1');
+    
     // Add proper HTML for sections with headings
-    let formattedText = text
+    formattedText = formattedText
       // Format main headings (e.g., "Key Observations:")
       .replace(/\n\s*([A-Z][A-Za-z\s]+):\s*\n/g, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
       .replace(/^([A-Z][A-Za-z\s]+):\s*\n/gm, '<h3 class="text-lg font-medium mt-4 mb-2">$1</h3>\n')
@@ -109,10 +118,6 @@ export const useSkinAdvice = ({
     formattedText = formattedText
       .replace(/\n([A-Za-z\s]+):\s*([^\n]+)/g, '\n<div class="flex justify-between my-1"><span class="font-medium">$1:</span> <span>$2</span></div>');
     
-    // Bold important terms
-    formattedText = formattedText
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
     // Format paragraphs
     formattedText = formattedText
       .replace(/\n\n/g, '</div><div class="mt-4 mb-3">')
@@ -138,6 +143,22 @@ export const useSkinAdvice = ({
     question: string, 
     context: Record<string, any> = {}
   ): Promise<AIResponse | null> => {
+    // Check if we have a cached response for this exact question in localStorage
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const cacheKey = `ai-advice-${adviceType}-${today}-${JSON.stringify(question)}`;
+    
+    try {
+      const cachedResponse = localStorage.getItem(cacheKey);
+      
+      if (cachedResponse) {
+        const parsedCache = JSON.parse(cachedResponse);
+        return parsedCache;
+      }
+    } catch (cacheError) {
+      console.error("Error reading from cache:", cacheError);
+      // Continue with API call if cache read fails
+    }
+    
     try {
       setIsLoading(true);
 
@@ -180,6 +201,7 @@ export const useSkinAdvice = ({
           4. Discuss evidence levels objectively
           5. Mention potential side effects and interactions
           6. Clarify that individual responses may vary
+          7. Do not use bold text formatting with asterisks (no ** formatting)
         `;
       } else if (adviceType === "weekly-insight" && structuredOutput) {
         systemPrompt = `
@@ -194,6 +216,7 @@ export const useSkinAdvice = ({
           5. "challenges": Array of 2 recommended challenges with "title", "description", "difficulty" (easy/medium/hard).
           
           Be specific, actionable, and evidence-based. Format the response as valid parseable JSON without additional text.
+          Do not use bold text formatting with asterisks (no ** formatting).
         `;
       } else {
         // For all pages, guide the AI to format content nicely with clear structure
@@ -209,7 +232,7 @@ export const useSkinAdvice = ({
           - Use key-value formatting for metrics or ratings (e.g., "Hydration: 85%")
           - Include specific data points when available
           - Be specific and actionable in your recommendations
-          - Use **bold** for important terms or concepts
+          - DO NOT use bold text with asterisks (no ** formatting)
           
           Organize your analysis into these types of sections:
           1. "### Brief Summary:" (2-3 sentences overview)
@@ -264,11 +287,26 @@ export const useSkinAdvice = ({
         try {
           // If data.content is already an object, return it
           if (typeof data.content === 'object' && data.content !== null) {
+            // Cache the result before returning
+            try {
+              localStorage.setItem(cacheKey, JSON.stringify(data.content));
+            } catch (cacheError) {
+              console.error("Failed to cache structured response:", cacheError);
+            }
             return data.content;
           }
           
           // Otherwise try to parse it as JSON
-          return JSON.parse(data.content);
+          const parsedContent = JSON.parse(data.content);
+          
+          // Cache the result before returning
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(parsedContent));
+          } catch (cacheError) {
+            console.error("Failed to cache structured response:", cacheError);
+          }
+          
+          return parsedContent;
         } catch (e) {
           console.error("Error parsing structured output:", e);
           return { 
@@ -282,12 +320,21 @@ export const useSkinAdvice = ({
 
       // Parse AI response into sections
       const parsedResponse = parseAIResponse(data.content);
-
-      // Format the text for better readability before returning
-      return {
+      
+      // Format the text for better readability
+      const formattedResponse = {
         formattedHtml: formatTextContent(data.content),
         sections: parsedResponse
       };
+      
+      // Cache the result before returning
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(formattedResponse));
+      } catch (cacheError) {
+        console.error("Failed to cache response:", cacheError);
+      }
+
+      return formattedResponse;
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
       toast.error("Failed to get skin advice. Please try again.");

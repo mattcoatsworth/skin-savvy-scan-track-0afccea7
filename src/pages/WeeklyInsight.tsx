@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import BackButton from "@/components/BackButton";
 import AppNavigation from "@/components/AppNavigation";
@@ -50,13 +51,36 @@ const WeeklyInsight = () => {
     const getSummary = async () => {
       if (!insightData) return;
       
+      // Check if we have cached summary in localStorage
+      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+      const cacheKey = `weekly-insight-summary-${today}`;
+      
+      try {
+        const cachedSummary = localStorage.getItem(cacheKey);
+        if (cachedSummary) {
+          setAiSummary(cachedSummary);
+          return; // Exit early if we have cached summary
+        }
+      } catch (error) {
+        console.error("Error reading from cache:", error);
+        // Continue with API request if cache read fails
+      }
+      
       try {
         const summaryResponse = await getAdvice(
           "Provide a concise summary of the weekly skin health changes and what they mean",
           { weekData: insightData }
         );
         
-        setAiSummary(getTextContent(summaryResponse));
+        const summaryText = getTextContent(summaryResponse);
+        setAiSummary(summaryText);
+        
+        // Save to localStorage for future use
+        try {
+          localStorage.setItem(cacheKey, summaryText);
+        } catch (storageError) {
+          console.error("Error saving to localStorage:", storageError);
+        }
       } catch (error) {
         console.error("Error getting AI summary:", error);
         setAiSummary("Unable to generate AI summary at this time.");

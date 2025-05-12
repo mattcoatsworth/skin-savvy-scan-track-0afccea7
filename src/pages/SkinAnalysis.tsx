@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -261,7 +260,27 @@ const SkinAnalysis = () => {
   };
 
   // Function to generate AI advice using useSkinAdvice hook
-  const generateAiAdvice = async () => {
+  const generateAiAdvice = async (forceRefresh = false) => {
+    // Check if we have cached advice in localStorage
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const cacheKey = `skin-analysis-advice-${today}`;
+    
+    // If not forcing a refresh, try to get data from localStorage first
+    if (!forceRefresh) {
+      try {
+        const cachedAdvice = localStorage.getItem(cacheKey);
+        if (cachedAdvice) {
+          const parsedAdvice = JSON.parse(cachedAdvice);
+          setAiAdvice(parsedAdvice);
+          return; // Exit early if we have cached data
+        }
+      } catch (error) {
+        console.error("Error reading from cache:", error);
+        // Continue with API request if cache read fails
+      }
+    }
+    
+    // If no cache or we need a refresh, proceed with API request
     setAiLoading(true);
     try {
       const advice = await getAdvice(
@@ -272,6 +291,13 @@ const SkinAnalysis = () => {
       // Make sure advice is not null or undefined before setting state
       if (advice) {
         setAiAdvice(advice);
+        
+        // Save to localStorage for future use
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(advice));
+        } catch (storageError) {
+          console.error("Error saving to localStorage:", storageError);
+        }
       } else {
         setAiAdvice({ formattedHtml: "", sections: {} });
       }
@@ -423,7 +449,7 @@ const SkinAnalysis = () => {
                         <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
                         {/* Regenerate button */}
                         <button 
-                          onClick={generateAiAdvice} 
+                          onClick={() => generateAiAdvice(true)} 
                           className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
                         >
                           Refresh
@@ -490,7 +516,7 @@ const SkinAnalysis = () => {
                         <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
                         {/* Regenerate button */}
                         <button 
-                          onClick={generateAiAdvice} 
+                          onClick={() => generateAiAdvice(true)} 
                           className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
                         >
                           Refresh
