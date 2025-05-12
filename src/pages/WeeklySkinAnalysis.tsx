@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -785,7 +786,7 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary - REMOVED the bold paragraph, keeping only the non-bold paragraph */}
+                    {/* Weekly Summary - Only showing the non-bold paragraph without any duplicate */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
@@ -853,7 +854,7 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards */}
+                {/* AI Sections in Formatted Cards - Modified to skip the Summary section entirely in this loop */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
