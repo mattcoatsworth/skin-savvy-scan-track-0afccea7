@@ -40,8 +40,14 @@ export const useAIDetailCache = () => {
       const productType = "ai-recommendation";
       const contentType = "detail";
       
-      // Convert DetailContent to a plain object that matches Json type
-      const jsonContent = content as unknown as Json;
+      // Convert DetailContent to a plain JSON object for storage
+      const jsonContent = {
+        title: content.title,
+        overview: content.overview,
+        details: content.details,
+        disclaimer: content.disclaimer,
+        recommendations: content.recommendations
+      } as unknown as Json;
       
       // Insert or update the content in Supabase
       const { error } = await supabase
@@ -75,6 +81,7 @@ export const useAIDetailCache = () => {
   const getCachedDetail = async (type: string, id: string): Promise<DetailContent | null> => {
     try {
       const productId = `${type}-${id}`;
+      console.log(`Attempting to fetch cached content for ${productId}`);
       const productType = "ai-recommendation";
       const contentType = "detail";
       
@@ -96,15 +103,18 @@ export const useAIDetailCache = () => {
         const content = data.content as any;
         
         // Type-safely extract content fields
-        return {
+        const detailContent: DetailContent = {
           title: typeof content.title === 'string' ? content.title : "",
           overview: typeof content.overview === 'string' ? content.overview : "",
           details: typeof content.details === 'string' ? content.details : "",
           disclaimer: typeof content.disclaimer === 'string' ? content.disclaimer : "",
           recommendations: Array.isArray(content.recommendations) ? content.recommendations : []
         };
+        
+        return detailContent;
       }
       
+      console.log(`No cached content found for ${productId}`);
       return null;
     } catch (error) {
       console.error("Failed to fetch cached detail content:", error);

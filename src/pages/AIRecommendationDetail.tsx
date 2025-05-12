@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -122,7 +121,25 @@ const AIRecommendationDetail = () => {
         console.log(`Fetching content for type=${recommendationType}, number=${recommendationNumber}`);
         
         // First try to get the cached content from Supabase
-        const cachedContent = await getCachedDetail(recommendationType, recommendationNumber);
+        let cachedContent = await getCachedDetail(recommendationType, recommendationNumber);
+        
+        if (!cachedContent && recommendationType === "factor") {
+          // Try alternative format (e.g., "ai-factor-1")
+          console.log("Trying alternative format with ai- prefix");
+          cachedContent = await getCachedDetail("ai-" + recommendationType, recommendationNumber);
+        }
+        
+        if (!cachedContent && fullId.includes('-')) {
+          // Try using the full ID as a fallback
+          console.log("Trying full ID as fallback");
+          
+          const parts = fullId.split('-');
+          if (parts.length >= 2) {
+            const altType = parts[0];
+            const altId = parts.slice(1).join('-');
+            cachedContent = await getCachedDetail(altType, altId);
+          }
+        }
         
         if (cachedContent) {
           console.log("Using cached detail content from Supabase", cachedContent);
