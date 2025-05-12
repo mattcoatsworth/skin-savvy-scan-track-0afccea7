@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
@@ -8,6 +7,7 @@ import ProductCard from "@/components/ProductCard";
 import { foodItems, productItems } from "@/data/products";
 import BackButton from "@/components/BackButton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import ScanButton from "@/components/ScanButton";
 
 // Mock data for insights
 const insightData = [
@@ -116,7 +116,7 @@ const Insights = () => {
         <h1 className="text-2xl font-bold">Products</h1>
       </header>
       
-      <InsightsTrends insights={insightData} className="mb-6" />
+      <ScanButton />
       
       <Tabs defaultValue="used" className="mb-6" onValueChange={setActiveTab}>
         <TabsList className="w-full grid grid-cols-3 mb-4">
