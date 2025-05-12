@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,6 +49,7 @@ const SkinAnalysis = () => {
     formattedHtml: "",
     sections: {}
   });
+  const [showAllRecommendations, setShowAllRecommendations] = useState(false);
   const { getAdvice, isLoading, getTextContent } = useSkinAdvice({ adviceType: "recommendation" });
   
   // Sample data
@@ -344,6 +346,17 @@ const SkinAnalysis = () => {
   
   // Process AI sections - add null check to provide fallback value
   const aiSections = processAIResponse(aiAdvice?.sections || {});
+
+  // Get recommendations section specifically
+  const recommendationsSection = aiSections.find(section => section.title === "Recommendations");
+  
+  // Check if we have AI recommendations or should use our static ones
+  const hasAiRecommendations = recommendationsSection && recommendationsSection.items.length > 0;
+  
+  // Show the AI recommendations or fall back to our static ones
+  const displayedItems = hasAiRecommendations 
+    ? (showAllRecommendations ? recommendationsSection.items : recommendationsSection.items.slice(0, 8)) 
+    : [];
   
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -469,42 +482,68 @@ const SkinAnalysis = () => {
             ) : (
               <>
                 {/* Display AI sections in a structured format */}
-                {aiSections.map((section, index) => (
-                  <div key={index} className="ai-section">
-                    <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
-                    
-                    <div className="space-y-3">
-                      {section.items.map((item, itemIdx) => {
-                        // Parse item text to extract title and details
-                        const hasColon = item.text.includes(":");
-                        const sectionConfig = {
-                          "Key Observations": "Observation",
-                          "Recommendations": "Recommendation",
-                          "Contributing Factors": "Factor",
-                          "Timeline": "Timeline"
-                        };
-                        const sectionPrefix = sectionConfig[section.title] || "Item";
-                        const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
-                        const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
+                {aiSections.map((section, index) => {
+                  // Skip empty sections
+                  if (section.items.length === 0) return null;
+                  
+                  // Determine if this is the recommendations section
+                  const isRecommendations = section.title === "Recommendations";
+                  
+                  // For recommendations section, implement the show more/less functionality
+                  const displayItems = isRecommendations && !showAllRecommendations && section.items.length > 8
+                    ? section.items.slice(0, 8)
+                    : section.items;
+                  
+                  return (
+                    <div key={index} className="ai-section">
+                      <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
+                      
+                      <div className="space-y-3">
+                        {displayItems.map((item, itemIdx) => {
+                          // Parse item text to extract title and details
+                          const hasColon = item.text.includes(":");
+                          const sectionConfig = {
+                            "Key Observations": "Observation",
+                            "Recommendations": "Recommendation",
+                            "Contributing Factors": "Factor",
+                            "Timeline": "Timeline"
+                          };
+                          const sectionPrefix = sectionConfig[section.title] || "Item";
+                          const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
+                          const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
 
-                        return (
-                          <Link to={item.linkTo} key={itemIdx} className="block">
-                            <Card className="ios-card hover:shadow-md transition-all">
-                              <CardContent className="p-4">
-                                <div>
-                                  <h3 className="font-medium">{title}</h3>
-                                  <p className="text-sm text-muted-foreground">
-                                    {details}
-                                  </p>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          </Link>
-                        );
-                      })}
+                          return (
+                            <Link to={item.linkTo} key={itemIdx} className="block">
+                              <Card className="ios-card hover:shadow-md transition-all">
+                                <CardContent className="p-4">
+                                  <div>
+                                    <h3 className="font-medium">{title}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                      {details}
+                                    </p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Show more/less button for recommendations section */}
+                      {isRecommendations && section.items.length > 8 && (
+                        <button 
+                          onClick={() => setShowAllRecommendations(!showAllRecommendations)}
+                          className="mt-4 text-skin-teal text-sm font-medium flex items-center"
+                        >
+                          {showAllRecommendations 
+                            ? "Show less" 
+                            : `Show ${section.items.length - 8} more recommendations`
+                          }
+                        </button>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 
                 {/* If there are no structured sections or sections parsing failed */}
                 {(!aiSections || aiSections.length === 0) && (
