@@ -69,9 +69,9 @@ export const useSkinAdvice = ({
               .trim();
           });
           
-        // Ensure we have at least 8 items for recommendations section
-        if (sectionName === "Recommended Actions" && items.length < 8) {
-          console.warn(`Only ${items.length} recommendations found, expected at least 8`);
+        // Log the number of items found for debugging (specifically for recommendations)
+        if (sectionName === "Recommended Actions") {
+          console.log(`Found ${items.length} recommendations in AI response`);
         }
           
         sections[sectionName] = items;
@@ -168,17 +168,22 @@ export const useSkinAdvice = ({
       if (cachedResponse) {
         const parsedCache = JSON.parse(cachedResponse);
         
-        // Check if the cached response has enough recommendations
+        // FIXED: Improved cache validation - ensure we have exactly 8 or more recommendations
         if (parsedCache.sections && parsedCache.sections["Recommended Actions"]) {
           const recommendations = parsedCache.sections["Recommended Actions"];
-          if (Array.isArray(recommendations) && recommendations.length < 8) {
-            console.log("Cached recommendations had fewer than 8 items, not using cache");
-            // Don't use the cache if it has fewer than 8 recommendations
-          } else {
+          if (Array.isArray(recommendations) && recommendations.length >= 8) {
+            console.log(`Using cached recommendations: found ${recommendations.length} items`);
             return parsedCache;
+          } else {
+            console.log(`Cache invalid: only ${Array.isArray(recommendations) ? recommendations.length : 0} recommendations found, need at least 8`);
+            // Don't use the cache if it doesn't have at least 8 recommendations
           }
         } else {
-          return parsedCache;
+          // For non-recommendation advice types, use cache as-is
+          if (adviceType !== "recommendation") {
+            return parsedCache;
+          }
+          console.log("Cache invalid: no Recommended Actions section found");
         }
       }
     } catch (cacheError) {
@@ -261,14 +266,14 @@ export const useSkinAdvice = ({
           - Be specific and actionable in your recommendations
           - DO NOT use bold text with asterisks (no ** formatting)
           - IMPORTANT: Ensure you provide only ONE of each section type (e.g., one "Brief Summary", one "Key Benefits", etc.)
-          - CRUCIAL: You MUST provide AT LEAST 8 DISTINCT recommendations in a bullet list format under the "### Recommended Actions:" section
-          - If asked for recommendations, you MUST ensure there are AT LEAST 8 distinct, specific recommendations
+          - CRUCIAL: You MUST provide EXACTLY 8 DISTINCT recommendations in a bullet list format under the "### Recommended Actions:" section
+          - If asked for recommendations, you MUST ensure there are EXACTLY 8 distinct, specific recommendations
           
           Organize your analysis into these types of sections:
           1. "### Brief Summary:" (2-3 sentences overview)
           2. "### Key Benefits/Observations:" (bullet points)
           3. "### Contributing Factors:" (bullet points for skin analysis)
-          4. "### Recommended Actions:" or "### Usage Instructions:" (numbered steps or bullet points, AT LEAST 8 items when requested)
+          4. "### Recommended Actions:" or "### Usage Instructions:" (EXACTLY 8 items in numbered list or bullet points)
           5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)
           
           Be evidence-based and specific to the user's situation.
@@ -289,7 +294,7 @@ export const useSkinAdvice = ({
             Question/Topic: ${question}
             
             Please provide personalized skin advice based on this information.
-            ${adviceType === "recommendation" ? "IMPORTANT: Please provide AT LEAST 8 distinct, specific recommendations." : ""}
+            ${adviceType === "recommendation" ? "IMPORTANT: Please provide EXACTLY 8 distinct, specific recommendations." : ""}
           `
         }
       ];
@@ -367,13 +372,13 @@ export const useSkinAdvice = ({
         parsedResponse["Recommended Actions"].length : 
         "Not an array");
       
-      // Ensure we have recommendations (fallback if none are found)
+      // FIXED: Always ensure we have exactly 8 recommendations
       if (!parsedResponse["Recommended Actions"] || 
-          (Array.isArray(parsedResponse["Recommended Actions"]) && 
-           parsedResponse["Recommended Actions"].length < 8)) {
-        console.log("Adding fallback recommendations as fewer than 8 were returned");
+          !Array.isArray(parsedResponse["Recommended Actions"]) || 
+          parsedResponse["Recommended Actions"].length !== 8) {
+        console.log(`Adding fallback recommendations as ${Array.isArray(parsedResponse["Recommended Actions"]) ? parsedResponse["Recommended Actions"].length : 0} were returned instead of 8`);
         
-        // Create fallback recommendations if needed
+        // Create exactly 8 fallback recommendations
         const defaultRecommendations = [
           "Use a hydrating serum: Apply hyaluronic acid serum before moisturizer",
           "Try gentle exfoliation: Use a mild chemical exfoliant 2-3 times per week",
@@ -385,12 +390,12 @@ export const useSkinAdvice = ({
           "Use antioxidant-rich products: Look for vitamin C or E in formulations"
         ];
         
-        // Only add fallbacks if missing or not enough recommendations
-        if (!parsedResponse["Recommended Actions"]) {
-          parsedResponse["Recommended Actions"] = defaultRecommendations;
-        } else if (Array.isArray(parsedResponse["Recommended Actions"]) && 
-                  parsedResponse["Recommended Actions"].length < 8) {
-          // Fill in missing recommendations to get to 8
+        // If no recommendations or not an array, use all defaults
+        if (!parsedResponse["Recommended Actions"] || !Array.isArray(parsedResponse["Recommended Actions"])) {
+          parsedResponse["Recommended Actions"] = [...defaultRecommendations];
+        }
+        // If too few, add from defaults to get to exactly 8
+        else if (parsedResponse["Recommended Actions"].length < 8) {
           const missingCount = 8 - parsedResponse["Recommended Actions"].length;
           const additionalRecs = defaultRecommendations.slice(0, missingCount);
           parsedResponse["Recommended Actions"] = [
@@ -398,12 +403,16 @@ export const useSkinAdvice = ({
             ...additionalRecs
           ];
         }
+        // If too many, truncate to exactly 8
+        else if (parsedResponse["Recommended Actions"].length > 8) {
+          parsedResponse["Recommended Actions"] = parsedResponse["Recommended Actions"].slice(0, 8);
+        }
         
-        // Update the response with our supplemented recommendations
+        // Update the response with our fixed recommendations
         formattedResponse.sections = parsedResponse;
       }
       
-      // Log the final recommendations count after potential additions
+      // Log the final recommendations count after fixing
       console.log("Final recommendations count:", 
         Array.isArray(formattedResponse.sections["Recommended Actions"]) ? 
         formattedResponse.sections["Recommended Actions"].length : 
