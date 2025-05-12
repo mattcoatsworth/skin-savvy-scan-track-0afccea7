@@ -256,7 +256,14 @@ export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4" }) => {
           For this weekly insight analysis, return a structured JSON response with these sections:
           
           1. "patternAnalysis": 2-3 paragraphs analyzing weekly skin patterns, connections between factors.
-          2. "detectedPatterns": Array of 3-4 patterns with "category" (e.g. "Food & Hydration", "Sleep & Stress"), "title", "description", and "correlation" (percentage).\n          3. "focusAreas": Array of 3 focus areas with "title", "description", "priority" (primary/secondary/tertiary), and "type" (product/habit/diet/lifestyle).\n          4. "metrics": Object with numerical metric changes: {\"overall\": +/-%, \"hydration\": +/-%, \"inflammation\": +/-%, \"breakouts\": +/-%}.\n          5. "challenges": Array of 2 recommended challenges with "title", "description", "difficulty" (easy/medium/hard).\n          \n          Be specific, actionable, and evidence-based. Format the response as valid parseable JSON without additional text.\n          Do not use bold text formatting with asterisks (no ** formatting).\n        `;
+          2. "detectedPatterns": Array of 3-4 patterns with "category" (e.g. "Food & Hydration", "Sleep & Stress"), "title", "description", and "correlation" (percentage).
+          3. "focusAreas": Array of 3 focus areas with "title", "description", "priority" (primary/secondary/tertiary), and "type" (product/habit/diet/lifestyle).
+          4. "metrics": Object with numerical metric changes: {"overall": +/-%, "hydration": +/-%, "inflammation": +/-%, "breakouts": +/-%}.
+          5. "challenges": Array of 2 recommended challenges with "title", "description", "difficulty" (easy/medium/hard).
+          
+          Be specific, actionable, and evidence-based. Format the response as valid parseable JSON without additional text.
+          Do not use bold text formatting with asterisks (no ** formatting).
+        `;
       } else {
         // For all pages, guide the AI to format content nicely with clear structure
         systemPrompt = `
@@ -276,7 +283,15 @@ export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4" }) => {
           - CRUCIAL: You MUST provide EXACTLY 8 DISTINCT recommendations in a bullet list format under the "### Recommended Actions:" section
           - If asked for recommendations, you MUST ensure there are EXACTLY 8 distinct, specific recommendations
           
-          Organize your analysis into these types of sections:\n          1. "### Brief Summary:" (2-3 sentences overview)\n          2. "### Key Benefits/Observations:" (bullet points)\n          3. "### Contributing Factors:" (bullet points for skin analysis)\n          4. "### Recommended Actions:" or "### Usage Instructions:" (EXACTLY 8 items in numbered list or bullet points)\n          5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)\n          \n          Be evidence-based and specific to the user's situation.\n        `;
+          Organize your analysis into these types of sections:
+          1. "### Brief Summary:" (2-3 sentences overview)
+          2. "### Key Benefits/Observations:" (bullet points)
+          3. "### Contributing Factors:" (bullet points for skin analysis)
+          4. "### Recommended Actions:" or "### Usage Instructions:" (EXACTLY 8 items in numbered list or bullet points)
+          5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)
+          
+          Be evidence-based and specific to the user's situation.
+        `;
       }
 
       // Create messages for the AI
@@ -346,7 +361,8 @@ export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4" }) => {
           console.error("Error parsing structured output:", e);
           return { 
             formattedHtml: "Failed to parse structured response", 
-            sections: {},\n            error: "Failed to parse structured response", 
+            sections: {}, 
+            error: "Failed to parse structured response", 
             rawContent: data.content 
           };
         }
