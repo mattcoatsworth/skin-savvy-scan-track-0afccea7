@@ -1,10 +1,17 @@
+
 import React, { useMemo, useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { ApiKeyProvider } from "@/contexts/ApiKeyContext";
 import { Toaster as SonnerToaster } from "sonner";
-import { useMediaQuery } from "@/hooks/use-mobile";
-import { isIOS as isIOSDevice } from "react-device-detect";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+// Components
+import AppNavigation from "@/components/AppNavigation";
+import ChatInput from "@/components/ChatInput";
+import SkinAuth from "@/components/SkinAuth";
 
 // Page imports
 import Onboarding from "@/pages/Onboarding";
@@ -57,20 +64,6 @@ const queryClient = new QueryClient();
 // Layout component that includes the AppNavigation but not the ChatInput
 const AppLayout = () => {
   const [session, setSession] = useState(null);
-  
-  useEffect(() => {
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
   
   return (
     <>
@@ -153,6 +146,10 @@ const App = () => (
               <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
               <Route path="/correlations-detail" element={<CorrelationsDetail />} />
               <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
+              <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/ai-timeline-:id" element={<AIRecommendationDetail />} />
               
               {/* Specific recommendation detail pages */}
               <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />

@@ -220,7 +220,9 @@ const AIRecommendationDetail = () => {
                     {content.details}
                   </div>
                   
-                  <Disclaimer text={content.disclaimer} className="mt-6" />
+                  <div className="mt-6 text-sm text-muted-foreground p-3 bg-slate-50 border border-slate-100 rounded-md">
+                    {content.disclaimer}
+                  </div>
                 </CardContent>
               </Card>
             )}
