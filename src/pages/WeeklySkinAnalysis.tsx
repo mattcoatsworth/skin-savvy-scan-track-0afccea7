@@ -785,7 +785,7 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary - keeping only the non-bold paragraph */}
+                    {/* Weekly Summary - REMOVED the bold paragraph, keeping only the non-bold paragraph */}
                     {aiAdvice.sections["Weekly Summary"] && (
                       <div className="mt-4 pt-4 border-t border-slate-100">
                         <p className="text-sm text-muted-foreground">
