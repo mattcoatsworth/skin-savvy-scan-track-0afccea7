@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 // Define proper types for our content structure
 interface DetailContent {
@@ -39,6 +40,9 @@ export const useAIDetailCache = () => {
       const productType = "ai-recommendation";
       const contentType = "detail";
       
+      // Convert DetailContent to a plain object that matches Json type
+      const jsonContent = content as unknown as Json;
+      
       // Insert or update the content in Supabase
       const { error } = await supabase
         .from('ai_generated_content')
@@ -46,7 +50,7 @@ export const useAIDetailCache = () => {
           product_id: productId,
           product_type: productType,
           content_type: contentType,
-          content: content,
+          content: jsonContent,
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'product_id, product_type, content_type'
@@ -91,11 +95,12 @@ export const useAIDetailCache = () => {
       if (data?.content && typeof data.content === 'object' && data.content !== null) {
         const content = data.content as any;
         
+        // Type-safely extract content fields
         return {
-          title: content.title || "",
-          overview: content.overview || "",
-          details: content.details || "",
-          disclaimer: content.disclaimer || "",
+          title: typeof content.title === 'string' ? content.title : "",
+          overview: typeof content.overview === 'string' ? content.overview : "",
+          details: typeof content.details === 'string' ? content.details : "",
+          disclaimer: typeof content.disclaimer === 'string' ? content.disclaimer : "",
           recommendations: Array.isArray(content.recommendations) ? content.recommendations : []
         };
       }
