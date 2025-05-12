@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,7 +35,8 @@ const AIRecommendationDetail = () => {
   console.log("AIRecommendationDetail: Location state:", location.state);
 
   // Check if we're in testai mode (like ProductAITestPage)
-  const isTestAiMode = location.pathname.endsWith('/testai');
+  const isTestAiMode = location.pathname.includes('/testai');
+  console.log("TestAI mode:", isTestAiMode);
   
   // Extract ID from various possible URL formats
   const fullId = params['*'] || params.id || params.type || "";
@@ -73,6 +73,16 @@ const AIRecommendationDetail = () => {
         return "Key Observation";
       case "timeline":
         return "Timeline Insight";
+      case "skincare":
+        return "Skincare Recommendation";
+      case "food":
+        return "Nutrition Recommendation";
+      case "supplements":
+        return "Supplement Recommendation";
+      case "lifestyle":
+        return "Lifestyle Recommendation";
+      case "makeup":
+        return "Makeup Recommendation";
       default:
         return type.charAt(0).toUpperCase() + type.slice(1);
     }
@@ -107,22 +117,39 @@ const AIRecommendationDetail = () => {
       
       try {
         console.log(`Attempting to fetch content for: ${fullId}`);
+        console.log("With location state:", location.state);
         
         // First check for state passed from a card (similar to ProductDetail)
         if (location.state?.recommendation) {
           console.log("Found recommendation data in location state:", location.state.recommendation);
           const recommendationText = location.state.recommendation.text;
+          const recommendationType = location.state.recommendation.type || params.type || "action";
+          const recommendationId = location.state.recommendation.id || recommendationNumber || "1";
+          
+          console.log(`Processing recommendation from state: ${recommendationType}/${recommendationId} - ${recommendationText}`);
           
           // If we're in testai mode, generate content directly like ProductAITestPage does
           if (isTestAiMode && recommendationText) {
             console.log("TestAI mode detected, generating content directly");
             const baseTitle = typeof recommendationText === 'string' 
-              ? recommendationText.split(":")[0] 
+              ? recommendationText
               : formatTitle(fullId);
             
-            const generatedContent = await generateNewContent(baseTitle);
+            const generatedContent = await generateNewContent(baseTitle, recommendationType, recommendationId);
             if (generatedContent) {
               setContent(generatedContent);
+              setIsLoading(false);
+              return;
+            }
+          }
+          
+          // Check cache with recommendation type and ID from state
+          if (recommendationType && recommendationId) {
+            console.log(`Checking cache with type=${recommendationType}, id=${recommendationId}`);
+            const cachedContent = await getCachedDetail(recommendationType, recommendationId);
+            if (cachedContent) {
+              console.log("Found content in cache with recommendation state data");
+              setContent(cachedContent);
               setIsLoading(false);
               return;
             }
@@ -199,13 +226,18 @@ const AIRecommendationDetail = () => {
         
         // Build the base title from the ID for the prompt or use text from state
         const baseTitle = location.state?.recommendation?.text 
-          ? location.state.recommendation.text.split(":")[0]
+          ? location.state.recommendation.text
           : formatTitle(fullId);
         
         console.log("Generating content with base title:", baseTitle);
         
         // Generate content immediately with minimal placeholder
-        const generatedContent = await generateNewContent(baseTitle);
+        const generatedContent = await generateNewContent(
+          baseTitle, 
+          location.state?.recommendation?.type || recommendationType, 
+          location.state?.recommendation?.id || recommendationNumber
+        );
+        
         if (generatedContent) {
           setContent(generatedContent);
           
@@ -234,8 +266,14 @@ const AIRecommendationDetail = () => {
   }, [fullId, recommendationType, recommendationNumber, location.state, isTestAiMode]);
 
   // Function to generate content when not found in cache
-  const generateNewContent = async (baseTitle: string): Promise<DetailContent | null> => {
+  const generateNewContent = async (
+    baseTitle: string, 
+    recommendationType: string = "recommendation",
+    recommendationId: string = "1"
+  ): Promise<DetailContent | null> => {
     try {
+      console.log(`Generating content for: "${baseTitle}" (${recommendationType}/${recommendationId})`);
+      
       // First set temporary content for UI responsiveness
       const tempContent: DetailContent = {
         title: baseTitle,
@@ -251,6 +289,7 @@ const AIRecommendationDetail = () => {
       // Generate detailed content using AI
       const detailPrompt = `
         Create detailed information about the skin care topic: "${baseTitle}".
+        This is a recommendation of type: "${recommendationType}".
         
         Please provide:
         1. A clear title for this topic (just the key concept, 2-5 words)
@@ -270,7 +309,7 @@ const AIRecommendationDetail = () => {
       const response = await getAdvice(detailPrompt);
       
       if (response && response.sections) {
-        return {
+        const generatedContent = {
           title: response.sections["Title"] as string || baseTitle,
           overview: response.sections["Overview"] as string || tempContent.overview,
           details: response.sections["Details"] as string || tempContent.details,
@@ -279,6 +318,11 @@ const AIRecommendationDetail = () => {
             ? response.sections["Recommendations"] as string[] 
             : tempContent.recommendations
         };
+        
+        // Cache the generated content
+        await cacheDetailContent(recommendationType, recommendationId, generatedContent);
+        
+        return generatedContent;
       }
       
       return tempContent;
@@ -313,7 +357,8 @@ const AIRecommendationDetail = () => {
               <p className="text-sm mb-4 text-gray-600">
                 URL ID: {fullId}<br />
                 Parsed Type: {recommendationType}<br />
-                Parsed Number: {recommendationNumber}
+                Parsed Number: {recommendationNumber}<br />
+                Location State: {JSON.stringify(location.state?.recommendation || {})}
               </p>
               <Button 
                 onClick={() => navigate(-1)}
