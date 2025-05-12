@@ -1,9 +1,9 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { Smile, Droplet, Utensils, Pill, Circle, Activity, Calendar } from "lucide-react";
+import { Smile, Droplet, Utensils, Pill, Circle, Activity, Calendar, ChevronRight } from "lucide-react";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -69,6 +69,14 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   recommendations = [],
   className,
 }) => {
+  // State to control how many recommendations to show
+  const [showAllRecommendations, setShowAllRecommendations] = useState(false);
+  
+  // Only show 3 recommendations by default, or all if expanded
+  const displayedRecommendations = showAllRecommendations 
+    ? recommendations 
+    : recommendations.slice(0, 3);
+  
   return (
     <Link to="/skin">
       <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
@@ -83,39 +91,51 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           </div>
           
-          <div className="mb-3">
+          <div className="mb-4">
             <p className="text-sm text-muted-foreground mb-2">Contributing Factors:</p>
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap gap-2">
               {factors.map((factor, index) => (
                 <span 
                   key={index} 
-                  className={`factor-tag ${getFactorColor(factor.type)} flex items-center`}
+                  className={`${getFactorColor(factor.type)} flex items-center px-3 py-1.5 rounded-full text-sm`}
                 >
-                  <span className="mr-1">{factor.icon}</span> {factor.type}: {factor.status}
+                  <span className="mr-1.5">{factor.icon}</span> {factor.status}
                 </span>
               ))}
             </div>
           </div>
           
           {recommendations.length > 0 && (
-            <div className="mb-3 pt-2 border-t border-gray-100">
+            <div className="mb-3 pt-3 border-t border-gray-100">
               <p className="text-sm text-muted-foreground mb-2">For You Recommendations:</p>
-              <div className="flex flex-wrap">
-                {recommendations.map((recommendation, index) => (
+              <div className="flex flex-wrap gap-2">
+                {displayedRecommendations.map((recommendation, index) => (
                   <Link 
                     key={index} 
                     to={recommendation.linkTo}
-                    className={`factor-tag ${getRecommendationColor(recommendation.type)} flex items-center cursor-pointer hover:opacity-80 transition-opacity`}
+                    className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
                   >
-                    <span className="mr-1">{recommendation.icon}</span> {recommendation.text}
+                    <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
                   </Link>
                 ))}
               </div>
+              
+              {recommendations.length > 3 && (
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowAllRecommendations(!showAllRecommendations);
+                  }}
+                  className="mt-2 text-skin-teal text-sm font-medium flex items-center"
+                >
+                  {showAllRecommendations ? "Show less" : `Show ${recommendations.length - 3} more recommendations`}
+                </button>
+              )}
             </div>
           )}
           
-          <div className="text-center mt-4">
-            View Full Analysis →
+          <div className="text-center mt-4 text-skin-teal flex items-center justify-center">
+            View Full Analysis <ChevronRight className="h-4 w-4 ml-1" />
           </div>
         </CardContent>
       </Card>
