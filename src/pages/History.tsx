@@ -11,7 +11,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Camera, Image, Smile } from "lucide-react";
+import { Camera, Image, Smile, Sun, Moon } from "lucide-react";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
 import InsightsTrends from "@/components/InsightsTrends";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
@@ -98,6 +98,12 @@ const History = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   
+  // Add state for today's selfies
+  const [todaysSelfies, setTodaysSelfies] = useState({
+    am: null as string | null,
+    pm: null as string | null
+  });
+  
   // Set the default active tab
   const [activeTab, setActiveTab] = useState("daily");
   
@@ -144,6 +150,14 @@ const History = () => {
     event.preventDefault();
     event.stopPropagation();
     
+    // Special handling for today's selfies
+    if (dayId === "today") {
+      setCurrentDayId("today");
+      setCurrentPhotoType(photoType);
+      setIsPhotoDialogOpen(true);
+      return;
+    }
+    
     // Only open dialog if the photo is null or undefined (not uploaded yet)
     const dayLog = dayLogs.find(log => log.id === dayId);
     // Fix: changed the instanceof check to a more appropriate type check
@@ -162,6 +176,16 @@ const History = () => {
   const handleTakePhoto = () => {
     // In a real app, this would open the camera
     console.log(`Taking photo for ${currentPhotoType} on day ${currentDayId}`);
+    
+    // Simulate adding a photo for today's selfies
+    if (currentDayId === "today") {
+      const placeholderImage = "https://source.unsplash.com/random/300x300/?face";
+      setTodaysSelfies(prev => ({
+        ...prev,
+        [currentPhotoType || "am"]: placeholderImage
+      }));
+    }
+    
     // Close the dialog after action
     setIsPhotoDialogOpen(false);
   };
@@ -170,6 +194,16 @@ const History = () => {
   const handleSelectFromGallery = () => {
     // In a real app, this would open the photo gallery
     console.log(`Selecting from gallery for ${currentPhotoType} on day ${currentDayId}`);
+    
+    // Simulate adding a photo for today's selfies
+    if (currentDayId === "today") {
+      const placeholderImage = "https://source.unsplash.com/random/300x300/?skin";
+      setTodaysSelfies(prev => ({
+        ...prev,
+        [currentPhotoType || "am"]: placeholderImage
+      }));
+    }
+    
     // Close the dialog after action
     setIsPhotoDialogOpen(false);
   };
@@ -315,6 +349,66 @@ const History = () => {
             
             {/* SkinIndexComparison component */}
             <SkinIndexComparison className="mb-6" gender="female" age={25} />
+            
+            {/* Add Today's Selfies Section */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
+              <Card className="ios-card">
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* AM Selfie */}
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center mb-2">
+                        <Sun className="h-4 w-4 mr-1 text-amber-500" />
+                        <h3 className="font-medium text-sm">Morning</h3>
+                      </div>
+                      <div 
+                        className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
+                        onClick={(e) => handlePhotoClick("today", "am", e)}
+                      >
+                        {todaysSelfies.am ? (
+                          <img 
+                            src={todaysSelfies.am} 
+                            alt="Morning Selfie" 
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center">
+                            <Camera className="h-6 w-6 mb-1" />
+                            <span className="text-xs">Add AM Photo</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* PM Selfie */}
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center mb-2">
+                        <Moon className="h-4 w-4 mr-1 text-indigo-400" />
+                        <h3 className="font-medium text-sm">Evening</h3>
+                      </div>
+                      <div 
+                        className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
+                        onClick={(e) => handlePhotoClick("today", "pm", e)}
+                      >
+                        {todaysSelfies.pm ? (
+                          <img 
+                            src={todaysSelfies.pm} 
+                            alt="Evening Selfie" 
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center">
+                            <Camera className="h-6 w-6 mb-1" />
+                            <span className="text-xs">Add PM Photo</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
             
             {/* InsightsTrends component */}
             <InsightsTrends insights={insightData} className="mb-6" />
