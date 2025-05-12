@@ -453,18 +453,15 @@ const SkinAnalysis = () => {
                         <Link to={item.linkTo} key={itemIdx} className="block">
                           <Card className="ios-card hover:shadow-md transition-all">
                             <CardContent className="p-4">
-                              <div className="flex items-start">
-                                {getIconComponent("info")}
-                                <div>
-                                  <h3 className="font-medium">
-                                    {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                  </h3>
-                                  <p className="text-sm text-muted-foreground">
-                                    {item.text.includes(":") 
-                                      ? item.text.split(":").slice(1).join(":").trim()
-                                      : item.text}
-                                  </p>
-                                </div>
+                              <div>
+                                <h3 className="font-medium">
+                                  {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                  {item.text.includes(":") 
+                                    ? item.text.split(":").slice(1).join(":").trim()
+                                    : item.text}
+                                </p>
                               </div>
                             </CardContent>
                           </Card>
