@@ -24,6 +24,7 @@ import TrendChart from "@/components/TrendChart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Badge } from "@/components/ui/badge";
 import SelfieCarousel from "@/components/SelfieCarousel";
+import SelfieSection from "@/components/SelfieSection";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -614,7 +615,7 @@ const History = () => {
     return 'inline bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
   };
 
-  // Daily Log Cards - UPDATING to make selfie sections consistent with the requested design
+  // Daily Log Cards - UPDATED to use the SelfieSection component
   const renderDayLogs = () => {
     return dayLogs.map((log) => (
       <Link key={log.id} to={`/day-log/${log.id}`}>
@@ -645,68 +646,15 @@ const History = () => {
               </div>
             </div>
             
-            {/* UPDATED SELFIES SECTION to match the reference image */}
+            {/* UPDATED: Using the standardized SelfieSection component */}
             <div className="mt-4 pt-3 border-t border-gray-100">
-              <h4 className="text-sm font-medium mb-2">Selfies</h4>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Morning Selfies */}
-                <div className="flex flex-col">
-                  <span className="text-sm text-center text-slate-400 mb-2">AM</span>
-                  <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                    {log.amSelfies?.[0] ? (
-                      <div className="relative w-full h-full">
-                        <img 
-                          src={log.amSelfies[0]} 
-                          alt="Morning Selfie" 
-                          className="object-cover w-full h-full" 
-                        />
-                        <div className="absolute top-0 left-0 w-full p-2 bg-white bg-opacity-90">
-                          <span className="text-black text-sm">Morning Selfie</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full w-full">
-                        <Camera className="h-10 w-10 text-gray-300" />
-                        <span className="text-gray-400 mt-2">No Photo</span>
-                      </div>
-                    )}
-                  </div>
-                  {log.amSelfies && log.amSelfies.filter(img => img).length > 1 && (
-                    <span className="text-sm text-center text-slate-500 mt-2">
-                      +{log.amSelfies.filter(img => img).length - 1} more photos
-                    </span>
-                  )}
-                </div>
-                
-                {/* Evening Selfies */}
-                <div className="flex flex-col">
-                  <span className="text-sm text-center text-slate-400 mb-2">PM</span>
-                  <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                    {log.pmSelfies?.[0] ? (
-                      <div className="relative w-full h-full">
-                        <img 
-                          src={log.pmSelfies[0]} 
-                          alt="Evening Selfie" 
-                          className="object-cover w-full h-full" 
-                        />
-                        <div className="absolute top-0 left-0 w-full p-2 bg-white bg-opacity-90">
-                          <span className="text-black text-sm">Evening Selfie</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full w-full">
-                        <Camera className="h-10 w-10 text-gray-300" />
-                        <span className="text-gray-400 mt-2">No Photo</span>
-                      </div>
-                    )}
-                  </div>
-                  {log.pmSelfies && log.pmSelfies.filter(img => img).length > 1 && (
-                    <span className="text-sm text-center text-slate-500 mt-2">
-                      +{log.pmSelfies.filter(img => img).length - 1} more photos
-                    </span>
-                  )}
-                </div>
-              </div>
+              <SelfieSection 
+                amImages={log.amSelfies || []}
+                pmImages={log.pmSelfies || []}
+                readOnly={true}
+                maxImages={4}
+                title="Selfies"
+              />
             </div>
           </CardContent>
         </Card>
@@ -757,28 +705,18 @@ const History = () => {
             {/* SkinIndexComparison component */}
             <SkinIndexComparison className="mb-6" gender="female" age={25} />
             
-            {/* Add Today's Selfies Section */}
+            {/* Today's Selfies Section */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Morning Selfie Carousel */}
-                    <SelfieCarousel
-                      type="am"
-                      images={todaysSelfies.am}
-                      onAddImage={handleAddSelfie}
-                      label="Morning"
-                    />
-                    
-                    {/* Evening Selfie Carousel */}
-                    <SelfieCarousel
-                      type="pm" 
-                      images={todaysSelfies.pm}
-                      onAddImage={handleAddSelfie}
-                      label="Evening"
-                    />
-                  </div>
+                  <SelfieSection 
+                    amImages={todaysSelfies.am}
+                    pmImages={todaysSelfies.pm}
+                    onAddImage={handleAddSelfie}
+                    maxImages={4}
+                    title="Selfies"
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -868,7 +806,7 @@ const History = () => {
               )}
             </div>
             
-            {/* Daily Log Cards - Using our new consistent rendering function */}
+            {/* Daily Log Cards - Using our updated rendering function with SelfieSection */}
             <div className="flex flex-col gap-y-6">
               {renderDayLogs()}
             </div>
