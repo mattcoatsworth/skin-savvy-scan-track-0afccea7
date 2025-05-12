@@ -58,7 +58,7 @@ const SelfieSection = ({
     setIsPhotoDialogOpen(false);
   };
 
-  // Count valid images (filtering out null or undefined values)
+  // Count valid images
   const amCount = amImages.filter(img => img).length;
   const pmCount = pmImages.filter(img => img).length;
 
