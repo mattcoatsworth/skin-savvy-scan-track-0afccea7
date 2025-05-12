@@ -10,6 +10,7 @@ type ActionType = {
   linkTo?: string;
   id?: string;
   supplementId?: string;
+  type?: string; // Add type for AI recommendations
 };
 
 type SuggestedActionsProps = {
@@ -32,7 +33,12 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
       return action.linkTo;
     }
     
-    // If we have an ID, link to specific action detail page
+    // If we have an ID and type for AI recommendation, use the consistent testai format
+    if (action.id && action.type) {
+      return `/recommendations-detail/${action.type}/${action.id}/testai`;
+    }
+    
+    // If we have just an ID, link to specific action detail page
     if (action.id) {
       return `/suggested-actions/${action.id}`;
     }
@@ -54,7 +60,17 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className 
         {actions.map((action, index) => {
           const path = getActionLink(action);
           return (
-            <Link key={index} to={path}>
+            <Link 
+              key={index} 
+              to={path}
+              state={{ 
+                recommendation: {
+                  text: action.text,
+                  type: action.type || "recommendation",
+                  id: action.id || String(index)
+                }
+              }}
+            >
               <Card className="ios-card border-l-4 border-l-skin-teal hover:shadow-md transition-all cursor-pointer">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center">

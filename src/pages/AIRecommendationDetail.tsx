@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,10 +29,18 @@ interface DetailContent {
 const AIRecommendationDetail = () => {
   // Extract all possible ID parameters from URL
   const params = useParams();
-  const fullId = params['*'] || params.id || params.type || "";
+  const location = useLocation();
   const navigate = useNavigate();
   
   console.log("AIRecommendationDetail: All URL params:", params);
+  console.log("AIRecommendationDetail: Location state:", location.state);
+
+  // Check if we're in testai mode (like ProductAITestPage)
+  const isTestAiMode = location.pathname.endsWith('/testai');
+  
+  // Extract ID from various possible URL formats
+  const fullId = params['*'] || params.id || params.type || "";
+  
   console.log("AIRecommendationDetail: Using fullId:", fullId);
   
   const [isLoading, setIsLoading] = useState(true);
@@ -89,8 +97,8 @@ const AIRecommendationDetail = () => {
 
   useEffect(() => {
     const fetchContent = async () => {
-      if (!fullId) {
-        console.error("Invalid recommendation ID: empty");
+      if (!fullId && !location.state?.recommendation) {
+        console.error("Invalid recommendation ID: empty and no state passed");
         setIsLoading(false);
         return;
       }
@@ -99,6 +107,27 @@ const AIRecommendationDetail = () => {
       
       try {
         console.log(`Attempting to fetch content for: ${fullId}`);
+        
+        // First check for state passed from a card (similar to ProductDetail)
+        if (location.state?.recommendation) {
+          console.log("Found recommendation data in location state:", location.state.recommendation);
+          const recommendationText = location.state.recommendation.text;
+          
+          // If we're in testai mode, generate content directly like ProductAITestPage does
+          if (isTestAiMode && recommendationText) {
+            console.log("TestAI mode detected, generating content directly");
+            const baseTitle = typeof recommendationText === 'string' 
+              ? recommendationText.split(":")[0] 
+              : formatTitle(fullId);
+            
+            const generatedContent = await generateNewContent(baseTitle);
+            if (generatedContent) {
+              setContent(generatedContent);
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
         
         // Generate variants for lookup to maximize chance of finding content
         const variants = getRecommendationIdVariants(recommendationType, recommendationNumber, fullId);
@@ -168,8 +197,12 @@ const AIRecommendationDetail = () => {
         // No cached content anywhere, generate new content
         console.log("No cached content found, generating new content");
         
-        // Build the base title from the ID for the prompt
-        const baseTitle = formatTitle(fullId);
+        // Build the base title from the ID for the prompt or use text from state
+        const baseTitle = location.state?.recommendation?.text 
+          ? location.state.recommendation.text.split(":")[0]
+          : formatTitle(fullId);
+        
+        console.log("Generating content with base title:", baseTitle);
         
         // Generate content immediately with minimal placeholder
         const generatedContent = await generateNewContent(baseTitle);
@@ -198,7 +231,7 @@ const AIRecommendationDetail = () => {
     };
     
     fetchContent();
-  }, [fullId, recommendationType, recommendationNumber]);
+  }, [fullId, recommendationType, recommendationNumber, location.state, isTestAiMode]);
 
   // Function to generate content when not found in cache
   const generateNewContent = async (baseTitle: string): Promise<DetailContent | null> => {

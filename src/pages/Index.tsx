@@ -20,49 +20,49 @@ const Index = () => {
   // Add fallback static recommendations in case AI fails
   const fallbackRecommendations = [
     { 
-      type: "skincare" as const, 
+      type: "skincare", 
       text: "Use gentle cleanser", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/gentle-cleanser" 
     },
     { 
-      type: "food" as const, 
+      type: "food", 
       text: "Limit dairy intake", 
       icon: <Salad className="h-4 w-4" />,
       linkTo: "/recommendations-detail/limit-dairy"
     },
     { 
-      type: "lifestyle" as const, 
+      type: "lifestyle", 
       text: "Practice meditation", 
       icon: <CloudSun className="h-4 w-4" />,
       linkTo: "/recommendations-detail/meditation"
     },
     { 
-      type: "skincare" as const, 
+      type: "skincare", 
       text: "Try vitamin C serum", 
       icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/vitamin-c-serum" 
+      linkTo: "/recommendations-detail/vitamin-c-serum/testai" 
     },
     { 
-      type: "food" as const, 
+      type: "food", 
       text: "Add antioxidant foods", 
       icon: <Salad className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/antioxidants"
+      linkTo: "/recommendations-detail/antioxidants/testai"
     },
     { 
-      type: "lifestyle" as const, 
+      type: "lifestyle", 
       text: "Morning hydration", 
       icon: <CloudSun className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/hydration"
+      linkTo: "/recommendations-detail/hydration/testai"
     },
     { 
-      type: "skincare" as const, 
+      type: "skincare", 
       text: "SPF reapplication", 
       icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/spf" 
+      linkTo: "/recommendations-detail/spf/testai" 
     },
     { 
-      type: "supplements" as const, 
+      type: "supplements", 
       text: "Add zinc", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/zinc"
@@ -71,41 +71,6 @@ const Index = () => {
 
   // We no longer need to define static recommendations here as they'll be dynamically generated
   // by the DailySkinSnapshot component using the useSkinAdvice hook
-
-  const recentLogs = [
-    { 
-      title: "Retinol Cream", 
-      status: "positive" as const, 
-      description: "No reaction",
-      rating: 85,
-      id: "retinol-cream",
-      linkTo: "/recent-logs/retinol-cream"
-    },
-    { 
-      title: "Whey Protein", 
-      status: "negative" as const, 
-      description: "Possible acne trigger",
-      rating: 30,
-      id: "whey-protein",
-      linkTo: "/recent-logs/whey-protein"
-    },
-    { 
-      title: "Avocado", 
-      status: "positive" as const, 
-      description: "Skin hydration improved",
-      rating: 92,
-      id: "avocado",
-      linkTo: "/recent-logs/avocado"
-    },
-    { 
-      title: "New Foundation", 
-      status: "neutral" as const, 
-      description: "No noticeable change",
-      rating: 65,
-      id: "new-foundation",
-      linkTo: "/recent-logs/new-foundation"
-    },
-  ];
 
   // Get current date and the past 7 days
   const getDayName = (date: Date) => {
@@ -160,16 +125,19 @@ const Index = () => {
     { 
       text: "Try logging your water intake today",
       linkTo: "/day-log/today", // Link directly to today's log
-      id: "water-intake"
+      id: "water-intake",
+      type: "action"
     },
     { 
       text: "Consider pausing this supplement to see if irritation decreases",
       id: "supplement-irritation", 
-      supplementId: "collagen" // Add supplementId to link directly to supplement page
+      supplementId: "collagen", // Add supplementId to link directly to supplement page
+      type: "action"
     },
     { 
       text: "Use SPF more consistently this week",
-      id: "spf-consistency"
+      id: "spf-consistency",
+      type: "action"
     },
   ];
 

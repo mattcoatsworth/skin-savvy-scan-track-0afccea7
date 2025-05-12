@@ -154,6 +154,11 @@ const App = () => (
               <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
               
               {/* AI Recommendation routes - all possible formats */}
+              {/* Support for /testai suffix */}
+              <Route path="/recommendations-detail/:id/testai" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/:type/:id/testai" element={<AIRecommendationDetail />} />
+              
+              {/* Standard AI recommendation formats */}
               <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />

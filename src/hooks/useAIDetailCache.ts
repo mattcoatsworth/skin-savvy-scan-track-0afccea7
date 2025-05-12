@@ -43,13 +43,13 @@ export const useAIDetailCache = () => {
       console.log(`Attempting to cache content for ${productId}`);
       
       // Properly cast the content object to the Json type expected by Supabase
-      const jsonContent: Json = {
+      const jsonContent = {
         title: content.title,
         overview: content.overview,
         details: content.details,
         disclaimer: content.disclaimer,
         recommendations: content.recommendations
-      };
+      } as Json;
       
       // Insert or update the content in Supabase
       const { error } = await supabase

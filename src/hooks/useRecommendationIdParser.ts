@@ -11,6 +11,7 @@ export const useRecommendationIdParser = () => {
    * - timeline-1
    * - timeline/1
    * - ai/timeline/1
+   * - /testai suffix
    * 
    * @param fullId The full ID string from the URL
    * @returns Object containing recommendationType and recommendationNumber
@@ -28,8 +29,11 @@ export const useRecommendationIdParser = () => {
     }
     
     try {
+      // First strip out any /testai suffix - this is just a route modifier
+      const idWithoutTestAi = fullId.replace('/testai', '');
+      
       // Handle URL encoded slashes (convert to standard format)
-      const normalizedId = fullId.replace(/%2F/g, '/');
+      const normalizedId = idWithoutTestAi.replace(/%2F/g, '/');
       
       // For URLs like /recommendations-detail/ai-timeline-1
       if (normalizedId.startsWith("ai-")) {
