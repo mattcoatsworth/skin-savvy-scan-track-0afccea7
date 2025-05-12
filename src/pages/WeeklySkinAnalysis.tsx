@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -530,7 +529,7 @@ const WeeklySkinAnalysis = () => {
               </div>
             </div>
 
-            {/* Category Analysis - MODIFIED: Removed section titles from inside cards */}
+            {/* Category Analysis - MODIFYING THIS SECTION */}
             <div className="space-y-6 mb-6">
               <h2 className="text-lg font-semibold mb-3">Category Analysis</h2>
               
@@ -564,7 +563,7 @@ const WeeklySkinAnalysis = () => {
                         
                         <div className="space-y-4">
                           {data.factors.map((factor, idx) => (
-                            <div key={idx} className="border-t pt-3">
+                            <div key={idx} className={idx > 0 ? "border-t pt-3" : ""}>
                               <div className="flex justify-between">
                                 <div>
                                   <span className="font-medium">{factor.name}</span>
@@ -853,7 +852,7 @@ const WeeklySkinAnalysis = () => {
                   </div>
                 </div>
 
-                {/* AI Sections in Formatted Cards - MODIFIED: Removed section titles from cards */}
+                {/* AI Sections in Formatted Cards - MODIFYING THIS SECTION */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
                   if (section.title === "Summary") return null; // Skip summary as it's displayed above
                   
@@ -876,11 +875,6 @@ const WeeklySkinAnalysis = () => {
                                           ? item.text.split(":").slice(1).join(":").trim()
                                           : item.text}
                                       </p>
-                                    </div>
-                                    <div className="ml-2 text-muted-foreground">
-                                      <span className="text-xs">
-                                        {section.title}
-                                      </span>
                                     </div>
                                   </div>
                                 </Link>
