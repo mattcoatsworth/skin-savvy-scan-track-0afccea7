@@ -56,8 +56,9 @@ export const useRecommendations = () => {
         const lastUpdated = new Date(existingData.updated_at).getTime();
         const now = new Date().getTime();
         
-        // Cast content to our typed interface to access recommendations properly
-        const typedContent = existingData.content as RecommendationsContent;
+        // First convert to unknown, then to our typed interface to safely access recommendations
+        // This addresses the TypeScript type mismatch issue
+        const typedContent = (existingData.content as unknown) as RecommendationsContent;
         
         if (now - lastUpdated < ONE_DAY && typedContent.recommendations) {
           setRecommendations(typedContent.recommendations);
