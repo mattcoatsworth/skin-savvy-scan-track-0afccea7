@@ -11,8 +11,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
 import AppNavigation from "@/components/AppNavigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 
 const LogSkinCondition = () => {
   const { toast } = useToast();
@@ -475,25 +473,37 @@ const LogSkinCondition = () => {
             </div>
           </div>
           
-          {/* Personalized Skin Plan Section */}
+          {/* Personalized Skin Plan Section - Updated to use button style */}
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Do you want a personalized skin plan?</h2>
             <Card className="ios-card">
               <CardContent className="p-4">
-                <RadioGroup 
-                  value={wantsPersonalizedPlan} 
-                  onValueChange={handlePersonalizedPlanChange}
-                  className="flex flex-col space-y-2"
-                >
-                  <div className="flex items-center space-x-3">
-                    <RadioGroupItem value="yes" id="yes" />
-                    <Label htmlFor="yes" className="font-medium text-skin-black">Yes</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant={wantsPersonalizedPlan === "yes" ? "default" : "outline"} 
+                    size="sm" 
+                    className={`rounded-xl ${wantsPersonalizedPlan === "yes" ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20 hover:bg-gray-50'}`}
+                    onClick={() => handlePersonalizedPlanChange("yes")}
+                  >
+                    Yes
+                  </Button>
+                  <Button 
+                    variant={wantsPersonalizedPlan === "no" ? "default" : "outline"} 
+                    size="sm" 
+                    className={`rounded-xl ${wantsPersonalizedPlan === "no" ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20 hover:bg-gray-50'}`}
+                    onClick={() => handlePersonalizedPlanChange("no")}
+                  >
+                    No
+                  </Button>
+                </div>
+                
+                {wantsPersonalizedPlan === "yes" && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+                    Complete 7 straight days of skin logs so we can understand enough about your skin and routine to help you. 
+                    <br /><br />
+                    We will provide personal guidance along the way.
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <RadioGroupItem value="no" id="no" />
-                    <Label htmlFor="no" className="font-medium text-skin-black">No</Label>
-                  </div>
-                </RadioGroup>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -617,7 +627,7 @@ const LogSkinCondition = () => {
                         key={factor}
                         variant={selectedFactors.stressors.includes(factor) ? "default" : "outline"} 
                         size="sm" 
-                        className={`rounded-xl ${selectedFactors.stressors.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20 hover:bg-gray-50'}`}
+                        className={`rounded-xl ${selectedFactors.stressors.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
                         onClick={() => handleFactorSelect('stressors', factor)}
                       >
                         {factor}
