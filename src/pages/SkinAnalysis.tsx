@@ -49,7 +49,7 @@ const SkinAnalysis = () => {
     formattedHtml: "",
     sections: {}
   });
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  const { getAdvice, isLoading, getTextContent } = useSkinAdvice({ adviceType: "recommendation" });
   
   // Sample data
   const skinFactors = [

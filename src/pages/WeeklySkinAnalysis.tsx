@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -115,7 +114,7 @@ const WeeklySkinAnalysis = () => {
     formattedHtml: "",
     sections: {}
   });
-  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "weekly-insight" });
+  const { getAdvice, isLoading, getTextContent } = useSkinAdvice({ adviceType: "weekly-insight" });
   
   // In a real app, we would fetch this data from an API based on date range
   // For now, we'll use mock data
@@ -315,7 +314,9 @@ const WeeklySkinAnalysis = () => {
     };
     
     // Process each section
-    Object.entries(sections).forEach(([key, content]) => {
+    Object.entries(sections || {}).forEach(([key, content]) => {
+      if (!content) return; // Skip if content is null/undefined
+      
       const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
       
       if (Array.isArray(content)) {
@@ -348,13 +349,20 @@ const WeeklySkinAnalysis = () => {
   const generateAiAdvice = async () => {
     setAiLoading(true);
     try {
+      const analysisData = generateMockData();
       const advice = await getAdvice(
         "Provide a comprehensive weekly analysis of my skin health with clear sections for patterns, correlations, recommendations, and focus areas. Include metrics and comparative insights based on my logs.", 
         { analysisData, skinRecommendations }
       );
-      setAiAdvice(advice);
+      
+      if (advice) {
+        setAiAdvice(advice);
+      } else {
+        setAiAdvice({ formattedHtml: "", sections: {} });
+      }
     } catch (error) {
       console.error("Error getting AI skin advice:", error);
+      setAiAdvice({ formattedHtml: "", sections: {} });
     } finally {
       setAiLoading(false);
     }
@@ -366,7 +374,7 @@ const WeeklySkinAnalysis = () => {
   }, []);
 
   // Process AI sections for structured display
-  const aiSections = processAIResponse(aiAdvice.sections);
+  const aiSections = processAIResponse(aiAdvice.sections || {});
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -713,7 +721,9 @@ const WeeklySkinAnalysis = () => {
                           <p className="text-sm text-muted-foreground">
                             {typeof aiAdvice.sections["Weekly Summary"] === 'string' 
                               ? aiAdvice.sections["Weekly Summary"] 
-                              : "Weekly summary of your skin health."}
+                              : Array.isArray(aiAdvice.sections["Weekly Summary"])
+                                ? aiAdvice.sections["Weekly Summary"].join(" ")
+                                : "Weekly summary of your skin health."}
                           </p>
                         </div>
                       </div>
@@ -760,7 +770,14 @@ const WeeklySkinAnalysis = () => {
                     ) : (
                       <div className="prose prose-sm max-w-none">
                         {aiAdvice.formattedHtml ? (
-                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} className="skin-advice-content" />
+                          <div 
+                            dangerouslySetInnerHTML={{ 
+                              __html: typeof aiAdvice.formattedHtml === 'string' 
+                                ? aiAdvice.formattedHtml 
+                                : '' 
+                            }} 
+                            className="skin-advice-content" 
+                          />
                         ) : (
                           <p>Unable to generate AI analysis at this time. Please try again later.</p>
                         )}
