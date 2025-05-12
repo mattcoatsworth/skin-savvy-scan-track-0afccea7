@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";
@@ -8,8 +7,47 @@ import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import { Salad, Pill, Palette, CloudSun, Droplet, Utensils, Circle, Activity } from "lucide-react";
+import { useRecommendations, Recommendation } from "@/hooks/useRecommendations";
 
 const Index = () => {
+  // Use our recommendations hook
+  const { recommendations, isLoading, fetchRecommendations } = useRecommendations();
+  
+  // Fetch recommendations when component mounts
+  useEffect(() => {
+    fetchRecommendations();
+  }, []);
+  
+  // Map recommendation data to include icons and links
+  const mapRecommendationWithIcons = (recommendation: Recommendation) => {
+    let icon;
+    let linkTo = `/recommendations-detail/${recommendation.text.toLowerCase().replace(/\s+/g, '-')}`;
+    
+    switch (recommendation.type) {
+      case 'skincare':
+        icon = <Droplet className="h-4 w-4" />;
+        break;
+      case 'food':
+        icon = <Utensils className="h-4 w-4" />;
+        break;
+      case 'supplements':
+        icon = <Pill className="h-4 w-4" />;
+        break;
+      case 'makeup':
+        icon = <Circle className="h-4 w-4" />;
+        break;
+      case 'lifestyle':
+        icon = <Activity className="h-4 w-4" />;
+        break;
+    }
+    
+    return {
+      ...recommendation,
+      icon,
+      linkTo
+    };
+  };
+  
   // Sample data
   const skinFactors = [
     { type: "Food" as const, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
@@ -18,117 +56,10 @@ const Index = () => {
     { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
-  // Sample personalized recommendations - Added more recommendations
-  const skinRecommendations = [
-    { 
-      type: "skincare" as const, 
-      text: "Try vitamin C serum", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/vitamin-c-serum"
-    },
-    { 
-      type: "food" as const, 
-      text: "Increase omega-3", 
-      icon: <Utensils className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/increase-omega-3"
-    },
-    { 
-      type: "supplements" as const, 
-      text: "Add zinc", 
-      icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/add-zinc"
-    },
-    { 
-      type: "makeup" as const, 
-      text: "Switch foundation", 
-      icon: <Circle className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/switch-foundation"
-    },
-    { 
-      type: "lifestyle" as const, 
-      text: "Stress management", 
-      icon: <Activity className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/stress-management"
-    },
-    // New recommendations
-    { 
-      type: "skincare" as const, 
-      text: "Gentle night exfoliant", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/night-exfoliant"
-    },
-    { 
-      type: "food" as const, 
-      text: "Add antioxidant foods", 
-      icon: <Utensils className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/antioxidant-foods"
-    },
-    { 
-      type: "supplements" as const, 
-      text: "Try evening primrose", 
-      icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/evening-primrose"
-    },
-    { 
-      type: "lifestyle" as const, 
-      text: "Morning hydration", 
-      icon: <Activity className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/morning-hydration"
-    },
-    { 
-      type: "makeup" as const, 
-      text: "Oil-free concealer", 
-      icon: <Circle className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/oil-free-concealer"
-    },
-    { 
-      type: "skincare" as const, 
-      text: "Add ceramide moisturizer", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/ceramide-moisturizer"
-    },
-    { 
-      type: "food" as const, 
-      text: "Limit dairy consumption", 
-      icon: <Utensils className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/limit-dairy"
-    }
-  ];
-
-  const recentLogs = [
-    { 
-      title: "Retinol Cream", 
-      status: "positive" as const, 
-      description: "No reaction",
-      rating: 85,
-      id: "retinol-cream",
-      linkTo: "/recent-logs/retinol-cream"
-    },
-    { 
-      title: "Whey Protein", 
-      status: "negative" as const, 
-      description: "Possible acne trigger",
-      rating: 30,
-      id: "whey-protein",
-      linkTo: "/recent-logs/whey-protein"
-    },
-    { 
-      title: "Avocado", 
-      status: "positive" as const, 
-      description: "Skin hydration improved",
-      rating: 92,
-      id: "avocado",
-      linkTo: "/recent-logs/avocado"
-    },
-    { 
-      title: "New Foundation", 
-      status: "neutral" as const, 
-      description: "No noticeable change",
-      rating: 65,
-      id: "new-foundation",
-      linkTo: "/recent-logs/new-foundation"
-    },
-  ];
+  // Process our recommendations for display
+  const skinRecommendations = isLoading 
+    ? [] // Show nothing while loading
+    : recommendations.map(mapRecommendationWithIcons);
 
   // Get current date and the past 7 days
   const getDayName = (date: Date) => {
@@ -214,6 +145,41 @@ const Index = () => {
       subtitle: "Connect with others",
       id: "community",
       linkTo: "/explore/community"
+    },
+  ];
+
+  const recentLogs = [
+    { 
+      title: "Retinol Cream", 
+      status: "positive" as const, 
+      description: "No reaction",
+      rating: 85,
+      id: "retinol-cream",
+      linkTo: "/recent-logs/retinol-cream"
+    },
+    { 
+      title: "Whey Protein", 
+      status: "negative" as const, 
+      description: "Possible acne trigger",
+      rating: 30,
+      id: "whey-protein",
+      linkTo: "/recent-logs/whey-protein"
+    },
+    { 
+      title: "Avocado", 
+      status: "positive" as const, 
+      description: "Skin hydration improved",
+      rating: 92,
+      id: "avocado",
+      linkTo: "/recent-logs/avocado"
+    },
+    { 
+      title: "New Foundation", 
+      status: "neutral" as const, 
+      description: "No noticeable change",
+      rating: 65,
+      id: "new-foundation",
+      linkTo: "/recent-logs/new-foundation"
     },
   ];
 
