@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -7,6 +8,7 @@ import BackButton from "@/components/BackButton";
 import { AlertTriangle, Check, X, Beaker, Calendar, Activity, UserCircle, PieChart, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { Progress } from "@/components/ui/progress";
 
 // Hypothetical supplement data (in a real app, this would come from an API or database)
 const supplementsData = {
@@ -41,8 +43,8 @@ const supplementsData = {
     },
     recommendations: {
       pause: true,
-      alternatives?: ["Plant-based collagen boosters", "Targeted topical peptides", "Vitamin C serum"],
-      resumptionGuidance?: "If symptoms improve after 7-day pause, try reintroducing at half dose every other day."
+      alternatives: ["Plant-based collagen boosters", "Targeted topical peptides", "Vitamin C serum"],
+      resumptionGuidance: "If symptoms improve after 7-day pause, try reintroducing at half dose every other day."
     }
   }
 };
