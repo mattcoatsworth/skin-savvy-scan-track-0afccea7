@@ -11,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
 import AppNavigation from "@/components/AppNavigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from 'uuid';
 
 const LogSkinCondition = () => {
   const { toast } = useToast();
@@ -242,32 +244,77 @@ const LogSkinCondition = () => {
     }
   };
   
-  // Handle saving the entire log
-  const handleSaveLog = () => {
-    // Save all data to localStorage
-    const currentDate = new Date().toISOString().split('T')[0];
-    
-    // Save factors
-    Object.entries(selectedFactors).forEach(([category, items]) => {
-      localStorage.setItem(`skin-${category}-${currentDate}`, JSON.stringify(items));
-    });
-    
-    // Save other data
-    localStorage.setItem(`skin-mood-${currentDate}`, selectedMood || '');
-    localStorage.setItem(`skin-sleep-${currentDate}`, sleepHours.toString());
-    localStorage.setItem(`skin-stress-${currentDate}`, stressLevel.toString());
-    localStorage.setItem(`personalized-plan-${currentDate}`, wantsPersonalizedPlan);
-    
-    // Already saving notes and water intake in their respective handlers
-    
-    toast({
-      title: "Log saved",
-      description: "Your skin condition log has been saved successfully.",
-      duration: 3000
-    });
-    
-    // Navigate to today's detail page
-    navigate("/day-log/today");
+  // Handle saving the entire log, now including personalized plan preference to Supabase
+  const handleSaveLog = async () => {
+    try {
+      // Generate UUID for the skin log
+      const skinLogId = uuidv4();
+      const currentDate = new Date().toISOString().split('T')[0];
+      
+      // Save skin log to Supabase
+      const { error: skinLogError } = await supabase
+        .from('skin_logs')
+        .insert({
+          id: skinLogId,
+          user_id: '00000000-0000-0000-0000-000000000000', // Replace with actual user id when auth is implemented
+          overall_condition: selectedMood || 'Normal',
+          log_date: currentDate,
+          notes: notes,
+          personalized_plan_preference: wantsPersonalizedPlan
+        });
+      
+      if (skinLogError) {
+        console.error('Error saving skin log:', skinLogError);
+        toast({
+          title: "Error saving log",
+          description: "There was a problem saving your skin condition log.",
+          duration: 3000
+        });
+        return;
+      }
+      
+      // Save daily factors to Supabase
+      const { error: factorsError } = await supabase
+        .from('daily_factors')
+        .insert({
+          skin_log_id: skinLogId,
+          sleep_hours: sleepHours,
+          water_intake_ml: waterIntake * 250, // Convert cups to ml
+          stress_level: stressLevel
+        });
+      
+      if (factorsError) {
+        console.error('Error saving daily factors:', factorsError);
+        // Continue as we've already saved the main log
+      }
+      
+      // Save factors locally 
+      Object.entries(selectedFactors).forEach(([category, items]) => {
+        localStorage.setItem(`skin-${category}-${currentDate}`, JSON.stringify(items));
+      });
+      
+      // Save other data locally
+      localStorage.setItem(`skin-mood-${currentDate}`, selectedMood || '');
+      localStorage.setItem(`skin-sleep-${currentDate}`, sleepHours.toString());
+      localStorage.setItem(`skin-stress-${currentDate}`, stressLevel.toString());
+      localStorage.setItem(`personalized-plan-${currentDate}`, wantsPersonalizedPlan);
+      
+      toast({
+        title: "Log saved",
+        description: "Your skin condition log has been saved successfully.",
+        duration: 3000
+      });
+      
+      // Navigate to today's detail page
+      navigate("/day-log/today");
+    } catch (error) {
+      console.error('Error in save log function:', error);
+      toast({
+        title: "Error saving log",
+        description: "There was a problem saving your skin condition log.",
+        duration: 3000
+      });
+    }
   };
   
   const getDefaultOptions = (category: string) => {

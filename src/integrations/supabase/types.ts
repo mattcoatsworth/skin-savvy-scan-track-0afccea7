@@ -174,6 +174,7 @@ export type Database = {
           notes: string | null
           oiliness_level: number | null
           overall_condition: string
+          personalized_plan_preference: string | null
           redness_level: number | null
           updated_at: string | null
           user_id: string
@@ -187,6 +188,7 @@ export type Database = {
           notes?: string | null
           oiliness_level?: number | null
           overall_condition: string
+          personalized_plan_preference?: string | null
           redness_level?: number | null
           updated_at?: string | null
           user_id: string
@@ -200,6 +202,7 @@ export type Database = {
           notes?: string | null
           oiliness_level?: number | null
           overall_condition?: string
+          personalized_plan_preference?: string | null
           redness_level?: number | null
           updated_at?: string | null
           user_id?: string
