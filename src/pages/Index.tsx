@@ -22,25 +22,25 @@ const dailyScores = [
   { day: "Sun", rating: 84, date: "May 12" },
 ];
 
-// Mock actions for suggestions
+// Updated mock actions for suggestions to match the ActionType required by SuggestedActions component
 const suggestedActions = [
   {
     id: "hydration",
-    title: "Stay Hydrated",
+    text: "Stay Hydrated",
     description: "Drink 8 glasses of water daily",
     icon: "💧",
     category: "Lifestyle"
   },
   {
     id: "sunscreen",
-    title: "Apply Sunscreen",
+    text: "Apply Sunscreen",
     description: "Use SPF 30+ even indoors",
     icon: "☀️",
     category: "Protection"
   },
   {
     id: "sleep",
-    title: "Get Enough Sleep",
+    text: "Get Enough Sleep",
     description: "Aim for 7-8 hours nightly",
     icon: "😴",
     category: "Wellness"
