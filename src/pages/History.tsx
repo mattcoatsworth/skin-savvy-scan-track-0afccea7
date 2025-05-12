@@ -11,7 +11,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Camera, Image, Smile, Sun, Moon, LoaderCircle, Calendar, ArrowRight } from "lucide-react";
+import { Camera, Image, Smile, Sun, Moon, LoaderCircle, Calendar } from "lucide-react";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
 import InsightsTrends from "@/components/InsightsTrends";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
@@ -23,6 +23,7 @@ import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Badge } from "@/components/ui/badge";
+import SelfieCarousel from "@/components/SelfieCarousel";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -77,8 +78,8 @@ type DayLogType = {
     products: string[];
     skin: string[];
   };
-  amSelfie?: string | null;
-  pmSelfie?: string | null;
+  amSelfies?: (string | null)[];
+  pmSelfies?: (string | null)[];
 };
 
 // Determine label based on rating
@@ -102,10 +103,12 @@ const History = () => {
     return tabParam === 'weekly' ? 'weekly' : 'daily';
   };
   
-  // State for photo upload dialog
-  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
-  const [currentPhotoType, setCurrentPhotoType] = useState<"am" | "pm" | null>(null);
-  const [currentDayId, setCurrentDayId] = useState<string | null>(null);
+  // State for today's selfies (updated to support multiple images per type)
+  const [todaysSelfies, setTodaysSelfies] = useState({
+    am: [] as (string | null)[],
+    pm: [] as (string | null)[]
+  });
+  
   const [aiSkinAnalysis, setAiSkinAnalysis] = useState<{
     status: string;
     analysis: string;
@@ -113,13 +116,8 @@ const History = () => {
     status: "Loading...", 
     analysis: "Analyzing your skin logs..." 
   });
-  const [isLoading, setIsLoading] = useState(true);
   
-  // Add state for today's selfies
-  const [todaysSelfies, setTodaysSelfies] = useState({
-    am: null as string | null,
-    pm: null as string | null
-  });
+  const [isLoading, setIsLoading] = useState(true);
   
   // Set the active tab based on URL parameter
   const [activeTab, setActiveTab] = useState(getTabFromUrl());
@@ -132,15 +130,25 @@ const History = () => {
   // Use the skin advice hook for AI analysis
   const { getAdvice, isLoading: isAdviceLoading, getTextContent } = useSkinAdvice({ adviceType: "general" });
   
-  // Generate 7 days of mock data
+  // Generate 7 days of mock data with multiple selfies per day
   const dayLogs: DayLogType[] = Array.from({ length: 7 }).map((_, index) => {
     const date = subDays(new Date(), index);
     const rating = Math.floor(Math.random() * 100) + 1; // Random rating between 1-100
     
-    // Randomly determine if this log has selfies (for demo purposes)
-    // In a real app, this would come from user data
-    const hasAmSelfie = Math.random() > 0.7;
-    const hasPmSelfie = Math.random() > 0.7;
+    // Generate random selfie data (some filled, some empty)
+    const amSelfies = Array(4).fill(null).map((_, i) => {
+      // 30% chance of having a selfie
+      return Math.random() > 0.7 ? 
+        `https://source.unsplash.com/random/300x300/?face&sig=${index * 10 + i}` : 
+        null;
+    });
+    
+    const pmSelfies = Array(4).fill(null).map((_, i) => {
+      // 30% chance of having a selfie
+      return Math.random() > 0.7 ? 
+        `https://source.unsplash.com/random/300x300/?face&sig=${index * 10 + i + 5}` : 
+        null;
+    });
     
     return {
       id: `day-${index}`,
@@ -156,8 +164,8 @@ const History = () => {
         products: getRandomFactors(["Retinol", "Vitamin C Serum", "Moisturizer", "Sunscreen", "Cleanser"], 2),
         skin: getRandomFactors(["Hydrated", "Dry", "Oily", "Irritated", "Calm", "Breakout"], 1),
       },
-      amSelfie: hasAmSelfie ? null : undefined, // null means placeholder, undefined means no selfie block
-      pmSelfie: hasPmSelfie ? null : undefined, // this is just for demo - in real app all would have placeholders
+      amSelfies,
+      pmSelfies
     };
   });
 
@@ -166,68 +174,29 @@ const History = () => {
     return shuffled.slice(0, count);
   }
   
-  // Handle photo placeholder click
-  const handlePhotoClick = (dayId: string, photoType: "am" | "pm", event: React.MouseEvent) => {
-    // Stop event propagation to prevent navigation to day log detail
-    event.preventDefault();
-    event.stopPropagation();
+  // Handle adding a selfie image
+  const handleAddSelfie = (type: "am" | "pm", index: number) => {
+    // In a real app, this would open the camera or file selector
+    // For demo, we'll use placeholder images
+    const placeholderImages = [
+      "https://source.unsplash.com/random/300x300/?face&sig=1",
+      "https://source.unsplash.com/random/300x300/?face&sig=2",
+      "https://source.unsplash.com/random/300x300/?face&sig=3",
+      "https://source.unsplash.com/random/300x300/?face&sig=4"
+    ];
     
-    // Special handling for today's selfies
-    if (dayId === "today") {
-      setCurrentDayId("today");
-      setCurrentPhotoType(photoType);
-      setIsPhotoDialogOpen(true);
-      return;
-    }
-    
-    // Only open dialog if the photo is null or undefined (not uploaded yet)
-    const dayLog = dayLogs.find(log => log.id === dayId);
-    // Fix: changed the instanceof check to a more appropriate type check
-    const photoExists = photoType === "am" 
-      ? typeof dayLog?.amSelfie === 'string' && dayLog.amSelfie !== null
-      : typeof dayLog?.pmSelfie === 'string' && dayLog.pmSelfie !== null;
-    
-    if (!photoExists) {
-      setCurrentDayId(dayId);
-      setCurrentPhotoType(photoType);
-      setIsPhotoDialogOpen(true);
-    }
-  };
-  
-  // Handle taking a photo
-  const handleTakePhoto = () => {
-    // In a real app, this would open the camera
-    console.log(`Taking photo for ${currentPhotoType} on day ${currentDayId}`);
-    
-    // Simulate adding a photo for today's selfies
-    if (currentDayId === "today") {
-      const placeholderImage = "https://source.unsplash.com/random/300x300/?face";
-      setTodaysSelfies(prev => ({
+    setTodaysSelfies(prev => {
+      const newImages = [...prev[type]];
+      newImages[index] = placeholderImages[index % placeholderImages.length];
+      
+      // Save to localStorage
+      localStorage.setItem(`today-${type}-selfies`, JSON.stringify(newImages));
+      
+      return {
         ...prev,
-        [currentPhotoType || "am"]: placeholderImage
-      }));
-    }
-    
-    // Close the dialog after action
-    setIsPhotoDialogOpen(false);
-  };
-  
-  // Handle selecting from gallery
-  const handleSelectFromGallery = () => {
-    // In a real app, this would open the photo gallery
-    console.log(`Selecting from gallery for ${currentPhotoType} on day ${currentDayId}`);
-    
-    // Simulate adding a photo for today's selfies
-    if (currentDayId === "today") {
-      const placeholderImage = "https://source.unsplash.com/random/300x300/?skin";
-      setTodaysSelfies(prev => ({
-        ...prev,
-        [currentPhotoType || "am"]: placeholderImage
-      }));
-    }
-    
-    // Close the dialog after action
-    setIsPhotoDialogOpen(false);
+        [type]: newImages
+      };
+    });
   };
 
   // Fetch the user's skin logs and generate AI analysis
@@ -323,6 +292,34 @@ const History = () => {
       setIsLoading(false);
     }
   };
+  
+  // Load saved selfies from localStorage on component mount
+  useEffect(() => {
+    const savedAmSelfies = localStorage.getItem('today-am-selfies');
+    const savedPmSelfies = localStorage.getItem('today-pm-selfies');
+    
+    if (savedAmSelfies) {
+      try {
+        setTodaysSelfies(prev => ({
+          ...prev,
+          am: JSON.parse(savedAmSelfies)
+        }));
+      } catch (e) {
+        console.error("Error parsing saved AM selfies:", e);
+      }
+    }
+    
+    if (savedPmSelfies) {
+      try {
+        setTodaysSelfies(prev => ({
+          ...prev,
+          pm: JSON.parse(savedPmSelfies)
+        }));
+      } catch (e) {
+        console.error("Error parsing saved PM selfies:", e);
+      }
+    }
+  }, []);
   
   // Add new state for AI analysis
   const [aiAdvice, setAiAdvice] = useState<any>({
@@ -660,61 +657,27 @@ const History = () => {
             {/* SkinIndexComparison component */}
             <SkinIndexComparison className="mb-6" gender="female" age={25} />
             
-            {/* Add Today's Selfies Section */}
+            {/* Add Today's Selfies Section - Updated to use SelfieCarousel */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
               <Card className="ios-card">
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
-                    {/* AM Selfie */}
-                    <div className="flex flex-col items-center">
-                      <div className="flex items-center mb-2">
-                        <Sun className="h-4 w-4 mr-1 text-amber-500" />
-                        <h3 className="font-medium text-sm">Morning</h3>
-                      </div>
-                      <div 
-                        className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
-                        onClick={(e) => handlePhotoClick("today", "am", e)}
-                      >
-                        {todaysSelfies.am ? (
-                          <img 
-                            src={todaysSelfies.am} 
-                            alt="Morning Selfie" 
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center">
-                            <Camera className="h-6 w-6 mb-1" />
-                            <span className="text-xs">Add AM Photo</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    {/* Morning Selfie Carousel */}
+                    <SelfieCarousel
+                      type="am"
+                      images={todaysSelfies.am}
+                      onAddImage={handleAddSelfie}
+                      label="Morning"
+                    />
                     
-                    {/* PM Selfie */}
-                    <div className="flex flex-col items-center">
-                      <div className="flex items-center mb-2">
-                        <Moon className="h-4 w-4 mr-1 text-indigo-400" />
-                        <h3 className="font-medium text-sm">Evening</h3>
-                      </div>
-                      <div 
-                        className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
-                        onClick={(e) => handlePhotoClick("today", "pm", e)}
-                      >
-                        {todaysSelfies.pm ? (
-                          <img 
-                            src={todaysSelfies.pm} 
-                            alt="Evening Selfie" 
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center">
-                            <Camera className="h-6 w-6 mb-1" />
-                            <span className="text-xs">Add PM Photo</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    {/* Evening Selfie Carousel */}
+                    <SelfieCarousel
+                      type="pm" 
+                      images={todaysSelfies.pm}
+                      onAddImage={handleAddSelfie}
+                      label="Evening"
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -812,7 +775,7 @@ const History = () => {
               )}
             </div>
             
-            {/* Daily Log Cards */}
+            {/* Daily Log Cards - Updated to use SelfieCarousel */}
             <div className="flex flex-col gap-y-6">
               {dayLogs.map((log) => (
                 <Link key={log.id} to={`/day-log/${log.id}`}>
@@ -846,296 +809,11 @@ const History = () => {
                       {/* Selfies section */}
                       <div className="mt-4 pt-3 border-t border-gray-100">
                         <h4 className="text-sm font-medium mb-2">Selfies</h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {/* AM Photo */}
-                          <div 
-                            className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
-                            onClick={(e) => handlePhotoClick(log.id, "am", e)}
-                          >
-                            {log.amSelfie ? (
-                              <img 
-                                src={log.amSelfie} 
-                                alt="AM Selfie" 
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              <span>AM Photo</span>
-                            )}
-                          </div>
-                          
-                          {/* PM Photo */}
-                          <div 
-                            className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
-                            onClick={(e) => handlePhotoClick(log.id, "pm", e)}
-                          >
-                            {log.pmSelfie ? (
-                              <img 
-                                src={log.pmSelfie} 
-                                alt="PM Selfie" 
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              <span>PM Photo</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-            
-            {/* Add ViewScoringMethod and Disclaimer components */}
-            <ViewScoringMethod />
-            <Disclaimer />
-          </TabsContent>
-          
-          {/* Weekly Analysis Tab Content */}
-          <TabsContent value="weekly" className="px-4">
-            {/* 1. Skin Health Overview (at the top) */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Skin Health</h2>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between items-end mb-1">
-                        <span className="text-3xl font-bold">{weeklyRating}</span>
-                        <span className="text-green-600 text-sm">+{weeklyRating - previousWeekRating} from last week</span>
-                      </div>
-                      <Progress value={weeklyRating} className="h-2" />
-                    </div>
-                    
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-3">Weekly Trend</p>
-                      <TrendChart data={weeklyTrendData} height={100} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* 2. Daily Scores */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
-              <div className="space-y-3">
-                {dailyScores.map((day, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="font-medium">{day.day}</h3>
-                          <p className="text-sm text-muted-foreground">{day.note}</p>
-                        </div>
-                        <div className="text-lg font-semibold">{day.score}</div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-            
-            {/* 3. Skin Index Comparison */}
-            <div className="mb-6">
-              <SkinIndexComparison gender="female" age={28} />
-            </div>
-            
-            {/* AI Analysis Section */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">AI Skin Analysis</h2>
-              <Card className="mb-4">
-                <CardContent className="p-4 space-y-4">
-                  <div>
-                    <h3 className="font-medium text-base mb-2">Weekly Pattern Analysis</h3>
-                    <p className="text-sm text-muted-foreground">{aiAnalysis.patternAnalysis}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-base mb-2">Detected Patterns</h3>
-                    <div className="space-y-3">
-                      {aiAnalysis.detectedPatterns.map((pattern, index) => (
-                        <div key={index} className="bg-slate-50 p-3 rounded-lg">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-slate-500">{pattern.category}</span>
-                            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded">
-                              {pattern.correlation}% correlation
-                            </span>
-                          </div>
-                          <h4 className="font-medium my-1">{pattern.title}</h4>
-                          <p className="text-sm text-muted-foreground">{pattern.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-base mb-2">Focus Areas</h3>
-                    <div className="space-y-3">
-                      {aiAnalysis.focusAreas.map((area, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <div className={`mt-1 w-2 h-2 rounded-full ${
-                            area.priority === 'primary' ? 'bg-green-500' : 
-                            area.priority === 'secondary' ? 'bg-blue-500' : 'bg-purple-500'
-                          }`}></div>
-                          <div>
-                            <h4 className="font-medium">{area.title}</h4>
-                            <p className="text-sm text-muted-foreground">{area.description}</p>
-                            <span className="text-xs bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">
-                              {area.type}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-base mb-2">Weekly Metrics</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      {Object.entries(aiAnalysis.metrics).map(([key, value]) => (
-                        <div key={key} className="bg-slate-50 p-3 rounded-lg">
-                          <p className="text-xs text-slate-500 capitalize">{key}</p>
-                          <p className={`text-lg font-medium ${value.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                            {value}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-base mb-2">Weekly Challenges</h3>
-                    <div className="space-y-3">
-                      {aiAnalysis.challenges.map((challenge, index) => (
-                        <div key={index} className="bg-slate-50 p-3 rounded-lg">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center space-x-2">
-                              <h4 className="font-medium">{challenge.title}</h4>
-                              <span className={getCategoryBadgeClass()}>
-                                {challenge.category}
-                              </span>
-                            </div>
-                            <span className={getDifficultyBadgeClass(challenge.difficulty)}>
-                              {challenge.difficulty}
-                            </span>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* 4. Skin Parameters */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Skin Parameters</h2>
-              <Card className="mb-4">
-                <CardContent className="p-4 space-y-3">
-                  {skinParameters.map((param, index) => (
-                    <div key={index}>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">{param.name}</span>
-                        <span className="text-sm text-green-600">
-                          +{param.current - param.previous}%
-                        </span>
-                      </div>
-                      <Progress value={param.current} className="h-2" />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* 5. Influential Factors */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">What Influenced Your Skin</h2>
-              
-              <div className="space-y-4">
-                {/* Positive Factors */}
-                <Card>
-                  <CardContent className="p-4">
-                    <h3 className="font-medium text-green-600 mb-2">Positive Impact</h3>
-                    <ul className="space-y-2">
-                      {positiveFactors.map((factor, index) => (
-                        <li key={index} className="flex justify-between text-sm">
-                          <span>{factor.name}</span>
-                          <span className="font-medium text-green-600">{factor.impact}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                {/* Negative Factors */}
-                <Card>
-                  <CardContent className="p-4">
-                    <h3 className="font-medium text-red-600 mb-2">Negative Impact</h3>
-                    <ul className="space-y-2">
-                      {negativeFactors.map((factor, index) => (
-                        <li key={index} className="flex justify-between text-sm">
-                          <span>{factor.name}</span>
-                          <span className="font-medium text-red-600">{factor.impact}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-            
-            {/* 6. Monthly Analysis Link */}
-            <div className="mb-6">
-              <Link 
-                to="/monthly-analysis"
-                className="block bg-slate-100 hover:bg-slate-200 transition-colors p-4 rounded-lg text-center"
-              >
-                View Monthly Analysis
-              </Link>
-            </div>
-            
-            {/* 7. View Scoring Method */}
-            <ViewScoringMethod />
-            
-            {/* 8. Disclaimer */}
-            <Disclaimer />
-          </TabsContent>
-        </Tabs>
-      </div>
-      
-      {/* Photo selection dialog */}
-      <Dialog open={isPhotoDialogOpen} onOpenChange={setIsPhotoDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogTitle>Add {currentPhotoType?.toUpperCase()} Photo</DialogTitle>
-          <DialogDescription>
-            Choose how you want to add your photo
-          </DialogDescription>
-          
-          <div className="grid grid-cols-2 gap-4 py-4">
-            <Button 
-              onClick={handleTakePhoto}
-              className="flex flex-col items-center justify-center h-24 gap-2"
-              variant="outline"
-            >
-              <Camera className="h-8 w-8" />
-              <span>Take Picture</span>
-            </Button>
-            
-            <Button 
-              onClick={handleSelectFromGallery}
-              className="flex flex-col items-center justify-center h-24 gap-2"
-              variant="outline"
-            >
-              <Image className="h-8 w-8" />
-              <span>Photo Gallery</span>
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export default History;
+                        <div className="grid grid-cols-2 gap-4">
+                          {/* Morning Selfies Preview */}
+                          <div className="flex flex-col items-center">
+                            <span className="text-xs text-slate-500 mb-1">AM</span>
+                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                              {log.amSelfies?.[0] ? (
+                                <img 
+                                  src={log.amSelfies

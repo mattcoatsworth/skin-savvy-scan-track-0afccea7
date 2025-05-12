@@ -1,0 +1,164 @@
+
+import React, { useState } from "react";
+import { Camera, Image, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+interface SelfieCarouselProps {
+  type: "am" | "pm";
+  images: (string | null)[];
+  onAddImage: (type: "am" | "pm", index: number) => void;
+  maxImages?: number;
+  label?: string;
+}
+
+const SelfieCarousel = ({
+  type,
+  images,
+  onAddImage,
+  maxImages = 4,
+  label = type === "am" ? "Morning" : "Evening",
+}: SelfieCarouselProps) => {
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Find the first empty slot or use the length if all slots are filled
+  const findFirstEmptySlot = () => {
+    for (let i = 0; i < maxImages; i++) {
+      if (!images[i]) {
+        return i;
+      }
+    }
+    return Math.min(images.length, maxImages - 1);
+  };
+
+  const handleAddPhoto = () => {
+    setCurrentImageIndex(findFirstEmptySlot());
+    setIsPhotoDialogOpen(true);
+  };
+
+  const handleTakePhoto = () => {
+    onAddImage(type, currentImageIndex);
+    setIsPhotoDialogOpen(false);
+  };
+
+  const handleSelectFromGallery = () => {
+    onAddImage(type, currentImageIndex);
+    setIsPhotoDialogOpen(false);
+  };
+
+  // Ensure we have exactly maxImages slots (filled or empty)
+  const normalizedImages = [...images];
+  while (normalizedImages.length < maxImages) {
+    normalizedImages.push(null);
+  }
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="flex items-center mb-2">
+        {type === "am" ? (
+          <div className="flex items-center text-amber-500">
+            {/* Sun icon is part of the original component */}
+            <h3 className="font-medium text-sm">{label}</h3>
+          </div>
+        ) : (
+          <div className="flex items-center text-indigo-400">
+            {/* Moon icon is part of the original component */}
+            <h3 className="font-medium text-sm">{label}</h3>
+          </div>
+        )}
+      </div>
+
+      <Carousel className="w-full">
+        <CarouselContent>
+          {normalizedImages.map((image, index) => (
+            <CarouselItem key={index}>
+              <div
+                className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
+                onClick={() => {
+                  if (!image) {
+                    setCurrentImageIndex(index);
+                    setIsPhotoDialogOpen(true);
+                  }
+                }}
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt={`${label} Selfie ${index + 1}`}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <Camera className="h-6 w-6 mb-1" />
+                    <span className="text-xs">Add Photo {index + 1}</span>
+                  </div>
+                )}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="flex justify-between items-center mt-2">
+          <CarouselPrevious className="relative left-0 right-auto translate-y-0" />
+          <div className="text-xs text-center">
+            {images.filter(img => img).length} of {maxImages} images
+          </div>
+          <CarouselNext className="relative left-auto right-0 translate-y-0" />
+        </div>
+      </Carousel>
+
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className="mt-2 w-full"
+        onClick={handleAddPhoto}
+      >
+        Add {label} Photo
+      </Button>
+
+      {/* Photo selection dialog */}
+      <Dialog open={isPhotoDialogOpen} onOpenChange={setIsPhotoDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Add {label} Photo {currentImageIndex + 1}</DialogTitle>
+          <DialogDescription>
+            Choose how you want to add your photo
+          </DialogDescription>
+          
+          <div className="grid grid-cols-2 gap-4 py-4">
+            <Button 
+              onClick={handleTakePhoto}
+              className="flex flex-col items-center justify-center h-24 gap-2"
+              variant="outline"
+            >
+              <Camera className="h-8 w-8" />
+              <span>Take Picture</span>
+            </Button>
+            
+            <Button 
+              onClick={handleSelectFromGallery}
+              className="flex flex-col items-center justify-center h-24 gap-2"
+              variant="outline"
+            >
+              <Image className="h-8 w-8" />
+              <span>Photo Gallery</span>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default SelfieCarousel;

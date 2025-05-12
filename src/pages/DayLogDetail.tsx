@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import BackButton from "@/components/BackButton";
 import useScrollToTop from "@/hooks/useScrollToTop";
+import SelfieCarousel from "@/components/SelfieCarousel";
 
 // Define types for the page
 type Factor = {
@@ -66,6 +67,12 @@ const DayLogDetail = () => {
   const [waterIntake, setWaterIntake] = useState<number>(4);
   const [isEditingWater, setIsEditingWater] = useState(false);
   
+  // Add state for selfie images
+  const [selfieImages, setSelfieImages] = useState({
+    am: [] as (string | null)[],
+    pm: [] as (string | null)[]
+  });
+  
   // Handle special case for "today"
   const getCurrentDate = () => {
     if (id === "today") {
@@ -86,7 +93,7 @@ const DayLogDetail = () => {
   const date = getCurrentDate();
   const rating = Math.floor(Math.random() * 100) + 1;
   
-  // Load notes and water intake from localStorage on component mount
+  // Load notes, water intake, and selfies from localStorage on component mount
   useEffect(() => {
     if (id) {
       const savedNotes = localStorage.getItem(`skin-notes-${id}`);
@@ -97,6 +104,24 @@ const DayLogDetail = () => {
       const savedWaterIntake = localStorage.getItem(`water-intake-${id}`);
       if (savedWaterIntake) {
         setWaterIntake(Number(savedWaterIntake));
+      }
+      
+      // Load selfies from localStorage
+      const savedAmSelfies = localStorage.getItem(`am-selfies-${id}`);
+      const savedPmSelfies = localStorage.getItem(`pm-selfies-${id}`);
+      
+      if (savedAmSelfies) {
+        setSelfieImages(prev => ({
+          ...prev,
+          am: JSON.parse(savedAmSelfies)
+        }));
+      }
+      
+      if (savedPmSelfies) {
+        setSelfieImages(prev => ({
+          ...prev,
+          pm: JSON.parse(savedPmSelfies)
+        }));
       }
     }
   }, [id]);
@@ -121,6 +146,37 @@ const DayLogDetail = () => {
       toast({
         title: "Water intake updated",
         description: `You've logged ${waterIntake} cups of water for today.`,
+        duration: 3000
+      });
+    }
+  };
+  
+  // Handle adding a selfie image
+  const handleAddSelfie = (type: "am" | "pm", index: number) => {
+    // In a real app, this would open the camera or file selector
+    // For demo, we'll use placeholder images
+    const placeholderImages = [
+      "https://source.unsplash.com/random/300x300/?face&sig=1",
+      "https://source.unsplash.com/random/300x300/?face&sig=2",
+      "https://source.unsplash.com/random/300x300/?face&sig=3",
+      "https://source.unsplash.com/random/300x300/?face&sig=4"
+    ];
+    
+    const newImages = [...(selfieImages[type] || [])];
+    newImages[index] = placeholderImages[index % placeholderImages.length];
+    
+    setSelfieImages(prev => ({
+      ...prev,
+      [type]: newImages
+    }));
+    
+    // Save to localStorage
+    if (id) {
+      localStorage.setItem(`${type}-selfies-${id}`, JSON.stringify(newImages));
+      
+      toast({
+        title: "Photo added",
+        description: `Your ${type === 'am' ? 'morning' : 'evening'} photo has been saved.`,
         duration: 3000
       });
     }
@@ -373,6 +429,30 @@ const DayLogDetail = () => {
           </CardContent>
         </Card>
         
+        {/* Self Photos Section - Updated to use SelfieCarousel */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Selfies</h2>
+          <Card className="ios-card">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-2 gap-4">
+                {/* AM Selfies Carousel */}
+                <SelfieCarousel
+                  type="am"
+                  images={selfieImages.am}
+                  onAddImage={handleAddSelfie}
+                />
+                
+                {/* PM Selfies Carousel */}
+                <SelfieCarousel
+                  type="pm" 
+                  images={selfieImages.pm}
+                  onAddImage={handleAddSelfie}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
         {/* Food Section - Scrollable section instead of tab */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Food</h2>
@@ -535,19 +615,6 @@ const DayLogDetail = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </div>
-        
-        {/* Self Photos Section */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">Selfies</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-              <span className="text-gray-400">AM Photo</span>
-            </div>
-            <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-              <span className="text-gray-400">PM Photo</span>
-            </div>
           </div>
         </div>
         

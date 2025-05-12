@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";
@@ -8,6 +7,8 @@ import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
+import SelfieCarousel from "@/components/SelfieCarousel";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
   // Sample data
@@ -20,6 +21,33 @@ const Index = () => {
 
   // Define the RecommendationType to match what's expected by DailySkinSnapshot
   type RecommendationType = "skincare" | "food" | "lifestyle" | "supplements";
+  
+  // Add state for today's selfies (multiple images per type)
+  const [todaysSelfies, setTodaysSelfies] = useState({
+    am: [] as (string | null)[],
+    pm: [] as (string | null)[]
+  });
+
+  // Handle adding a selfie image
+  const handleAddSelfie = (type: "am" | "pm", index: number) => {
+    // In a real app, this would open the camera or file selector
+    // For demo, we'll use placeholder images
+    const placeholderImages = [
+      "https://source.unsplash.com/random/300x300/?face&sig=1",
+      "https://source.unsplash.com/random/300x300/?face&sig=2",
+      "https://source.unsplash.com/random/300x300/?face&sig=3",
+      "https://source.unsplash.com/random/300x300/?face&sig=4"
+    ];
+    
+    setTodaysSelfies(prev => {
+      const newImages = [...prev[type]];
+      newImages[index] = placeholderImages[index % placeholderImages.length];
+      return {
+        ...prev,
+        [type]: newImages
+      };
+    });
+  };
 
   // Add fallback static recommendations in case AI fails
   const fallbackRecommendations = [
@@ -220,6 +248,30 @@ const Index = () => {
         {/* ScanButton in its own div with proper spacing */}
         <div className="mb-6">
           <ScanButton />
+        </div>
+        
+        {/* Add Today's Selfies Section */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
+          <Card className="ios-card">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Morning Selfie Carousel */}
+                <SelfieCarousel
+                  type="am"
+                  images={todaysSelfies.am}
+                  onAddImage={handleAddSelfie}
+                />
+                
+                {/* Evening Selfie Carousel */}
+                <SelfieCarousel
+                  type="pm"
+                  images={todaysSelfies.pm}
+                  onAddImage={handleAddSelfie}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
         
         <div className="space-y-6">
