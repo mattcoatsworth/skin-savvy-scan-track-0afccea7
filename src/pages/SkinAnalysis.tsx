@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -447,26 +446,26 @@ const SkinAnalysis = () => {
                 {/* Display AI sections in a structured format */}
                 {aiSections.map((section, index) => (
                   <div key={index} className="ai-section">
-                    <h2 className="ai-section-title">{section.title}</h2>
+                    <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
                     
                     <div className="space-y-3">
                       {section.items.map((item, itemIdx) => (
-                        <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
-                          <Card className="ai-data-point-card">
+                        <Link to={item.linkTo} key={itemIdx} className="block">
+                          <Card className="ios-card hover:shadow-md transition-all">
                             <CardContent className="p-4">
-                              <div className="ai-data-point-header">
-                                <h3 className="ai-data-point-title">
-                                  {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                </h3>
-                                <span className="ai-data-point-category">
-                                  {section.title}
-                                </span>
+                              <div className="flex items-start">
+                                {getIconComponent("info")}
+                                <div>
+                                  <h3 className="font-medium">
+                                    {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground">
+                                    {item.text.includes(":") 
+                                      ? item.text.split(":").slice(1).join(":").trim()
+                                      : item.text}
+                                  </p>
+                                </div>
                               </div>
-                              <p className="ai-data-point-content">
-                                {item.text.includes(":") 
-                                  ? item.text.split(":").slice(1).join(":").trim()
-                                  : item.text}
-                              </p>
                             </CardContent>
                           </Card>
                         </Link>
