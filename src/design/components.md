@@ -148,3 +148,40 @@ All components follow iOS-inspired design principles with a focus on accessibili
 - `readonly`: Optional boolean to make carousel view-only (default: false)
 - `compact`: Optional boolean for smaller display (default: false)
 
+## SelfieGrid Component
+
+### Purpose
+- Displays all user selfies in an Instagram-style grid layout
+- Used on profile pages and history views
+- Supports image expansion and navigation
+
+### Implementation Guidelines
+- Use a responsive grid with 3 columns on mobile, 4+ on larger screens
+- Each image should maintain a square aspect ratio
+- Include rating information in bottom corners (AM rating on left, PM on right)
+- Support image click to expand with navigation controls
+- Always place under relevant section headers with proper spacing
+
+### Usage Example
+```jsx
+<div className="mb-6">
+  <h2 className="text-xl font-semibold mb-3">Your Skin Photos</h2>
+  <SelfieGrid images={selfieImages} />
+</div>
+```
+
+### Props
+- `images`: SelfieImage[] - Array of selfie image objects
+- Each image object should include:
+  - `id`: string - Unique identifier
+  - `url`: string - Image URL
+  - `date`: string - Display date
+  - `type`: "am" | "pm" - Time of day
+  - `rating`: number - Skin rating (0-100)
+
+### Image Modal
+- Full-screen or large modal displays selected image
+- Include navigation arrows if there are multiple images
+- Show date, time (AM/PM), and rating information
+- Provide a clear close button
+- Support swipe gestures on mobile (optional)
