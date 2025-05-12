@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -182,13 +181,12 @@ const WeeklySkinAnalysis = () => {
         </div>
       </div>
       
-      {/* 3. Skin Index Comparison */}
+      {/* 3. Skin Index Comparison - Keeping only this instance */}
       <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Skin Index Comparison</h2>
         <SkinIndexComparison gender="female" age={28} />
       </div>
       
-      {/* AI Analysis Section (Added back) */}
+      {/* AI Analysis Section */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">AI Skin Analysis</h2>
         <Card className="mb-4">
