@@ -20,7 +20,7 @@ export const supabase = createClient<Database>(
     },
     realtime: {
       // Configure realtime subscriptions
-      autoConnect: true
+      connect: true
     }
   }
 );

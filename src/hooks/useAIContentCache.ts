@@ -21,9 +21,9 @@ export const useAIContentCache = () => {
       const { data, error } = await supabase
         .from('ai_generated_content')
         .select('content, updated_at')
-        .eq('product_id', productId as any)
-        .eq('product_type', productType as any)
-        .eq('content_type', contentType as any)
+        .eq('product_id', productId)
+        .eq('product_type', productType)
+        .eq('content_type', contentType)
         .maybeSingle();
       
       if (error) {
@@ -33,12 +33,12 @@ export const useAIContentCache = () => {
       }
 
       // If data exists, log when it was last updated
-      if (data) {
+      if (data && 'updated_at' in data && data.updated_at) {
         console.log(`Found cached ${contentType} from ${new Date(data.updated_at).toLocaleString()}`);
       }
       
       setCacheStatus("idle");
-      return data?.content || null;
+      return data && 'content' in data ? data.content : null;
     } catch (error) {
       console.error("Exception fetching cached content:", error);
       setCacheStatus("error");
@@ -66,7 +66,7 @@ export const useAIContentCache = () => {
           content_type: contentType,
           content: jsonContent as Json,
           updated_at: new Date().toISOString()
-        } as any, {
+        }, {
           onConflict: 'product_id, product_type, content_type'
         });
       

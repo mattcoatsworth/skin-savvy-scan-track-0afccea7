@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -181,7 +180,7 @@ export const useSkinAdvice = ({
         const { data: recentLogs } = await supabase
           .from('skin_logs')
           .select('*, daily_factors(*)')
-          .eq('user_id', session.user.id as any)
+          .eq('user_id', session.user.id)
           .order('log_date', { ascending: false })
           .limit(7);
           
@@ -189,7 +188,7 @@ export const useSkinAdvice = ({
         const { data: recentProducts } = await supabase
           .from('product_usage')
           .select('*')
-          .eq('user_id', session.user.id as any)
+          .eq('user_id', session.user.id)
           .order('usage_date', { ascending: false })
           .limit(5);
           

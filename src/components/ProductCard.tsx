@@ -44,8 +44,8 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
         const { data: usageData, error } = await supabase
           .from('product_usage')
           .select('rating')
-          .eq('product_id', product.id as any)
-          .eq('product_type', type as any)
+          .eq('product_id', product.id)
+          .eq('product_type', type)
           .order('usage_date', { ascending: false })
           .limit(1);
         
@@ -55,9 +55,13 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
         }
         
         // If user has rated this product before, use their personalized rating
-        if (usageData && usageData.length > 0 && usageData[0]?.rating) {
-          // Convert the 1-10 scale to our 0-100 scale
-          setPersonalizedRating(usageData[0].rating * 10);
+        if (usageData && usageData.length > 0 && usageData[0]) {
+          const firstItem = usageData[0];
+          // Make sure rating exists before using it
+          if (firstItem && typeof firstItem.rating === 'number') {
+            // Convert the 1-10 scale to our 0-100 scale
+            setPersonalizedRating(firstItem.rating * 10);
+          }
         }
       } catch (err) {
         console.error('Error in personalized rating:', err);
