@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -123,12 +122,10 @@ const ProductAITestPage = () => {
         setAiContent(prev => ({...prev, details}));
         setIsLoading(prev => ({ ...prev, details: false }));
         
-        // Generate Disclaimer content
+        // Generate shorter Disclaimer content
         setIsLoading(prev => ({ ...prev, disclaimer: true }));
-        const disclaimerPrompt = `Create a medical and scientific disclaimer about the information provided for ${product.name} 
-                                  and its effects on skin health. Include standard disclaimers about individual variation, 
-                                  consultation with healthcare providers, and limitations of current research. 
-                                  Only include the disclaimer text - do not include any analysis, benefits, or other sections.`;
+        const disclaimerPrompt = `Create a brief medical disclaimer about ${product.name} and skin health. Keep it under 50 words.
+                                 Only include the essential disclaimer text - no analysis or other sections.`;
         
         const disclaimer = await getDisclaimerAdvice(disclaimerPrompt, {
           productType: type,
@@ -358,23 +355,20 @@ const ProductAITestPage = () => {
             {/* View Scoring Method */}
             <ViewScoringMethod />
             
-            {/* Disclaimer Section - AI Generated - Moved below ViewScoringMethod */}
-            <div className="mb-8 mt-8">
-              <h2 className="text-xl font-semibold mb-4">Disclaimer</h2>
-              <Card className="ios-card">
-                <CardContent className="p-6">
+            {/* Shortened Disclaimer Section - AI Generated */}
+            <div className="mt-6">
+              <Card>
+                <CardContent className="p-4">
                   {isLoading.disclaimer ? (
                     <LoadingIndicator />
                   ) : (
-                    <div className="text-sm">
-                      {aiContent.disclaimer?.formattedHtml ? (
-                        <div dangerouslySetInnerHTML={{ __html: aiContent.disclaimer.formattedHtml }} className="skin-advice-content" />
+                    <div className="text-xs text-muted-foreground italic">
+                      {aiContent.disclaimer?.sections["Disclaimer"] ? (
+                        <p>{typeof aiContent.disclaimer.sections["Disclaimer"] === 'string' 
+                          ? aiContent.disclaimer.sections["Disclaimer"] 
+                          : "Individual responses may vary. Consult a healthcare professional before making changes to your routine."}</p>
                       ) : (
-                        <p>
-                          This information is provided for educational purposes only and is not intended as medical advice.
-                          Individual responses to products may vary. Always consult with a healthcare provider before making
-                          significant changes to your skincare routine.
-                        </p>
+                        <p>Individual responses may vary. Consult a healthcare professional before making changes to your routine.</p>
                       )}
                     </div>
                   )}
