@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { format, subDays, parseISO } from "date-fns";
@@ -14,8 +13,7 @@ import {
   Thermometer,
   Eye,
   RefreshCcw,
-  Info,
-  Star 
+  Info
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -974,7 +972,6 @@ const WeeklySkinAnalysis = () => {
                                       
                                       <div className="ml-3 flex items-center">
                                         <div className="text-xs inline-flex items-center">
-                                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
                                           <span className="font-medium">{itemRating}</span>
                                         </div>
                                       </div>
