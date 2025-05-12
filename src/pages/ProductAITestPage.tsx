@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity, MessageSquare, RefreshCcw } from "lucide-react";
+import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -322,15 +323,6 @@ const ProductAITestPage = () => {
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Overview</h2>
-                <Button 
-                  onClick={() => handleRefreshContent('overview')} 
-                  size="sm" 
-                  variant="ghost"
-                  disabled={isLoading.overview}
-                >
-                  <RefreshCcw className="h-4 w-4 mr-1" />
-                  Refresh
-                </Button>
               </div>
               <Card>
                 <CardContent className="p-6">
@@ -414,15 +406,6 @@ const ProductAITestPage = () => {
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Details</h2>
-                <Button 
-                  onClick={() => handleRefreshContent('details')} 
-                  size="sm" 
-                  variant="ghost"
-                  disabled={isLoading.details}
-                >
-                  <RefreshCcw className="h-4 w-4 mr-1" />
-                  Refresh
-                </Button>
               </div>
               
               {isLoading.details ? (
@@ -436,7 +419,7 @@ const ProductAITestPage = () => {
                   <div className="space-y-4">
                     {detailsSections.map((section, idx) => (
                       <div key={idx} className="ai-section">
-                        <h3 className="ai-section-title">{section.title}</h3>
+                        <h3 className="ai-section-title">{section.title === "Brief Summary" ? `Key About ${product.name}` : section.title}</h3>
                         
                         <div className="space-y-3">
                           {section.items.map((item, itemIdx) => (
@@ -485,16 +468,6 @@ const ProductAITestPage = () => {
             <div className="mt-6">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-sm font-medium text-muted-foreground">Disclaimer</h3>
-                <Button 
-                  onClick={() => handleRefreshContent('disclaimer')} 
-                  size="sm" 
-                  variant="ghost" 
-                  className="h-6 text-xs"
-                  disabled={isLoading.disclaimer}
-                >
-                  <RefreshCcw className="h-3 w-3 mr-1" />
-                  Refresh
-                </Button>
               </div>
               
               <Card>

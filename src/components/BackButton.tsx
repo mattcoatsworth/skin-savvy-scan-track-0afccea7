@@ -62,6 +62,11 @@ const BackButton: React.FC = () => {
         if (pathParts[0] === 'correlations-detail' || pathParts[0] === 'recommendations-detail') {
           backPath = '/weekly-skin-analysis';
         }
+        
+        // Handle product AI test pages
+        if (pathParts[0] === 'product' && pathParts.length > 3 && pathParts[3] === 'testai') {
+          backPath = `/product/${pathParts[1]}/${pathParts[2]}`;
+        }
       }
       
       return backPath;
@@ -78,4 +83,3 @@ const BackButton: React.FC = () => {
 };
 
 export default BackButton;
-

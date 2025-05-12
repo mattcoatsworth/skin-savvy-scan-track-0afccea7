@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -265,7 +266,7 @@ const ProductDetail = () => {
                   )}
 
                   <div>
-                    <h3 className="text-base font-medium mb-1">Summary</h3>
+                    <h3 className="text-base font-medium mb-1">Key About {product.name}</h3>
                     <p className="text-sm">{product.description}</p>
                   </div>
                   
