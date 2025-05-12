@@ -1,37 +1,36 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import OnboardingTemplate from "@/components/OnboardingTemplate";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import OnboardingTemplate from "@/components/OnboardingTemplate";
 
-type MenstrualCycleFormValues = {
+type CycleFormValues = {
   cycleType: string;
-  cycleDay?: number;
 };
+
+const cycleTypes = [
+  { id: "regular", label: "Regular (21-35 days)" },
+  { id: "irregular", label: "Irregular" },
+  { id: "hormonal", label: "On hormonal birth control" },
+  { id: "menopausal", label: "Menopausal/Post-menopausal" },
+  { id: "pregnant", label: "Pregnant/Post-partum" },
+  { id: "other", label: "Other" },
+];
 
 const FemaleOnboardingMenstrualCycle: React.FC = () => {
   const navigate = useNavigate();
-  const [cycleType, setCycleType] = useState<string | undefined>(undefined);
-  const [dayInCycle, setDayInCycle] = useState<number | undefined>(undefined);
-  
-  const form = useForm<MenstrualCycleFormValues>({
+  const form = useForm<CycleFormValues>({
     defaultValues: {
-      cycleType: undefined,
-      cycleDay: undefined,
+      cycleType: "",
     },
   });
 
-  const onSubmit = (data: MenstrualCycleFormValues) => {
+  const onSubmit = (data: CycleFormValues) => {
     // Save to localStorage for future reference
-    const cycleData = {
-      type: cycleType,
-      dayInCycle: dayInCycle
-    };
-    localStorage.setItem("userMenstrualCycle", JSON.stringify(cycleData));
+    localStorage.setItem("userCycleType", data.cycleType);
     
     // Navigate to the next screen
     navigate("/onboarding/female/food-allergies");
@@ -41,92 +40,44 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
     form.handleSubmit(onSubmit)();
   };
 
-  // Days array for selection
-  const days = Array.from({ length: 40 }, (_, i) => i + 1);
-
   return (
     <OnboardingTemplate
       title="When is your cycle?"
-      description="This helps us provide more personalized recommendations based on hormonal changes."
+      description="Help us understand your hormonal patterns."
       currentStep={6}
       totalSteps={13}
       onNext={handleNext}
-      nextDisabled={!cycleType}
+      nextDisabled={!form.watch("cycleType")}
     >
       <Form {...form}>
-        <form className="space-y-6">
+        <form className="space-y-4">
           <FormField
             control={form.control}
             name="cycleType"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
+                <div className="space-y-3">
                   <RadioGroup
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setCycleType(value);
-                    }}
                     value={field.value}
+                    onValueChange={field.onChange}
                     className="space-y-3"
                   >
-                    {[
-                      { value: "regular", label: "Regular periods" },
-                      { value: "irregular", label: "Irregular periods" },
-                      { value: "none", label: "No periods (menopause, health condition, etc.)" },
-                      { value: "hormonal", label: "On hormonal birth control" },
-                      { value: "pregnant", label: "Pregnant or postpartum" },
-                      { value: "prefer_not", label: "Prefer not to track" },
-                    ].map((option) => (
-                      <div 
-                        key={option.value}
-                        className={`flex items-center space-x-3 rounded-lg border p-4 cursor-pointer ${
-                          field.value === option.value ? "border-primary bg-primary/5" : "border-input"
-                        }`}
-                        onClick={() => {
-                          field.onChange(option.value);
-                          setCycleType(option.value);
-                        }}
+                    {cycleTypes.map((item) => (
+                      <FormItem
+                        key={item.id}
+                        className="flex items-center space-x-3 space-y-0 rounded-lg border p-3"
                       >
                         <FormControl>
-                          <RadioGroupItem value={option.value} id={option.value} className="sr-only" />
+                          <RadioGroupItem value={item.id} />
                         </FormControl>
-                        <Label htmlFor={option.value} className="flex-1 cursor-pointer font-normal">
-                          {option.label}
-                        </Label>
-                      </div>
+                        <Label className="cursor-pointer flex-1">{item.label}</Label>
+                      </FormItem>
                     ))}
                   </RadioGroup>
-                </FormControl>
+                </div>
               </FormItem>
             )}
           />
-
-          {/* Show day selector only if user has regular periods */}
-          {cycleType === "regular" && (
-            <div className="mt-6">
-              <h3 className="text-lg font-medium mb-3">Which day of your cycle are you on?</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Day 1 is the first day of your period
-              </p>
-              
-              <div className="grid grid-cols-5 gap-2">
-                {days.map((day) => (
-                  <Button
-                    key={day}
-                    type="button"
-                    variant={dayInCycle === day ? "default" : "outline"}
-                    className="h-12 w-full"
-                    onClick={() => {
-                      setDayInCycle(day);
-                      form.setValue("cycleDay", day);
-                    }}
-                  >
-                    {day}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
         </form>
       </Form>
     </OnboardingTemplate>

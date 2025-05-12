@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -37,6 +36,7 @@ import SkinAnalysis from "@/pages/SkinAnalysis";
 import DayLogDetail from "@/pages/DayLogDetail";
 import LogSkinCondition from "@/pages/LogSkinCondition";
 import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
 import RecentLogs from "@/pages/RecentLogs";
 import RecentLogDetail from "@/pages/RecentLogDetail";
 import SuggestedActionDetail from "@/pages/SuggestedActionDetail";
@@ -139,6 +139,7 @@ const App = () => (
               <Route path="/skin" element={<History />} />
               <Route path="/products" element={<Insights />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/skin-analysis" element={<SkinAnalysis />} />
               <Route path="/recent-logs" element={<RecentLogs />} />
               <Route path="/recent-logs/:logId" element={<RecentLogDetail />} />
