@@ -29,7 +29,7 @@ const getRatingLabel = (rating: number) => {
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
   const navigate = useNavigate();
   
-  // Function to handle card click with manual scroll to top and navigation to weekly analysis tab
+  // Function to handle card click with manual scroll to top
   const handleCardClick = (event: React.MouseEvent) => {
     // Prevent default link behavior
     event.preventDefault();
@@ -37,9 +37,9 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
     // First scroll to top
     window.scrollTo(0, 0);
     
-    // Navigate to /skin with tab=weekly query parameter
+    // Wait a tiny bit before navigation to allow the scroll to happen
     setTimeout(() => {
-      navigate('/skin?tab=weekly');
+      navigate('/weekly-skin-analysis');
     }, 10);
   };
   
@@ -66,12 +66,12 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Weekly Skin Report</h2>
         <Link 
-          to="/skin?tab=weekly" 
+          to="/weekly-skin-analysis" 
           className="text-skin-teal text-sm font-medium flex items-center"
           onClick={(e) => {
             e.preventDefault();
             window.scrollTo(0, 0);
-            setTimeout(() => navigate('/skin?tab=weekly'), 10);
+            setTimeout(() => navigate('/weekly-skin-analysis'), 10);
           }}
         >
           View Report <ArrowRight className="h-4 w-4 ml-1" />
