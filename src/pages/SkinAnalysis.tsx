@@ -220,11 +220,11 @@ const SkinAnalysis = () => {
     const aiSections: AISection[] = [];
     
     // Map section names to display names and types
-    const sectionConfig: Record<string, {title: string, type: string, icon: string}> = {
-      "Key Benefits/Observations": { title: "Key Observations", type: "observation", icon: "circle" },
-      "Contributing Factors": { title: "Contributing Factors", type: "factor", icon: "activity" },
-      "Recommended Actions": { title: "Recommendations", type: "action", icon: "droplet" },
-      "Expected Timeline": { title: "Timeline", type: "timeline", icon: "calendar" }
+    const sectionConfig: Record<string, {title: string, type: string, icon: string, labelPrefix: string}> = {
+      "Key Benefits/Observations": { title: "Key Observations", type: "observation", icon: "circle", labelPrefix: "Observation" },
+      "Contributing Factors": { title: "Contributing Factors", type: "factor", icon: "activity", labelPrefix: "Factor" },
+      "Recommended Actions": { title: "Recommendations", type: "action", icon: "droplet", labelPrefix: "Recommendation" },
+      "Expected Timeline": { title: "Timeline", type: "timeline", icon: "calendar", labelPrefix: "Timeline" }
     };
     
     // Process each section
@@ -234,7 +234,7 @@ const SkinAnalysis = () => {
       
       if (!content) return; // Skip if content is null/undefined
       
-      const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
+      const config = sectionConfig[key] || { title: key, type: "info", icon: "info", labelPrefix: "Item" };
       
       if (Array.isArray(content)) {
         // Create a section with items for array content
@@ -243,7 +243,7 @@ const SkinAnalysis = () => {
           items: content.map((item, index) => {
             // Parse the item to separate title and details if it contains a colon
             const hasColon = item.includes(":");
-            const title = hasColon ? item.split(":")[0].trim() : `Item ${index + 1}`;
+            const title = hasColon ? item.split(":")[0].trim() : `${config.labelPrefix} ${index + 1}`;
             const details = hasColon ? item.split(":").slice(1).join(":").trim() : item;
             
             return {
@@ -256,7 +256,7 @@ const SkinAnalysis = () => {
       } else if (typeof content === 'string') {
         // Create a section with a single item for string content
         const hasColon = content.includes(":");
-        const title = hasColon ? content.split(":")[0].trim() : config.title;
+        const title = hasColon ? content.split(":")[0].trim() : `${config.labelPrefix} 1`;
         const details = hasColon ? content.split(":").slice(1).join(":").trim() : content;
         
         aiSections.push({
@@ -464,7 +464,14 @@ const SkinAnalysis = () => {
                       {section.items.map((item, itemIdx) => {
                         // Parse item text to extract title and details
                         const hasColon = item.text.includes(":");
-                        const title = hasColon ? item.text.split(":")[0].trim() : `Item ${itemIdx + 1}`;
+                        const sectionConfig = {
+                          "Key Observations": "Observation",
+                          "Recommendations": "Recommendation",
+                          "Contributing Factors": "Factor",
+                          "Timeline": "Timeline"
+                        };
+                        const sectionPrefix = sectionConfig[section.title] || "Item";
+                        const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
                         const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
 
                         return (
