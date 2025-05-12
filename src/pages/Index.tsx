@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";
@@ -9,6 +9,7 @@ import SkinHistory from "@/components/SkinHistory";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import SelfieCarousel from "@/components/SelfieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   // Sample data
@@ -28,20 +29,95 @@ const Index = () => {
     pm: [] as (string | null)[]
   });
 
-  // Handle adding a selfie image
-  const handleAddSelfie = (type: "am" | "pm", index: number) => {
-    // In a real app, this would open the camera or file selector
-    // For demo, we'll use placeholder images
-    const placeholderImages = [
-      "https://source.unsplash.com/random/300x300/?face&sig=1",
-      "https://source.unsplash.com/random/300x300/?face&sig=2",
-      "https://source.unsplash.com/random/300x300/?face&sig=3",
-      "https://source.unsplash.com/random/300x300/?face&sig=4"
-    ];
+  // Load selfies from localStorage on component mount
+  useEffect(() => {
+    const date = new Date().toISOString().split('T')[0];
+    const amKey = `am-selfies-${date}`;
+    const pmKey = `pm-selfies-${date}`;
     
+    try {
+      const storedAmSelfies = localStorage.getItem(amKey);
+      const storedPmSelfies = localStorage.getItem(pmKey);
+      
+      if (storedAmSelfies) {
+        setTodaysSelfies(prev => ({
+          ...prev,
+          am: JSON.parse(storedAmSelfies)
+        }));
+      }
+      
+      if (storedPmSelfies) {
+        setTodaysSelfies(prev => ({
+          ...prev,
+          pm: JSON.parse(storedPmSelfies)
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading selfies from localStorage:", error);
+    }
+  }, []);
+
+  // Add toast functionality
+  const { toast } = useToast();
+  
+  // Handle adding a selfie image with Supabase integration
+  const handleAddSelfie = (type: "am" | "pm", index: number, imageUrl?: string) => {
+    if (imageUrl) {
+      // If an image URL is provided (from Supabase), use that
+      setTodaysSelfies(prev => {
+        const newImages = [...prev[type]];
+        newImages[index] = imageUrl;
+        
+        // Save to localStorage for offline access
+        const date = new Date().toISOString().split('T')[0];
+        localStorage.setItem(`${type}-selfies-${date}`, JSON.stringify(newImages));
+        
+        return {
+          ...prev,
+          [type]: newImages
+        };
+      });
+    } else {
+      // Fallback to placeholder images if no URL provided (this is a backup option)
+      const placeholderImages = [
+        "https://source.unsplash.com/random/300x300/?face&sig=1",
+        "https://source.unsplash.com/random/300x300/?face&sig=2",
+        "https://source.unsplash.com/random/300x300/?face&sig=3",
+        "https://source.unsplash.com/random/300x300/?face&sig=4"
+      ];
+      
+      setTodaysSelfies(prev => {
+        const newImages = [...prev[type]];
+        newImages[index] = placeholderImages[index % placeholderImages.length];
+        
+        // Save to localStorage for offline access
+        const date = new Date().toISOString().split('T')[0];
+        localStorage.setItem(`${type}-selfies-${date}`, JSON.stringify(newImages));
+        
+        toast({
+          title: "Notice",
+          description: "Using placeholder image instead of camera. Check app permissions if needed.",
+          duration: 3000,
+        });
+        
+        return {
+          ...prev,
+          [type]: newImages
+        };
+      });
+    }
+  };
+  
+  // Handle deleting a selfie
+  const handleDeleteSelfie = (type: "am" | "pm", index: number) => {
     setTodaysSelfies(prev => {
       const newImages = [...prev[type]];
-      newImages[index] = placeholderImages[index % placeholderImages.length];
+      newImages[index] = null;
+      
+      // Update localStorage
+      const date = new Date().toISOString().split('T')[0];
+      localStorage.setItem(`${type}-selfies-${date}`, JSON.stringify(newImages));
+      
       return {
         ...prev,
         [type]: newImages
@@ -250,24 +326,28 @@ const Index = () => {
           <ScanButton />
         </div>
         
-        {/* Add Today's Selfies Section */}
+        {/* Add Today's Selfies Section with updated component */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
           <Card className="ios-card">
             <CardContent className="p-4">
               <div className="grid grid-cols-2 gap-4">
-                {/* Morning Selfie Carousel */}
+                {/* Morning Selfie Carousel with Supabase storage */}
                 <SelfieCarousel
                   type="am"
                   images={todaysSelfies.am}
                   onAddImage={handleAddSelfie}
+                  onDeleteImage={handleDeleteSelfie}
+                  userId="current-user" // In a real app, you'd use the authenticated user ID
                 />
                 
-                {/* Evening Selfie Carousel */}
+                {/* Evening Selfie Carousel with Supabase storage */}
                 <SelfieCarousel
                   type="pm"
                   images={todaysSelfies.pm}
                   onAddImage={handleAddSelfie}
+                  onDeleteImage={handleDeleteSelfie}
+                  userId="current-user" // In a real app, you'd use the authenticated user ID
                 />
               </div>
             </CardContent>
