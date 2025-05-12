@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -61,7 +62,7 @@ const WeeklySkinAnalysis = () => {
         <h1 className="text-2xl font-bold">Weekly Report</h1>
       </header>
       
-      {/* 1. Skin Health Overview (Moved to the top) */}
+      {/* 1. Skin Health Overview (at the top) */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Skin Health</h2>
         <Card>
@@ -84,7 +85,7 @@ const WeeklySkinAnalysis = () => {
         </Card>
       </div>
       
-      {/* 2. Daily Scores (Moved below Skin Health) */}
+      {/* 2. Daily Scores */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
         <div className="space-y-3">
@@ -104,13 +105,13 @@ const WeeklySkinAnalysis = () => {
         </div>
       </div>
       
-      {/* 3. Skin Index Comparison (Moved below Daily Scores) */}
+      {/* 3. Skin Index Comparison */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Skin Index Comparison</h2>
         <SkinIndexComparison gender="female" age={28} />
       </div>
       
-      {/* 4. Skin Parameters (Keeping below Skin Index Comparison) */}
+      {/* 4. Skin Parameters */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Skin Parameters</h2>
         <Card className="mb-4">
@@ -130,7 +131,7 @@ const WeeklySkinAnalysis = () => {
         </Card>
       </div>
       
-      {/* 5. Influential Factors (Keeping below Skin Parameters) */}
+      {/* 5. Influential Factors */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">What Influenced Your Skin</h2>
         
@@ -167,7 +168,7 @@ const WeeklySkinAnalysis = () => {
         </div>
       </div>
       
-      {/* 6. Monthly Analysis Link (Keeping at the bottom) */}
+      {/* 6. Monthly Analysis Link */}
       <div>
         <Link 
           to="/monthly-analysis"
