@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -7,7 +6,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
-import { Salad, Pill, Palette, CloudSun, Droplet, Utensils, Circle, Activity } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 
 const Index = () => {
   // Sample data
@@ -18,82 +17,8 @@ const Index = () => {
     { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
-  // Sample personalized recommendations - Added more recommendations
-  const skinRecommendations = [
-    { 
-      type: "skincare" as const, 
-      text: "Try vitamin C serum", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/vitamin-c-serum"
-    },
-    { 
-      type: "food" as const, 
-      text: "Increase omega-3", 
-      icon: <Utensils className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/increase-omega-3"
-    },
-    { 
-      type: "supplements" as const, 
-      text: "Add zinc", 
-      icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/add-zinc"
-    },
-    { 
-      type: "makeup" as const, 
-      text: "Switch foundation", 
-      icon: <Circle className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/switch-foundation"
-    },
-    { 
-      type: "lifestyle" as const, 
-      text: "Stress management", 
-      icon: <Activity className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/stress-management"
-    },
-    // New recommendations
-    { 
-      type: "skincare" as const, 
-      text: "Gentle night exfoliant", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/night-exfoliant"
-    },
-    { 
-      type: "food" as const, 
-      text: "Add antioxidant foods", 
-      icon: <Utensils className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/antioxidant-foods"
-    },
-    { 
-      type: "supplements" as const, 
-      text: "Try evening primrose", 
-      icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/evening-primrose"
-    },
-    { 
-      type: "lifestyle" as const, 
-      text: "Morning hydration", 
-      icon: <Activity className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/morning-hydration"
-    },
-    { 
-      type: "makeup" as const, 
-      text: "Oil-free concealer", 
-      icon: <Circle className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/oil-free-concealer"
-    },
-    { 
-      type: "skincare" as const, 
-      text: "Add ceramide moisturizer", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/ceramide-moisturizer"
-    },
-    { 
-      type: "food" as const, 
-      text: "Limit dairy consumption", 
-      icon: <Utensils className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/limit-dairy"
-    }
-  ];
+  // We no longer need to define static recommendations here as they'll be dynamically generated
+  // by the DailySkinSnapshot component using the useSkinAdvice hook
 
   const recentLogs = [
     { 
@@ -240,7 +165,7 @@ const Index = () => {
             emoji="😊" 
             status="Balanced" 
             factors={skinFactors}
-            recommendations={skinRecommendations}
+            // We no longer pass static recommendations as they'll be loaded dynamically
           />
           
           <RecentLogsCarousel logs={recentLogs} />

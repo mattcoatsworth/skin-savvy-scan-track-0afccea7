@@ -1,9 +1,11 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, Calendar, ChevronRight } from "lucide-react";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { toast } from "sonner";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -62,6 +64,24 @@ const getRecommendationColor = (type: RecommendationType) => {
   }
 };
 
+// Icon mapping function to get the right icon for each recommendation
+const getRecommendationIcon = (type: RecommendationType): React.ReactNode => {
+  switch (type) {
+    case "skincare":
+      return <Droplet className="h-4 w-4" />;
+    case "food":
+      return <Utensils className="h-4 w-4" />;
+    case "supplements":
+      return <Pill className="h-4 w-4" />;
+    case "makeup":
+      return <Circle className="h-4 w-4" />;
+    case "lifestyle":
+      return <Activity className="h-4 w-4" />;
+    default:
+      return <Circle className="h-4 w-4" />;
+  }
+};
+
 const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   emoji,
   status,
@@ -69,13 +89,115 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   recommendations = [],
   className,
 }) => {
-  // State to control how many recommendations to show
+  // State for AI-generated recommendations
+  const [aiRecommendations, setAiRecommendations] = useState<Recommendation[]>([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
+  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(true);
   
-  // Only show 3 recommendations by default, or all if expanded
+  // Fetch AI recommendations on component mount
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        setIsLoadingRecommendations(true);
+        
+        // Try to get cached recommendations from localStorage first
+        const today = new Date().toISOString().split('T')[0];
+        const cacheKey = `home-recommendations-${today}`;
+        const cachedRecommendations = localStorage.getItem(cacheKey);
+        
+        if (cachedRecommendations) {
+          const parsed = JSON.parse(cachedRecommendations);
+          setAiRecommendations(parsed);
+          setIsLoadingRecommendations(false);
+          return;
+        }
+        
+        // If no cache, fetch from AI
+        const aiResponse = await getAdvice(
+          "Based on my recent skin logs, provide personalized recommendations for improving my skin health. Focus on actionable suggestions spanning skincare products, diet, supplements, and lifestyle changes.",
+          { factors }
+        );
+        
+        if (aiResponse) {
+          // Extract recommended actions from AI response
+          const recommendedActions = aiResponse.sections["Recommended Actions"];
+          
+          // Process recommendations based on the format they come in (string or string[])
+          const processedRecommendations: Recommendation[] = [];
+          
+          if (Array.isArray(recommendedActions)) {
+            // Process array of recommendations
+            recommendedActions.forEach((action, index) => {
+              // Check if the action contains classification hints
+              const typeMatches = {
+                "skincare": ["serum", "cleanser", "moisturizer", "exfoliant", "spf", "sunscreen", "face", "skin"],
+                "food": ["food", "diet", "eat", "dairy", "meal", "nutrition", "fruit", "vegetable", "omega", "antioxidant"],
+                "supplements": ["supplement", "vitamin", "mineral", "zinc", "collagen", "primrose"],
+                "makeup": ["makeup", "foundation", "concealer", "cosmetic"],
+                "lifestyle": ["sleep", "stress", "hydration", "water", "exercise", "routine", "habit"]
+              };
+              
+              // Determine the type based on keywords in the action
+              let determinedType: RecommendationType = "skincare"; // Default
+              for (const [type, keywords] of Object.entries(typeMatches)) {
+                if (keywords.some(keyword => action.toLowerCase().includes(keyword))) {
+                  determinedType = type as RecommendationType;
+                  break;
+                }
+              }
+              
+              // Clean up the recommendation text (extract only the key part)
+              const cleanText = action.replace(/^(Try|Use|Add|Increase|Consider|Limit|Avoid|Switch to|Incorporate)\s+/i, "");
+              
+              // Create a sanitized recommendation object
+              processedRecommendations.push({
+                type: determinedType,
+                text: cleanText,
+                icon: getRecommendationIcon(determinedType),
+                linkTo: `/recommendations-detail/ai-recommendation-${index + 1}`
+              });
+            });
+          } else if (typeof recommendedActions === 'string') {
+            // If it's just a single string, add it as one recommendation
+            processedRecommendations.push({
+              type: "skincare", 
+              text: recommendedActions,
+              icon: <Droplet className="h-4 w-4" />,
+              linkTo: "/recommendations-detail/ai-recommendation"
+            });
+          }
+          
+          // Save processed recommendations in state
+          setAiRecommendations(processedRecommendations);
+          
+          // Cache the recommendations in localStorage
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(processedRecommendations));
+          } catch (error) {
+            console.error("Failed to cache recommendations:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching AI recommendations:", error);
+        // Fallback to provided static recommendations if AI fetch fails
+        setAiRecommendations(recommendations);
+        toast.error("Could not load personalized recommendations");
+      } finally {
+        setIsLoadingRecommendations(false);
+      }
+    };
+    
+    fetchRecommendations();
+  }, [getAdvice]);
+  
+  // Use AI recommendations if available, otherwise fall back to static recommendations
+  const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
+  
+  // Only show a limited number by default, or all if expanded
   const displayedRecommendations = showAllRecommendations 
-    ? recommendations 
-    : recommendations.slice(0, 3);
+    ? displayRecommendations 
+    : displayRecommendations.slice(0, 3);
   
   return (
     <Link to="/skin">
@@ -105,9 +227,14 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           </div>
           
-          {recommendations.length > 0 && (
+          {displayRecommendations.length > 0 && (
             <div className="mb-3 pt-3 border-t border-gray-100">
-              <p className="text-sm text-muted-foreground mb-2">For You Recommendations:</p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm text-muted-foreground">For You Recommendations:</p>
+                {isLoadingRecommendations && (
+                  <div className="animate-spin h-4 w-4 border-2 border-skin-teal border-t-transparent rounded-full"></div>
+                )}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {displayedRecommendations.map((recommendation, index) => (
                   <Link 
@@ -120,7 +247,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                 ))}
               </div>
               
-              {recommendations.length > 3 && (
+              {displayRecommendations.length > 3 && (
                 <button 
                   onClick={(e) => {
                     e.preventDefault();
@@ -128,7 +255,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                   }}
                   className="mt-2 text-skin-teal text-sm font-medium flex items-center"
                 >
-                  {showAllRecommendations ? "Show less" : `Show ${recommendations.length - 3} more recommendations`}
+                  {showAllRecommendations ? "Show less" : `Show ${displayRecommendations.length - 3} more recommendations`}
                 </button>
               )}
             </div>
