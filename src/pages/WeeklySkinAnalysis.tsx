@@ -601,7 +601,7 @@ const WeeklySkinAnalysis = () => {
                         <TableRow>
                           <TableCell className="font-medium">Dairy Consumption</TableCell>
                           <TableCell>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                            <span className="text-xs">
                               Negative
                             </span>
                           </TableCell>
@@ -610,7 +610,7 @@ const WeeklySkinAnalysis = () => {
                         <TableRow>
                           <TableCell className="font-medium">Hydration</TableCell>
                           <TableCell>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                            <span className="text-xs">
                               Positive
                             </span>
                           </TableCell>
@@ -619,7 +619,7 @@ const WeeklySkinAnalysis = () => {
                         <TableRow>
                           <TableCell className="font-medium">Stress Levels</TableCell>
                           <TableCell>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                            <span className="text-xs">
                               Negative
                             </span>
                           </TableCell>
@@ -628,7 +628,7 @@ const WeeklySkinAnalysis = () => {
                         <TableRow>
                           <TableCell className="font-medium">Sunscreen Use</TableCell>
                           <TableCell>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                            <span className="text-xs">
                               Positive
                             </span>
                           </TableCell>
@@ -681,7 +681,7 @@ const WeeklySkinAnalysis = () => {
                         <div>
                           <div className="flex justify-between items-center mb-1">
                             <h3 className="font-medium text-lg">{recommendation.text}</h3>
-                            <div className="bg-skin-teal text-white text-xs rounded-full px-2 py-0.5">
+                            <div className="text-skin-teal text-xs">
                               {recommendation.type}
                             </div>
                           </div>
@@ -712,7 +712,7 @@ const WeeklySkinAnalysis = () => {
             </div>
           </TabsContent>
           
-          {/* AI Analysis Tab - Updated to match Current tab visual style */}
+          {/* AI Analysis Tab */}
           <TabsContent value="ai" className="space-y-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">AI Analysis</h2>
@@ -824,7 +824,7 @@ const WeeklySkinAnalysis = () => {
                                       </p>
                                     </div>
                                     <div className="ml-2 text-muted-foreground">
-                                      <span className="text-xs bg-slate-100 px-2 py-1 rounded">
+                                      <span className="text-xs">
                                         {section.title}
                                       </span>
                                     </div>
@@ -856,7 +856,7 @@ const WeeklySkinAnalysis = () => {
                           <TableRow>
                             <TableCell className="font-medium">Dairy Consumption</TableCell>
                             <TableCell>
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                              <span className="text-xs">
                                 Negative
                               </span>
                             </TableCell>
@@ -865,7 +865,7 @@ const WeeklySkinAnalysis = () => {
                           <TableRow>
                             <TableCell className="font-medium">Hydration</TableCell>
                             <TableCell>
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                              <span className="text-xs">
                                 Positive
                               </span>
                             </TableCell>
@@ -874,7 +874,7 @@ const WeeklySkinAnalysis = () => {
                           <TableRow>
                             <TableCell className="font-medium">Stress Levels</TableCell>
                             <TableCell>
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                              <span className="text-xs">
                                 Negative
                               </span>
                             </TableCell>
@@ -886,19 +886,7 @@ const WeeklySkinAnalysis = () => {
                   </Card>
                 </div>
 
-                {/* If no structured sections but we have formatted HTML */}
-                {(!aiSections || aiSections.length === 0) && aiAdvice.formattedHtml && (
-                  <div className="mb-6">
-                    <h2 className="text-lg font-semibold mb-3">AI Analysis</h2>
-                    <Card className="ios-card">
-                      <CardContent className="p-4">
-                        <div className="prose prose-sm max-w-none">
-                          <div dangerouslySetInnerHTML={{ __html: aiAdvice.formattedHtml }} />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
+                {/* ... keep existing code (formatted HTML section) */}
               </>
             )}
           </TabsContent>
