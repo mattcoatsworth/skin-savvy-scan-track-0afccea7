@@ -112,7 +112,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                 {displayedRecommendations.map((recommendation, index) => (
                   <Link 
                     key={index} 
-                    to={`/skin?tab=for-you`}
+                    to={recommendation.linkTo}
                     className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
                   >
                     <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
