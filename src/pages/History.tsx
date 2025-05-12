@@ -1,10 +1,18 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { format, subDays } from "date-fns";
 import SkinHistory from "@/components/SkinHistory";
 import BackButton from "@/components/BackButton";
+import { 
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Camera, Image } from "lucide-react";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -54,6 +62,11 @@ const getRatingLabel = (rating: number) => {
 };
 
 const History = () => {
+  // State for photo upload dialog
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
+  const [currentPhotoType, setCurrentPhotoType] = useState<"am" | "pm" | null>(null);
+  const [currentDayId, setCurrentDayId] = useState<string | null>(null);
+  
   // Generate 7 days of mock data
   const dayLogs: DayLogType[] = Array.from({ length: 7 }).map((_, index) => {
     const date = subDays(new Date(), index);
@@ -87,6 +100,39 @@ const History = () => {
     const shuffled = [...array].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   }
+  
+  // Handle photo placeholder click
+  const handlePhotoClick = (dayId: string, photoType: "am" | "pm", event: React.MouseEvent) => {
+    // Stop event propagation to prevent navigation to day log detail
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Only open dialog if the photo is null or undefined (not uploaded yet)
+    const dayLog = dayLogs.find(log => log.id === dayId);
+    const photoExists = photoType === "am" ? dayLog?.amSelfie instanceof Blob : dayLog?.pmSelfie instanceof Blob;
+    
+    if (!photoExists) {
+      setCurrentDayId(dayId);
+      setCurrentPhotoType(photoType);
+      setIsPhotoDialogOpen(true);
+    }
+  };
+  
+  // Handle taking a photo
+  const handleTakePhoto = () => {
+    // In a real app, this would open the camera
+    console.log(`Taking photo for ${currentPhotoType} on day ${currentDayId}`);
+    // Close the dialog after action
+    setIsPhotoDialogOpen(false);
+  };
+  
+  // Handle selecting from gallery
+  const handleSelectFromGallery = () => {
+    // In a real app, this would open the photo gallery
+    console.log(`Selecting from gallery for ${currentPhotoType} on day ${currentDayId}`);
+    // Close the dialog after action
+    setIsPhotoDialogOpen(false);
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -135,7 +181,10 @@ const History = () => {
                     <h4 className="text-sm font-medium mb-2">Selfies</h4>
                     <div className="grid grid-cols-2 gap-2">
                       {/* AM Photo */}
-                      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                      <div 
+                        className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
+                        onClick={(e) => handlePhotoClick(log.id, "am", e)}
+                      >
                         {log.amSelfie ? (
                           <img 
                             src={log.amSelfie} 
@@ -148,7 +197,10 @@ const History = () => {
                       </div>
                       
                       {/* PM Photo */}
-                      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                      <div 
+                        className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
+                        onClick={(e) => handlePhotoClick(log.id, "pm", e)}
+                      >
                         {log.pmSelfie ? (
                           <img 
                             src={log.pmSelfie} 
@@ -167,6 +219,36 @@ const History = () => {
           ))}
         </div>
       </div>
+      
+      {/* Photo selection dialog */}
+      <Dialog open={isPhotoDialogOpen} onOpenChange={setIsPhotoDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Add {currentPhotoType?.toUpperCase()} Photo</DialogTitle>
+          <DialogDescription>
+            Choose how you want to add your photo
+          </DialogDescription>
+          
+          <div className="grid grid-cols-2 gap-4 py-4">
+            <Button 
+              onClick={handleTakePhoto}
+              className="flex flex-col items-center justify-center h-24 gap-2"
+              variant="outline"
+            >
+              <Camera className="h-8 w-8" />
+              <span>Take Picture</span>
+            </Button>
+            
+            <Button 
+              onClick={handleSelectFromGallery}
+              className="flex flex-col items-center justify-center h-24 gap-2"
+              variant="outline"
+            >
+              <Image className="h-8 w-8" />
+              <span>Photo Gallery</span>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
