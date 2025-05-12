@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, Droplet, Minus, Plus } from "lucide-react";
+import { Calendar, Droplet, Minus, Plus } from "lucide-react";
 import { format, subDays, isValid } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import AppNavigation from "@/components/AppNavigation";
@@ -10,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Slider } from "@/components/ui/slider";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
+import BackButton from "@/components/BackButton";
+import useScrollToTop from "@/hooks/useScrollToTop";
 
 // Define types for the page
 type Factor = {
@@ -58,6 +59,7 @@ const getWaterIntakeRating = (cups: number): {label: string; color: string} => {
 const DayLogDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  useScrollToTop();
   
   // State for notes and water intake
   const [notes, setNotes] = useState("");
@@ -209,9 +211,7 @@ const DayLogDetail = () => {
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
-          <Link to="/history" className="mr-4">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+          <BackButton />
           <div>
             <h1 className="text-2xl font-bold">{formattedDay}</h1>
             <div className="flex items-center text-sm text-muted-foreground">

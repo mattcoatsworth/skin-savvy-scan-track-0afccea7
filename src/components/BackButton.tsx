@@ -8,6 +8,12 @@ const BackButton: React.FC = () => {
   const navigate = useNavigate();
   
   const handleGoBack = () => {
+    // Special case for day-log pages - always go to /skin
+    if (location.pathname.startsWith('/day-log')) {
+      navigate('/skin');
+      return;
+    }
+    
     // Special case for Skin page - always go to home
     if (location.pathname === '/skin') {
       navigate('/home');
@@ -50,7 +56,7 @@ const BackButton: React.FC = () => {
         
         // If we're in a second-level page under a main section, go back to that section
         if (backPath === '/day-log') {
-          backPath = '/';
+          backPath = '/skin';
         }
         
         // Handle the new category analysis pages
