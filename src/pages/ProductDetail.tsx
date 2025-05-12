@@ -206,11 +206,11 @@ const ProductDetail = () => {
         </header>
 
         {/* Updated Tabs to match SkinAnalysis.tsx styling */}
-        <Tabs defaultValue="current" className="w-full mb-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="current">Current</TabsTrigger>
-            <TabsTrigger value="foryou">For You</TabsTrigger>
-            <TabsTrigger value="ai" onClick={switchToAI}>AI</TabsTrigger>
+        <Tabs defaultValue="current" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="current" className="text-base">Current</TabsTrigger>
+            <TabsTrigger value="foryou" className="text-base">For You</TabsTrigger>
+            <TabsTrigger value="ai" className="text-base" onClick={switchToAI}>AI</TabsTrigger>
           </TabsList>
           
           {/* Current Tab Content */}
