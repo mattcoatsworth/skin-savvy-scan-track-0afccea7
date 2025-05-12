@@ -78,7 +78,19 @@ export const useAIDetailCache = () => {
         return null;
       }
       
-      return data?.content || null;
+      // Ensure content has all expected fields
+      if (data?.content) {
+        const content = data.content;
+        return {
+          title: content.title || "",
+          overview: content.overview || "",
+          details: content.details || "",
+          disclaimer: content.disclaimer || "",
+          recommendations: Array.isArray(content.recommendations) ? content.recommendations : []
+        };
+      }
+      
+      return null;
     } catch (error) {
       console.error("Failed to fetch cached detail content:", error);
       return null;

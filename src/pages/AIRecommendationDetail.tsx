@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -82,7 +83,15 @@ const AIRecommendationDetail = () => {
         
         if (cachedContent) {
           console.log("Using cached detail content from Supabase");
-          setContent(cachedContent);
+          // Fix the TypeScript error by ensuring the cached content has the expected structure
+          const typedContent = {
+            title: cachedContent.title || "",
+            overview: cachedContent.overview || "",
+            details: cachedContent.details || "",
+            disclaimer: cachedContent.disclaimer || "",
+            recommendations: Array.isArray(cachedContent.recommendations) ? cachedContent.recommendations : []
+          };
+          setContent(typedContent);
           setIsLoading(false);
           return;
         }
