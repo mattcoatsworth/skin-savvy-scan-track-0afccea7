@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -58,7 +59,13 @@ const ProductAITestPage = () => {
   const processAIResponse = (sectionName: string, sections: Record<string, string | string[]>) => {
     const result = [];
     
+    // Process only the first instance of each section type
+    const processedSectionTypes = new Set<string>();
+    
     for (const [key, content] of Object.entries(sections)) {
+      if (processedSectionTypes.has(key)) continue;
+      processedSectionTypes.add(key);
+      
       if (Array.isArray(content)) {
         result.push({
           title: key,
@@ -420,10 +427,13 @@ const ProductAITestPage = () => {
               )}
             </div>
             
-            {/* Disclaimer Section - AI Generated */}
-            <div className="mb-8">
+            {/* View Scoring Method */}
+            <ViewScoringMethod />
+            
+            {/* Disclaimer Section - AI Generated - Moved below ViewScoringMethod */}
+            <div className="mb-8 mt-8">
               <h2 className="text-xl font-semibold mb-4">Disclaimer</h2>
-              <Card className="ios-card bg-slate-50 border-l-4 border-l-blue-500">
+              <Card className="ios-card bg-slate-50">
                 <CardContent className="p-6">
                   {isLoading.disclaimer ? (
                     <LoadingIndicator />
@@ -445,9 +455,6 @@ const ProductAITestPage = () => {
             </div>
           </TabsContent>
         </Tabs>
-        
-        {/* View Scoring Method (always at bottom) */}
-        <ViewScoringMethod />
       </div>
     </div>
   );
