@@ -428,7 +428,7 @@ const ProductAITestPage = () => {
                                   <div>
                                     <h3 className="font-medium text-base">
                                       {section.title === "Brief Summary" 
-                                        ? `Benefit ${itemIdx + 1}`
+                                        ? `${product.name} Benefit`
                                         : item.text.split(":")[0] || `Point ${itemIdx + 1}`}
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
