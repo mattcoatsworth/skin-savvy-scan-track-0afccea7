@@ -41,8 +41,16 @@ export const useSkinAdvice = ({
     // Extract sections using regex
     const sectionMatches = text.matchAll(/###\s+([^:]+):\s*\n([\s\S]*?)(?=###\s+[^:]+:|$)/g);
     
+    // Track section types to prevent duplicates
+    const processedSectionTypes = new Set<string>();
+    
     for (const match of sectionMatches) {
       const sectionName = match[1].trim();
+      
+      // Skip duplicate section types (like "Brief Summary" or "Key Benefits")
+      if (processedSectionTypes.has(sectionName)) continue;
+      processedSectionTypes.add(sectionName);
+      
       const sectionContent = match[2].trim();
       
       // Remove bold formatting
@@ -235,12 +243,13 @@ export const useSkinAdvice = ({
           - Include specific data points when available
           - Be specific and actionable in your recommendations
           - DO NOT use bold text with asterisks (no ** formatting)
+          - IMPORTANT: Ensure you provide only ONE of each section type (e.g., one "Brief Summary", one "Key Benefits", etc.)
           
           Organize your analysis into these types of sections:
           1. "### Brief Summary:" (2-3 sentences overview)
           2. "### Key Benefits/Observations:" (bullet points)
           3. "### Contributing Factors:" (bullet points for skin analysis)
-          4. "### Usage Instructions:" or "### Recommended Actions:" (numbered steps)
+          4. "### Recommended Actions:" or "### Usage Instructions:" (numbered steps)
           5. "### Potential Concerns:" or "### Expected Timeline:" (bullet points)
           
           Be evidence-based and specific to the user's situation.
