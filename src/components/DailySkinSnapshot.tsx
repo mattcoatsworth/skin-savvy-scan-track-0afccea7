@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -160,7 +159,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                 type: determinedType,
                 text: cleanText,
                 icon: getRecommendationIcon(determinedType),
-                linkTo: `/recommendations-detail/ai-recommendation-${index + 1}`
+                linkTo: `/recommendations-detail/ai-action-${index + 1}`
               });
             });
           } else if (typeof recommendedActions === 'string') {
@@ -169,7 +168,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               type: "skincare", 
               text: recommendedActions,
               icon: <Droplet className="h-4 w-4" />,
-              linkTo: "/recommendations-detail/ai-recommendation"
+              linkTo: "/recommendations-detail/ai-action-1"
             });
           }
           

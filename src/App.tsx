@@ -1,58 +1,56 @@
-
+import React, { useMemo, useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { ApiKeyProvider } from "./contexts/ApiKeyContext";
-import Index from "./pages/Index";
-import History from "./pages/History";
-import Insights from "./pages/Insights";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import SkinAnalysis from "./pages/SkinAnalysis";
-import RecentLogs from "./pages/RecentLogs";
-import InsightsTrendsPage from "./pages/InsightsTrendsPage";
-import SuggestedActionsPage from "./pages/SuggestedActionsPage";
-import ExplorePage from "./pages/ExplorePage";
-import LogSkinCondition from "./pages/LogSkinCondition";
-import ProductDetail from "./pages/ProductDetail";
-import DayLogDetail from "./pages/DayLogDetail";
-import ChatPage from "./pages/ChatPage";
-import Search from "./pages/Search";
-import AppNavigation from "./components/AppNavigation";
-import ChatInput from "./components/ChatInput";
-import ExploreItemDetail from "./pages/ExploreItemDetail";
-import RecentLogDetail from "./pages/RecentLogDetail";
-import SuggestedActionDetail from "./pages/SuggestedActionDetail";
-import MonthlyAnalysisDetail from "./pages/MonthlyAnalysisDetail";
-import ScoringMethodPage from "./pages/ScoringMethodPage";
-import ScannedFoods from "./pages/ScannedFoods";
-import ScannedProducts from "./pages/ScannedProducts";
-import TrendingFoods from "./pages/TrendingFoods";
-import TrendingProducts from "./pages/TrendingProducts";
-import WeeklySkinAnalysis from "./pages/WeeklySkinAnalysis";
-import CategoryAnalysis from "./pages/CategoryAnalysis";
-import CategoryAnalysisDetail from "./pages/CategoryAnalysisDetail";
-import CorrelationsDetail from "./pages/CorrelationsDetail";
-import RecommendationsDetail from "./pages/RecommendationsDetail";
-import SupplementDetail from "./pages/SupplementDetail";
-import Onboarding from "./pages/Onboarding";
-import SplashScreen from "./pages/SplashScreen";
-import FemaleOnboardingBirthdate from "./pages/onboarding/FemaleOnboardingBirthdate";
-import FemaleOnboardingPreviousApps from "./pages/onboarding/FemaleOnboardingPreviousApps";
-import ProductAITestPage from "./pages/ProductAITestPage";
-import SkinAuth from "./components/SkinAuth";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import WeeklyInsight from "./pages/WeeklyInsight";
+import { ApiKeyProvider } from "@/contexts/ApiKeyContext";
+import { Toaster as SonnerToaster } from "sonner";
+import { useMediaQuery } from "@/hooks/use-mobile";
+import { isIOS as isIOSDevice } from "react-device-detect";
 
-// Import recommendation detail pages
-import LimitDairyPage from "./pages/RecommendationsDetail/LimitDairy";
-import VitaminCSerumPage from "./pages/RecommendationsDetail/VitaminCSerum";
-import MeditationPage from "./pages/RecommendationsDetail/Meditation";
-import ZincSupplementPage from "./pages/RecommendationsDetail/Zinc";
-import GentleCleanserPage from "./pages/RecommendationsDetail/GentleCleanser";
+// Page imports
+import Onboarding from "@/pages/Onboarding";
+import FemaleOnboardingBirthdate from "@/pages/onboarding/FemaleOnboardingBirthdate";
+import FemaleOnboardingPreviousApps from "@/pages/onboarding/FemaleOnboardingPreviousApps";
+import SplashScreen from "@/pages/SplashScreen";
+import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
+import History from "@/pages/History";
+import ChatPage from "@/pages/ChatPage";
+import ExplorePage from "@/pages/ExplorePage";
+import SkinAnalysis from "@/pages/SkinAnalysis";
+import DayLogDetail from "@/pages/DayLogDetail";
+import LogSkinCondition from "@/pages/LogSkinCondition";
+import Profile from "@/pages/Profile";
+import RecentLogs from "@/pages/RecentLogs";
+import RecentLogDetail from "@/pages/RecentLogDetail";
+import SuggestedActionDetail from "@/pages/SuggestedActionDetail";
+import SuggestedActionsPage from "@/pages/SuggestedActionsPage";
+import ExploreItemDetail from "@/pages/ExploreItemDetail";
+import RecommendationsDetail from "@/pages/RecommendationsDetail";
+import ProductDetail from "@/pages/ProductDetail";
+import AIRecommendationDetail from "@/pages/AIRecommendationDetail";
+import Insights from "@/pages/Insights";
+import ScoringMethodPage from "@/pages/ScoringMethodPage";
+import Search from "@/pages/Search";
+import WeeklySkinAnalysis from "@/pages/WeeklySkinAnalysis";
+import WeeklyInsight from "@/pages/WeeklyInsight";
+import TrendingProducts from "@/pages/TrendingProducts";
+import TrendingFoods from "@/pages/TrendingFoods";
+import ScannedProducts from "@/pages/ScannedProducts";
+import ScannedFoods from "@/pages/ScannedFoods";
+import InsightsTrendsPage from "@/pages/InsightsTrendsPage";
+import SupplementDetail from "@/pages/SupplementDetail";
+import CategoryAnalysis from "@/pages/CategoryAnalysis";
+import CategoryAnalysisDetail from "@/pages/CategoryAnalysisDetail";
+import MonthlyAnalysisDetail from "@/pages/MonthlyAnalysisDetail";
+import CorrelationsDetail from "@/pages/CorrelationsDetail";
+import ProductAITestPage from "@/pages/ProductAITestPage";
+
+// Custom recommendation pages
+import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
+import LimitDairy from "@/pages/RecommendationsDetail/LimitDairy";
+import Meditation from "@/pages/RecommendationsDetail/Meditation";
+import VitaminCSerum from "@/pages/RecommendationsDetail/VitaminCSerum";
+import Zinc from "@/pages/RecommendationsDetail/Zinc";
 
 const queryClient = new QueryClient();
 
@@ -101,8 +99,8 @@ const App = () => (
     <ApiKeyProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
-        <BrowserRouter>
+        <SonnerToaster />
+        <Router>
           <Routes>
             {/* Redirect root to splash screen */}
             <Route path="/" element={<SplashScreen />} />
@@ -157,11 +155,11 @@ const App = () => (
               <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
               
               {/* Specific recommendation detail pages */}
-              <Route path="/recommendations-detail/limit-dairy" element={<LimitDairyPage />} />
-              <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerumPage />} />
-              <Route path="/recommendations-detail/meditation" element={<MeditationPage />} />
-              <Route path="/recommendations-detail/zinc" element={<ZincSupplementPage />} />
-              <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanserPage />} />
+              <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />
+              <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerum />} />
+              <Route path="/recommendations-detail/meditation" element={<Meditation />} />
+              <Route path="/recommendations-detail/zinc" element={<Zinc />} />
+              <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
               
               <Route path="/supplement/:id" element={<SupplementDetail />} />
             </Route>
@@ -172,11 +170,10 @@ const App = () => (
             {/* Catch all for 404s */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </Router>
       </TooltipProvider>
     </ApiKeyProvider>
   </QueryClientProvider>
 );
 
 export default App;
-
