@@ -17,6 +17,28 @@ const Index = () => {
     { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
+  // Add fallback static recommendations in case AI fails
+  const fallbackRecommendations = [
+    { 
+      type: "skincare" as const, 
+      text: "Use gentle cleanser", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/gentle-cleanser" 
+    },
+    { 
+      type: "food" as const, 
+      text: "Limit dairy intake", 
+      icon: <Salad className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/limit-dairy"
+    },
+    { 
+      type: "lifestyle" as const, 
+      text: "Practice meditation", 
+      icon: <CloudSun className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/meditation"
+    },
+  ];
+
   // We no longer need to define static recommendations here as they'll be dynamically generated
   // by the DailySkinSnapshot component using the useSkinAdvice hook
 
@@ -165,7 +187,7 @@ const Index = () => {
             emoji="😊" 
             status="Balanced" 
             factors={skinFactors}
-            // We no longer pass static recommendations as they'll be loaded dynamically
+            recommendations={fallbackRecommendations}
           />
           
           <RecentLogsCarousel logs={recentLogs} />

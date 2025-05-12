@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { Smile, Droplet, Utensils, Pill, Circle, Activity, Calendar, ChevronRight } from "lucide-react";
+import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { toast } from "sonner";
 
@@ -227,7 +227,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           </div>
           
-          {displayRecommendations.length > 0 && (
+          {(displayRecommendations.length > 0 || isLoadingRecommendations) && (
             <div className="mb-3 pt-3 border-t border-gray-100">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm text-muted-foreground">For You Recommendations:</p>
@@ -235,17 +235,23 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                   <div className="animate-spin h-4 w-4 border-2 border-skin-teal border-t-transparent rounded-full"></div>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2">
-                {displayedRecommendations.map((recommendation, index) => (
-                  <Link 
-                    key={index} 
-                    to={recommendation.linkTo}
-                    className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
-                  >
-                    <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
-                  </Link>
-                ))}
-              </div>
+              {!isLoadingRecommendations && displayedRecommendations.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {displayedRecommendations.map((recommendation, index) => (
+                    <Link 
+                      key={index} 
+                      to={recommendation.linkTo}
+                      className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
+                    >
+                      <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                !isLoadingRecommendations && (
+                  <p className="text-sm text-muted-foreground italic">No recommendations available</p>
+                )
+              )}
               
               {displayRecommendations.length > 3 && (
                 <button 
