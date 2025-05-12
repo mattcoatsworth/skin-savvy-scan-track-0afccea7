@@ -78,8 +78,8 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     : recommendations.slice(0, 3);
   
   return (
-    <div className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
-      <Card>
+    <Link to="/skin">
+      <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
         <CardContent className="p-4">
           <div className="flex items-center mb-4">
             <div className="text-4xl mr-3">
@@ -112,7 +112,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                 {displayedRecommendations.map((recommendation, index) => (
                   <Link 
                     key={index} 
-                    to="/skin?tab=for-you"
+                    to={`/skin?tab=for-you`}
                     className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
                   >
                     <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
@@ -134,12 +134,12 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           )}
           
-          <Link to="/skin" className="text-center mt-4 text-skin-teal flex items-center justify-center">
+          <div className="text-center mt-4 text-skin-teal flex items-center justify-center">
             View Full Analysis <ChevronRight className="h-4 w-4 ml-1" />
-          </Link>
+          </div>
         </CardContent>
       </Card>
-    </div>
+    </Link>
   );
 };
 
