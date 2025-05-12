@@ -7,6 +7,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 
 interface SelfieCarouselProps {
   type: "am" | "pm";
@@ -44,7 +49,7 @@ const SelfieCarousel = ({
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center">
       <div className="flex items-center mb-2">
         {type === "am" ? (
           <div className="flex items-center text-amber-500">
@@ -57,40 +62,41 @@ const SelfieCarousel = ({
         )}
       </div>
 
-      <div className="w-full">
-        {/* Single image display - more consistent with design mockups */}
-        <div
-          className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
-          onClick={() => {
-            // Find the first empty slot or use the first slot if all are filled
-            const emptyIndex = normalizedImages.findIndex(img => !img);
-            const indexToUse = emptyIndex >= 0 ? emptyIndex : 0;
-            setCurrentImageIndex(indexToUse);
-            setIsPhotoDialogOpen(true);
-          }}
-        >
-          {normalizedImages[0] ? (
-            <img
-              src={normalizedImages[0]}
-              alt={`${label} Selfie`}
-              className="object-cover w-full h-full"
-            />
-          ) : (
-            <div className="flex flex-col items-center">
-              <Camera className="h-6 w-6 mb-1" />
-              <span className="text-xs">No Photo</span>
-            </div>
-          )}
-        </div>
+      <Carousel className="w-full">
+        <CarouselContent>
+          {normalizedImages.map((image, index) => (
+            <CarouselItem key={index}>
+              <div
+                className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden cursor-pointer"
+                onClick={() => {
+                  if (!image) {
+                    setCurrentImageIndex(index);
+                    setIsPhotoDialogOpen(true);
+                  }
+                }}
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt={`${label} Selfie ${index + 1}`}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <Camera className="h-6 w-6 mb-1" />
+                    <span className="text-xs">No Photo</span>
+                  </div>
+                )}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
         <div className="flex justify-center mt-2">
-          <div className="text-xs text-center text-gray-500">
+          <div className="text-xs text-center">
             {images.filter(img => img).length} of {maxImages} images
-            {normalizedImages.filter(img => img).length > 1 && (
-              <span className="ml-1">• +{normalizedImages.filter(img => img).length - 1} more photos</span>
-            )}
           </div>
         </div>
-      </div>
+      </Carousel>
 
       {/* Photo selection dialog */}
       <Dialog open={isPhotoDialogOpen} onOpenChange={setIsPhotoDialogOpen}>
