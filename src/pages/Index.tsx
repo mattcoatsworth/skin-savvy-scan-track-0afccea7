@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -6,7 +7,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
-import { Salad, Pill, Palette, CloudSun, Droplet, Utensils, Circle, Activity, Calendar } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, Droplet, Utensils, Circle, Activity } from "lucide-react";
 
 const Index = () => {
   // Sample data
@@ -223,27 +224,33 @@ const Index = () => {
         <h1 className="text-xl font-bold">Skin Savvy</h1>
       </header>
       
-      <main className="space-y-6">
-        {/* Moved SkinHistory to the top, below the header */}
-        <SkinHistory ratings={skinHistory} />
+      <main>
+        {/* Skin History at the top with proper spacing */}
+        <div className="mb-6">
+          <SkinHistory ratings={skinHistory} />
+        </div>
         
-        {/* ScanButton is now below SkinHistory with proper spacing */}
-        <ScanButton />
+        {/* ScanButton in its own div with proper spacing */}
+        <div className="mb-6">
+          <ScanButton />
+        </div>
         
-        <DailySkinSnapshot 
-          emoji="😊" 
-          status="Balanced" 
-          factors={skinFactors}
-          recommendations={skinRecommendations}
-        />
-        
-        <RecentLogsCarousel logs={recentLogs} />
-        
-        <InsightsTrends insights={insights} />
-        
-        <SuggestedActions actions={suggestedActions} />
-        
-        <ExploreSection items={exploreItems} />
+        <div className="space-y-6">
+          <DailySkinSnapshot 
+            emoji="😊" 
+            status="Balanced" 
+            factors={skinFactors}
+            recommendations={skinRecommendations}
+          />
+          
+          <RecentLogsCarousel logs={recentLogs} />
+          
+          <InsightsTrends insights={insights} />
+          
+          <SuggestedActions actions={suggestedActions} />
+          
+          <ExploreSection items={exploreItems} />
+        </div>
       </main>
     </div>
   );
