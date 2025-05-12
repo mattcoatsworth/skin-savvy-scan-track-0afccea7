@@ -29,21 +29,18 @@ const ProductAITestPage = () => {
   }>>({
     overview: { formattedHtml: "", sections: {} },
     details: { formattedHtml: "", sections: {} },
-    science: { formattedHtml: "", sections: {} },
     disclaimer: { formattedHtml: "", sections: {} }
   });
   
   const [isLoading, setIsLoading] = useState({
     overview: true,
     details: true,
-    science: true,
     disclaimer: true
   });
   
   // Initialize the skin advice hook for different content types
   const { getAdvice: getOverviewAdvice } = useSkinAdvice({ adviceType: "general" });
   const { getAdvice: getDetailsAdvice } = useSkinAdvice({ adviceType: "product" });
-  const { getAdvice: getScienceAdvice } = useSkinAdvice({ adviceType: "general" });
   const { getAdvice: getDisclaimerAdvice } = useSkinAdvice({ adviceType: "general" });
   
   // Find the product from our data
@@ -126,24 +123,12 @@ const ProductAITestPage = () => {
         setAiContent(prev => ({...prev, details}));
         setIsLoading(prev => ({ ...prev, details: false }));
         
-        // Generate Science content
-        setIsLoading(prev => ({ ...prev, science: true }));
-        const sciencePrompt = `Provide scientific information about ${product.name} as it relates to skin health. 
-                              Include information about key compounds or nutrients, mechanisms of action, and reference any 
-                              relevant scientific studies if applicable. Keep it factual and educational but accessible to non-experts.`;
-        
-        const science = await getScienceAdvice(sciencePrompt, {
-          productType: type,
-          productName: product.name
-        });
-        setAiContent(prev => ({...prev, science}));
-        setIsLoading(prev => ({ ...prev, science: false }));
-        
         // Generate Disclaimer content
         setIsLoading(prev => ({ ...prev, disclaimer: true }));
         const disclaimerPrompt = `Create a medical and scientific disclaimer about the information provided for ${product.name} 
                                   and its effects on skin health. Include standard disclaimers about individual variation, 
-                                  consultation with healthcare providers, and limitations of current research.`;
+                                  consultation with healthcare providers, and limitations of current research. 
+                                  Only include the disclaimer text - do not include any analysis, benefits, or other sections.`;
         
         const disclaimer = await getDisclaimerAdvice(disclaimerPrompt, {
           productType: type,
@@ -215,7 +200,6 @@ const ProductAITestPage = () => {
 
   // Process AI sections
   const detailsSections = processAIResponse("details", aiContent.details?.sections || {});
-  const scienceSections = processAIResponse("science", aiContent.science?.sections || {});
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -370,62 +354,6 @@ const ProductAITestPage = () => {
                 )
               )}
             </div>
-
-            {/* Science Section - AI Generated */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Science</h2>
-              {isLoading.science ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <LoadingIndicator />
-                  </CardContent>
-                </Card>
-              ) : (
-                scienceSections.length > 0 ? (
-                  <div className="space-y-4">
-                    {scienceSections.map((section, idx) => (
-                      <div key={idx} className="ai-section">
-                        <h3 className="ai-section-title">{section.title}</h3>
-                        
-                        <div className="space-y-3">
-                          {section.items.map((item, itemIdx) => (
-                            <Link to={item.linkTo} key={itemIdx} className="block">
-                              <Card className="ios-card mb-4 hover:shadow-md transition-shadow">
-                                <CardContent className="p-4 flex items-center justify-between">
-                                  <div>
-                                    <h3 className="font-medium text-base">
-                                      {item.text.split(":")[0] || `Finding ${itemIdx + 1}`}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground">
-                                      {item.text.includes(":") 
-                                        ? item.text.split(":").slice(1).join(":").trim()
-                                        : item.text}
-                                    </p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <Card>
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-3">AI Generated Science Information</h3>
-                      <div className="text-sm">
-                        {aiContent.science?.formattedHtml ? (
-                          <div dangerouslySetInnerHTML={{ __html: aiContent.science.formattedHtml }} className="skin-advice-content" />
-                        ) : (
-                          <p>No scientific information available for this product.</p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              )}
-            </div>
             
             {/* View Scoring Method */}
             <ViewScoringMethod />
@@ -433,7 +361,7 @@ const ProductAITestPage = () => {
             {/* Disclaimer Section - AI Generated - Moved below ViewScoringMethod */}
             <div className="mb-8 mt-8">
               <h2 className="text-xl font-semibold mb-4">Disclaimer</h2>
-              <Card className="ios-card bg-slate-50">
+              <Card className="ios-card">
                 <CardContent className="p-6">
                   {isLoading.disclaimer ? (
                     <LoadingIndicator />
