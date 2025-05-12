@@ -10,6 +10,8 @@ import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Import product data (In a real app, this would come from an API)
 import { foodItems, productItems } from "@/data/products";
@@ -88,6 +90,59 @@ const ProductAITestPage = () => {
     return result;
   };
 
+  // Function to fetch cached content from Supabase or generate new content
+  const getOrGenerateContent = async (contentType: string, generatePrompt: string, generateContext: any) => {
+    if (!product) return null;
+    
+    try {
+      // First, check if we have cached content
+      const { data: cachedContent, error } = await supabase
+        .from('ai_generated_content')
+        .select('content')
+        .eq('product_id', id)
+        .eq('product_type', type)
+        .eq('content_type', contentType)
+        .single();
+      
+      // If we have cached content, use it
+      if (cachedContent && !error) {
+        console.log(`Found cached ${contentType} for ${type}/${id}`);
+        return cachedContent.content;
+      }
+      
+      // Otherwise generate new content
+      console.log(`Generating new ${contentType} for ${type}/${id}`);
+      const getAdviceFunction = 
+        contentType === 'overview' ? getOverviewAdvice : 
+        contentType === 'details' ? getDetailsAdvice : 
+        getDisclaimerAdvice;
+      
+      const generatedContent = await getAdviceFunction(generatePrompt, generateContext);
+      
+      // Cache the generated content
+      const { error: insertError } = await supabase
+        .from('ai_generated_content')
+        .upsert({
+          product_id: id,
+          product_type: type,
+          content_type: contentType,
+          content: generatedContent
+        }, {
+          onConflict: 'product_id, product_type, content_type'
+        });
+      
+      if (insertError) {
+        console.error("Error caching AI content:", insertError);
+        // Still return the generated content even if caching fails
+      }
+      
+      return generatedContent;
+    } catch (error) {
+      console.error(`Error in getOrGenerateContent for ${contentType}:`, error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Get AI content for each section when product changes
     const fetchAIContent = async () => {
@@ -100,12 +155,15 @@ const ProductAITestPage = () => {
                                 Include information about its impact (${product.impact}), what it does, and a brief description. 
                                 Write this as if it's for a skincare app product detail page. Keep it under 200 words.`;
         
-        const overview = await getOverviewAdvice(overviewPrompt, { 
+        const overview = await getOrGenerateContent('overview', overviewPrompt, { 
           productType: type,
           productName: product.name,
           productImpact: product.impact
         });
-        setAiContent(prev => ({...prev, overview}));
+        
+        if (overview) {
+          setAiContent(prev => ({...prev, overview}));
+        }
         setIsLoading(prev => ({ ...prev, overview: false }));
         
         // Generate Details content
@@ -115,11 +173,14 @@ const ProductAITestPage = () => {
                               Include at least 4 potential benefits and 3 potential concerns based on scientific research.
                               Make it specific to skin health.`;
         
-        const details = await getDetailsAdvice(detailsPrompt, {
+        const details = await getOrGenerateContent('details', detailsPrompt, {
           productType: type,
           productName: product.name
         });
-        setAiContent(prev => ({...prev, details}));
+        
+        if (details) {
+          setAiContent(prev => ({...prev, details}));
+        }
         setIsLoading(prev => ({ ...prev, details: false }));
         
         // Generate shorter Disclaimer content
@@ -127,20 +188,24 @@ const ProductAITestPage = () => {
         const disclaimerPrompt = `Create a brief medical disclaimer about ${product.name} and skin health. Keep it under 50 words.
                                  Only include the essential disclaimer text - no analysis or other sections.`;
         
-        const disclaimer = await getDisclaimerAdvice(disclaimerPrompt, {
+        const disclaimer = await getOrGenerateContent('disclaimer', disclaimerPrompt, {
           productType: type,
           productName: product.name
         });
-        setAiContent(prev => ({...prev, disclaimer}));
+        
+        if (disclaimer) {
+          setAiContent(prev => ({...prev, disclaimer}));
+        }
         setIsLoading(prev => ({ ...prev, disclaimer: false }));
         
       } catch (error) {
         console.error("Error generating AI content:", error);
+        toast.error("There was a problem loading AI content. Please try again.");
       }
     };
     
     fetchAIContent();
-  }, [product, type]);
+  }, [product, type, id]);
 
   if (!product) {
     return (
