@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { format, subDays } from "date-fns";
 import SkinHistory from "@/components/SkinHistory";
 import BackButton from "@/components/BackButton";
@@ -93,6 +92,16 @@ const getRatingLabel = (rating: number) => {
 
 const History = () => {
   useScrollToTop();
+  // Get the location to parse query parameters
+  const location = useLocation();
+  
+  // Extract the tab parameter from the URL
+  const getTabFromUrl = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const tabParam = searchParams.get('tab');
+    return tabParam === 'weekly' ? 'weekly' : 'daily';
+  };
+  
   // State for photo upload dialog
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [currentPhotoType, setCurrentPhotoType] = useState<"am" | "pm" | null>(null);
@@ -112,8 +121,13 @@ const History = () => {
     pm: null as string | null
   });
   
-  // Set the default active tab
-  const [activeTab, setActiveTab] = useState("daily");
+  // Set the active tab based on URL parameter
+  const [activeTab, setActiveTab] = useState(getTabFromUrl());
+  
+  // Update the active tab when the URL changes
+  useEffect(() => {
+    setActiveTab(getTabFromUrl());
+  }, [location.search]);
   
   // Use the skin advice hook for AI analysis
   const { getAdvice, isLoading: isAdviceLoading, getTextContent } = useSkinAdvice({ adviceType: "general" });
@@ -612,7 +626,7 @@ const History = () => {
         </header>
         
         {/* Add tabs at the top */}
-        <Tabs defaultValue="daily" className="w-full" onValueChange={setActiveTab}>
+        <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="daily" className="text-base">Daily Analysis</TabsTrigger>
             <TabsTrigger value="weekly" className="text-base">Weekly Analysis</TabsTrigger>
