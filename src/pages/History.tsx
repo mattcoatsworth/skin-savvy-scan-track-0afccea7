@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -17,6 +16,7 @@ import SkinIndexComparison from "@/components/SkinIndexComparison";
 import InsightsTrends from "@/components/InsightsTrends";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -97,6 +97,9 @@ const History = () => {
     analysis: "Analyzing your skin logs..." 
   });
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Set the default active tab
+  const [activeTab, setActiveTab] = useState("daily");
   
   // Use the skin advice hook for AI analysis
   const { getAdvice } = useSkinAdvice({ adviceType: "general" });
@@ -278,111 +281,176 @@ const History = () => {
           <h1 className="text-2xl font-bold">Skin</h1>
         </header>
         
-        {/* Today's Skin Card - Added at the top */}
-        <Card className="ios-card mb-6">
-          <CardContent className="p-6">
-            <div className="flex items-start mb-4">
-              <Smile className="h-12 w-12 mr-4 mt-1" /> {/* Increased emoji size */}
-              <div className="flex-grow">
-                <h2 className="text-2xl font-bold mb-1">Today's Skin</h2>
-                <p className="text-2xl font-semibold mb-4">
-                  {isLoading ? "Analyzing..." : aiSkinAnalysis.status}
+        {/* Add tabs at the top */}
+        <Tabs defaultValue="daily" className="w-full" onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="daily" className="text-base">Daily Analysis</TabsTrigger>
+            <TabsTrigger value="weekly" className="text-base">Weekly Analysis</TabsTrigger>
+          </TabsList>
+          
+          {/* Daily Analysis Tab Content */}
+          <TabsContent value="daily">
+            {/* Today's Skin Card */}
+            <Card className="ios-card mb-6">
+              <CardContent className="p-6">
+                <div className="flex items-start mb-4">
+                  <Smile className="h-12 w-12 mr-4 mt-1" />
+                  <div className="flex-grow">
+                    <h2 className="text-2xl font-bold mb-1">Today's Skin</h2>
+                    <p className="text-2xl font-semibold mb-4">
+                      {isLoading ? "Analyzing..." : aiSkinAnalysis.status}
+                    </p>
+                    
+                    <p className="font-medium text-base mb-2">Detailed Analysis:</p>
+                    <p className="text-slate-600">
+                      {isLoading ? 
+                        "Analyzing your skin logs..." : 
+                        aiSkinAnalysis.analysis
+                      }
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* SkinIndexComparison component */}
+            <SkinIndexComparison className="mb-6" gender="female" age={25} />
+            
+            {/* InsightsTrends component */}
+            <InsightsTrends insights={insightData} className="mb-6" />
+            
+            {/* Daily Log Cards */}
+            <div className="flex flex-col gap-y-6">
+              {dayLogs.map((log) => (
+                <Link key={log.id} to={`/day-log/${log.id}`}>
+                  <Card className="ios-card hover:shadow-md transition-all">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-medium">{format(log.date, "EEEE")}</h3>
+                          <p className="text-sm text-muted-foreground">{format(log.date, "MMM d, yyyy")}</p>
+                          <p className="text-sm mt-2">{log.summary}</p>
+                          
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {log.factors.skin.map((factor, index) => (
+                              <span key={index} className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
+                                {factor}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-center">
+                          <div className="text-lg font-semibold">
+                            {log.rating}
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {getRatingLabel(log.rating)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Selfies section */}
+                      <div className="mt-4 pt-3 border-t border-gray-100">
+                        <h4 className="text-sm font-medium mb-2">Selfies</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {/* AM Photo */}
+                          <div 
+                            className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
+                            onClick={(e) => handlePhotoClick(log.id, "am", e)}
+                          >
+                            {log.amSelfie ? (
+                              <img 
+                                src={log.amSelfie} 
+                                alt="AM Selfie" 
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <span>AM Photo</span>
+                            )}
+                          </div>
+                          
+                          {/* PM Photo */}
+                          <div 
+                            className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
+                            onClick={(e) => handlePhotoClick(log.id, "pm", e)}
+                          >
+                            {log.pmSelfie ? (
+                              <img 
+                                src={log.pmSelfie} 
+                                alt="PM Selfie" 
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <span>PM Photo</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </TabsContent>
+          
+          {/* Weekly Analysis Tab Content */}
+          <TabsContent value="weekly">
+            {/* Weekly Skin Report moved here */}
+            <SkinHistory ratings={skinRatings} className="mb-6" />
+            
+            {/* Additional weekly analysis content can be added here */}
+            <Card className="ios-card mb-6">
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold mb-3">Weekly Summary</h2>
+                <p className="text-slate-600 mb-4">
+                  Your skin has shown improvement over the past week with increased hydration levels and fewer breakouts.
+                  Continue with your current skincare routine and monitor changes in texture and tone.
                 </p>
                 
-                <p className="font-medium text-base mb-2">Detailed Analysis:</p>
+                <h3 className="text-lg font-medium mb-2">Key Findings</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Hydration increased by 15%</li>
+                  <li>Redness decreased significantly</li>
+                  <li>Overall skin tone has become more even</li>
+                  <li>T-zone oil production has stabilized</li>
+                </ul>
+              </CardContent>
+            </Card>
+            
+            {/* Weekly trends and patterns */}
+            <Card className="ios-card mb-6">
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold mb-3">Trends & Patterns</h2>
                 <p className="text-slate-600">
-                  {isLoading ? 
-                    "Analyzing your skin logs..." : 
-                    aiSkinAnalysis.analysis
-                  }
+                  Based on your weekly logs, we've identified the following correlations:
                 </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Add SkinHistory with moderate margin */}
-        <SkinHistory ratings={skinRatings} className="mb-6" />
-        
-        {/* Add the SkinIndexComparison component */}
-        <SkinIndexComparison className="mb-6" gender="female" age={25} />
-        
-        {/* Add the InsightsTrends component under SkinIndexComparison */}
-        <InsightsTrends insights={insightData} className="mb-6" />
-        
-        {/* Use gap-y-6 for moderate spacing between cards to match scans page */}
-        <div className="flex flex-col gap-y-6">
-          {dayLogs.map((log) => (
-            <Link key={log.id} to={`/day-log/${log.id}`}>
-              <Card className="ios-card hover:shadow-md transition-all">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-medium">{format(log.date, "EEEE")}</h3>
-                      <p className="text-sm text-muted-foreground">{format(log.date, "MMM d, yyyy")}</p>
-                      <p className="text-sm mt-2">{log.summary}</p>
-                      
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {log.factors.skin.map((factor, index) => (
-                          <span key={index} className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
-                            {factor}
-                          </span>
-                        ))}
-                      </div>
+                
+                <div className="mt-4 space-y-4">
+                  <div className="flex items-start">
+                    <div className="bg-green-100 p-2 rounded-full mr-3">
+                      <span className="text-green-600 text-sm">+</span>
                     </div>
-                    
-                    <div className="flex flex-col items-center">
-                      <div className="text-lg font-semibold">
-                        {log.rating}
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        {getRatingLabel(log.rating)}
-                      </span>
+                    <div>
+                      <h4 className="font-medium">Positive Impact</h4>
+                      <p className="text-sm text-slate-600">Consistent morning hydration shows strong correlation with skin elasticity and barrier function.</p>
                     </div>
                   </div>
                   
-                  {/* Add Selfies section to each card */}
-                  <div className="mt-4 pt-3 border-t border-gray-100">
-                    <h4 className="text-sm font-medium mb-2">Selfies</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {/* AM Photo */}
-                      <div 
-                        className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
-                        onClick={(e) => handlePhotoClick(log.id, "am", e)}
-                      >
-                        {log.amSelfie ? (
-                          <img 
-                            src={log.amSelfie} 
-                            alt="AM Selfie" 
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <span>AM Photo</span>
-                        )}
-                      </div>
-                      
-                      {/* PM Photo */}
-                      <div 
-                        className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs overflow-hidden cursor-pointer"
-                        onClick={(e) => handlePhotoClick(log.id, "pm", e)}
-                      >
-                        {log.pmSelfie ? (
-                          <img 
-                            src={log.pmSelfie} 
-                            alt="PM Selfie" 
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <span>PM Photo</span>
-                        )}
-                      </div>
+                  <div className="flex items-start">
+                    <div className="bg-red-100 p-2 rounded-full mr-3">
+                      <span className="text-red-600 text-sm">-</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium">Negative Impact</h4>
+                      <p className="text-sm text-slate-600">Dairy consumption appears to correlate with mild inflammatory response 1-2 days after consumption.</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
       
       {/* Photo selection dialog */}
