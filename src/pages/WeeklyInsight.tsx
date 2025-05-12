@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import BackButton from "@/components/BackButton";
 import AppNavigation from "@/components/AppNavigation";

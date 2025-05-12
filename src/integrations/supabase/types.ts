@@ -164,42 +164,6 @@ export type Database = {
         }
         Relationships: []
       }
-      selfies_metadata: {
-        Row: {
-          created_at: string
-          date: string
-          file_path: string
-          filename: string
-          id: string
-          index: number
-          public_url: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          date: string
-          file_path: string
-          filename: string
-          id?: string
-          index: number
-          public_url: string
-          type: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          date?: string
-          file_path?: string
-          filename?: string
-          id?: string
-          index?: number
-          public_url?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       skin_logs: {
         Row: {
           acne_level: number | null
@@ -281,39 +245,6 @@ export type Database = {
           related_product_id?: string | null
           updated_at?: string | null
           user_id?: string
-        }
-        Relationships: []
-      }
-      weekly_ratings: {
-        Row: {
-          created_at: string
-          id: string
-          notes: string | null
-          rating: number
-          updated_at: string
-          user_id: string
-          week_end_date: string
-          week_start_date: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          notes?: string | null
-          rating: number
-          updated_at?: string
-          user_id: string
-          week_end_date: string
-          week_start_date: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          notes?: string | null
-          rating?: number
-          updated_at?: string
-          user_id?: string
-          week_end_date?: string
-          week_start_date?: string
         }
         Relationships: []
       }

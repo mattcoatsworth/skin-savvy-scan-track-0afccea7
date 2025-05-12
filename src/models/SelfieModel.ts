@@ -53,7 +53,7 @@ export const saveSelfie = async ({ userId, file, type, index }: SaveSelfieOption
       .getPublicUrl(filePath);
     
     // Store metadata in the database
-    const selfieMetadata = {
+    const selfieMetadata: Omit<SelfieMetadata, 'id'> = {
       user_id: userId,
       filename: file.name,
       file_path: filePath,
@@ -67,7 +67,7 @@ export const saveSelfie = async ({ userId, file, type, index }: SaveSelfieOption
     const { data: metadataData, error: metadataError } = await supabase
       .from('selfies_metadata')
       .insert(selfieMetadata)
-      .select('*')
+      .select()
       .single();
       
     if (metadataError) {
@@ -75,7 +75,7 @@ export const saveSelfie = async ({ userId, file, type, index }: SaveSelfieOption
       throw metadataError;
     }
     
-    return metadataData as SelfieMetadata;
+    return metadataData;
   } catch (error) {
     console.error('Error in saveSelfie:', error);
     throw error;
@@ -139,11 +139,7 @@ export const getSelfiesByDate = async (userId: string, date: string): Promise<Se
       throw error;
     }
     
-    // Cast to ensure 'type' is of correct type 'am' | 'pm'
-    return (data || []).map(item => ({
-      ...item,
-      type: item.type as 'am' | 'pm'
-    })) as SelfieMetadata[];
+    return data || [];
   } catch (error) {
     console.error('Error in getSelfiesByDate:', error);
     throw error;
@@ -163,11 +159,7 @@ export const getAllSelfies = async (userId: string): Promise<SelfieMetadata[]> =
       throw error;
     }
     
-    // Cast to ensure 'type' is of correct type 'am' | 'pm'
-    return (data || []).map(item => ({
-      ...item,
-      type: item.type as 'am' | 'pm'
-    })) as SelfieMetadata[];
+    return data || [];
   } catch (error) {
     console.error('Error in getAllSelfies:', error);
     throw error;
