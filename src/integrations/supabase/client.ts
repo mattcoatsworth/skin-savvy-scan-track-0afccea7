@@ -17,31 +17,8 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true
-    }
+    },
+    // Fixed: Remove incorrect realtime config options
+    realtime: {}
   }
 );
-
-// Initialize the storage bucket if it doesn't exist yet
-const initializeStorage = async () => {
-  try {
-    const { data: buckets, error } = await supabase.storage.listBuckets();
-    
-    // Check if selfies bucket exists
-    const selfiesBucketExists = buckets?.some(bucket => bucket.name === 'selfies');
-    
-    if (!selfiesBucketExists && !error) {
-      console.log("Creating selfies bucket...");
-      await supabase.storage.createBucket('selfies', {
-        public: true,
-        fileSizeLimit: 5242880, // 5MB limit
-        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp']
-      });
-      console.log("Selfies bucket created successfully!");
-    }
-  } catch (err) {
-    console.error("Error initializing storage:", err);
-  }
-};
-
-// Call the initialization function
-initializeStorage();

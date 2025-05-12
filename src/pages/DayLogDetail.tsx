@@ -440,17 +440,6 @@ const DayLogDetail = () => {
                   type="am"
                   images={selfieImages.am}
                   onAddImage={handleAddSelfie}
-                  onDeleteImage={(type, index) => {
-                    console.log(`Delete ${type} image at index ${index}`);
-                    // Implement actual deletion logic here
-                    const newImages = [...selfieImages.am];
-                    newImages[index] = null;
-                    setSelfieImages(prev => ({
-                      ...prev,
-                      am: newImages
-                    }));
-                  }}
-                  userId="day-log-demo-user" // Use actual user ID when available
                 />
                 
                 {/* PM Selfies Carousel */}
@@ -458,17 +447,6 @@ const DayLogDetail = () => {
                   type="pm" 
                   images={selfieImages.pm}
                   onAddImage={handleAddSelfie}
-                  onDeleteImage={(type, index) => {
-                    console.log(`Delete ${type} image at index ${index}`);
-                    // Implement actual deletion logic here
-                    const newImages = [...selfieImages.pm];
-                    newImages[index] = null;
-                    setSelfieImages(prev => ({
-                      ...prev,
-                      pm: newImages
-                    }));
-                  }}
-                  userId="day-log-demo-user" // Use actual user ID when available
                 />
               </div>
             </CardContent>

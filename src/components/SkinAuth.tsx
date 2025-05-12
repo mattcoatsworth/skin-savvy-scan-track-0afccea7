@@ -5,32 +5,69 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "@/contexts/AuthContext";
-import { LoaderCircle } from "lucide-react";
 
 const SkinAuth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn, signUp, loading, isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [session, setSession] = useState(null);
   const navigate = useNavigate();
   
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        navigate('/home');
+      }
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        navigate('/home');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      await signUp(email, password);
+      setLoading(true);
+      
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Sign up successful",
+          description: "Please check your email for the confirmation link.",
+        });
+      }
     } catch (error) {
-      // Error is handled in AuthContext
-      console.error('Error in sign up component:', error);
+      console.error('Error signing up:', error);
+      toast({
+        title: "Sign up failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,15 +75,36 @@ const SkinAuth = () => {
     e.preventDefault();
     
     try {
-      await signIn(email, password);
+      setLoading(true);
+      
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Sign in failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        navigate('/home');
+      }
     } catch (error) {
-      // Error is handled in AuthContext
-      console.error('Error in sign in component:', error);
+      console.error('Error signing in:', error);
+      toast({
+        title: "Sign in failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-slate-50 p-4">
+    <div className="flex justify-center items-center min-h-screen bg-skin-gray p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center">SkinInsight</CardTitle>
@@ -85,12 +143,7 @@ const SkinAuth = () => {
                 </div>
                 
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : "Sign In"}
+                  {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </TabsContent>
@@ -124,12 +177,7 @@ const SkinAuth = () => {
                 </div>
                 
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Account...
-                    </>
-                  ) : "Create Account"}
+                  {loading ? "Creating Account..." : "Create Account"}
                 </Button>
               </form>
             </TabsContent>

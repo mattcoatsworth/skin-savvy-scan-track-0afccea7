@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useLocation } from "react-router-dom";
@@ -668,13 +669,7 @@ const History = () => {
                       type="am"
                       images={todaysSelfies.am}
                       onAddImage={handleAddSelfie}
-                      onDeleteImage={(type, index) => {
-                        // Implement deletion logic here
-                        const newImages = [...todaysSelfies.am];
-                        newImages[index] = null;
-                        // Update state accordingly
-                      }}
-                      userId="history-demo-user" // Use actual user ID when available
+                      label="Morning"
                     />
                     
                     {/* Evening Selfie Carousel */}
@@ -682,13 +677,7 @@ const History = () => {
                       type="pm" 
                       images={todaysSelfies.pm}
                       onAddImage={handleAddSelfie}
-                      onDeleteImage={(type, index) => {
-                        // Implement deletion logic here
-                        const newImages = [...todaysSelfies.pm];
-                        newImages[index] = null;
-                        // Update state accordingly
-                      }}
-                      userId="history-demo-user" // Use actual user ID when available
+                      label="Evening"
                     />
                   </div>
                 </CardContent>

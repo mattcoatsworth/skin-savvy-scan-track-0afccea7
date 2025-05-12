@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import React, { useState } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";
@@ -10,8 +9,6 @@ import SkinHistory from "@/components/SkinHistory";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import SelfieCarousel from "@/components/SelfieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   // Sample data
@@ -30,135 +27,21 @@ const Index = () => {
     am: [] as (string | null)[],
     pm: [] as (string | null)[]
   });
-  
-  // User ID for storage - in a real app this would come from auth
-  const { user } = useAuth();
-  const [userId] = useState(user?.id || "demo-user"); 
 
-  // Load selfies from localStorage and Supabase on component mount
-  useEffect(() => {
-    const date = new Date().toISOString().split('T')[0];
-    const amKey = `am-selfies-${date}`;
-    const pmKey = `pm-selfies-${date}`;
+  // Handle adding a selfie image
+  const handleAddSelfie = (type: "am" | "pm", index: number) => {
+    // In a real app, this would open the camera or file selector
+    // For demo, we'll use placeholder images
+    const placeholderImages = [
+      "https://source.unsplash.com/random/300x300/?face&sig=1",
+      "https://source.unsplash.com/random/300x300/?face&sig=2",
+      "https://source.unsplash.com/random/300x300/?face&sig=3",
+      "https://source.unsplash.com/random/300x300/?face&sig=4"
+    ];
     
-    const loadSelfies = async () => {
-      try {
-        // Try to load from localStorage first (for backward compatibility)
-        const storedAmSelfies = localStorage.getItem(amKey);
-        const storedPmSelfies = localStorage.getItem(pmKey);
-        
-        const amSelfies = storedAmSelfies ? JSON.parse(storedAmSelfies) : [];
-        const pmSelfies = storedPmSelfies ? JSON.parse(storedPmSelfies) : [];
-        
-        setTodaysSelfies({
-          am: amSelfies,
-          pm: pmSelfies
-        });
-        
-        // Also try to load from Supabase if available
-        // In a real app with authentication, you would filter by the actual user ID
-        const { data: storageFiles, error } = await supabase.storage
-          .from('selfies')
-          .list(`${userId}-`, {
-            search: date
-          });
-          
-        if (!error && storageFiles) {
-          const amFiles = storageFiles.filter(file => file.name.includes('-am-'));
-          const pmFiles = storageFiles.filter(file => file.name.includes('-pm-'));
-          
-          // Update state with Supabase URLs if files exist
-          if (amFiles.length > 0 || pmFiles.length > 0) {
-            const updatedSelfies = { ...todaysSelfies };
-            
-            amFiles.forEach(file => {
-              const index = parseInt(file.name.split('-').pop() || '0', 10);
-              const { data } = supabase.storage.from('selfies').getPublicUrl(file.name);
-              if (data.publicUrl) {
-                updatedSelfies.am[index] = data.publicUrl;
-              }
-            });
-            
-            pmFiles.forEach(file => {
-              const index = parseInt(file.name.split('-').pop() || '0', 10);
-              const { data } = supabase.storage.from('selfies').getPublicUrl(file.name);
-              if (data.publicUrl) {
-                updatedSelfies.pm[index] = data.publicUrl;
-              }
-            });
-            
-            setTodaysSelfies(updatedSelfies);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading selfies:", error);
-      }
-    };
-    
-    loadSelfies();
-  }, [userId]);
-
-  // Add toast functionality
-  const { toast } = useToast();
-  
-  // Handle adding a selfie image with Supabase integration
-  const handleAddSelfie = (type: "am" | "pm", index: number, imageUrl?: string) => {
-    if (imageUrl) {
-      // If an image URL is provided (from Supabase), use that
-      setTodaysSelfies(prev => {
-        const newImages = [...prev[type]];
-        newImages[index] = imageUrl;
-        
-        // Save to localStorage for offline access
-        const date = new Date().toISOString().split('T')[0];
-        localStorage.setItem(`${type}-selfies-${date}`, JSON.stringify(newImages));
-        
-        return {
-          ...prev,
-          [type]: newImages
-        };
-      });
-    } else {
-      // Fallback to placeholder images if no URL provided (this is a backup option)
-      const placeholderImages = [
-        "https://source.unsplash.com/random/300x300/?face&sig=1",
-        "https://source.unsplash.com/random/300x300/?face&sig=2",
-        "https://source.unsplash.com/random/300x300/?face&sig=3",
-        "https://source.unsplash.com/random/300x300/?face&sig=4"
-      ];
-      
-      setTodaysSelfies(prev => {
-        const newImages = [...prev[type]];
-        newImages[index] = placeholderImages[index % placeholderImages.length];
-        
-        // Save to localStorage for offline access
-        const date = new Date().toISOString().split('T')[0];
-        localStorage.setItem(`${type}-selfies-${date}`, JSON.stringify(newImages));
-        
-        toast({
-          title: "Notice",
-          description: "Using placeholder image instead of camera. Check app permissions if needed.",
-          duration: 3000,
-        });
-        
-        return {
-          ...prev,
-          [type]: newImages
-        };
-      });
-    }
-  };
-  
-  // Handle deleting a selfie
-  const handleDeleteSelfie = (type: "am" | "pm", index: number) => {
     setTodaysSelfies(prev => {
       const newImages = [...prev[type]];
-      newImages[index] = null;
-      
-      // Update localStorage
-      const date = new Date().toISOString().split('T')[0];
-      localStorage.setItem(`${type}-selfies-${date}`, JSON.stringify(newImages));
-      
+      newImages[index] = placeholderImages[index % placeholderImages.length];
       return {
         ...prev,
         [type]: newImages
@@ -367,28 +250,24 @@ const Index = () => {
           <ScanButton />
         </div>
         
-        {/* Add Today's Selfies Section with updated component */}
+        {/* Add Today's Selfies Section */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
           <Card className="ios-card">
             <CardContent className="p-4">
               <div className="grid grid-cols-2 gap-4">
-                {/* Morning Selfie Carousel with Supabase storage */}
+                {/* Morning Selfie Carousel */}
                 <SelfieCarousel
                   type="am"
                   images={todaysSelfies.am}
                   onAddImage={handleAddSelfie}
-                  onDeleteImage={handleDeleteSelfie}
-                  userId={userId}
                 />
                 
-                {/* Evening Selfie Carousel with Supabase storage */}
+                {/* Evening Selfie Carousel */}
                 <SelfieCarousel
                   type="pm"
                   images={todaysSelfies.pm}
                   onAddImage={handleAddSelfie}
-                  onDeleteImage={handleDeleteSelfie}
-                  userId={userId}
                 />
               </div>
             </CardContent>
