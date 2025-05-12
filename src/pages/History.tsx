@@ -614,6 +614,96 @@ const History = () => {
     return 'inline bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
   };
 
+  // Daily Log Cards - UPDATING to make selfie sections consistent
+  const renderDayLogs = () => {
+    return dayLogs.map((log) => (
+      <Link key={log.id} to={`/day-log/${log.id}`}>
+        <Card className="ios-card hover:shadow-md transition-all">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-medium">{format(log.date, "EEEE")}</h3>
+                <p className="text-sm text-muted-foreground">{format(log.date, "MMM d, yyyy")}</p>
+                <p className="text-sm mt-2">{log.summary}</p>
+                
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {log.factors.skin.map((factor, index) => (
+                    <span key={index} className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
+                      {factor}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div className="text-lg font-semibold">
+                  {log.rating}
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {getRatingLabel(log.rating)}
+                </span>
+              </div>
+            </div>
+            
+            {/* CONSISTENT SELFIES SECTION */}
+            <div className="mt-4 pt-3 border-t border-gray-100">
+              <h4 className="text-sm font-medium mb-2">Selfies</h4>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Morning Selfies - Consistent styling */}
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-slate-500 mb-1">AM</span>
+                  <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
+                    {log.amSelfies?.[0] ? (
+                      <img 
+                        src={log.amSelfies[0]} 
+                        alt="Morning Selfie" 
+                        className="object-cover w-full h-full" 
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <Camera className="h-6 w-6 mb-1" />
+                        <span className="text-xs text-gray-400">No Photo</span>
+                      </div>
+                    )}
+                  </div>
+                  {log.amSelfies && log.amSelfies.filter(img => img).length > 1 && (
+                    <span className="text-xs mt-1 text-slate-500">
+                      +{log.amSelfies.filter(img => img).length - 1} more photos
+                    </span>
+                  )}
+                </div>
+                
+                {/* Evening Selfies - Consistent styling */}
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-slate-500 mb-1">PM</span>
+                  <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
+                    {log.pmSelfies?.[0] ? (
+                      <img 
+                        src={log.pmSelfies[0]} 
+                        alt="Evening Selfie" 
+                        className="object-cover w-full h-full" 
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <Camera className="h-6 w-6 mb-1" />
+                        <span className="text-xs text-gray-400">No Photo</span>
+                      </div>
+                    )}
+                  </div>
+                  {log.pmSelfies && log.pmSelfies.filter(img => img).length > 1 && (
+                    <span className="text-xs mt-1 text-slate-500">
+                      +{log.pmSelfies.filter(img => img).length - 1} more photos
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    ));
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen">
       <div className="max-w-md mx-auto">
@@ -657,7 +747,7 @@ const History = () => {
             {/* SkinIndexComparison component */}
             <SkinIndexComparison className="mb-6" gender="female" age={25} />
             
-            {/* Add Today's Selfies Section - Updated to use SelfieCarousel */}
+            {/* Add Today's Selfies Section */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
               <Card className="ios-card">
@@ -700,26 +790,17 @@ const History = () => {
                   </CardContent>
                 </Card>
               ) : (
+                // ... keep existing code (AI analysis display logic)
                 <>
                   {/* Display AI sections in a structured format */}
                   {aiSections.map((section, index) => (
+                    // ... keep existing code (AI sections rendering)
                     <div key={index} className="ai-section mb-4">
                       <h2 className="text-lg font-semibold mb-3">{section.title}</h2>
                       
                       <div className="space-y-3">
                         {section.items.map((item: any, itemIdx: number) => {
-                          // Parse item text to extract title and details
-                          const hasColon = item.text.includes(":");
-                          const sectionConfig = {
-                            "Key Observations": "Observation",
-                            "Recommendations": "Recommendation",
-                            "Contributing Factors": "Factor",
-                            "Timeline": "Timeline"
-                          };
-                          const sectionPrefix = sectionConfig[section.title] || "Item";
-                          const title = hasColon ? item.text.split(":")[0].trim() : `${sectionPrefix} ${itemIdx + 1}`;
-                          const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
-
+                          // ... keep existing code (item parsing and display)
                           return (
                             <Link to={item.linkTo} key={itemIdx} className="block">
                               <Card className="ios-card hover:shadow-md transition-all">
@@ -741,6 +822,7 @@ const History = () => {
                   
                   {/* If there are no structured sections or sections parsing failed */}
                   {(!aiSections || aiSections.length === 0) && (
+                    // ... keep existing code (fallback AI analysis display)
                     <Card className="ios-card">
                       <CardContent className="p-6">
                         <div className="flex justify-between items-center mb-4">
@@ -775,94 +857,9 @@ const History = () => {
               )}
             </div>
             
-            {/* Daily Log Cards - Updated to make selfie sections consistent */}
+            {/* Daily Log Cards - Using our new consistent rendering function */}
             <div className="flex flex-col gap-y-6">
-              {dayLogs.map((log) => (
-                <Link key={log.id} to={`/day-log/${log.id}`}>
-                  <Card className="ios-card hover:shadow-md transition-all">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-medium">{format(log.date, "EEEE")}</h3>
-                          <p className="text-sm text-muted-foreground">{format(log.date, "MMM d, yyyy")}</p>
-                          <p className="text-sm mt-2">{log.summary}</p>
-                          
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {log.factors.skin.map((factor, index) => (
-                              <span key={index} className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
-                                {factor}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col items-center">
-                          <div className="text-lg font-semibold">
-                            {log.rating}
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {getRatingLabel(log.rating)}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      {/* Updated consistent selfies section */}
-                      <div className="mt-4 pt-3 border-t border-gray-100">
-                        <h4 className="text-sm font-medium mb-2">Selfies</h4>
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Morning Selfies Preview - Consistent styling */}
-                          <div className="flex flex-col items-center">
-                            <span className="text-xs text-slate-500 mb-1">AM</span>
-                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
-                              {log.amSelfies?.[0] ? (
-                                <img 
-                                  src={log.amSelfies[0]} 
-                                  alt="Morning Selfie" 
-                                  className="object-cover w-full h-full"
-                                />
-                              ) : (
-                                <div className="flex flex-col items-center">
-                                  <Camera className="h-6 w-6 mb-1" />
-                                  <span className="text-xs text-gray-400">No Photo</span>
-                                </div>
-                              )}
-                            </div>
-                            {log.amSelfies && log.amSelfies.filter(img => img).length > 1 && (
-                              <span className="text-xs mt-1 text-slate-500">
-                                +{log.amSelfies.filter(img => img).length - 1} more photos
-                              </span>
-                            )}
-                          </div>
-                          
-                          {/* Evening Selfies Preview - Consistent styling */}
-                          <div className="flex flex-col items-center">
-                            <span className="text-xs text-slate-500 mb-1">PM</span>
-                            <div className="aspect-square w-full bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer">
-                              {log.pmSelfies?.[0] ? (
-                                <img 
-                                  src={log.pmSelfies[0]} 
-                                  alt="Evening Selfie" 
-                                  className="object-cover w-full h-full"
-                                />
-                              ) : (
-                                <div className="flex flex-col items-center">
-                                  <Camera className="h-6 w-6 mb-1" />
-                                  <span className="text-xs text-gray-400">No Photo</span>
-                                </div>
-                              )}
-                            </div>
-                            {log.pmSelfies && log.pmSelfies.filter(img => img).length > 1 && (
-                              <span className="text-xs mt-1 text-slate-500">
-                                +{log.pmSelfies.filter(img => img).length - 1} more photos
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+              {renderDayLogs()}
             </div>
             
             {/* Add ViewScoringMethod and Disclaimer components */}
