@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Badge } from "@/components/ui/badge";
 import BackButton from "@/components/BackButton";
 
 interface ProductHeaderProps {
@@ -13,7 +12,6 @@ const ProductHeader = ({ productName }: ProductHeaderProps) => {
       <BackButton />
       <div>
         <h1 className="text-2xl font-bold">{productName}</h1>
-        <Badge variant="outline" className="mt-1">AI Generated Content</Badge>
       </div>
     </header>
   );
