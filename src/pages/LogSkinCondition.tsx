@@ -473,7 +473,7 @@ const LogSkinCondition = () => {
             </div>
           </div>
           
-          {/* Personalized Skin Plan Section - Updated to use button style */}
+          {/* Personalized Skin Plan Section - Updated message text */}
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">Do you want a personalized skin plan?</h2>
             <Card className="ios-card">
@@ -499,9 +499,9 @@ const LogSkinCondition = () => {
                 
                 {wantsPersonalizedPlan === "yes" && (
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
-                    Complete 7 straight days of skin logs so we can understand enough about your skin and routine to help you. 
+                    Complete 7 straight days of skin logs so we can understand enough about your skin and routine to help you.
                     <br /><br />
-                    We will provide personal guidance along the way.
+                    We will provide skincare information along the way.
                   </div>
                 )}
               </CardContent>
