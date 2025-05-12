@@ -14,6 +14,7 @@ import ProductHeader from "@/components/product/ProductHeader";
 import ProductOverview from "@/components/product/ProductOverview";
 import ProductDetails from "@/components/product/ProductDetails";
 import ProductDisclaimer from "@/components/product/ProductDisclaimer";
+import ProductForYou from "@/components/product/ProductForYou";
 
 const ProductAITestPage = () => {
   // Add scroll to top functionality
@@ -68,6 +69,14 @@ const ProductAITestPage = () => {
           type={type || ""} 
           aiContent={aiContent} 
           askAiAboutProduct={askAiAboutProduct}
+        />
+        
+        {/* For You Section - Personalized recommendation */}
+        <ProductForYou
+          isLoading={isLoading.overview}
+          product={product}
+          type={type || ""}
+          productId={id || ""}
         />
         
         {/* Details Section - AI Generated */}
