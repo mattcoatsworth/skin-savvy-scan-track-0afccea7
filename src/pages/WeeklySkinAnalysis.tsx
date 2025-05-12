@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -121,12 +122,26 @@ const WeeklySkinAnalysis = () => {
       { 
         title: "Morning Hydration Boost", 
         description: "Start each day with 16oz of water before coffee for one week",
-        difficulty: "easy" 
+        difficulty: "easy",
+        category: "food"
+      },
+      { 
+        title: "Niacinamide Integration", 
+        description: "Add a niacinamide serum to your evening routine to help with oil control",
+        difficulty: "medium",
+        category: "product" 
       },
       { 
         title: "Stress-Reduction Protocol", 
         description: "Complete three 5-minute breathing exercises daily during work hours",
-        difficulty: "medium" 
+        difficulty: "medium",
+        category: "stress" 
+      },
+      { 
+        title: "Sleep Schedule Consistency", 
+        description: "Aim for the same bedtime (within 30 minutes) every night this week",
+        difficulty: "hard",
+        category: "sleep" 
       }
     ]
   };
@@ -255,7 +270,12 @@ const WeeklySkinAnalysis = () => {
                 {aiAnalysis.challenges.map((challenge, index) => (
                   <div key={index} className="bg-slate-50 p-3 rounded-lg">
                     <div className="flex justify-between">
-                      <h4 className="font-medium">{challenge.title}</h4>
+                      <div className="flex items-center space-x-2">
+                        <h4 className="font-medium">{challenge.title}</h4>
+                        <span className="text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-700">
+                          {challenge.category}
+                        </span>
+                      </div>
                       <span className={`text-xs px-2 py-0.5 rounded ${
                         challenge.difficulty === 'easy' ? 'bg-green-100 text-green-800' : 
                         challenge.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
