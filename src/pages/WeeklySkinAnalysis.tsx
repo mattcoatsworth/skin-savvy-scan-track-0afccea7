@@ -152,19 +152,19 @@ const WeeklySkinAnalysis = () => {
   const getDifficultyBadgeClass = (difficulty: string) => {
     switch(difficulty) {
       case 'easy':
-        return 'bg-green-100 text-green-800 px-2 py-0.5 text-xs';
+        return 'bg-green-100 text-green-800 px-2 py-0.5 text-xs inline-block';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 px-2 py-0.5 text-xs';
+        return 'bg-yellow-100 text-yellow-800 px-2 py-0.5 text-xs inline-block';
       case 'hard':
-        return 'bg-red-100 text-red-800 px-2 py-0.5 text-xs';
+        return 'bg-red-100 text-red-800 px-2 py-0.5 text-xs inline-block';
       default:
-        return 'bg-slate-100 text-slate-800 px-2 py-0.5 text-xs';
+        return 'bg-slate-100 text-slate-800 px-2 py-0.5 text-xs inline-block';
     }
   };
 
   // Helper function to get the category badge styling
   const getCategoryBadgeClass = () => {
-    return 'bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
+    return 'bg-slate-200 text-slate-700 px-2 py-0.5 text-xs inline-block';
   };
 
   return (
