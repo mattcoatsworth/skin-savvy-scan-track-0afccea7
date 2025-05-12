@@ -348,7 +348,6 @@ const WeeklySkinAnalysis = () => {
     
     // Map section names to display names and types
     const sectionConfig: Record<string, {title: string, type: string, icon: string}> = {
-      "Weekly Summary": { title: "Summary", type: "summary", icon: "info" },
       "Key Patterns": { title: "Patterns", type: "pattern", icon: "activity" },
       "Correlations": { title: "Correlations", type: "correlation", icon: "activity" },
       "Progress Metrics": { title: "Progress", type: "metric", icon: "activity" },
@@ -358,6 +357,9 @@ const WeeklySkinAnalysis = () => {
     
     // Process each section
     Object.entries(sections || {}).forEach(([key, content]) => {
+      // Skip the Weekly Summary section
+      if (key === "Weekly Summary") return;
+      
       if (!content) return; // Skip if content is null/undefined
       
       const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
@@ -784,7 +786,7 @@ const WeeklySkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                {/* Overall Score Card with Brief Summary */}
+                {/* Overall Score Card - WITHOUT BRIEF SUMMARY */}
                 <Card className="ios-card mb-6">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -829,14 +831,7 @@ const WeeklySkinAnalysis = () => {
                       </div>
                     </div>
                     
-                    {/* Weekly Summary */}
-                    {aiAdvice.sections["Weekly Summary"] && (
-                      <div className="mt-4 pt-4 border-t border-slate-100">
-                        <p className="text-sm text-muted-foreground">
-                          {cleanAiContent(aiAdvice.sections["Weekly Summary"], "Weekly Summary")}
-                        </p>
-                      </div>
-                    )}
+                    {/* Remove Weekly Summary section entirely */}
                   </CardContent>
                 </Card>
 
@@ -895,7 +890,7 @@ const WeeklySkinAnalysis = () => {
 
                 {/* AI Sections in Formatted Cards with Ratings */}
                 {aiSections.length > 0 && aiSections.map((section, index) => {
-                  if (section.title === "Summary") return null; // Skip summary as it's displayed above
+                  if (section.title === "Summary") return null; // Skip summary as it's no longer displayed
                   
                   return (
                     <div key={index} className="mb-6">
