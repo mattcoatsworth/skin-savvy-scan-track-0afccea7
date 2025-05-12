@@ -71,7 +71,8 @@ export default {
 					flame: '#FF6B01',
 					red: '#FF4559',
 					blue: '#6BB9FF',
-					amber: '#FFC170'
+					amber: '#FFC170',
+					teal: '#20B2AA' // Added teal color here
 				}
 			},
 			borderRadius: {
