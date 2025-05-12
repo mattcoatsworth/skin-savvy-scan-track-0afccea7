@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Link } from "react-router-dom";
 import SkinIndexComparison from "@/components/SkinIndexComparison";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useAIContentCache } from "@/hooks/useAIContentCache";
 
 const WeeklySkinAnalysis = () => {
   useScrollToTop();
@@ -54,6 +56,81 @@ const WeeklySkinAnalysis = () => {
     { day: "Saturday", score: 88, note: "Best skin day this week" },
     { day: "Sunday", score: 82, note: "Slight dullness in the evening" }
   ];
+
+  // AI Analysis data using our hooks
+  const { getAdvice, isLoading } = useSkinAdvice({
+    adviceType: "weekly-insight",
+    model: "gpt-4o-mini"
+  });
+  
+  const { getOrGenerate } = useAIContentCache();
+  
+  // Sample AI analysis data
+  const aiAnalysis = {
+    patternAnalysis: "Your skin health improved steadily throughout the week, showing a positive response to your consistent hydration routine. The most notable improvement was in overall texture and brightness, particularly after introducing the new hydrating serum. Your skin appears most reactive to sleep quality and hydration levels, with a clear correlation between increased water intake and skin clarity.",
+    
+    detectedPatterns: [
+      { 
+        category: "Hydration & Diet", 
+        title: "Water Intake Correlation", 
+        description: "Days with 8+ glasses of water showed 12% higher skin scores",
+        correlation: 85 
+      },
+      { 
+        category: "Sleep & Stress", 
+        title: "Sleep Quality Impact", 
+        description: "Nights with 7+ hours of sleep led to reduced inflammation",
+        correlation: 78 
+      },
+      { 
+        category: "Product Usage", 
+        title: "Hydrating Serum Effect", 
+        description: "Consistent usage led to improved elasticity within 4 days",
+        correlation: 72 
+      }
+    ],
+    
+    focusAreas: [
+      { 
+        title: "Continue Hydration Routine", 
+        description: "Maintain 8+ glasses of water daily and consistent use of humidifier at night",
+        priority: "primary", 
+        type: "habit" 
+      },
+      { 
+        title: "Monitor Sugar Intake", 
+        description: "Sugar consumption on Friday and Saturday correlated with Sunday's slight dullness",
+        priority: "secondary", 
+        type: "diet" 
+      },
+      { 
+        title: "Address Stress Levels", 
+        description: "Implement brief mindfulness sessions on workdays to reduce cortisol impact",
+        priority: "tertiary", 
+        type: "lifestyle" 
+      }
+    ],
+    
+    metrics: {
+      overall: "+7%",
+      hydration: "+13%",
+      inflammation: "-6%",
+      breakouts: "-4%"
+    },
+    
+    challenges: [
+      { 
+        title: "Morning Hydration Boost", 
+        description: "Start each day with 16oz of water before coffee for one week",
+        difficulty: "easy" 
+      },
+      { 
+        title: "Stress-Reduction Protocol", 
+        description: "Complete three 5-minute breathing exercises daily during work hours",
+        difficulty: "medium" 
+      }
+    ]
+  };
 
   return (
     <div className="pb-20">
@@ -109,6 +186,93 @@ const WeeklySkinAnalysis = () => {
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Skin Index Comparison</h2>
         <SkinIndexComparison gender="female" age={28} />
+      </div>
+      
+      {/* AI Analysis Section (Added back) */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">AI Skin Analysis</h2>
+        <Card className="mb-4">
+          <CardContent className="p-4 space-y-4">
+            <div>
+              <h3 className="font-medium text-base mb-2">Weekly Pattern Analysis</h3>
+              <p className="text-sm text-muted-foreground">{aiAnalysis.patternAnalysis}</p>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-base mb-2">Detected Patterns</h3>
+              <div className="space-y-3">
+                {aiAnalysis.detectedPatterns.map((pattern, index) => (
+                  <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-500">{pattern.category}</span>
+                      <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded">
+                        {pattern.correlation}% correlation
+                      </span>
+                    </div>
+                    <h4 className="font-medium my-1">{pattern.title}</h4>
+                    <p className="text-sm text-muted-foreground">{pattern.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-base mb-2">Focus Areas</h3>
+              <div className="space-y-3">
+                {aiAnalysis.focusAreas.map((area, index) => (
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className={`mt-1 w-2 h-2 rounded-full ${
+                      area.priority === 'primary' ? 'bg-green-500' : 
+                      area.priority === 'secondary' ? 'bg-blue-500' : 'bg-purple-500'
+                    }`}></div>
+                    <div>
+                      <h4 className="font-medium">{area.title}</h4>
+                      <p className="text-sm text-muted-foreground">{area.description}</p>
+                      <span className="text-xs bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">
+                        {area.type}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-base mb-2">Weekly Metrics</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(aiAnalysis.metrics).map(([key, value]) => (
+                  <div key={key} className="bg-slate-50 p-3 rounded-lg">
+                    <p className="text-xs text-slate-500 capitalize">{key}</p>
+                    <p className={`text-lg font-medium ${value.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                      {value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-base mb-2">Weekly Challenges</h3>
+              <div className="space-y-3">
+                {aiAnalysis.challenges.map((challenge, index) => (
+                  <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                    <div className="flex justify-between">
+                      <h4 className="font-medium">{challenge.title}</h4>
+                      <span className={`text-xs px-2 py-0.5 rounded ${
+                        challenge.difficulty === 'easy' ? 'bg-green-100 text-green-800' : 
+                        challenge.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {challenge.difficulty}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       
       {/* 4. Skin Parameters */}
