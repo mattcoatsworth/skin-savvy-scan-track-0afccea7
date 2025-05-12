@@ -307,7 +307,7 @@ const ProductAITestPage = () => {
 
                       <div>
                         <h3 className="text-base font-medium mb-1">AI Generated Summary</h3>
-                        <div className="text-sm border-l-2 border-slate-200 pl-4 py-1">
+                        <div className="text-sm bg-transparent py-1">
                           {aiContent.overview?.sections["Brief Summary"] && (
                             <p>
                               {typeof aiContent.overview.sections["Brief Summary"] === 'string' 
