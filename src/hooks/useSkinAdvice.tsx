@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -361,7 +362,7 @@ export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4", structu
           console.error("Error parsing structured output:", e);
           return { 
             formattedHtml: "Failed to parse structured response", 
-            sections: {}, 
+            sections: {},
             error: "Failed to parse structured response", 
             rawContent: data.content 
           };

@@ -199,7 +199,7 @@ const CategoryAnalysisDetail = () => {
   const [data, setData] = useState<any>(null);
   const [aiRecommendations, setAiRecommendations] = useState<string>("");
   
-  // Initialize the skin advice hook
+  // Initialize the skin advice hook with explicit empty object
   const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice({});
   
   // Load category detail data
@@ -279,7 +279,7 @@ const CategoryAnalysisDetail = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
-          <h1 className="text-2xl font-bold">{data.title}</h1>
+          <h1 className="text-2xl font-bold">{data?.title || "Loading..."}</h1>
         </header>
 
         <Tabs defaultValue="factors" className="mb-6">
