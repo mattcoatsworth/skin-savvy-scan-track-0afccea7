@@ -17,6 +17,8 @@ import InsightsTrends from "@/components/InsightsTrends";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import ViewScoringMethod from "@/components/ViewScoringMethod";
+import Disclaimer from "@/components/Disclaimer";
 
 // Generate data for the past 7 days for skin history chart
 const generatePastWeekData = () => {
@@ -719,6 +721,10 @@ const History = () => {
                 </Link>
               ))}
             </div>
+            
+            {/* Add ViewScoringMethod and Disclaimer components */}
+            <ViewScoringMethod />
+            <Disclaimer />
           </TabsContent>
           
           {/* Weekly Analysis Tab Content */}
@@ -776,6 +782,10 @@ const History = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* Add ViewScoringMethod and Disclaimer components */}
+            <ViewScoringMethod />
+            <Disclaimer />
           </TabsContent>
         </Tabs>
       </div>
