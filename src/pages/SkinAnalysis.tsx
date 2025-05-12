@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -220,7 +221,6 @@ const SkinAnalysis = () => {
     
     // Map section names to display names and types
     const sectionConfig: Record<string, {title: string, type: string, icon: string}> = {
-      "Brief Summary": { title: "Summary", type: "info", icon: "info" },
       "Key Benefits/Observations": { title: "Key Observations", type: "observation", icon: "circle" },
       "Contributing Factors": { title: "Contributing Factors", type: "factor", icon: "activity" },
       "Recommended Actions": { title: "Recommendations", type: "action", icon: "droplet" },
@@ -229,6 +229,9 @@ const SkinAnalysis = () => {
     
     // Process each section
     Object.entries(sections).forEach(([key, content]) => {
+      // Skip Brief Summary section
+      if (key === "Brief Summary") return;
+      
       if (!content) return; // Skip if content is null/undefined
       
       const config = sectionConfig[key] || { title: key, type: "info", icon: "info" };
@@ -441,72 +444,36 @@ const SkinAnalysis = () => {
               </Card>
             ) : (
               <>
-                {/* Summary Card (if present) */}
-                {aiAdvice?.sections && aiAdvice.sections["Brief Summary"] && (
-                  <Card className="ios-card">
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">AI Skin Analysis</h2>
-                        {/* Regenerate button */}
-                        <button 
-                          onClick={() => generateAiAdvice(true)} 
-                          className="px-3 py-1 bg-skin-teal text-white text-xs rounded-md hover:bg-skin-teal-dark transition-colors"
-                        >
-                          Refresh
-                        </button>
-                      </div>
-                      
-                      <div className="flex items-start">
-                        <Info className="h-5 w-5 mr-3 text-skin-teal mt-0.5" />
-                        <div>
-                          <h3 className="font-medium">Summary</h3>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {typeof aiAdvice.sections["Brief Summary"] === 'string' 
-                              ? aiAdvice.sections["Brief Summary"]
-                              : Array.isArray(aiAdvice.sections["Brief Summary"]) 
-                                ? aiAdvice.sections["Brief Summary"].join(" ")
-                                : "Your skin analysis summary"}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-                
                 {/* Display AI sections in a structured format */}
-                {aiSections.map((section, index) => {
-                  if (section.title === "Summary") return null; // Skip summary as it's shown above
-                  
-                  return (
-                    <div key={index} className="ai-section">
-                      <h2 className="ai-section-title">{section.title}</h2>
-                      
-                      <div className="space-y-3">
-                        {section.items.map((item, itemIdx) => (
-                          <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
-                            <Card className="ai-data-point-card">
-                              <CardContent className="p-4">
-                                <div className="ai-data-point-header">
-                                  <h3 className="ai-data-point-title">
-                                    {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
-                                  </h3>
-                                  <span className="ai-data-point-category">
-                                    {section.title}
-                                  </span>
-                                </div>
-                                <p className="ai-data-point-content">
-                                  {item.text.includes(":") 
-                                    ? item.text.split(":").slice(1).join(":").trim()
-                                    : item.text}
-                                </p>
-                              </CardContent>
-                            </Card>
-                          </Link>
-                        ))}
-                      </div>
+                {aiSections.map((section, index) => (
+                  <div key={index} className="ai-section">
+                    <h2 className="ai-section-title">{section.title}</h2>
+                    
+                    <div className="space-y-3">
+                      {section.items.map((item, itemIdx) => (
+                        <Link to={item.linkTo} key={itemIdx} className="ai-data-point block">
+                          <Card className="ai-data-point-card">
+                            <CardContent className="p-4">
+                              <div className="ai-data-point-header">
+                                <h3 className="ai-data-point-title">
+                                  {item.text.split(":")[0] || `Item ${itemIdx + 1}`}
+                                </h3>
+                                <span className="ai-data-point-category">
+                                  {section.title}
+                                </span>
+                              </div>
+                              <p className="ai-data-point-content">
+                                {item.text.includes(":") 
+                                  ? item.text.split(":").slice(1).join(":").trim()
+                                  : item.text}
+                              </p>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
                 
                 {/* If there are no structured sections or sections parsing failed */}
                 {(!aiSections || aiSections.length === 0) && (
