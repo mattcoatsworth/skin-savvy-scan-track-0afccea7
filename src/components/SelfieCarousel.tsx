@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PlusCircle, X, Camera, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { saveSelfie, deleteSelfie } from "@/models/SelfieModel";
 
 interface SelfieCarouselProps {
   type: "am" | "pm";
@@ -22,11 +24,7 @@ const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
 }) => {
   const [isUploading, setIsUploading] = useState<number | null>(null);
   const { toast } = useToast();
-  
-  // Helper function to get image ID
-  const getImageId = (type: string, index: number, userId: string) => {
-    return `${userId}-${type}-${new Date().toISOString().split('T')[0]}-${index}`;
-  };
+  const { user } = useAuth();
   
   // Function to handle the image file selection and upload
   const handleFileChange = async (index: number) => {
@@ -46,37 +44,19 @@ const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
         try {
           setIsUploading(index);
           
-          // Create a unique file path for the image
-          const imageId = getImageId(type, index, userId);
-          const fileExt = file.name.split('.').pop();
-          const filePath = `${imageId}.${fileExt}`;
+          // Get the authenticated user ID, or use the provided userId if not authenticated
+          const effectiveUserId = user?.id || userId;
           
-          // Upload file to Supabase Storage
-          const { data, error } = await supabase.storage
-            .from('selfies')
-            .upload(filePath, file, {
-              upsert: true
-            });
-            
-          if (error) {
-            console.error('Error uploading image:', error.message);
-            toast({
-              title: "Upload Failed",
-              description: "Unable to upload image. Please try again.",
-              variant: "destructive",
-              duration: 3000,
-            });
-            setIsUploading(null);
-            return;
-          }
+          // Use the SelfieModel to save the selfie
+          const selfieMetadata = await saveSelfie({
+            userId: effectiveUserId,
+            file,
+            type,
+            index
+          });
           
-          // Get the public URL for the uploaded image
-          const { data: { publicUrl } } = supabase.storage
-            .from('selfies')
-            .getPublicUrl(filePath);
-            
           // Call the parent component's onAddImage function with the public URL
-          onAddImage(type, index, publicUrl);
+          onAddImage(type, index, selfieMetadata.public_url);
           
           toast({
             title: "Upload Complete",
@@ -115,21 +95,14 @@ const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
         const filePath = urlParts[urlParts.length - 1];
         
         if (filePath) {
-          // Delete the file from Supabase Storage
-          const { error } = await supabase.storage
-            .from('selfies')
-            .remove([filePath]);
-            
-          if (error) {
-            console.error('Error deleting image:', error.message);
-            toast({
-              title: "Delete Failed",
-              description: "Unable to delete image. Please try again.",
-              variant: "destructive",
-              duration: 3000,
-            });
-            return;
-          }
+          // Get the effective user ID
+          const effectiveUserId = user?.id || userId;
+          
+          // Use the SelfieModel to delete the selfie
+          await deleteSelfie({
+            userId: effectiveUserId,
+            filePath
+          });
         }
       }
       

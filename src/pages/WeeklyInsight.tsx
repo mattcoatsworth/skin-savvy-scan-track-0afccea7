@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import BackButton from "@/components/BackButton";
 import AppNavigation from "@/components/AppNavigation";
@@ -6,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoaderCircle } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useAuth } from "@/contexts/AuthContext";
+import { getWeeklyRatingByDate, saveWeeklyRating } from "@/models/WeeklyRating";
 
 const weeklyData = {
   weekStartDate: "2024-07-01",
@@ -31,15 +32,71 @@ const WeeklyInsight = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [insightData, setInsightData] = useState<any>(null);
   const [aiSummary, setAiSummary] = useState<string>("");
+  const { user } = useAuth();
   
   // Get initial data
   useEffect(() => {
+    const loadWeeklyData = async () => {
+      try {
+        if (user?.id) {
+          // Get the start and end dates of the current week
+          const today = new Date();
+          const startOfWeek = new Date(today);
+          startOfWeek.setDate(today.getDate() - today.getDay()); // Sunday as start of week
+          const endOfWeek = new Date(today);
+          endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday as end of week
+          
+          const startDateString = startOfWeek.toISOString().split('T')[0];
+          const endDateString = endOfWeek.toISOString().split('T')[0];
+          
+          // Try to fetch the weekly rating from Supabase
+          const weeklyRating = await getWeeklyRatingByDate(user.id, today.toISOString().split('T')[0]);
+          
+          if (weeklyRating) {
+            // Use data from Supabase
+            setInsightData({
+              ...weeklyData, // Use weeklyData as a base
+              weekStartDate: weeklyRating.week_start_date,
+              weekEndDate: weeklyRating.week_end_date,
+              overallScore: weeklyRating.rating,
+              // ... merge other properties as needed
+            });
+          } else {
+            // Use sample data but with correct dates
+            setInsightData({
+              ...weeklyData,
+              weekStartDate: startDateString,
+              weekEndDate: endDateString,
+            });
+            
+            // Save the sample data to Supabase for future reference
+            await saveWeeklyRating({
+              userId: user.id,
+              weekStartDate: startDateString,
+              weekEndDate: endDateString,
+              rating: weeklyData.overallScore,
+              notes: "Auto-generated weekly insight"
+            });
+          }
+        } else {
+          // Use sample data for non-authenticated users
+          setInsightData(weeklyData);
+        }
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading weekly data:", error);
+        // Fallback to sample data
+        setInsightData(weeklyData);
+        setIsLoading(false);
+      }
+    };
+    
     // Simulate loading from API
     setTimeout(() => {
-      setInsightData(weeklyData);
-      setIsLoading(false);
-    }, 1500);
-  }, []);
+      loadWeeklyData();
+    }, 1000);
+  }, [user]);
   
   // Initialize the skin advice hook for weekly insights
   const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice({

@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";
@@ -32,7 +32,8 @@ const Index = () => {
   });
   
   // User ID for storage - in a real app this would come from auth
-  const [userId] = useState("demo-user"); 
+  const { user } = useAuth();
+  const [userId] = useState(user?.id || "demo-user"); 
 
   // Load selfies from localStorage and Supabase on component mount
   useEffect(() => {
