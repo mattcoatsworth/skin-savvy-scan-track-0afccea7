@@ -125,7 +125,7 @@ const WeeklySkinAnalysis = () => {
         title: "Morning Hydration Boost", 
         description: "Start each day with 16oz of water before coffee for one week",
         difficulty: "easy",
-        category: "food"
+        category: "food" 
       },
       { 
         title: "Niacinamide Integration", 
@@ -152,19 +152,19 @@ const WeeklySkinAnalysis = () => {
   const getDifficultyBadgeClass = (difficulty: string) => {
     switch(difficulty) {
       case 'easy':
-        return 'bg-green-100 text-green-800 px-2 py-0.5 text-xs inline-block';
+        return 'inline bg-green-100 text-green-800 px-2 py-0.5 text-xs';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 px-2 py-0.5 text-xs inline-block';
+        return 'inline bg-yellow-100 text-yellow-800 px-2 py-0.5 text-xs';
       case 'hard':
-        return 'bg-red-100 text-red-800 px-2 py-0.5 text-xs inline-block';
+        return 'inline bg-red-100 text-red-800 px-2 py-0.5 text-xs';
       default:
-        return 'bg-slate-100 text-slate-800 px-2 py-0.5 text-xs inline-block';
+        return 'inline bg-slate-100 text-slate-800 px-2 py-0.5 text-xs';
     }
   };
 
   // Helper function to get the category badge styling
   const getCategoryBadgeClass = () => {
-    return 'bg-slate-200 text-slate-700 px-2 py-0.5 text-xs inline-block';
+    return 'inline bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
   };
 
   return (
@@ -290,14 +290,14 @@ const WeeklySkinAnalysis = () => {
               <div className="space-y-3">
                 {aiAnalysis.challenges.map((challenge, index) => (
                   <div key={index} className="bg-slate-50 p-3 rounded-lg">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <div className="flex items-center space-x-2">
                         <h4 className="font-medium">{challenge.title}</h4>
-                        <span className={`text-xs rounded ${getCategoryBadgeClass()}`}>
+                        <span className={getCategoryBadgeClass()}>
                           {challenge.category}
                         </span>
                       </div>
-                      <span className={`text-xs rounded ${getDifficultyBadgeClass(challenge.difficulty)}`}>
+                      <span className={getDifficultyBadgeClass(challenge.difficulty)}>
                         {challenge.difficulty}
                       </span>
                     </div>
