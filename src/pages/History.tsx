@@ -615,7 +615,7 @@ const History = () => {
     return 'inline bg-slate-200 text-slate-700 px-2 py-0.5 text-xs';
   };
 
-  // Daily Log Cards - Ensure all days use the SelfieSection component consistently
+  // Daily Log Cards - UPDATED to use the SelfieSection component
   const renderDayLogs = () => {
     return dayLogs.map((log) => (
       <Link key={log.id} to={`/day-log/${log.id}`}>
@@ -646,7 +646,7 @@ const History = () => {
               </div>
             </div>
             
-            {/* Use the standardized SelfieSection component for ALL day cards */}
+            {/* UPDATED: Using the standardized SelfieSection component */}
             <div className="mt-4 pt-3 border-t border-gray-100">
               <SelfieSection 
                 amImages={log.amSelfies || []}
@@ -705,7 +705,7 @@ const History = () => {
             {/* SkinIndexComparison component */}
             <SkinIndexComparison className="mb-6" gender="female" age={25} />
             
-            {/* Today's Selfies Section - Using the standardized component */}
+            {/* Today's Selfies Section */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
               <Card className="ios-card">
@@ -806,7 +806,7 @@ const History = () => {
               )}
             </div>
             
-            {/* Daily Log Cards - Now rendering ALL days consistently */}
+            {/* Daily Log Cards - Using our updated rendering function with SelfieSection */}
             <div className="flex flex-col gap-y-6">
               {renderDayLogs()}
             </div>
