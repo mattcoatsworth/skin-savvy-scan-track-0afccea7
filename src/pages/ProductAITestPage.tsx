@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +10,6 @@ import BackButton from "@/components/BackButton";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAIContentCache } from "@/hooks/useAIContentCache";
 import { toast } from "sonner";
 
@@ -50,11 +50,6 @@ const ProductAITestPage = () => {
   // Find the product from our data
   const products = type === "food" ? foodItems : productItems;
   const product = products.find(p => p.id === id);
-
-  // Function to navigate to normal product page
-  const switchToCurrent = () => {
-    navigate(`/product/${type}/${id}`);
-  };
 
   // Create sections for structured display
   const processAIResponse = (sectionName: string, sections: Record<string, string | string[]>) => {
@@ -312,185 +307,177 @@ const ProductAITestPage = () => {
           </div>
         </header>
         
-        <Tabs defaultValue="ai" className="mb-6">
-          <TabsList className="w-full grid grid-cols-2">
-            <TabsTrigger value="current" onClick={switchToCurrent}>Current</TabsTrigger>
-            <TabsTrigger value="ai">AI</TabsTrigger>
-          </TabsList>
-          <TabsContent value="ai" className="mt-4">
-            {/* Overview Section */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Overview</h2>
+        {/* Overview Section */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Overview</h2>
+          </div>
+          <Card>
+            <CardContent className="p-6">
+              {isLoading.overview ? (
+                <LoadingIndicator />
+              ) : (
+                <div>
+                  <div className="flex items-center mb-4">
+                    <div>
+                      <h2 className="text-xl font-semibold">{product.impact} Effect</h2>
+                      <p className="text-muted-foreground">{product.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4 flex items-center">
+                    <BadgeInfo className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <div>
+                      <h3 className="text-base font-medium">Category</h3>
+                      <p>{type === "food" ? "Food" : "Skincare Product"}</p>
+                    </div>
+                  </div>
+                  
+                  {product.brand && (
+                    <div className="mb-4 flex items-center">
+                      <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
+                      <div>
+                        <h3 className="text-base font-medium">Brand</h3>
+                        <p>{product.brand}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {product.rating !== undefined && (
+                    <div className="mb-6">
+                      <div className="flex items-center mb-1">
+                        <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
+                        <h3 className="text-base font-medium">Effect Rating</h3>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex-1 mr-4">
+                          <Progress 
+                            value={product.rating} 
+                            className="h-3 bg-gray-100" 
+                            indicatorClassName={getProgressColor(product.rating)} 
+                          />
+                        </div>
+                        <div className="text-base font-semibold">{product.rating}/100</div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(product.rating)}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <h3 className="text-base font-medium mb-1">AI Generated Summary</h3>
+                    <div className="text-sm bg-transparent py-1">
+                      {aiContent.overview?.sections["Brief Summary"] && (
+                        <p>
+                          {typeof aiContent.overview.sections["Brief Summary"] === 'string' 
+                            ? aiContent.overview.sections["Brief Summary"]
+                            : "Summary of benefits and effects"}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={askAiAboutProduct}
+                    className="w-full mt-4 flex items-center justify-center gap-2"
+                    variant="outline"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    Ask AI about this product
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Details Section - AI Generated */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Details</h2>
+          </div>
+          
+          {isLoading.details ? (
+            <Card>
+              <CardContent className="p-6">
+                <LoadingIndicator />
+              </CardContent>
+            </Card>
+          ) : (
+            detailsSections.length > 0 ? (
+              <div className="space-y-4">
+                {detailsSections.map((section, idx) => (
+                  <div key={idx} className="ai-section">
+                    <h3 className="ai-section-title">{section.title === "Brief Summary" ? "Key Benefits" : section.title}</h3>
+                    
+                    <div className="space-y-3">
+                      {section.items.map((item, itemIdx) => (
+                        <Link to={item.linkTo} key={itemIdx} className="block">
+                          <Card className="ios-card mb-4 hover:shadow-md transition-shadow">
+                            <CardContent className="p-4 flex items-center justify-between">
+                              <div>
+                                <h3 className="font-medium text-base">
+                                  {section.title === "Brief Summary" 
+                                    ? `${product.name} Benefit`
+                                    : item.text.split(":")[0] || `Point ${itemIdx + 1}`}
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                  {item.text.includes(":") 
+                                    ? item.text.split(":").slice(1).join(":").trim()
+                                    : item.text}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
+            ) : (
               <Card>
                 <CardContent className="p-6">
-                  {isLoading.overview ? (
-                    <LoadingIndicator />
-                  ) : (
-                    <div>
-                      <div className="flex items-center mb-4">
-                        <div>
-                          <h2 className="text-xl font-semibold">{product.impact} Effect</h2>
-                          <p className="text-muted-foreground">{product.description}</p>
-                        </div>
-                      </div>
-
-                      <div className="mb-4 flex items-center">
-                        <BadgeInfo className="h-5 w-5 mr-2 text-muted-foreground" />
-                        <div>
-                          <h3 className="text-base font-medium">Category</h3>
-                          <p>{type === "food" ? "Food" : "Skincare Product"}</p>
-                        </div>
-                      </div>
-                      
-                      {product.brand && (
-                        <div className="mb-4 flex items-center">
-                          <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
-                          <div>
-                            <h3 className="text-base font-medium">Brand</h3>
-                            <p>{product.brand}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {product.rating !== undefined && (
-                        <div className="mb-6">
-                          <div className="flex items-center mb-1">
-                            <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
-                            <h3 className="text-base font-medium">Effect Rating</h3>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="flex-1 mr-4">
-                              <Progress 
-                                value={product.rating} 
-                                className="h-3 bg-gray-100" 
-                                indicatorClassName={getProgressColor(product.rating)} 
-                              />
-                            </div>
-                            <div className="text-base font-semibold">{product.rating}/100</div>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(product.rating)}</p>
-                        </div>
-                      )}
-
-                      <div>
-                        <h3 className="text-base font-medium mb-1">AI Generated Summary</h3>
-                        <div className="text-sm bg-transparent py-1">
-                          {aiContent.overview?.sections["Brief Summary"] && (
-                            <p>
-                              {typeof aiContent.overview.sections["Brief Summary"] === 'string' 
-                                ? aiContent.overview.sections["Brief Summary"]
-                                : "Summary of benefits and effects"}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        onClick={askAiAboutProduct}
-                        className="w-full mt-4 flex items-center justify-center gap-2"
-                        variant="outline"
-                      >
-                        <MessageSquare className="h-4 w-4" />
-                        Ask AI about this product
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* Details Section - AI Generated */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Details</h2>
-              </div>
-              
-              {isLoading.details ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <LoadingIndicator />
-                  </CardContent>
-                </Card>
-              ) : (
-                detailsSections.length > 0 ? (
-                  <div className="space-y-4">
-                    {detailsSections.map((section, idx) => (
-                      <div key={idx} className="ai-section">
-                        <h3 className="ai-section-title">{section.title === "Brief Summary" ? "Key Benefits" : section.title}</h3>
-                        
-                        <div className="space-y-3">
-                          {section.items.map((item, itemIdx) => (
-                            <Link to={item.linkTo} key={itemIdx} className="block">
-                              <Card className="ios-card mb-4 hover:shadow-md transition-shadow">
-                                <CardContent className="p-4 flex items-center justify-between">
-                                  <div>
-                                    <h3 className="font-medium text-base">
-                                      {section.title === "Brief Summary" 
-                                        ? `${product.name} Benefit`
-                                        : item.text.split(":")[0] || `Point ${itemIdx + 1}`}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground">
-                                      {item.text.includes(":") 
-                                        ? item.text.split(":").slice(1).join(":").trim()
-                                        : item.text}
-                                    </p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                  <h3 className="text-lg font-semibold mb-3">AI Generated Details</h3>
+                  <div className="text-sm">
+                    {aiContent.details?.formattedHtml ? (
+                      <div dangerouslySetInnerHTML={{ __html: aiContent.details.formattedHtml }} className="skin-advice-content" />
+                    ) : (
+                      <p>No details available for this product.</p>
+                    )}
                   </div>
-                ) : (
-                  <Card>
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-3">AI Generated Details</h3>
-                      <div className="text-sm">
-                        {aiContent.details?.formattedHtml ? (
-                          <div dangerouslySetInnerHTML={{ __html: aiContent.details.formattedHtml }} className="skin-advice-content" />
-                        ) : (
-                          <p>No details available for this product.</p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              )}
-            </div>
-            
-            {/* View Scoring Method */}
-            <ViewScoringMethod />
-            
-            {/* Shortened Disclaimer Section - AI Generated */}
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-medium text-muted-foreground">Disclaimer</h3>
-              </div>
-              
-              <Card>
-                <CardContent className="p-4">
-                  {isLoading.disclaimer ? (
-                    <LoadingIndicator />
-                  ) : (
-                    <div className="text-xs text-muted-foreground italic">
-                      {aiContent.disclaimer?.sections["Disclaimer"] ? (
-                        <p>{typeof aiContent.disclaimer.sections["Disclaimer"] === 'string' 
-                          ? aiContent.disclaimer.sections["Disclaimer"] 
-                          : "Individual responses may vary. Consult a healthcare professional before making changes to your routine."}</p>
-                      ) : (
-                        <p>Individual responses may vary. Consult a healthcare professional before making changes to your routine.</p>
-                      )}
-                    </div>
-                  )}
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+            )
+          )}
+        </div>
+        
+        {/* View Scoring Method */}
+        <ViewScoringMethod />
+        
+        {/* Shortened Disclaimer Section - AI Generated */}
+        <div className="mt-6">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Disclaimer</h3>
+          </div>
+          
+          <Card>
+            <CardContent className="p-4">
+              {isLoading.disclaimer ? (
+                <LoadingIndicator />
+              ) : (
+                <div className="text-xs text-muted-foreground italic">
+                  {aiContent.disclaimer?.sections["Disclaimer"] ? (
+                    <p>{typeof aiContent.disclaimer.sections["Disclaimer"] === 'string' 
+                      ? aiContent.disclaimer.sections["Disclaimer"] 
+                      : "Individual responses may vary. Consult a healthcare professional before making changes to your routine."}</p>
+                  ) : (
+                    <p>Individual responses may vary. Consult a healthcare professional before making changes to your routine.</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
