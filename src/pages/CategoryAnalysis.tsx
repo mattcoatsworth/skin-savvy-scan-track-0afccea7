@@ -58,7 +58,7 @@ const CategoryAnalysis = () => {
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   
   // Initialize the skin advice hook
-  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice({});
+  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice();
   
   // Load category data
   useEffect(() => {
@@ -81,9 +81,7 @@ const CategoryAnalysis = () => {
           { categoryData: data }
         );
         
-        if (analysisResponse) {
-          setAiAnalysis(getTextContent(analysisResponse));
-        }
+        setAiAnalysis(getTextContent(analysisResponse));
       } catch (error) {
         console.error("Error getting AI analysis:", error);
       }
@@ -92,7 +90,7 @@ const CategoryAnalysis = () => {
     if (data) {
       getAnalysis();
     }
-  }, [data, getAdvice, getTextContent]);
+  }, [data]);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">

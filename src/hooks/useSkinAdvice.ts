@@ -1,9 +1,8 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
-import { Droplet } from "lucide-react";
 
 type AdviceType = "general" | "product" | "recommendation" | "action" | "supplement" | "weekly-insight";
 
@@ -20,25 +19,11 @@ interface AIResponse {
   rawContent?: string;
 }
 
-// Helper function to get recommendation icon
-const getRecommendationIcon = (type: string): React.ReactNode => {
-  switch (type) {
-    case "skincare":
-      return <Droplet className="h-4 w-4" />;
-    case "food":
-      return <Droplet className="h-4 w-4" />;
-    case "supplements":
-      return <Droplet className="h-4 w-4" />;
-    case "makeup":
-      return <Droplet className="h-4 w-4" />;
-    case "lifestyle":
-      return <Droplet className="h-4 w-4" />;
-    default:
-      return <Droplet className="h-4 w-4" />;
-  }
-};
-
-export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4", structuredOutput = false }: UseSkinAdviceProps = {}) => {
+export const useSkinAdvice = ({
+  adviceType = "general",
+  model = "gpt-4o-mini",
+  structuredOutput = false
+}: UseSkinAdviceProps = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
 
@@ -453,72 +438,9 @@ export const useSkinAdvice = ({ adviceType = "general", model = "gpt-4", structu
     }
   };
 
-  // Process the AI response for recommendations to ensure they have proper format
-  const processRecommendations = useCallback((aiResponse) => {
-    if (!aiResponse || !aiResponse.sections || !aiResponse.sections["Recommended Actions"]) {
-      return [];
-    }
-
-    // Extract recommended actions from AI response
-    const recommendedActions = aiResponse.sections["Recommended Actions"];
-          
-    // Process recommendations based on the format they come in (string or string[])
-    const processedRecommendations = [];
-          
-    if (Array.isArray(recommendedActions)) {
-      // Process array of recommendations
-      recommendedActions.forEach((action, index) => {
-        // Check if the action contains classification hints
-        const typeMatches = {
-          "skincare": ["serum", "cleanser", "moisturizer", "exfoliant", "spf", "sunscreen", "face", "skin"],
-          "food": ["food", "diet", "eat", "dairy", "meal", "nutrition", "fruit", "vegetable", "omega", "antioxidant"],
-          "supplements": ["supplement", "vitamin", "mineral", "zinc", "collagen", "primrose"],
-          "makeup": ["makeup", "foundation", "concealer", "cosmetic"],
-          "lifestyle": ["sleep", "stress", "hydration", "water", "exercise", "routine", "habit"]
-        };
-              
-        // Determine the type based on keywords in the action
-        let determinedType = "skincare"; // Default
-        for (const [type, keywords] of Object.entries(typeMatches)) {
-          if (keywords.some(keyword => action.toLowerCase().includes(keyword))) {
-            determinedType = type;
-            break;
-          }
-        }
-              
-        // Clean up the recommendation text (extract only the key part)
-        const cleanText = action.replace(/^(Try|Use|Add|Increase|Consider|Limit|Avoid|Switch to|Incorporate)\s+/i, "");
-              
-        // Create ID with consistent format that matches our router paths
-        const recId = `${index + 1}`;
-              
-        // Use the testai format consistently for AI-generated recommendations
-        const linkTo = `/recommendations-detail/action/${recId}/testai`;
-              
-        processedRecommendations.push({
-          type: determinedType,
-          text: cleanText,
-          icon: getRecommendationIcon(determinedType),
-          linkTo: linkTo
-        });
-      });
-    } else if (typeof recommendedActions === 'string') {
-      // If it's just a single string, add it as one recommendation
-      processedRecommendations.push({
-        type: "skincare", 
-        text: recommendedActions,
-        icon: getRecommendationIcon("skincare"),
-        linkTo: "/recommendations-detail/action/1/testai"
-      });
-    }
-          
-    return processedRecommendations;
-  }, []);
-
   return {
     getAdvice,
-    getTextContent,
     isLoading,
-    processRecommendations,
+    getTextContent
   };
 };

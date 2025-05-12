@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -18,7 +19,7 @@ const Index = () => {
   ];
 
   // Define the RecommendationType to match what's expected by DailySkinSnapshot
-  type RecommendationType = "skincare" | "food" | "lifestyle" | "supplements" | "makeup";
+  type RecommendationType = "skincare" | "food" | "lifestyle" | "supplements";
 
   // Add fallback static recommendations in case AI fails
   const fallbackRecommendations = [
@@ -26,49 +27,49 @@ const Index = () => {
       type: "skincare" as RecommendationType, 
       text: "Use gentle cleanser", 
       icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/skincare/gentle-cleanser/testai" 
+      linkTo: "/recommendations-detail/gentle-cleanser" 
     },
     { 
       type: "food" as RecommendationType, 
       text: "Limit dairy intake", 
       icon: <Salad className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/food/limit-dairy/testai"
+      linkTo: "/recommendations-detail/limit-dairy"
     },
     { 
       type: "lifestyle" as RecommendationType, 
       text: "Practice meditation", 
       icon: <CloudSun className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/lifestyle/meditation/testai"
+      linkTo: "/recommendations-detail/meditation"
     },
     { 
       type: "skincare" as RecommendationType, 
       text: "Try vitamin C serum", 
       icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/skincare/vitamin-c-serum/testai" 
+      linkTo: "/recommendations-detail/vitamin-c-serum/testai" 
     },
     { 
       type: "food" as RecommendationType, 
       text: "Add antioxidant foods", 
       icon: <Salad className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/food/antioxidants/testai"
+      linkTo: "/recommendations-detail/antioxidants/testai"
     },
     { 
       type: "lifestyle" as RecommendationType, 
       text: "Morning hydration", 
       icon: <CloudSun className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/lifestyle/hydration/testai"
+      linkTo: "/recommendations-detail/hydration/testai"
     },
     { 
       type: "skincare" as RecommendationType, 
       text: "SPF reapplication", 
       icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/skincare/spf/testai" 
+      linkTo: "/recommendations-detail/spf/testai" 
     },
     { 
       type: "supplements" as RecommendationType, 
       text: "Add zinc", 
       icon: <Pill className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/supplements/zinc/testai"
+      linkTo: "/recommendations-detail/zinc"
     },
   ];
 
@@ -178,8 +179,8 @@ const Index = () => {
     { 
       text: "Try a weekly exfoliation routine",
       id: "exfoliation",
-      type: "factor" // Using factor type for testing
-    }
+      type: "factor", // Using factor type for testing
+    },
   ];
 
   const exploreItems = [

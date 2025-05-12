@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
@@ -215,7 +215,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     };
     
     fetchRecommendations();
-  }, [hasAttemptedFetch, preGenerateMultipleDetails, recommendations, factors, getAdvice]); // Only depend on hasAttemptedFetch to prevent infinite loop
+  }, [hasAttemptedFetch, preGenerateMultipleDetails]); // Only depend on hasAttemptedFetch to prevent infinite loop
   
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
@@ -263,34 +263,19 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               </div>
               {!isLoadingRecommendations && displayedRecommendations.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {displayedRecommendations.map((recommendation, index) => {
-                    // Extract just the type and id from the linkTo URL for testai format
-                    const urlParts = recommendation.linkTo.split('/');
-                    const recType = urlParts[urlParts.length - 2] || 'action';
-                    const recId = urlParts[urlParts.length - 1] || String(index + 1);
-                    
-                    // Create state in the same format as ProductCard does
-                    return (
-                      <Link 
-                        key={index} 
-                        to={`/recommendations-detail/${recType}/${recId}/testai`}
-                        state={{ 
-                          recommendation: {
-                            text: recommendation.text,
-                            type: recommendation.type,
-                            id: recId
-                          }
-                        }}
-                        className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
-                        onClick={(e) => {
-                          // Prevent parent link navigation when clicking on a recommendation
-                          e.stopPropagation();
-                        }}
-                      >
-                        <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
-                      </Link>
-                    );
-                  })}
+                  {displayedRecommendations.map((recommendation, index) => (
+                    <Link 
+                      key={index} 
+                      to={recommendation.linkTo}
+                      className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
+                      onClick={(e) => {
+                        // Prevent parent link navigation when clicking on a recommendation
+                        e.stopPropagation();
+                      }}
+                    >
+                      <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
+                    </Link>
+                  ))}
                 </div>
               ) : (
                 !isLoadingRecommendations && (

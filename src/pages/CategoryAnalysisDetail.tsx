@@ -199,8 +199,8 @@ const CategoryAnalysisDetail = () => {
   const [data, setData] = useState<any>(null);
   const [aiRecommendations, setAiRecommendations] = useState<string>("");
   
-  // Initialize the skin advice hook with explicit empty object
-  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice({});
+  // Initialize the skin advice hook
+  const { getAdvice, isLoading: isAiLoading, getTextContent } = useSkinAdvice();
   
   // Load category detail data
   useEffect(() => {
@@ -225,9 +225,7 @@ const CategoryAnalysisDetail = () => {
           { categoryData: data, category }
         );
         
-        if (recommendationsResponse) {
-          setAiRecommendations(getTextContent(recommendationsResponse));
-        }
+        setAiRecommendations(getTextContent(recommendationsResponse));
       } catch (error) {
         console.error("Error getting AI recommendations:", error);
       }
@@ -236,7 +234,7 @@ const CategoryAnalysisDetail = () => {
     if (data) {
       getRecommendations();
     }
-  }, [data, category, getAdvice, getTextContent]);
+  }, [data, category]);
 
   if (isLoading) {
     return (
@@ -279,7 +277,7 @@ const CategoryAnalysisDetail = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
-          <h1 className="text-2xl font-bold">{data?.title || "Loading..."}</h1>
+          <h1 className="text-2xl font-bold">{data.title}</h1>
         </header>
 
         <Tabs defaultValue="factors" className="mb-6">
