@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -178,7 +177,7 @@ const ProductAITestPage = () => {
           productType: type,
           contentType: 'overview'
         }, () => getOverviewAdvice(overviewPrompt, { 
-          productType: type,
+          productType: type, 
           productName: product.name,
           productImpact: product.impact
         }));
@@ -419,7 +418,7 @@ const ProductAITestPage = () => {
                   <div className="space-y-4">
                     {detailsSections.map((section, idx) => (
                       <div key={idx} className="ai-section">
-                        <h3 className="ai-section-title">{section.title === "Brief Summary" ? `Key About ${product.name}` : section.title}</h3>
+                        <h3 className="ai-section-title">{section.title === "Brief Summary" ? "Key Benefits" : section.title}</h3>
                         
                         <div className="space-y-3">
                           {section.items.map((item, itemIdx) => (
@@ -428,7 +427,9 @@ const ProductAITestPage = () => {
                                 <CardContent className="p-4 flex items-center justify-between">
                                   <div>
                                     <h3 className="font-medium text-base">
-                                      {item.text.split(":")[0] || `Point ${itemIdx + 1}`}
+                                      {section.title === "Brief Summary" 
+                                        ? `Benefit ${itemIdx + 1}`
+                                        : item.text.split(":")[0] || `Point ${itemIdx + 1}`}
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
                                       {item.text.includes(":") 
