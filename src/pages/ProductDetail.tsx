@@ -205,15 +205,16 @@ const ProductDetail = () => {
           <h1 className="text-2xl font-bold">{product.name}</h1>
         </header>
 
-        <Tabs defaultValue="current" className="mb-6">
-          <TabsList className="w-full grid grid-cols-3">
+        {/* Updated Tabs to match SkinAnalysis.tsx styling */}
+        <Tabs defaultValue="current" className="w-full mb-6">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="current">Current</TabsTrigger>
             <TabsTrigger value="foryou">For You</TabsTrigger>
             <TabsTrigger value="ai" onClick={switchToAI}>AI</TabsTrigger>
           </TabsList>
           
-          {/* Current Tab Content - Kept the same */}
-          <TabsContent value="current" className="mt-4">
+          {/* Current Tab Content */}
+          <TabsContent value="current" className="space-y-6 mt-4">
             {/* Overview Section */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Overview</h2>
@@ -385,8 +386,8 @@ const ProductDetail = () => {
             </div>
           </TabsContent>
 
-          {/* For You Tab - New personalized content */}
-          <TabsContent value="foryou" className="mt-4">
+          {/* For You Tab */}
+          <TabsContent value="foryou" className="space-y-6 mt-4">
             {isLoadingPersonalized ? (
               <Card>
                 <CardContent className="p-6">
