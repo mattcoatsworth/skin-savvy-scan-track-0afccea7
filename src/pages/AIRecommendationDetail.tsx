@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,8 +30,11 @@ interface DetailContent {
  * component and stored in Supabase for fast loading when users click on them.
  */
 const AIRecommendationDetail = () => {
-  const { id = "" } = useParams<{ id: string }>();
+  // Extract full ID from URL parameter
+  const params = useParams();
+  const fullId = params['*'] || params.id || "";
   const navigate = useNavigate();
+  
   const [isLoading, setIsLoading] = useState(true);
   const [content, setContent] = useState<DetailContent>({
     title: "",
@@ -47,9 +51,32 @@ const AIRecommendationDetail = () => {
   
   const { getCachedDetail, preGenerateDetailContent } = useAIDetailCache();
   
-  // Extract recommendation type from the ID
-  const recommendationType = id?.split('-')[0] || "recommendation";
-  const recommendationNumber = id?.split('-')[1] || "";
+  // Parse the route parameter to extract recommendation type and number
+  // Handle both formats: /recommendations-detail/ai-factor-1 and /recommendations-detail/factor/1
+  let recommendationType, recommendationNumber;
+  
+  if (fullId.includes('-')) {
+    // Format: ai-factor-1 or factor-1
+    const parts = fullId.split('-');
+    if (parts[0] === 'ai' && parts.length > 2) {
+      recommendationType = parts[1];
+      recommendationNumber = parts.slice(2).join('-');
+    } else {
+      recommendationType = parts[0];
+      recommendationNumber = parts.slice(1).join('-');
+    }
+  } else if (fullId.includes('/')) {
+    // Format: factor/1
+    const parts = fullId.split('/');
+    recommendationType = parts[0];
+    recommendationNumber = parts[1];
+  } else {
+    // Default fallback if the format doesn't match expected patterns
+    recommendationType = "recommendation";
+    recommendationNumber = fullId;
+  }
+  
+  console.log(`Parsed route: type=${recommendationType}, number=${recommendationNumber}, fullId=${fullId}`);
   
   // Format the type for display
   const formatType = (type: string): string => {
@@ -83,14 +110,22 @@ const AIRecommendationDetail = () => {
 
   useEffect(() => {
     const fetchContent = async () => {
+      if (!recommendationType || !recommendationNumber) {
+        console.error("Invalid recommendation ID format");
+        setIsLoading(false);
+        return;
+      }
+      
       setIsLoading(true);
       
       try {
+        console.log(`Fetching content for type=${recommendationType}, number=${recommendationNumber}`);
+        
         // First try to get the cached content from Supabase
         const cachedContent = await getCachedDetail(recommendationType, recommendationNumber);
         
         if (cachedContent) {
-          console.log("Using cached detail content from Supabase");
+          console.log("Using cached detail content from Supabase", cachedContent);
           // The cachedContent is already properly typed from our hook
           setContent(cachedContent);
           setIsLoading(false);
@@ -98,7 +133,7 @@ const AIRecommendationDetail = () => {
         }
         
         // If no cached content in Supabase, fall back to legacy localStorage cache
-        const cacheKey = `ai-recommendation-detail-${id}`;
+        const cacheKey = `ai-recommendation-detail-${fullId}`;
         const localCachedContent = localStorage.getItem(cacheKey);
         
         if (localCachedContent) {
@@ -125,7 +160,7 @@ const AIRecommendationDetail = () => {
         console.log("No cached content found, generating new content");
         
         // Build the base title from the ID
-        const baseTitle = formatTitle(id);
+        const baseTitle = formatTitle(fullId);
         
         // Generate detailed content using AI
         const detailPrompt = `
@@ -197,10 +232,10 @@ const AIRecommendationDetail = () => {
     };
     
     fetchContent();
-  }, [id, getAdvice, getCachedDetail, preGenerateDetailContent, recommendationType, recommendationNumber]);
+  }, [fullId, getAdvice, getCachedDetail, preGenerateDetailContent, recommendationType, recommendationNumber]);
 
   const recommendationTypeDisplay = formatType(recommendationType);
-  const displayTitle = content.title || formatTitle(id);
+  const displayTitle = content.title || formatTitle(fullId);
   
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
