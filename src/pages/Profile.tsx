@@ -34,73 +34,123 @@ const Profile = () => {
     { date: "Sun", value: 85 }
   ];
 
-  // Retrieve selfie images from localStorage
+  // Sample selfie images for demonstration
   const [selfieImages, setSelfieImages] = useState<{
     id: string;
     url: string;
     date: string;
     type: "am" | "pm";
     rating: number;
-  }[]>([]);
+  }[]>([
+    {
+      id: "sample-1",
+      url: "https://images.unsplash.com/photo-1599842057874-37393e9342df?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      date: "Today",
+      type: "am",
+      rating: 85
+    },
+    {
+      id: "sample-2",
+      url: "https://images.unsplash.com/photo-1508216310976-c518daae0cdc?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      date: "Today",
+      type: "pm",
+      rating: 78
+    },
+    {
+      id: "sample-3",
+      url: "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      date: "Yesterday",
+      type: "am",
+      rating: 72
+    },
+    {
+      id: "sample-4",
+      url: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      date: "Yesterday",
+      type: "pm",
+      rating: 79
+    },
+    {
+      id: "sample-5",
+      url: "https://images.unsplash.com/photo-1519143591231-28371a10b1c4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      date: "2 days ago",
+      type: "am",
+      rating: 65
+    },
+    {
+      id: "sample-6",
+      url: "https://images.unsplash.com/photo-1526758097130-bab247274f58?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      date: "2 days ago",
+      type: "pm",
+      rating: 71
+    }
+  ]);
   
+  // Function to load real selfie images from localStorage (keeping the logic for when real selfies are added)
   useEffect(() => {
     // Get all keys from localStorage that contain selfie data
     const selfieKeys = Object.keys(localStorage).filter(
       key => key.includes('-selfies-')
     );
     
-    const images: {
-      id: string;
-      url: string;
-      date: string;
-      type: "am" | "pm";
-      rating: number;
-    }[] = [];
-    
-    // Process each key to extract selfies
-    selfieKeys.forEach(key => {
-      try {
-        // Extract date and type from the key
-        const keyParts = key.split('-');
-        const type = keyParts[0] as "am" | "pm";
-        const dateId = keyParts[2]; // This will be like "day-1" or "today"
-        
-        // Convert dateId to a display date
-        let displayDate = "Today";
-        if (dateId !== "today") {
-          const dayNumber = parseInt(dateId.replace('day-', ''), 10);
-          if (!isNaN(dayNumber)) {
-            const date = new Date();
-            date.setDate(date.getDate() - dayNumber);
-            displayDate = date.toLocaleDateString();
-          }
-        }
-        
-        // Get selfies from localStorage
-        const storedSelfies = localStorage.getItem(key);
-        if (storedSelfies) {
-          const selfies = JSON.parse(storedSelfies) as (string | null)[];
+    // If there are actual selfies in localStorage, use them instead of samples
+    if (selfieKeys.length > 0) {
+      const images: {
+        id: string;
+        url: string;
+        date: string;
+        type: "am" | "pm";
+        rating: number;
+      }[] = [];
+      
+      // Process each key to extract selfies
+      selfieKeys.forEach(key => {
+        try {
+          // Extract date and type from the key
+          const keyParts = key.split('-');
+          const type = keyParts[0] as "am" | "pm";
+          const dateId = keyParts[2]; // This will be like "day-1" or "today"
           
-          // Add each valid selfie to the images array
-          selfies.forEach((url, index) => {
-            if (url) {
-              const rating = Math.floor(Math.random() * (95 - 60 + 1)) + 60; // Random rating between 60-95
-              images.push({
-                id: `${key}-${index}`,
-                url,
-                date: displayDate,
-                type,
-                rating
-              });
+          // Convert dateId to a display date
+          let displayDate = "Today";
+          if (dateId !== "today") {
+            const dayNumber = parseInt(dateId.replace('day-', ''), 10);
+            if (!isNaN(dayNumber)) {
+              const date = new Date();
+              date.setDate(date.getDate() - dayNumber);
+              displayDate = date.toLocaleDateString();
             }
-          });
+          }
+          
+          // Get selfies from localStorage
+          const storedSelfies = localStorage.getItem(key);
+          if (storedSelfies) {
+            const selfies = JSON.parse(storedSelfies) as (string | null)[];
+            
+            // Add each valid selfie to the images array
+            selfies.forEach((url, index) => {
+              if (url) {
+                const rating = Math.floor(Math.random() * (95 - 60 + 1)) + 60; // Random rating between 60-95
+                images.push({
+                  id: `${key}-${index}`,
+                  url,
+                  date: displayDate,
+                  type,
+                  rating
+                });
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error processing selfie key ${key}:`, error);
         }
-      } catch (error) {
-        console.error(`Error processing selfie key ${key}:`, error);
+      });
+      
+      // Only replace sample images if we found real ones
+      if (images.length > 0) {
+        setSelfieImages(images);
       }
-    });
-    
-    setSelfieImages(images);
+    }
   }, []);
 
   // For You Recommendations 
@@ -268,13 +318,11 @@ const Profile = () => {
           <ApiKeyInput />
         </div>
         
-        {/* Selfie Grid */}
-        {selfieImages.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3">Your Skin Photos</h2>
-            <SelfieGrid images={selfieImages} />
-          </div>
-        )}
+        {/* Selfie Grid - Always visible now with sample images */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-3">Your Skin Photos</h2>
+          <SelfieGrid images={selfieImages} />
+        </div>
         
         {/* Weekly Trend */}
         <div>
