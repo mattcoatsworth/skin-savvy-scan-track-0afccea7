@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { formatDisplayDate, toStorageFormat } from "@/utils/formatting/dateUtils";
 
 type CycleFormValues = {
   cycleType: string;
@@ -50,7 +50,7 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
     
     // Also save the last period date if provided
     if (data.lastPeriodDate) {
-      localStorage.setItem("userLastPeriodDate", data.lastPeriodDate.toISOString());
+      localStorage.setItem("userLastPeriodDate", toStorageFormat(data.lastPeriodDate));
     }
     
     // Navigate to the next screen
@@ -91,7 +91,7 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
                         )}
                       >
                         {field.value ? (
-                          format(field.value, "PPP")
+                          formatDisplayDate(field.value)
                         ) : (
                           <span>Pick a date</span>
                         )}
