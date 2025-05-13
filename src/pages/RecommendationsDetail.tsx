@@ -9,8 +9,7 @@ import useScrollToTop from "@/hooks/useScrollToTop";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { Badge } from "@/components/ui/badge";
-import DisclaimerCard from "@/components/DisclaimerCard";
-import TestAIChatBox from "@/components/TestAIChatBox";
+import BottomTemplate from "@/components/BottomTemplate";
 
 type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
@@ -1018,13 +1017,11 @@ const RecommendationsDetail = () => {
         {/* View Scoring Method (always at bottom) */}
         <ViewScoringMethod />
         
-        {/* Add disclaimer and chat box for testai routes */}
-        {isTestAiMode && (
-          <>
-            <DisclaimerCard />
-            <TestAIChatBox productTitle={recommendation?.title} />
-          </>
-        )}
+        {/* Add bottom template for testai routes */}
+        <BottomTemplate 
+          pageTitle={recommendation?.title}
+          disclaimerText="This information is for educational purposes only and is not intended as medical advice. Always consult with a healthcare professional or dermatologist for personalized recommendations and treatment options regarding skin concerns."
+        />
       </div>
     </div>
   );

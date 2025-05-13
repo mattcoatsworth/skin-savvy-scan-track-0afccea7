@@ -27,7 +27,7 @@ const ProductDisclaimer = ({ isLoading, aiContent }: ProductDisclaimerProps) => 
           {isLoading ? (
             <LoadingIndicator />
           ) : (
-            <div className="text-[10px] text-muted-foreground">
+            <div className="text-[8px] text-muted-foreground">
               {aiContent.disclaimer?.sections["Disclaimer"] ? (
                 <p>{typeof aiContent.disclaimer.sections["Disclaimer"] === 'string' 
                   ? aiContent.disclaimer.sections["Disclaimer"] 

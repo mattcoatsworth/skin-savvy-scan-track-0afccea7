@@ -7,5 +7,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function isTestAiMode() {
+  // Check if the URL path contains '/testai' anywhere
   return window.location.pathname.includes('/testai');
 }

@@ -13,8 +13,7 @@ import { foodItems, productItems } from "@/data/products";
 import ProductHeader from "@/components/product/ProductHeader";
 import ProductOverview from "@/components/product/ProductOverview";
 import ProductDetails from "@/components/product/ProductDetails";
-import ProductDisclaimer from "@/components/product/ProductDisclaimer";
-import ProductForYou from "@/components/product/ProductForYou";
+import BottomTemplate from "@/components/BottomTemplate";
 
 const ProductDetail = () => {
   // Add scroll to top functionality
@@ -93,10 +92,10 @@ const ProductDetail = () => {
         {/* View Scoring Method */}
         <ViewScoringMethod />
         
-        {/* Shortened Disclaimer Section - AI Generated */}
-        <ProductDisclaimer 
-          isLoading={isLoading.disclaimer}
-          aiContent={aiContent}
+        {/* Bottom Template - includes both disclaimer and chat */}
+        <BottomTemplate 
+          pageTitle={product.name}
+          disclaimerText="This information is for educational purposes only and is not intended as medical advice. Always consult with a healthcare professional or dermatologist for personalized recommendations and treatment options regarding skin concerns."
         />
       </div>
     </div>
