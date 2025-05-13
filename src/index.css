@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -71,7 +72,7 @@
   }
   
   [data-theme="summer"] {
-    /* Summer theme colors - light/soft, masculine, distinguishable */
+    /* Summer theme colors - updated with consistent color palette */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     
@@ -81,8 +82,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    /* Updated for more noticeable appearance */
-    --primary: 200 85% 60%; /* Increased saturation from 75% to 85% */
+    --primary: 200 85% 60%; /* Bright but not harsh blue */
     --primary-foreground: 0 0% 100%;
     
     --secondary: 210 40% 96.1%;
@@ -91,27 +91,29 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
     
-    /* Updated for more noticeable appearance */
-    --accent: 168 50% 65%; /* Increased saturation from 40% to 50% */
+    --accent: 168 50% 65%; /* Soft teal */
     --accent-foreground: 222.2 47.4% 11.2%;
     
-    /* Updated for more noticeable appearance */
-    --destructive: 0 75% 60%; /* Increased saturation from 65% to 75% */
+    --destructive: 0 75% 60%;
     --destructive-foreground: 210 40% 98%;
     
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     
-    /* Additional summer specific colors - updated for more noticeable appearance */
-    --summer-sage: 120 20% 70%; /* Increased saturation from 15% to 20% */
-    --summer-slate: 210 25% 60%; /* Increased saturation from 15% to 25% */
-    --summer-sand: 35 30% 75%; /* Increased saturation from 20% to 30% */
+    /* Additional summer specific colors - updated with theme colors from Today's Skin card */
+    --summer-sage: 120 20% 70%;
+    --summer-slate: 210 25% 60%;
+    --summer-sand: 35 30% 75%;
     --summer-stone: 0 0% 70%;
-    --summer-steel: 200 20% 50%; /* Increased saturation from 10% to 20% */
-    /* New masculine navigation color */
-    --summer-navy: 210 60% 40%; /* Masculine blue for active navigation */
-    --summer-bright-blue: 195 85% 45%; /* Bright blue for indicators */
+    --summer-steel: 200 20% 50%;
+    /* Updated to match navigation styling */
+    --summer-navy: 210 10% 45%; /* Updated to be less prominent, matching gray navigation */
+    --summer-bright-blue: 195 85% 45%;
+    /* New colors for recommendations with increased opacity */
+    --summer-rec-bg: 210 100% 95%; /* Background for recommendations */
+    --summer-plus-button: 210 10% 20%; /* Soft black for plus button hover */
+    --summer-nav-text: 210 10% 35%; /* Gray for navigation */
   }
  
   .dark {
@@ -133,3 +135,4 @@
 /* Keep existing code (Skin advice content styling) */
 
 /* Keep existing code (AI analysis section styling) */
+

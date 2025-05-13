@@ -1,3 +1,4 @@
+
 /**
  * Color palette definitions for the application.
  * These colors are configured in the Tailwind config and can be accessed via CSS variables.
@@ -53,15 +54,18 @@ export const colors = {
       blue: 'hsl(var(--spring-blue))',
       teal: 'hsl(var(--spring-teal))'
     },
-    // Summer theme specific colors
+    // Summer theme specific colors - updated with new values
     summer: {
       sage: 'hsl(var(--summer-sage))',
       slate: 'hsl(var(--summer-slate))',
       sand: 'hsl(var(--summer-sand))',
       stone: 'hsl(var(--summer-stone))',
       steel: 'hsl(var(--summer-steel))',
-      navy: 'hsl(var(--summer-navy))', // Added masculine navigation color
-      brightBlue: 'hsl(var(--summer-bright-blue))' // Added more noticeable indicator color
+      navy: 'hsl(var(--summer-navy))', // Updated masculine navigation color to be less prominent
+      brightBlue: 'hsl(var(--summer-bright-blue))', // Bright blue for indicators
+      recBg: 'hsl(var(--summer-rec-bg))', // New background for recommendations
+      plusButton: 'hsl(var(--summer-plus-button))', // New color for plus button hover
+      navText: 'hsl(var(--summer-nav-text))' // Gray for navigation text
     }
   },
 
@@ -81,7 +85,7 @@ export const colors = {
     warm: 'linear-gradient(111.4deg, rgba(238,113,113,1) 1%, rgba(246,215,148,1) 58%)',
     // Spring theme gradient 
     spring: 'linear-gradient(120deg, #FF6B01 0%, #FFC170 100%)',
-    // Summer theme gradient
+    // Summer theme gradient - updated to match new colors
     summer: 'linear-gradient(120deg, #66B3D9 0%, #8CD2BE 100%)'
   }
 };
