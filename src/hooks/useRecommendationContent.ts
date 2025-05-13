@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
 import { toast } from "sonner";
+import { Info } from "lucide-react";
 
 interface RecommendationContent {
   title: string;
@@ -46,12 +47,10 @@ export const useRecommendationContent = (type: string, id: string) => {
       if (detailContent.details) {
         parsedSections.push({
           title: "Detailed Analysis",
-          content: (
-            <div className="space-y-4">
-              {detailContent.details.split('\n\n').map((paragraph: string, i: number) => (
-                <p key={`details-${i}`} className="text-sm text-gray-600">{paragraph}</p>
-              ))}
-            </div>
+          content: React.createElement("div", { className: "space-y-4" },
+            detailContent.details.split('\n\n').map((paragraph: string, i: number) => 
+              React.createElement("p", { key: `details-${i}`, className: "text-sm text-gray-600" }, paragraph)
+            )
           )
         });
       }
@@ -60,12 +59,10 @@ export const useRecommendationContent = (type: string, id: string) => {
       if (detailContent.recommendations && detailContent.recommendations.length > 0) {
         parsedSections.push({
           title: "Recommendations",
-          content: (
-            <ul className="list-disc pl-5 space-y-2 text-sm text-gray-600">
-              {detailContent.recommendations.map((rec: string, i: number) => (
-                <li key={`rec-${i}`}>{rec}</li>
-              ))}
-            </ul>
+          content: React.createElement("ul", { className: "list-disc pl-5 space-y-2 text-sm text-gray-600" },
+            detailContent.recommendations.map((rec: string, i: number) => 
+              React.createElement("li", { key: `rec-${i}` }, rec)
+            )
           )
         });
       }
@@ -74,13 +71,11 @@ export const useRecommendationContent = (type: string, id: string) => {
       if (detailContent.disclaimer) {
         parsedSections.push({
           title: "Important Information",
-          content: (
-            <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <Info className="h-4 w-4 text-blue-500" />
-              </div>
-              <p className="text-sm text-gray-600">{detailContent.disclaimer}</p>
-            </div>
+          content: React.createElement("div", { className: "flex items-start space-x-3" },
+            React.createElement("div", { className: "w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0" },
+              React.createElement(Info, { className: "h-4 w-4 text-blue-500" })
+            ),
+            React.createElement("p", { className: "text-sm text-gray-600" }, detailContent.disclaimer)
           )
         });
       }
@@ -152,7 +147,7 @@ export const useRecommendationContent = (type: string, id: string) => {
     if (type && id) {
       fetchRecommendationContent();
     }
-  }, [type, id]);
+  }, [type, id, getCachedDetail, preGenerateDetailContent]);
   
   return { content, loading, error };
 };
