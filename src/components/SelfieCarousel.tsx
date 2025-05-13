@@ -37,7 +37,7 @@ const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
   label = type === "am" ? "Morning" : "Evening",
   readonly = false,
   compact = false,
-}: SelfieCarouselProps) => {
+}) => {
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [viewImageDialogOpen, setViewImageDialogOpen] = useState(false);
