@@ -11,15 +11,14 @@ export const userService = {
    */
   getUserProfile: async (userId: string) => {
     try {
-      // Use RPC function instead of direct table query for the "profiles" table
-      // that doesn't exist in our database types
-      const { data, error } = await supabase.rpc('get_user_profile', {
-        user_id: userId
+      // Use a function invocation instead of RPC to handle the profile retrieval
+      const { data, error } = await supabase.functions.invoke('get-user-profile', {
+        body: { user_id: userId }
       });
       
       if (error) {
-        console.error("RPC error:", error);
-        // Fallback for development when the RPC function doesn't exist yet
+        console.error("Function error:", error);
+        // Fallback for development when the function doesn't exist yet
         return { id: userId, name: "User " + userId };
       }
       

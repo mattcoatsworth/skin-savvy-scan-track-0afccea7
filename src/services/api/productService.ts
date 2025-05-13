@@ -1,4 +1,3 @@
-
 /**
  * Product service
  * Handles product-related API calls in a platform-agnostic way
@@ -68,14 +67,16 @@ export const productService = {
     try {
       // Instead of directly querying tables that don't exist in our database types,
       // use an RPC call to get the products
-      const { data, error } = await supabase.rpc('get_product_details', {
-        product_type: type,
-        product_id: productId
+      const { data, error } = await supabase.functions.invoke('get-product-details', {
+        body: {
+          product_type: type,
+          product_id: productId
+        }
       });
       
       if (error) {
-        console.error("RPC error:", error);
-        // Fallback for development: mock data when the RPC function doesn't exist yet
+        console.error("Function error:", error);
+        // Fallback for development: mock data when the function doesn't exist yet
         if (type === "food") {
           return { id: productId, name: "Food Item " + productId, type: "food" };
         } else {
