@@ -4,11 +4,38 @@
  * using our cross-platform theme system.
  * 
  * Note: This file is for reference only and won't be used in the web app.
+ * When implementing React Native, you'll need to install the react-native package.
  */
 
 import React from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+// These imports are commented out since this is just a reference file
+// When implementing in React Native, uncomment these imports
+// import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { theme } from '../theme';
+
+// Mock types for React Native components to avoid TypeScript errors
+interface TouchableOpacityProps {
+  style?: any;
+  onPress?: () => void;
+  disabled?: boolean;
+  activeOpacity?: number;
+  children: React.ReactNode;
+}
+
+interface TextProps {
+  style?: any;
+  children: React.ReactNode;
+}
+
+interface ViewProps {
+  style?: any;
+  children: React.ReactNode;
+}
+
+// Mock components
+const TouchableOpacity = ({ children, ...props }: TouchableOpacityProps) => <div {...props}>{children}</div>;
+const Text = ({ children, ...props }: TextProps) => <span {...props}>{children}</span>;
+const View = ({ children, ...props }: ViewProps) => <div {...props}>{children}</div>;
 
 type ButtonVariant = 'default' | 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -64,6 +91,7 @@ export const Button = ({
     }
   };
 
+  // Fixed type issue: Explicitly combine the style objects
   const buttonStyle = {
     ...theme.components.button.base,
     ...getVariantStyle(),
@@ -71,26 +99,40 @@ export const Button = ({
     ...(disabled && { opacity: 0.5 })
   };
 
+  // Fixed type issue: Explicitly access textColor from the variant style
+  const getTextColor = () => {
+    if (variant === 'primary') return theme.components.button.primary.color;
+    if (variant === 'secondary') return theme.components.button.secondary.color;
+    if (variant === 'outline') return theme.components.button.outline.color;
+    if (variant === 'destructive') return theme.components.button.destructive.color;
+    return theme.colors.skin.black;
+  };
+
   return (
     <TouchableOpacity
-      style={[styles.button, buttonStyle]}
+      style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }, buttonStyle]}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.7}
     >
-      {leftIcon && <View style={styles.iconLeft}>{leftIcon}</View>}
+      {leftIcon && <View style={{ marginRight: theme.spacing.base[2] }}>{leftIcon}</View>}
       
       {typeof children === 'string' ? (
-        <Text style={[styles.text, { color: buttonStyle.color }]}>
+        <Text style={{ color: getTextColor(), fontWeight: theme.typography.fontWeight.medium, textAlign: 'center' }}>
           {children}
         </Text>
       ) : (
         children
       )}
       
-      {rightIcon && <View style={styles.iconRight}>{rightIcon}</View>}
+      {rightIcon && <View style={{ marginLeft: theme.spacing.base[2] }}>{rightIcon}</View>}
     </TouchableOpacity>
   );
+};
+
+// Mock StyleSheet API
+const StyleSheet = {
+  create: (styles: any) => styles
 };
 
 const styles = StyleSheet.create({
