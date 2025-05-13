@@ -192,7 +192,7 @@ const Settings = () => {
                 <FormLabel>Website Theme</FormLabel>
                 <Select
                   value={theme}
-                  onValueChange={(value) => setTheme(value as 'default' | 'spring' | 'summer')}
+                  onValueChange={(value) => setTheme(value as 'default' | 'spring')}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select theme" />
@@ -200,7 +200,6 @@ const Settings = () => {
                   <SelectContent>
                     <SelectItem value="default">Default</SelectItem>
                     <SelectItem value="spring">Spring</SelectItem>
-                    <SelectItem value="summer">Summer</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground mt-2">

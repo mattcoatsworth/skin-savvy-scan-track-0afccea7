@@ -53,14 +53,6 @@ export const colors = {
     spring: {
       blue: 'hsl(var(--spring-blue))',
       teal: 'hsl(var(--spring-teal))'
-    },
-    // Summer theme specific colors
-    summer: {
-      blue: 'hsl(var(--summer-blue))',
-      steel: 'hsl(var(--summer-steel))',
-      sage: 'hsl(var(--summer-sage))',
-      sand: 'hsl(var(--summer-sand))',
-      stone: 'hsl(var(--summer-stone))'
     }
   },
 
@@ -79,9 +71,7 @@ export const colors = {
     calm: 'linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)',
     warm: 'linear-gradient(111.4deg, rgba(238,113,113,1) 1%, rgba(246,215,148,1) 58%)',
     // Spring theme gradient 
-    spring: 'linear-gradient(120deg, #FF6B01 0%, #FFC170 100%)',
-    // Summer theme gradient
-    summer: 'linear-gradient(120deg, #33C3F0 0%, #6D97C9 100%)'
+    spring: 'linear-gradient(120deg, #FF6B01 0%, #FFC170 100%)'
   }
 };
 

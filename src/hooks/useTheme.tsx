@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 
-type ThemeType = 'default' | 'spring' | 'summer';
+type ThemeType = 'default' | 'spring';
 
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeType>(() => {
