@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,6 +11,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 // Components
 import AppNavigation from "@/components/AppNavigation";
 import SkinAuth from "@/components/SkinAuth";
+import DesignExport from "@/components/DesignExport";
 
 // Page imports
 import Onboarding from "@/pages/Onboarding";
@@ -95,6 +97,15 @@ const OnboardingLayout = () => (
   </div>
 );
 
+// Layout without navigation for design export
+const ExportLayout = () => (
+  <div className="bg-white min-h-screen">
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <Outlet />
+    </div>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ApiKeyProvider>
@@ -108,6 +119,11 @@ const App = () => (
             
             {/* Auth route */}
             <Route path="/auth" element={<SkinAuth />} />
+            
+            {/* Design Export route */}
+            <Route element={<ExportLayout />}>
+              <Route path="/design-export" element={<DesignExport />} />
+            </Route>
             
             {/* Onboarding flow routes */}
             <Route element={<OnboardingLayout />}>

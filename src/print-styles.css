@@ -1,0 +1,52 @@
+
+/* Print-specific styles */
+@media print {
+  /* Hide navigation and other UI elements */
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  .print\:block {
+    display: block !important;
+  }
+  
+  /* Reset page margins and background */
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+  
+  body {
+    background-color: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Remove shadows, animations and interactive styles */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Ensure the content expands properly */
+  .export-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Hide AppNavigation component */
+  nav, 
+  .bottom-navigation,
+  footer {
+    display: none !important;
+  }
+  
+  /* Ensure text is readable */
+  p, h1, h2, h3, h4, h5, h6, span {
+    color: black !important;
+  }
+}
