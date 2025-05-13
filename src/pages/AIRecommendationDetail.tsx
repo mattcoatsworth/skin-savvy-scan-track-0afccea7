@@ -1,32 +1,24 @@
 
-import React from "react";
-import { useParams } from "react-router-dom";
-import RecommendationDetailTemplate from "@/components/RecommendationDetailTemplate";
-import { useRecommendationContent } from "@/hooks/useRecommendationContent";
-import { useRecommendationIdParser } from "@/hooks/useRecommendationIdParser";
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import RecommendationDetailTemplate from '@/components/RecommendationDetailTemplate';
+import { useRecommendationContent } from '@/hooks/useRecommendationContent';
+import { useRecommendationIdParser } from '@/hooks/useRecommendationIdParser';
 
 const AIRecommendationDetail = () => {
-  const { type = "", id = "" } = useParams();
-  const { parsedType, parsedId } = useRecommendationIdParser(type, id);
-  const { content, loading, error } = useRecommendationContent(parsedType, parsedId);
-  
-  if (error) {
-    return (
-      <div className="max-w-md mx-auto px-4 py-6 text-center">
-        <p className="text-red-500">Failed to load recommendation content.</p>
-        <p className="text-sm text-gray-600 mt-2">{error}</p>
-      </div>
-    );
+  const { type = '', id = '' } = useParams();
+  const idParser = useRecommendationIdParser();
+  const { content, loading, error } = useRecommendationContent(type, id);
+
+  if (loading) {
+    return <div className="p-4">Loading recommendation details...</div>;
   }
-  
-  return (
-    <RecommendationDetailTemplate
-      id={parsedId}
-      type={parsedType}
-      loading={loading}
-      content={content || undefined}
-    />
-  );
+
+  if (error || !content) {
+    return <div className="p-4">Failed to load recommendation details: {error}</div>;
+  }
+
+  return <RecommendationDetailTemplate {...content} />;
 };
 
 export default AIRecommendationDetail;
