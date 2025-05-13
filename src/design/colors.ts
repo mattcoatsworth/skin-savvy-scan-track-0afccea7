@@ -1,4 +1,3 @@
-
 /**
  * Color palette definitions for the application.
  * These colors are configured in the Tailwind config and can be accessed via CSS variables.
@@ -54,7 +53,8 @@ export const colors = {
       blue: 'hsl(var(--spring-blue))',
       teal: 'hsl(var(--spring-teal))'
     },
-    // Summer theme specific colors - updated with more distinct colors
+    
+    // Summer theme specific colors - masculine palette
     summer: {
       sage: 'hsl(var(--summer-sage))',
       slate: 'hsl(var(--summer-slate))',
@@ -63,7 +63,7 @@ export const colors = {
       steel: 'hsl(var(--summer-steel))',
       navy: 'hsl(var(--summer-navy))', 
       brightBlue: 'hsl(var(--summer-bright-blue))',
-      // New more distinct colors for the Today's Skin card
+      // Colors for the Today's Skin card
       emerald: 'hsl(var(--summer-emerald))', // For food factors
       azure: 'hsl(var(--summer-azure))',     // For supplement factors
       violet: 'hsl(var(--summer-violet))',   // For makeup factors
