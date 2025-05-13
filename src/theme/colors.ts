@@ -62,6 +62,15 @@ export const colors = {
     accent: '#FFC170', // skin-amber
     blue: '#6BB9FF', // skin-blue
     teal: '#20B2AA' // skin-teal
+  },
+  
+  // Summer theme colors - light, masculine palette
+  summer: {
+    primary: '#33C3F0', // sky blue
+    steel: '#6D97C9', // steel blue
+    sage: '#BFD1C0', // sage green
+    sand: '#E6D7B8', // sand
+    stone: '#BCAEA3' // stone
   }
 };
 

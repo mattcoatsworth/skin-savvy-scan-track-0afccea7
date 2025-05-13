@@ -33,52 +33,76 @@ type SkinSnapshotProps = {
 };
 
 const getFactorColor = (type: FactorType) => {
-  switch (type) {
-    case "Food":
-      return "bg-green-100 text-green-800";
-    case "Supplement":
-      return "bg-blue-100 text-blue-800";
-    case "Makeup":
-      return "bg-purple-100 text-purple-800";
-    case "Weather":
-      return "bg-orange-100 text-orange-800";
-    default:
-      return "bg-gray-100 text-gray-800";
+  // Get the current theme
+  const currentTheme = document.body.getAttribute('data-theme') || 'default';
+  
+  // Theme-specific color mappings
+  if (currentTheme === 'summer') {
+    switch (type) {
+      case "Food":
+        return "bg-[hsl(var(--summer-sage))] text-[hsl(var(--foreground))]";
+      case "Supplement":
+        return "bg-[hsl(var(--summer-steel))] text-[hsl(var(--foreground))]";
+      case "Makeup":
+        return "bg-[hsl(var(--summer-sand))] text-[hsl(var(--foreground))]";
+      case "Weather":
+        return "bg-[hsl(var(--summer-stone))] text-[hsl(var(--foreground))]";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  } else {
+    // Default and other themes use the original colors
+    switch (type) {
+      case "Food":
+        return "bg-green-100 text-green-800";
+      case "Supplement":
+        return "bg-blue-100 text-blue-800";
+      case "Makeup":
+        return "bg-purple-100 text-purple-800";
+      case "Weather":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   }
 };
 
 const getRecommendationColor = (type: RecommendationType) => {
-  switch (type) {
-    case "skincare":
-      return "bg-blue-100 text-blue-800";
-    case "food":
-      return "bg-green-100 text-green-800";
-    case "supplements":
-      return "bg-indigo-100 text-indigo-800";
-    case "makeup":
-      return "bg-purple-100 text-purple-800";
-    case "lifestyle":
-      return "bg-orange-100 text-orange-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
-// Icon mapping function to get the right icon for each recommendation
-const getRecommendationIcon = (type: RecommendationType): React.ReactNode => {
-  switch (type) {
-    case "skincare":
-      return <Droplet className="h-4 w-4" />;
-    case "food":
-      return <Utensils className="h-4 w-4" />;
-    case "supplements":
-      return <Pill className="h-4 w-4" />;
-    case "makeup":
-      return <Circle className="h-4 w-4" />;
-    case "lifestyle":
-      return <Activity className="h-4 w-4" />;
-    default:
-      return <Circle className="h-4 w-4" />;
+  // Get the current theme
+  const currentTheme = document.body.getAttribute('data-theme') || 'default';
+  
+  // Theme-specific color mappings
+  if (currentTheme === 'summer') {
+    switch (type) {
+      case "skincare":
+        return "bg-[hsl(var(--summer-blue))] text-[hsl(var(--foreground))]";
+      case "food":
+        return "bg-[hsl(var(--summer-sage))] text-[hsl(var(--foreground))]";
+      case "supplements":
+        return "bg-[hsl(var(--summer-steel))] text-[hsl(var(--foreground))]";
+      case "makeup":
+        return "bg-[hsl(var(--summer-sand))] text-[hsl(var(--foreground))]";
+      case "lifestyle":
+        return "bg-[hsl(var(--summer-stone))] text-[hsl(var(--foreground))]";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  } else {
+    // Original colors for default and other themes
+    switch (type) {
+      case "skincare":
+        return "bg-blue-100 text-blue-800";
+      case "food":
+        return "bg-green-100 text-green-800";
+      case "supplements":
+        return "bg-indigo-100 text-indigo-800";
+      case "makeup":
+        return "bg-purple-100 text-purple-800";
+      case "lifestyle":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   }
 };
 
@@ -221,7 +245,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     };
     
     fetchRecommendations();
-  }, [hasAttemptedFetch, preGenerateMultipleDetails]); // Only depend on hasAttemptedFetch to prevent infinite loop
+  }, [hasAttemptedFetch, preGenerateMultipleDetails, factors, getAdvice, recommendations, toast]); // Only depend on hasAttemptedFetch to prevent infinite loop
   
   // Use AI recommendations if available, otherwise fall back to static recommendations
   const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
