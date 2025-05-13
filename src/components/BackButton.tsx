@@ -11,6 +11,12 @@ const BackButton: React.FC = () => {
     // Prevent any default browser behavior that might interfere
     e.preventDefault();
     
+    // Special case for log-skin-condition page - always go to /home
+    if (location.pathname === '/log-skin-condition') {
+      navigate('/home');
+      return;
+    }
+    
     // Special case for day-log pages - always go to /skin
     if (location.pathname.startsWith('/day-log')) {
       navigate('/skin');

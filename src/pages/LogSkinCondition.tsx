@@ -523,7 +523,7 @@ const LogSkinCondition = () => {
     <div className="bg-skin-gray min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
-          <Link to="/" className="mr-4">
+          <Link to="/home" className="mr-4">
             <ArrowLeft className="h-5 w-5 text-skin-black" />
           </Link>
           <h1 className="text-2xl font-bold text-skin-black">Log Skin Condition</h1>
@@ -537,7 +537,7 @@ const LogSkinCondition = () => {
               onClick={() => console.log("Upload selfie initiated")}
             >
               <Camera className="h-5 w-5" />
-              Get Started by Uploading Selfie
+              Get Started by Uploading A Selfie
             </Button>
           </div>
           
