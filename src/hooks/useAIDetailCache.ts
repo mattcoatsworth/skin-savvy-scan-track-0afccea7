@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
@@ -158,53 +157,44 @@ export const useAIDetailCache = () => {
         return cachedContent;
       }
       
-      // Build a detailed prompt based on the recommendation text
-      const detailPrompt = `
-        Create detailed information about this skin care recommendation: "${text}"
-        
-        Please provide:
-        1. A clear title for this recommendation (just the key concept, 2-5 words)
-        2. A concise overview paragraph explaining the concept
-        3. Detailed information including benefits, how to implement, and expected results
-        4. 3-5 specific recommendations related to this topic
-        5. A brief medical disclaimer appropriate for skin care advice
-        
-        Format your response with the following sections:
-        ### Title: [Your Title]
-        ### Overview: [Single paragraph overview]
-        ### Details: [Several paragraphs of detailed information]
-        ### Recommendations: [Bulleted list of specific recommendations]
-        ### Disclaimer: [Brief appropriate medical disclaimer]
-      `;
-      
-      // Generate the detailed content using AI
-      const response = await getAdvice(detailPrompt, contextData);
-      
-      if (response && response.sections) {
-        // Parse the response sections
-        const detailContent: DetailContent = {
-          title: response.sections["Title"] as string || text.split(':')[0],
-          overview: response.sections["Overview"] as string || "",
-          details: response.sections["Details"] as string || "",
-          disclaimer: response.sections["Disclaimer"] as string || "",
-          recommendations: Array.isArray(response.sections["Recommendations"]) 
-            ? response.sections["Recommendations"] as string[] 
-            : []
-        };
-        
-        // Cache the content in Supabase
-        await cacheDetailContent(type, id, detailContent);
-        
-        // Also cache with alternative format for better findability
-        if (!type.startsWith('ai-') && type !== 'ai') {
-          await cacheDetailContent(`ai-${type}`, id, detailContent);
+      // Call the new edge function to generate content
+      const { data, error } = await supabase.functions.invoke('generate-recommendation', {
+        body: {
+          type,
+          id,
+          recommendationText: text,
+          userData: contextData
         }
-        
-        return detailContent;
+      });
+      
+      if (error) {
+        console.error("Error generating recommendation content:", error);
+        throw error;
       }
       
-      console.error("Failed to generate detail content");
-      return null;
+      if (!data) {
+        console.error("No data returned from generate-recommendation function");
+        return null;
+      }
+      
+      // Create the detail content object
+      const detailContent: DetailContent = {
+        title: data.title || text,
+        overview: data.overview || "",
+        details: data.details || "",
+        disclaimer: data.disclaimer || "",
+        recommendations: Array.isArray(data.recommendations) ? data.recommendations : []
+      };
+      
+      // Cache the content in Supabase
+      await cacheDetailContent(type, id, detailContent);
+      
+      // Also cache with alternative format for better findability
+      if (!type.startsWith('ai-') && type !== 'ai') {
+        await cacheDetailContent(`ai-${type}`, id, detailContent);
+      }
+      
+      return detailContent;
     } catch (error) {
       console.error("Error pre-generating detail content:", error);
       return null;

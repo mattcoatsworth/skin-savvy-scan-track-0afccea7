@@ -1,208 +1,142 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import { ApiKeyProvider } from "@/contexts/ApiKeyContext";
-import { Toaster as SonnerToaster } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import SkinLogForm from './components/SkinLogForm';
+import SkinLogList from './components/SkinLogList';
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { ModeToggle } from './components/ModeToggle';
+import { useApiKey } from './contexts/ApiKeyContext';
+import { isTestAiMode } from './lib/utils';
+import GentleCleanserPage from './pages/RecommendationsDetail/GentleCleanser';
+import LimitDairyPage from './pages/RecommendationsDetail/LimitDairy';
+import MeditationPage from './pages/RecommendationsDetail/Meditation';
+import AIRecommendationDetail from './pages/AIRecommendationDetail';
 
-// Components
-import AppNavigation from "@/components/AppNavigation";
-import SkinAuth from "@/components/SkinAuth";
+function App() {
+  const [skinLogs, setSkinLogs] = useState([]);
+  const [isTestAi, setIsTestAi] = useState(false);
+  const { toast } = useToast()
+  const { openaiApiKey, setOpenaiApiKey } = useApiKey();
 
-// Page imports
-import Onboarding from "@/pages/Onboarding";
-import FemaleOnboardingBirthdate from "@/pages/onboarding/FemaleOnboardingBirthdate";
-import FemaleOnboardingPreviousApps from "@/pages/onboarding/FemaleOnboardingPreviousApps";
-import FemaleOnboardingSkinType from "@/pages/onboarding/FemaleOnboardingSkinType";
-import FemaleOnboardingSkinConcerns from "@/pages/onboarding/FemaleOnboardingSkinConcerns";
-import FemaleOnboardingSkinGoals from "@/pages/onboarding/FemaleOnboardingSkinGoals";
-import FemaleOnboardingMenstrualCycle from "@/pages/onboarding/FemaleOnboardingMenstrualCycle";
-import FemaleOnboardingFoodAllergies from "@/pages/onboarding/FemaleOnboardingFoodAllergies";
-import FemaleOnboardingProductAllergies from "@/pages/onboarding/FemaleOnboardingProductAllergies";
-import FemaleOnboardingGoalTimeline from "@/pages/onboarding/FemaleOnboardingGoalTimeline";
-import FemaleOnboardingCurrentRoutine from "@/pages/onboarding/FemaleOnboardingCurrentRoutine";
-import FemaleOnboardingRoutineEffectiveness from "@/pages/onboarding/FemaleOnboardingRoutineEffectiveness";
-import FemaleOnboardingFamilyHistory from "@/pages/onboarding/FemaleOnboardingFamilyHistory";
-import SplashScreen from "@/pages/SplashScreen";
-import Index from "@/pages/Index";
-import NotFound from "@/pages/NotFound";
-import History from "@/pages/History";
-import ChatPage from "@/pages/ChatPage";
-import ExplorePage from "@/pages/ExplorePage";
-import SkinAnalysis from "@/pages/SkinAnalysis";
-import DayLogDetail from "@/pages/DayLogDetail";
-import LogSkinCondition from "@/pages/LogSkinCondition";
-import Profile from "@/pages/Profile";
-import Settings from "@/pages/Settings";
-import RecentLogs from "@/pages/RecentLogs";
-import RecentLogDetail from "@/pages/RecentLogDetail";
-import SuggestedActionDetail from "@/pages/SuggestedActionDetail";
-import SuggestedActionsPage from "@/pages/SuggestedActionsPage";
-import ExploreItemDetail from "@/pages/ExploreItemDetail";
-import RecommendationsDetail from "@/pages/RecommendationsDetail";
-import ProductDetail from "@/pages/ProductDetail";
-import AIRecommendationDetail from "@/pages/AIRecommendationDetail";
-import Insights from "@/pages/Insights";
-import ScoringMethodPage from "@/pages/ScoringMethodPage";
-import Search from "@/pages/Search";
-import WeeklySkinAnalysis from "@/pages/WeeklySkinAnalysis";
-import WeeklyInsight from "@/pages/WeeklyInsight";
-import TrendingProducts from "@/pages/TrendingProducts";
-import TrendingFoods from "@/pages/TrendingFoods";
-import ScannedProducts from "@/pages/ScannedProducts";
-import ScannedFoods from "@/pages/ScannedFoods";
-import InsightsTrendsPage from "@/pages/InsightsTrendsPage";
-import SupplementDetail from "@/pages/SupplementDetail";
-import CategoryAnalysis from "@/pages/CategoryAnalysis";
-import CategoryAnalysisDetail from "@/pages/CategoryAnalysisDetail";
-import MonthlyAnalysisDetail from "@/pages/MonthlyAnalysisDetail";
-import CorrelationsDetail from "@/pages/CorrelationsDetail";
-import ProductAITestPage from "@/pages/ProductAITestPage";
+  useEffect(() => {
+    // Load skin logs from local storage on initial load
+    const storedLogs = localStorage.getItem('skinLogs');
+    if (storedLogs) {
+      setSkinLogs(JSON.parse(storedLogs));
+    }
 
-// Custom recommendation pages
-import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
-import LimitDairy from "@/pages/RecommendationsDetail/LimitDairy";
-import Meditation from "@/pages/RecommendationsDetail/Meditation";
-import VitaminCSerum from "@/pages/RecommendationsDetail/VitaminCSerum";
-import Zinc from "@/pages/RecommendationsDetail/Zinc";
+    // Determine if we're in test AI mode
+    setIsTestAi(isTestAiMode());
+  }, []);
 
-const queryClient = new QueryClient();
+  useEffect(() => {
+    // Save skin logs to local storage whenever they change
+    localStorage.setItem('skinLogs', JSON.stringify(skinLogs));
+  }, [skinLogs]);
 
-// Layout component that includes the AppNavigation but not the ChatInput
-const AppLayout = () => {
-  const [session, setSession] = useState(null);
-  
+  const addSkinLog = (newLog) => {
+    setSkinLogs([newLog, ...skinLogs]);
+    toast({
+      title: "Success!",
+      description: "Your skin condition has been logged.",
+      action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
+    })
+  };
+
   return (
-    <>
-      <div className="bg-slate-50 min-h-screen">
-        <div className="max-w-md mx-auto px-4 py-6 pb-24">
-          <Outlet />
-        </div>
-        <AppNavigation />
+    <Router>
+      <div className="container mx-auto p-4">
+        <ModeToggle />
+        <nav className="mb-4">
+          <ul className="flex space-x-4">
+            <li>
+              <Link to="/" className="hover:text-skin-teal">Home</Link>
+            </li>
+            <li>
+              <Link to="/log-skin-condition" className="hover:text-skin-teal">Log Skin Condition</Link>
+            </li>
+            <li>
+              <Link to="/skin-logs" className="hover:text-skin-teal">View Skin Logs</Link>
+            </li>
+            {isTestAi && (
+              <li>
+                <Link to="/testai" className="hover:text-skin-teal">Test AI</Link>
+              </li>
+            )}
+          </ul>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={
+            <div>
+              <h1 className="text-2xl font-bold mb-4">Skin Condition Tracker</h1>
+              <p className="mb-4">Welcome to your personal skin condition tracker. Use the links above to log your skin's condition and view your history.</p>
+
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>What is this?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className='pb-2'>This is a simple app to track your skin's condition over time.</p>
+                    <p className='pb-2'>It uses local storage to save your data, so it's all stored on your computer.</p>
+                    <p className='pb-2'>It's open source, so you can view the code <a href="https://github.com/stevepeak/skin-log" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">here</a>.</p>
+                    <p className='pb-2'>It's built with React, Tailwind CSS, and Shadcn UI.</p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              <div className="mt-4">
+                <h2 className="text-xl font-semibold mb-2">Example Aspect Ratio</h2>
+                <AspectRatio ratio={16 / 9}>
+                  <img
+                    src="https://images.unsplash.com/photo-1587614382231-d9433e61f086?w=800&dpr=2&q=75"
+                    alt="Mountains"
+                    className="rounded-md object-cover"
+                  />
+                </AspectRatio>
+              </div>
+            </div>
+          } />
+          <Route path="/log-skin-condition" element={<SkinLogForm addSkinLog={addSkinLog} />} />
+          <Route path="/skin-logs" element={<SkinLogList skinLogs={skinLogs} />} />
+          {isTestAi && (
+            <Route path="/testai" element={
+              <div>
+                <h1 className="text-2xl font-bold mb-4">Test AI Features</h1>
+                <p className="mb-4">This page is for testing AI-related features.</p>
+
+                <div className="mb-4">
+                  <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">OpenAI API Key:</label>
+                  <input
+                    type="password"
+                    name="apiKey"
+                    id="apiKey"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    value={openaiApiKey}
+                    onChange={(e) => setOpenaiApiKey(e.target.value)}
+                  />
+                </div>
+              </div>
+            } />
+          )}
+          
+          {/* Dynamic AI Recommendation Detail Pages */}
+          <Route path="/recommendations-detail/:type/:id" element={<AIRecommendationDetail />} />
+          
+          {/* Legacy static recommendation pages (kept for compatibility) */}
+          <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanserPage />} />
+          <Route path="/recommendations-detail/limit-dairy" element={<LimitDairyPage />} />
+          <Route path="/recommendations-detail/meditation" element={<MeditationPage />} />
+        </Routes>
       </div>
-    </>
+    </Router>
   );
-};
-
-// Layout for onboarding pages that don't need the navigation or chat input
-const OnboardingLayout = () => (
-  <div className="bg-slate-50 min-h-screen">
-    <div className="max-w-md mx-auto">
-      <Outlet />
-    </div>
-  </div>
-);
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ApiKeyProvider>
-      <TooltipProvider>
-        <Toaster />
-        <SonnerToaster />
-        <Router>
-          <Routes>
-            {/* Redirect root to splash screen */}
-            <Route path="/" element={<SplashScreen />} />
-            
-            {/* Auth route */}
-            <Route path="/auth" element={<SkinAuth />} />
-            
-            {/* Onboarding flow routes */}
-            <Route element={<OnboardingLayout />}>
-              <Route path="/onboarding" element={<Onboarding />} />
-              
-              {/* Female onboarding flow */}
-              <Route path="/onboarding/female/birthdate" element={<FemaleOnboardingBirthdate />} />
-              <Route path="/onboarding/female/previous-apps" element={<FemaleOnboardingPreviousApps />} />
-              <Route path="/onboarding/female/skin-type" element={<FemaleOnboardingSkinType />} />
-              <Route path="/onboarding/female/skin-concerns" element={<FemaleOnboardingSkinConcerns />} />
-              <Route path="/onboarding/female/skin-goals" element={<FemaleOnboardingSkinGoals />} />
-              <Route path="/onboarding/female/menstrual-cycle" element={<FemaleOnboardingMenstrualCycle />} />
-              <Route path="/onboarding/female/food-allergies" element={<FemaleOnboardingFoodAllergies />} />
-              <Route path="/onboarding/female/product-allergies" element={<FemaleOnboardingProductAllergies />} />
-              <Route path="/onboarding/female/goal-timeline" element={<FemaleOnboardingGoalTimeline />} />
-              <Route path="/onboarding/female/current-routine" element={<FemaleOnboardingCurrentRoutine />} />
-              <Route path="/onboarding/female/routine-effectiveness" element={<FemaleOnboardingRoutineEffectiveness />} />
-              <Route path="/onboarding/female/family-history" element={<FemaleOnboardingFamilyHistory />} />
-              
-              {/* Male onboarding flow */}
-              {/* Will add male onboarding steps here later */}
-            </Route>
-
-            {/* Main app routes */}
-            <Route element={<AppLayout />}>
-              <Route path="/home" element={<Index />} />
-              <Route path="/skin" element={<History />} />
-              <Route path="/products" element={<Insights />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/skin-analysis" element={<SkinAnalysis />} />
-              <Route path="/recent-logs" element={<RecentLogs />} />
-              <Route path="/recent-logs/:logId" element={<RecentLogDetail />} />
-              <Route path="/insights-trends" element={<InsightsTrendsPage />} />
-              <Route path="/insights-trends/:insightId" element={<InsightsTrendsPage />} />
-              <Route path="/monthly-analysis" element={<MonthlyAnalysisDetail />} />
-              <Route path="/suggested-actions" element={<SuggestedActionsPage />} />
-              <Route path="/suggested-actions/:actionId" element={<SuggestedActionDetail />} />
-              <Route path="/explore" element={<ExplorePage />} />
-              <Route path="/explore/:itemId" element={<ExploreItemDetail />} />
-              <Route path="/log-skin-condition" element={<LogSkinCondition />} />
-              <Route path="/product/:type/:id" element={<ProductDetail />} />
-              <Route path="/product/:type/:id/testai" element={<ProductAITestPage />} />
-              <Route path="/day-log/:id" element={<DayLogDetail />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/scoring-method" element={<ScoringMethodPage />} />
-              <Route path="/scanned-foods" element={<ScannedFoods />} />
-              <Route path="/scanned-products" element={<ScannedProducts />} />
-              <Route path="/trending-foods" element={<TrendingFoods />} />
-              <Route path="/trending-products" element={<TrendingProducts />} />
-              <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
-              <Route path="/weekly-insight" element={<WeeklyInsight />} />
-              <Route path="/category-analysis" element={<CategoryAnalysis />} />
-              <Route path="/category-analysis/:category" element={<CategoryAnalysisDetail />} />
-              <Route path="/correlations-detail" element={<CorrelationsDetail />} />
-              
-              {/* Static recommendation detail pages */}
-              <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
-              <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />
-              <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerum />} />
-              <Route path="/recommendations-detail/meditation" element={<Meditation />} />
-              <Route path="/recommendations-detail/zinc" element={<Zinc />} />
-              <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
-              
-              {/* AI Recommendation routes - all possible formats */}
-              {/* Support for /testai suffix */}
-              <Route path="/recommendations-detail/:id/testai" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/:type/:id/testai" element={<AIRecommendationDetail />} />
-              
-              {/* Standard AI recommendation formats */}
-              <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-timeline-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai/:type/:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-:type-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/:type-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/:type/:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/action-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/factor-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/*" element={<AIRecommendationDetail />} />
-              
-              <Route path="/supplement/:id" element={<SupplementDetail />} />
-            </Route>
-            
-            {/* Chat page doesn't need the chat input */}
-            <Route path="/chat" element={<ChatPage />} />
-            
-            {/* Catch all for 404s */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
-      </TooltipProvider>
-    </ApiKeyProvider>
-  </QueryClientProvider>
-);
+}
 
 export default App;
