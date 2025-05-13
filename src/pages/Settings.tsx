@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -192,7 +193,7 @@ const Settings = () => {
                 <FormLabel>Website Theme</FormLabel>
                 <Select
                   value={theme}
-                  onValueChange={(value) => setTheme(value as 'default' | 'spring')}
+                  onValueChange={(value) => setTheme(value as 'default' | 'spring' | 'summer')}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select theme" />
@@ -200,6 +201,7 @@ const Settings = () => {
                   <SelectContent>
                     <SelectItem value="default">Default</SelectItem>
                     <SelectItem value="spring">Spring</SelectItem>
+                    <SelectItem value="summer">Summer</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground mt-2">
