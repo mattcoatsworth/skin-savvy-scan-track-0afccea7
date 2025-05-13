@@ -4,6 +4,7 @@
  * These utilities provide a consistent API for navigation 
  * that can work across both web (React Router) and mobile (React Navigation)
  */
+import React from 'react';
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 /**
