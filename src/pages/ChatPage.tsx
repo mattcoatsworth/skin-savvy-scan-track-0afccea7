@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Menu, PlusCircle, Paperclip, Send } from "lucide-react";
+import { MessageSquare, Menu, PlusCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,7 +13,6 @@ import {
   DrawerTitle,
   DrawerClose
 } from "@/components/ui/drawer";
-import { Separator } from "@/components/ui/separator";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -355,7 +354,7 @@ const ChatPage: React.FC = () => {
         </Drawer>
       </div>
       
-      <div className="flex-1 overflow-hidden bg-white flex flex-col">
+      <div className="flex-1 overflow-hidden bg-white flex flex-col pb-20">
         <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
           <div className="flex flex-col space-y-4">
             {activeChat.messages.map((msg) => (
@@ -411,76 +410,8 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Chat input area with shadow divider */}
-      <div className="p-4 pt-0 bg-white relative">
-        {/* Shadow divider - straight line with rounded corners */}
-        <div className="absolute left-0 right-0 top-0 h-1 w-full overflow-hidden">
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '1px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-            backgroundColor: 'rgba(0,0,0,0.05)',
-          }} />
-          {/* Left rounded edge */}
-          <div style={{
-            position: 'absolute',
-            top: '-10px',
-            left: '-10px',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            boxShadow: '0 0 5px rgba(0,0,0,0.1)',
-          }} />
-          {/* Right rounded edge */}
-          <div style={{
-            position: 'absolute',
-            top: '-10px',
-            right: '-10px',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            boxShadow: '0 0 5px rgba(0,0,0,0.1)',
-          }} />
-        </div>
-        
-        <div className="max-w-4xl mx-auto mt-8">
-          <div className="flex items-center">
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder="Ask anything"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="flex-1 bg-white border-gray-200 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-3 rounded-full"
-              disabled={isLoading}
-            />
-            <button 
-              onClick={handleSend}
-              disabled={!input.trim() || isLoading} 
-              className={`ml-2 bg-skin-teal text-white p-2 rounded-full flex items-center justify-center ${(!input.trim() || isLoading) ? 'opacity-50' : ''}`}
-            >
-              <Send className="h-4 w-4" />
-            </button>
-          </div>
-          
-          <div className="flex items-center justify-between mt-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full bg-gray-50 h-10 w-10"
-              disabled={isLoading}
-            >
-              <Paperclip className="h-4 w-4 text-gray-500" />
-            </Button>
-            
-            <div className="w-10 h-10"></div>
-          </div>
-        </div>
-      </div>
+      {/* Chat input area is now handled by the ChatInput component */}
+      <div className="h-16"></div> {/* Spacer for the fixed position input */}
     </div>
   );
 };
