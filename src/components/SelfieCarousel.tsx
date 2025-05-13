@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Image, Upload, Trash2, X } from "lucide-react";
+import { Image, Upload, Trash2, X, Camera } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -123,7 +123,7 @@ const SelfieCarousel = ({
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center w-full h-full">
-                    <span className="text-gray-400 font-medium text-base">No Photo</span>
+                    <span className="text-gray-400 text-base">No Photo</span>
                   </div>
                 )}
               </div>
@@ -151,7 +151,7 @@ const SelfieCarousel = ({
                 onClick={handleTakePhoto}
                 className="flex flex-col items-center justify-center h-24 gap-2 border rounded-md p-4 cursor-pointer hover:bg-gray-50"
               >
-                <Image className="h-8 w-8" />
+                <Camera className="h-8 w-8" />
                 <span>Take Picture</span>
               </div>
               
