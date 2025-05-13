@@ -429,7 +429,7 @@ const AIRecommendationDetail = () => {
                     )}
                     
                     <Button 
-                      className="w-full mt-6" 
+                      className="w-full mt-6 skin-goals-button" 
                       onClick={() => {
                         toast.success("Added to your skin goals!");
                         setTimeout(() => navigate("/skin"), 1500);
@@ -541,7 +541,7 @@ const AIRecommendationDetail = () => {
                       )}
                       
                       <Button 
-                        className="w-full mt-6" 
+                        className="w-full mt-6 skin-goals-button" 
                         onClick={() => {
                           toast.success("Added to your skin goals!");
                           setTimeout(() => navigate("/skin"), 1500);
