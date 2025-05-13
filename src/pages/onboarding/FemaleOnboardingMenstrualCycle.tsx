@@ -1,10 +1,8 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -12,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 type CycleFormValues = {
   cycleType: string;
@@ -120,25 +119,23 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
             name="cycleType"
             render={({ field }) => (
               <FormItem>
-                <div className="space-y-3">
-                  <RadioGroup
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="space-y-3"
-                  >
+                <FormControl>
+                  <div className="space-y-3">
                     {cycleTypes.map((item) => (
-                      <FormItem
+                      <div
                         key={item.id}
-                        className="flex items-center space-x-3 space-y-0 rounded-lg border p-3"
+                        onClick={() => field.onChange(item.id)}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+                          field.value === item.id 
+                            ? "bg-primary/10 border-primary border" 
+                            : "bg-background border border-input hover:bg-accent/50"
+                        }`}
                       >
-                        <FormControl>
-                          <RadioGroupItem value={item.id} />
-                        </FormControl>
-                        <Label className="cursor-pointer flex-1">{item.label}</Label>
-                      </FormItem>
+                        <span className="font-medium">{item.label}</span>
+                      </div>
                     ))}
-                  </RadioGroup>
-                </div>
+                  </div>
+                </FormControl>
               </FormItem>
             )}
           />

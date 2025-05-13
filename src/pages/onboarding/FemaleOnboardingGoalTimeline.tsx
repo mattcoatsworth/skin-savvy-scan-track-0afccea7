@@ -1,10 +1,8 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { RadioGroup } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
 import { Calendar, Clock } from "lucide-react";
 
@@ -57,31 +55,24 @@ const FemaleOnboardingGoalTimeline: React.FC = () => {
             render={({ field }) => (
               <FormItem className="flex-1">
                 <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    className="space-y-4 mt-4"
-                  >
+                  <div className="space-y-3 mt-4">
                     {timelineOptions.map((option) => (
                       <div 
                         key={option.value}
-                        className={`flex items-center space-x-3 rounded-xl border p-4 cursor-pointer ${
-                          field.value === option.value ? "border-primary bg-primary/5" : "border-input"
-                        }`}
                         onClick={() => field.onChange(option.value)}
+                        className={`flex items-center px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+                          field.value === option.value 
+                            ? "bg-primary/10 border-primary border" 
+                            : "bg-background border border-input hover:bg-accent/50"
+                        }`}
                       >
-                        <div className="text-muted-foreground">
+                        <div className="text-muted-foreground mr-3">
                           {option.icon}
                         </div>
-                        <Label 
-                          className="flex-1 cursor-pointer font-normal"
-                        >
-                          {option.label}
-                        </Label>
-                        <div className={`h-4 w-4 rounded-full ${field.value === option.value ? "bg-primary" : "border border-input"}`}></div>
+                        <span className="font-medium">{option.label}</span>
                       </div>
                     ))}
-                  </RadioGroup>
+                  </div>
                 </FormControl>
               </FormItem>
             )}

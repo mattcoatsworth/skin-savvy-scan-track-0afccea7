@@ -1,10 +1,8 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
 
 type GenderFormValues = {
@@ -42,6 +40,12 @@ const Onboarding: React.FC = () => {
     form.handleSubmit(onSubmit)();
   };
 
+  const genderOptions = [
+    { value: "female", label: "Female" },
+    { value: "male", label: "Male" },
+    { value: "other", label: "Other" },
+  ];
+
   return (
     <OnboardingTemplate
       title="Welcome to Skin Savvy"
@@ -67,37 +71,21 @@ const Onboarding: React.FC = () => {
                 </div>
                 
                 <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    className="space-y-4 mt-4"
-                  >
-                    {[
-                      { value: "female", label: "Female" },
-                      { value: "male", label: "Male" },
-                      { value: "other", label: "Other" },
-                    ].map((option) => (
+                  <div className="space-y-3 mt-4">
+                    {genderOptions.map((option) => (
                       <div 
                         key={option.value}
-                        className={`flex items-center space-x-3 rounded-xl border p-4 cursor-pointer ${
-                          field.value === option.value ? "border-primary bg-primary/5" : "border-input"
-                        }`}
                         onClick={() => field.onChange(option.value)}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+                          field.value === option.value 
+                            ? "bg-primary/10 border-primary border" 
+                            : "bg-background border border-input hover:bg-accent/50"
+                        }`}
                       >
-                        <RadioGroupItem 
-                          value={option.value} 
-                          id={option.value} 
-                          className="sr-only" 
-                        />
-                        <Label 
-                          htmlFor={option.value}
-                          className="flex-1 cursor-pointer font-normal"
-                        >
-                          {option.label}
-                        </Label>
+                        <span className="font-medium">{option.label}</span>
                       </div>
                     ))}
-                  </RadioGroup>
+                  </div>
                 </FormControl>
               </FormItem>
             )}
