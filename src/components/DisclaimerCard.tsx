@@ -15,7 +15,7 @@ const DisclaimerCard: React.FC<DisclaimerCardProps> = ({
   
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-semibold mb-4">Disclaimer</h2>
+      <h2 className="text-lg font-semibold mb-4 text-gray-600">Disclaimer</h2>
       <Card>
         <CardContent className="pt-6 p-4">
           {isLoading ? (
@@ -27,7 +27,7 @@ const DisclaimerCard: React.FC<DisclaimerCardProps> = ({
               </div>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {disclaimerText || defaultDisclaimer}
             </p>
           )}

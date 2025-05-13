@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -159,10 +160,14 @@ const SuggestedActionDetail = () => {
         </Card>
         
         {/* Add Disclaimer section */}
-        <DisclaimerCard />
-        
-        {/* Add chat box for /testai routes */}
-        {isTestAiMode && <TestAIChatBox productTitle={action.title} />}
+        {isTestAiMode ? (
+          <>
+            <DisclaimerCard />
+            <TestAIChatBox productTitle={action?.title} />
+          </>
+        ) : (
+          <DisclaimerCard />
+        )}
       </div>
     </div>
   );

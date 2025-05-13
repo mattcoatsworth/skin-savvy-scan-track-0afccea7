@@ -20,16 +20,14 @@ const ProductDisclaimer = ({ isLoading, aiContent }: ProductDisclaimerProps) => 
 
   return (
     <div className="mt-6">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-sm font-medium text-muted-foreground">Disclaimer</h3>
-      </div>
+      <h3 className="text-lg font-semibold mb-4 text-gray-600">Disclaimer</h3>
       
       <Card>
         <CardContent className="p-4">
           {isLoading ? (
             <LoadingIndicator />
           ) : (
-            <div className="text-xs text-muted-foreground italic">
+            <div className="text-xs text-muted-foreground">
               {aiContent.disclaimer?.sections["Disclaimer"] ? (
                 <p>{typeof aiContent.disclaimer.sections["Disclaimer"] === 'string' 
                   ? aiContent.disclaimer.sections["Disclaimer"] 

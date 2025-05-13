@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -537,6 +536,9 @@ const RecommendationsDetail = () => {
     return "bg-red-500";
   };
 
+  // Check if we're in testai mode
+  const isTestAiMode = location.pathname.includes('/testai');
+  
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <div className="max-w-md mx-auto px-4 py-6">
@@ -1012,6 +1014,14 @@ const RecommendationsDetail = () => {
         
         {/* View Scoring Method (always at bottom) */}
         <ViewScoringMethod />
+        
+        {/* Add disclaimer and chat box for testai routes */}
+        {isTestAiMode && (
+          <>
+            <DisclaimerCard />
+            <TestAIChatBox productTitle={recommendation?.title} />
+          </>
+        )}
       </div>
     </div>
   );
