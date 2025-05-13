@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, CheckCircle2, XCircle, Calendar, BadgeInfo, Clock, Activity } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -9,6 +9,8 @@ import useScrollToTop from "@/hooks/useScrollToTop";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { Badge } from "@/components/ui/badge";
+import DisclaimerCard from "@/components/DisclaimerCard";
+import TestAIChatBox from "@/components/TestAIChatBox";
 
 type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
@@ -339,6 +341,7 @@ const recommendationsData: Record<string, Recommendation> = {
 const RecommendationsDetail = () => {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Apply the scroll to top hook
   useScrollToTop();
