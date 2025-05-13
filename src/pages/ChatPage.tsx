@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Send, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +32,7 @@ type Chat = {
 
 const ChatPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const initialMessage = location.state?.initialMessage || "";
   
   const [input, setInput] = useState("");
@@ -281,11 +281,24 @@ const ChatPage: React.FC = () => {
     }
   };
 
+  // Function to handle going back to previous page
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-white p-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center">
-          <BackButton />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleGoBack} 
+            className="mr-2"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <MessageSquare className="h-6 w-6 mr-2 text-skin-teal" />
           <h1 className="text-lg font-semibold">{activeChat.title}</h1>
         </div>
