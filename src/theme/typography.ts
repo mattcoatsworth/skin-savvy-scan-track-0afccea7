@@ -1,4 +1,3 @@
-
 /**
  * Typography definitions for the application.
  * These are named variants for consistent text styling across the app.

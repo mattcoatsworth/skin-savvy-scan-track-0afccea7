@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cardStyles } from "@/theme";
 import { cn } from "@/lib/utils";
@@ -12,7 +13,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
  * Card component using our JavaScript styles system
  * This makes it easier to adapt to React Native later
  */
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
+export const StyledCard = React.forwardRef<HTMLDivElement, CardProps>(({
   className,
   variant = 'default',
   interactive = false,
@@ -37,11 +38,11 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
   );
 });
 
-Card.displayName = "Card";
+StyledCard.displayName = "StyledCard";
 
 interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(({
+export const StyledCardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(({
   className,
   ...props
 }, ref) => (
@@ -52,11 +53,11 @@ export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(({
   />
 ));
 
-CardHeader.displayName = "CardHeader";
+StyledCardHeader.displayName = "StyledCardHeader";
 
 interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
 
-export const CardTitle = React.forwardRef<
+export const StyledCardTitle = React.forwardRef<
   HTMLParagraphElement,
   CardTitleProps
 >(({ className, ...props }, ref) => (
@@ -69,11 +70,11 @@ export const CardTitle = React.forwardRef<
     {...props}
   />
 ))
-CardTitle.displayName = "CardTitle"
+StyledCardTitle.displayName = "StyledCardTitle"
 
 interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
 
-export const CardDescription = React.forwardRef<
+export const StyledCardDescription = React.forwardRef<
   HTMLParagraphElement,
   CardDescriptionProps
 >(({ className, ...props }, ref) => (
@@ -83,21 +84,21 @@ export const CardDescription = React.forwardRef<
     {...props}
   />
 ))
-CardDescription.displayName = "CardDescription"
+StyledCardDescription.displayName = "StyledCardDescription"
 
 interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const CardContent = React.forwardRef<
+export const StyledCardContent = React.forwardRef<
   HTMLDivElement,
   CardContentProps
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ))
-CardContent.displayName = "CardContent"
+StyledCardContent.displayName = "StyledCardContent"
 
 interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const CardFooter = React.forwardRef<
+export const StyledCardFooter = React.forwardRef<
   HTMLDivElement,
   CardFooterProps
 >(({ className, ...props }, ref) => (
@@ -107,14 +108,4 @@ export const CardFooter = React.forwardRef<
     {...props}
   />
 ))
-CardFooter.displayName = "CardFooter"
-
-export {
-  // Re-export the existing components
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter
-};
+StyledCardFooter.displayName = "StyledCardFooter"
