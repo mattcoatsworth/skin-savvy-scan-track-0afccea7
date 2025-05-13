@@ -13,6 +13,7 @@ import AppNavigation from "@/components/AppNavigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
+import SelfieCarousel from "@/components/SelfieCarousel";
 
 const LogSkinCondition = () => {
   const { toast } = useToast();
@@ -58,6 +59,33 @@ const LogSkinCondition = () => {
   const [scanDialogOpen, setScanDialogOpen] = useState(false);
   const [scanningCategory, setScanningCategory] = useState<string | null>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
+  
+  // Add state for today's selfies (multiple images per type)
+  const [todaysSelfies, setTodaysSelfies] = useState({
+    am: [] as (string | null)[],
+    pm: [] as (string | null)[]
+  });
+  
+  // Handle adding a selfie image
+  const handleAddSelfie = (type: "am" | "pm", index: number) => {
+    // In a real app, this would open the camera or file selector
+    // For demo, we'll use placeholder images
+    const placeholderImages = [
+      "https://source.unsplash.com/random/300x300/?face&sig=1",
+      "https://source.unsplash.com/random/300x300/?face&sig=2",
+      "https://source.unsplash.com/random/300x300/?face&sig=3",
+      "https://source.unsplash.com/random/300x300/?face&sig=4"
+    ];
+    
+    setTodaysSelfies(prev => {
+      const newImages = [...prev[type]];
+      newImages[index] = placeholderImages[index % placeholderImages.length];
+      return {
+        ...prev,
+        [type]: newImages
+      };
+    });
+  };
   
   // Load notes from localStorage on component mount
   useEffect(() => {
@@ -513,6 +541,30 @@ const LogSkinCondition = () => {
             </Button>
           </div>
           
+          {/* Add Today's Selfies Section - Moved from home page */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-3">Today's Selfies</h2>
+            <Card className="ios-card">
+              <CardContent className="p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Morning Selfie Carousel */}
+                  <SelfieCarousel
+                    type="am"
+                    images={todaysSelfies.am}
+                    onAddImage={handleAddSelfie}
+                  />
+                  
+                  {/* Evening Selfie Carousel */}
+                  <SelfieCarousel
+                    type="pm"
+                    images={todaysSelfies.pm}
+                    onAddImage={handleAddSelfie}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
           {/* Mood Section */}
           <div>
             <h2 className="text-xl font-semibold mb-4 text-skin-black">How does your skin feel today?</h2>
@@ -674,10 +726,8 @@ const LogSkinCondition = () => {
               {/* Stressors Card */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Brain className="h-5 w-5 mr-2 text-skin-black" /> Stressors
-                    </div>
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                    <Brain className="h-5 w-5 mr-2 text-skin-black" /> Stressors
                   </h3>
                   <p className="text-sm text-muted-foreground mb-3">What's causing your stress today?</p>
                   <div className="flex flex-wrap gap-2">
