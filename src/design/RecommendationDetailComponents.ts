@@ -16,7 +16,7 @@ export const recommendationDetailDesign = {
   buttons: {
     skinGoals: {
       base: 'text-white rounded-md py-3 px-4 w-full text-center font-medium skin-goals-button',
-      backgroundColor: 'black', // Always black across all themes
+      backgroundColor: '#000000', // Pure black color for all themes
       hoverState: 'opacity-90',
       transition: 'transition-opacity duration-200 ease-in-out',
       textSize: 'text-base',

@@ -90,4 +90,10 @@ export const colors = {
   }
 };
 
+// Adding a new constant specifically for buttons that should remain
+// consistent across all themes
+export const constantColors = {
+  skinGoalsButton: '#000000' // Pure black for Add to My Skin Goals button
+};
+
 export default colors;

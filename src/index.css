@@ -159,7 +159,7 @@
 /* Custom Add to My Skin Goals button styling for themed pages */
 .skin-goals-button {
   @apply text-white rounded-md py-3 px-4 w-full text-center font-medium;
-  background-color: black !important; /* Added !important to override any theme */
+  background-color: #000000 !important; /* Pure black with !important to override any theme */
   transition: opacity 0.2s ease;
 }
 
