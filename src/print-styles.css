@@ -10,10 +10,10 @@
     display: block !important;
   }
   
-  /* Reset page margins and background */
+  /* Set page to portrait mode with minimal margins */
   @page {
-    size: A4;
-    margin: 1cm;
+    size: portrait;
+    margin: 0.5cm;
   }
   
   body {
@@ -38,11 +38,17 @@
     padding: 0 !important;
   }
   
-  /* Don't hide AppNavigation when printing */
-  .bottom-navigation {
-    display: block !important; 
+  /* Ensure AppNavigation is visible in the PDF */
+  .navigation-container {
     position: relative !important;
     bottom: auto !important;
+    page-break-before: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Fix AppNavigation position at the bottom of the page */
+  .home-screen-content {
+    page-break-after: avoid;
   }
   
   /* Ensure text is readable */
@@ -50,23 +56,22 @@
     color: black !important;
   }
   
-  /* iOS frame design optimizations for print */
-  .ios-device-frame {
-    border: 2px solid #000 !important;
-    break-inside: avoid;
-  }
-  
-  .ios-notch, .ios-home-indicator {
-    background-color: #000 !important;
-  }
-  
-  .ios-status-bar svg, .ios-status-bar div {
-    color: #000 !important;
-  }
-  
   /* Make sure we have print borders for the device frame description */
   .export-description {
     border: 1px solid #000 !important;
     margin-top: 1cm !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Remove any device frame styling */
+  .ios-device-frame,
+  .ios-notch,
+  .ios-home-indicator {
+    display: none !important;
+  }
+  
+  /* Ensure consistent spacing */
+  .export-content {
+    margin-bottom: 0 !important;
   }
 }
