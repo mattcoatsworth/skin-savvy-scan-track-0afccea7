@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -38,15 +39,15 @@ const getFactorColor = (type: FactorType) => {
   if (theme === 'summer') {
     switch (type) {
       case "Food":
-        return "bg-emerald-600/70 text-white"; // Softened emerald with opacity
+        return "bg-emerald-50 text-emerald-800"; // Soft green
       case "Supplement":
-        return "bg-blue-600/70 text-white"; // Softened blue with opacity
+        return "bg-sky-50 text-sky-800"; // Soft blue
       case "Makeup":
-        return "bg-purple-600/70 text-white"; // Softened purple with opacity
+        return "bg-violet-50 text-violet-800"; // Soft purple
       case "Weather":
-        return "bg-amber-600/70 text-white"; // Softened amber with opacity
+        return "bg-amber-50 text-amber-800"; // Soft amber
       default:
-        return "bg-gray-600/70 text-white";
+        return "bg-gray-100 text-gray-800";
     }
   } else if (theme === 'spring') {
     switch (type) {
@@ -84,17 +85,17 @@ const getRecommendationColor = (type: RecommendationType) => {
   if (theme === 'summer') {
     switch (type) {
       case "skincare":
-        return "bg-blue-600/70 text-white"; // Softened with opacity
+        return "bg-sky-50 text-sky-800"; // Soft blue
       case "food":
-        return "bg-emerald-600/70 text-white"; // Softened with opacity
+        return "bg-emerald-50 text-emerald-800"; // Soft green
       case "supplements":
-        return "bg-slate-600/70 text-white"; // Softened with opacity
+        return "bg-slate-50 text-slate-800"; // Soft slate
       case "makeup":
-        return "bg-violet-600/70 text-white"; // Softened with opacity
+        return "bg-violet-50 text-violet-800"; // Soft purple
       case "lifestyle":
-        return "bg-stone-600/70 text-white"; // Softened with opacity
+        return "bg-stone-50 text-stone-800"; // Soft stone
       default:
-        return "bg-gray-600/70 text-white";
+        return "bg-gray-100 text-gray-800";
     }
   } else if (theme === 'spring') {
     switch (type) {
@@ -297,29 +298,17 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     ? displayRecommendations 
     : displayRecommendations.slice(0, 8);
   
-  // Get current theme
-  const theme = document.body.getAttribute('data-theme') || 'default';
-  
-  // Theme-specific styling classes
-  const cardClasses = theme === 'summer' 
-    ? "ios-card hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-slate-100" 
-    : "ios-card hover:shadow-lg transition-shadow";
-  
-  const statusTextClass = theme === 'summer' ? 'text-blue-700' : '';
-  const headingTextClass = theme === 'summer' ? 'text-slate-700' : '';
-  const viewAnalysisTextClass = theme === 'summer' ? 'text-black' : 'text-skin-teal';
-  
   return (
     <Link to="/skin">
-      <Card className={cn(cardClasses, className)}>
+      <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
         <CardContent className="p-4">
           <div className="flex items-center mb-4">
             <div className="text-4xl mr-3">
-              <Smile className={`h-8 w-8 ${theme === 'summer' ? 'text-blue-600' : ''}`} />
+              <Smile className="h-8 w-8" />
             </div>
             <div>
-              <h2 className={`font-medium text-lg ${headingTextClass}`}>Today's Skin</h2>
-              <p className={`text-xl font-semibold ${statusTextClass}`}>{status}</p>
+              <h2 className="font-medium text-lg">Today's Skin</h2>
+              <p className="text-xl font-semibold">{status}</p>
             </div>
           </div>
           
@@ -381,8 +370,8 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           )}
           
-          <div className="text-center mt-4 flex items-center justify-center">
-            <span className={viewAnalysisTextClass}>View Full Analysis</span> <ChevronRight className={`h-4 w-4 ml-1 ${viewAnalysisTextClass}`} />
+          <div className="text-center mt-4 text-skin-teal flex items-center justify-center">
+            View Full Analysis <ChevronRight className="h-4 w-4 ml-1" />
           </div>
         </CardContent>
       </Card>

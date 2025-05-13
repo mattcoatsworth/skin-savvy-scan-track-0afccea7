@@ -53,21 +53,15 @@ export const colors = {
       blue: 'hsl(var(--spring-blue))',
       teal: 'hsl(var(--spring-teal))'
     },
-    
-    // Summer theme specific colors - masculine palette
+    // Summer theme specific colors
     summer: {
       sage: 'hsl(var(--summer-sage))',
       slate: 'hsl(var(--summer-slate))',
       sand: 'hsl(var(--summer-sand))',
       stone: 'hsl(var(--summer-stone))',
       steel: 'hsl(var(--summer-steel))',
-      navy: 'hsl(var(--summer-navy))', 
-      brightBlue: 'hsl(var(--summer-bright-blue))',
-      // Colors for the Today's Skin card
-      emerald: 'hsl(var(--summer-emerald))', // For food factors
-      azure: 'hsl(var(--summer-azure))',     // For supplement factors
-      violet: 'hsl(var(--summer-violet))',   // For makeup factors
-      amber: 'hsl(var(--summer-amber))'      // For weather factors
+      navy: 'hsl(var(--summer-navy))', // Added masculine navigation color
+      brightBlue: 'hsl(var(--summer-bright-blue))' // Added more noticeable indicator color
     }
   },
 
