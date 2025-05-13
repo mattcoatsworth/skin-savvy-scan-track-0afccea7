@@ -103,19 +103,50 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     
-    /* Additional summer specific colors - updated for more noticeable appearance */
-    --summer-sage: 120 20% 70%; /* Increased saturation from 15% to 20% */
-    --summer-slate: 210 25% 60%; /* Increased saturation from 15% to 25% */
-    --summer-sand: 35 30% 75%; /* Increased saturation from 20% to 30% */
+    /* Additional summer specific colors - updated for more distinct appearance */
+    --summer-sage: 120 20% 70%; 
+    --summer-slate: 210 25% 60%; 
+    --summer-sand: 35 30% 75%; 
     --summer-stone: 0 0% 70%;
-    --summer-steel: 200 20% 50%; /* Increased saturation from 10% to 20% */
-    /* New masculine navigation color */
-    --summer-navy: 210 60% 40%; /* Masculine blue for active navigation */
-    --summer-bright-blue: 195 85% 45%; /* Bright blue for indicators */
+    --summer-steel: 200 20% 50%; 
+    --summer-navy: 210 60% 40%; 
+    --summer-bright-blue: 195 85% 45%; 
+    
+    /* New more distinct colors for Today's Skin card */
+    --summer-emerald: 150 60% 40%; /* Darker green for food */
+    --summer-azure: 210 70% 50%;   /* Deeper blue for supplements */
+    --summer-violet: 280 60% 60%;  /* Richer purple for makeup */
+    --summer-amber: 35 90% 55%;    /* Deeper amber for weather */
   }
  
   .dark {
-    /* ... keep existing code */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.9%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
  
@@ -128,8 +159,82 @@
   }
 }
 
-/* Keep existing code (iOS-inspired design components) */
+/* iOS-inspired design components */
+.ios-card {
+  @apply rounded-xl bg-card shadow-sm border border-border;
+}
 
-/* Keep existing code (Skin advice content styling) */
+/* Skin advice content styling */
+.skin-advice-content {
+  @apply prose prose-sm m-5;
+}
 
-/* Keep existing code (AI analysis section styling) */
+.skin-advice-content h1 {
+  @apply text-2xl font-semibold mb-4;
+}
+
+.skin-advice-content h2 {
+  @apply text-xl font-semibold mt-6 mb-3;
+}
+
+.skin-advice-content h3 {
+  @apply text-lg font-semibold mt-5 mb-2;
+}
+
+.skin-advice-content p {
+  @apply text-gray-700 mb-4;
+}
+
+.skin-advice-content ul,
+.skin-advice-content ol {
+  @apply list-disc pl-5 mb-4;
+}
+
+.skin-advice-content li {
+  @apply text-gray-700;
+}
+
+.skin-advice-content a {
+  @apply text-blue-500 hover:underline;
+}
+
+.skin-advice-content blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic mb-4;
+}
+
+.skin-advice-content code {
+  @apply bg-gray-100 rounded px-2 py-1 font-mono text-sm;
+}
+
+.skin-advice-content pre {
+  @apply bg-gray-100 rounded p-4 overflow-x-auto mb-4;
+}
+
+.skin-advice-content pre code {
+  @apply bg-transparent p-0;
+}
+
+/* AI analysis section styling */
+.ai-analysis-section {
+  @apply rounded-lg bg-gray-50 p-6 shadow-md;
+}
+
+.ai-analysis-section h2 {
+  @apply text-2xl font-bold text-gray-800 mb-4;
+}
+
+.ai-analysis-section p {
+  @apply text-gray-700 leading-relaxed mb-5;
+}
+
+.ai-analysis-section ul {
+  @apply list-disc pl-5 mb-5;
+}
+
+.ai-analysis-section li {
+  @apply text-gray-700;
+}
+
+.ai-analysis-section a {
+  @apply text-blue-500 hover:underline;
+}

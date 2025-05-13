@@ -39,15 +39,15 @@ const getFactorColor = (type: FactorType) => {
   if (theme === 'summer') {
     switch (type) {
       case "Food":
-        return "bg-emerald-50 text-emerald-800"; // Soft green
+        return "bg-emerald-600 text-white"; // Darker, more distinct green
       case "Supplement":
-        return "bg-sky-50 text-sky-800"; // Soft blue
+        return "bg-blue-600 text-white"; // Darker, more distinct blue
       case "Makeup":
-        return "bg-violet-50 text-violet-800"; // Soft purple
+        return "bg-purple-600 text-white"; // Darker, more distinct purple
       case "Weather":
-        return "bg-amber-50 text-amber-800"; // Soft amber
+        return "bg-amber-600 text-white"; // Darker, more distinct amber
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-600 text-white";
     }
   } else if (theme === 'spring') {
     switch (type) {
@@ -85,17 +85,17 @@ const getRecommendationColor = (type: RecommendationType) => {
   if (theme === 'summer') {
     switch (type) {
       case "skincare":
-        return "bg-sky-50 text-sky-800"; // Soft blue
+        return "bg-blue-600 text-white"; // Darker blue with white text
       case "food":
-        return "bg-emerald-50 text-emerald-800"; // Soft green
+        return "bg-emerald-600 text-white"; // Darker green with white text
       case "supplements":
-        return "bg-slate-50 text-slate-800"; // Soft slate
+        return "bg-slate-600 text-white"; // Darker slate with white text
       case "makeup":
-        return "bg-violet-50 text-violet-800"; // Soft purple
+        return "bg-violet-600 text-white"; // Darker purple with white text
       case "lifestyle":
-        return "bg-stone-50 text-stone-800"; // Soft stone
+        return "bg-stone-600 text-white"; // Darker stone with white text
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-600 text-white";
     }
   } else if (theme === 'spring') {
     switch (type) {
