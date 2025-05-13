@@ -5,6 +5,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type BirthdateFormValues = {
   birthdate: Date | undefined;
@@ -52,23 +56,36 @@ const FemaleOnboardingBirthdate: React.FC = () => {
         <div className="w-full mb-6 px-4">
           <p className="text-sm text-muted-foreground mb-2">Select your date of birth:</p>
           
-          {/* Native date input styled to look iOS-like */}
-          <input
-            type="date"
-            className="w-full p-4 rounded-xl border border-input bg-background text-foreground appearance-none"
-            onChange={(e) => {
-              if (e.target.value) {
-                setDate(new Date(e.target.value));
-              }
-            }}
-            min={MIN_DATE.toISOString().split('T')[0]}
-            max={MAX_DATE.toISOString().split('T')[0]}
-            style={{
-              // iOS-like styling
-              fontSize: '16px',
-              height: '50px',
-            }}
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full pl-3 text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                {date ? (
+                  format(date, "MMMM d, yyyy")
+                ) : (
+                  <span>Pick a date</span>
+                )}
+                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                disabled={(date) =>
+                  date > MAX_DATE || date < MIN_DATE
+                }
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         {date && (
