@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
-import { ArrowRight, Check, Info, Calendar, BarChart2, Lightbulb, AlertCircle, Zap, Clock, Brain } from "lucide-react";
+import { ArrowRight, Check, Info, Calendar, BarChart2, Lightbulb, AlertCircle, Zap, Clock, Brain, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
