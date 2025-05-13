@@ -384,6 +384,11 @@ const LogSkinCondition = () => {
 
   // Render a category section with search box
   const renderCategoryWithSearch = (category: string, icon: React.ReactNode, title: string) => {
+    // Skip rendering if user is male and category is makeup
+    if (category === 'makeup' && userGender === 'male') {
+      return null;
+    }
+    
     const categoryKey = category as keyof typeof searchInputs;
     const defaultOptions = getDefaultOptions(category);
     const inputValue = searchInputs[categoryKey];
@@ -632,7 +637,7 @@ const LogSkinCondition = () => {
               {/* Render sections with search */}
               {renderCategoryWithSearch('food', <Utensils className="h-5 w-5 text-skin-black" />, 'Food')}
               {renderCategoryWithSearch('supplements', <Pill className="h-5 w-5 text-skin-black" />, 'Supplements')}
-              {renderCategoryWithSearch('makeup', <Palette className="h-5 w-5 text-skin-black" />, 'Makeup')}
+              {userGender !== 'male' && renderCategoryWithSearch('makeup', <Palette className="h-5 w-5 text-skin-black" />, 'Makeup')}
               
               {/* Stress Level Card - Updated with rating badge */}
               <Card className="ios-card">

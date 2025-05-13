@@ -5,8 +5,18 @@ type ThemeType = 'default' | 'spring' | 'summer';
 
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeType>(() => {
-    // Get saved theme from localStorage or use default
+    // Get saved theme from localStorage
     const savedTheme = localStorage.getItem('skin-savvy-theme');
+    
+    // If no saved theme, check user gender for default
+    if (!savedTheme) {
+      const userGender = localStorage.getItem('userGender');
+      // Set summer as default for male users
+      if (userGender === 'male') {
+        return 'summer';
+      }
+    }
+    
     return (savedTheme as ThemeType) || 'default';
   });
 

@@ -21,14 +21,19 @@ const Onboarding: React.FC = () => {
     // Save gender to localStorage for future reference
     localStorage.setItem("userGender", data.gender);
     
+    // Set default theme based on gender - Summer theme for males
+    if (data.gender === "male") {
+      localStorage.setItem("skin-savvy-theme", "summer");
+    }
+    
     // Navigate to the appropriate onboarding path based on gender
     switch (data.gender) {
       case "female":
         navigate("/onboarding/female/birthdate");
         break;
       case "male":
-        // Will create male flow later
-        navigate("/onboarding/female/birthdate"); // Temporarily use female flow
+        // Skip the menstrual cycle question for male users
+        navigate("/onboarding/female/birthdate"); // Start with birthdate
         break;
       default:
         // For "other", we'll use the female flow for now

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
@@ -34,6 +34,15 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
       lastPeriodDate: undefined,
     },
   });
+
+  // Check if the user is male and skip this step
+  useEffect(() => {
+    const userGender = localStorage.getItem("userGender");
+    if (userGender === "male") {
+      // If male user, skip this step and go to food allergies
+      navigate("/onboarding/female/food-allergies");
+    }
+  }, [navigate]);
 
   const onSubmit = (data: CycleFormValues) => {
     // Save to localStorage for future reference
