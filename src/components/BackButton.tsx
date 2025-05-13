@@ -1,11 +1,12 @@
 
 import React from "react";
 import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useAppNavigation } from "@/navigation/navigationUtils";
 
 const BackButton: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const { goBack, navigate } = useAppNavigation();
   
   const handleGoBack = (e: React.MouseEvent) => {
     // Prevent any default browser behavior that might interfere
@@ -47,60 +48,8 @@ const BackButton: React.FC = () => {
       return;
     }
     
-    // If there's browser history, go back
-    if (window.history.length > 1) {
-      navigate(-1);
-      return;
-    }
-    
-    // Fallback behavior using pathname logic
-    const getBackPath = () => {
-      // Default to home
-      let backPath = "/home";
-      
-      // If the path has multiple segments (like /product/skincare/123)
-      // Go back one level if possible
-      const pathParts = location.pathname.split('/').filter(Boolean);
-      if (pathParts.length > 1) {
-        pathParts.pop();
-        backPath = '/' + pathParts.join('/');
-        
-        // If we're in a product page path
-        if (pathParts[0] === 'product') {
-          // Default to insights
-          backPath = '/products';
-        }
-        
-        // Special case for products page - always go back to home
-        if (location.pathname === '/products') {
-          backPath = '/home';
-        }
-        
-        // If we're in a second-level page under a main section, go back to that section
-        if (backPath === '/day-log') {
-          backPath = '/skin';
-        }
-        
-        // Handle the new category analysis pages
-        if (pathParts[0] === 'category-analysis' && pathParts.length > 1) {
-          backPath = '/category-analysis';
-        }
-        
-        // Handle correlations and recommendations pages
-        if (pathParts[0] === 'correlations-detail' || pathParts[0] === 'recommendations-detail') {
-          backPath = '/weekly-skin-analysis';
-        }
-        
-        // Handle product AI test pages
-        if (pathParts[0] === 'product' && pathParts.length > 3 && pathParts[3] === 'testai') {
-          backPath = `/product/${pathParts[1]}/${pathParts[2]}`;
-        }
-      }
-      
-      return backPath;
-    };
-    
-    navigate(getBackPath());
+    // Default behavior - go back
+    goBack();
   };
   
   return (
