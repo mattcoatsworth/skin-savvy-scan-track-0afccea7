@@ -1,9 +1,4 @@
 
-/**
- * Cross-platform navigation utilities
- * These utilities provide a consistent API for navigation 
- * that can work across both web (React Router) and mobile (React Navigation)
- */
 import React from 'react';
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
@@ -87,7 +82,14 @@ export function NavigationContainer({
   theme,
   onReady
 }: NavigationContainerProps) {
-  // In web, this does very little
-  // In React Native, this would be the NavigationContainer from React Navigation
+  // Call onReady if provided
+  React.useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, [onReady]);
+
+  // In web, this is just a fragment wrapper
+  // In React Native, this would be the NavigationContainer
   return <>{children}</>;
 }
