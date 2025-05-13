@@ -9,6 +9,7 @@ import SkinHistory from "@/components/SkinHistory";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import SelfieCarousel from "@/components/SelfieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
+import BottomTemplate from "@/components/BottomTemplate";
 
 const Index = () => {
   // Sample data
@@ -291,6 +292,9 @@ const Index = () => {
           <ExploreSection items={exploreItems} />
         </div>
       </main>
+
+      {/* Add BottomTemplate to the home page */}
+      <BottomTemplate pageTitle="Skin Savvy" />
     </div>
   );
 };
