@@ -7,6 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { cn } from "@/lib/utils";
 
 interface SelfieImage {
   id: string;
@@ -18,9 +20,10 @@ interface SelfieImage {
 
 interface SelfieGridProps {
   images: SelfieImage[];
+  className?: string;
 }
 
-const SelfieGrid: React.FC<SelfieGridProps> = ({ images }) => {
+const SelfieGrid: React.FC<SelfieGridProps> = ({ images, className }) => {
   const [selectedImage, setSelectedImage] = useState<SelfieImage | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   
@@ -53,26 +56,38 @@ const SelfieGrid: React.FC<SelfieGridProps> = ({ images }) => {
   });
 
   return (
-    <div>
-      <div className="grid grid-cols-3 gap-1">
-        {images.map((image, index) => (
-          <div 
-            key={image.id} 
-            className="aspect-square relative cursor-pointer"
-            onClick={() => handleOpenImage(image, index)}
-          >
-            <img 
-              src={image.url}
-              alt={`Selfie from ${image.date}`}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 rounded px-1 py-0.5">
-              <span className="text-white text-xs">
-                {image.type === "am" ? "AM" : "PM"}: {image.rating}
-              </span>
+    <div className={cn("", className)}>
+      <div className="grid grid-cols-3 gap-1 sm:gap-2">
+        {images.length > 0 ? (
+          images.map((image, index) => (
+            <div 
+              key={image.id} 
+              className="aspect-square relative cursor-pointer rounded-md overflow-hidden"
+              onClick={() => handleOpenImage(image, index)}
+            >
+              <img 
+                src={image.url}
+                alt={`Selfie from ${image.date}`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 rounded px-1 py-0.5">
+                <span className="text-white text-xs">
+                  {image.type === "am" ? "AM" : "PM"}: {image.rating}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          // Empty state - show 3 placeholder boxes
+          Array.from({ length: 3 }).map((_, index) => (
+            <div 
+              key={`empty-${index}`} 
+              className="aspect-square bg-gray-100 rounded-md flex items-center justify-center"
+            >
+              <span className="text-gray-400 font-medium">No Photos</span>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Expanded image dialog */}

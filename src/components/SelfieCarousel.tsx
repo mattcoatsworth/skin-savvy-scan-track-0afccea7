@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Camera, Image, Upload, Trash2, X } from "lucide-react";
+import { Image, Upload, Trash2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface SelfieCarouselProps {
   type: "am" | "pm";
@@ -121,9 +122,8 @@ const SelfieCarousel = ({
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-col items-center">
-                    <Camera className="h-6 w-6 mb-1" />
-                    <span className="text-xs">No Photo</span>
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <span className="text-gray-400 font-medium text-base">No Photo</span>
                   </div>
                 )}
               </div>
@@ -151,7 +151,7 @@ const SelfieCarousel = ({
                 onClick={handleTakePhoto}
                 className="flex flex-col items-center justify-center h-24 gap-2 border rounded-md p-4 cursor-pointer hover:bg-gray-50"
               >
-                <Camera className="h-8 w-8" />
+                <Image className="h-8 w-8" />
                 <span>Take Picture</span>
               </div>
               

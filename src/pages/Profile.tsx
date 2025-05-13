@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import AppNavigation from "@/components/AppNavigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,52 +21,9 @@ const Profile = () => {
     date: string;
     type: "am" | "pm";
     rating: number;
-  }[]>([
-    {
-      id: "sample-1",
-      url: "https://images.unsplash.com/photo-1599842057874-37393e9342df?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      date: "Today",
-      type: "am",
-      rating: 85
-    },
-    {
-      id: "sample-2",
-      url: "https://images.unsplash.com/photo-1508216310976-c518daae0cdc?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      date: "Today",
-      type: "pm",
-      rating: 78
-    },
-    {
-      id: "sample-3",
-      url: "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      date: "Yesterday",
-      type: "am",
-      rating: 72
-    },
-    {
-      id: "sample-4",
-      url: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      date: "Yesterday",
-      type: "pm",
-      rating: 79
-    },
-    {
-      id: "sample-5",
-      url: "https://images.unsplash.com/photo-1519143591231-28371a10b1c4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      date: "2 days ago",
-      type: "am",
-      rating: 65
-    },
-    {
-      id: "sample-6",
-      url: "https://images.unsplash.com/photo-1526758097130-bab247274f58?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      date: "2 days ago",
-      type: "pm",
-      rating: 71
-    }
-  ]);
+  }[]>([]);
   
-  // Function to load real selfie images from localStorage (keeping the logic for when real selfies are added)
+  // Function to load all selfie images from localStorage
   useEffect(() => {
     // Get all keys from localStorage that contain selfie data
     const selfieKeys = Object.keys(localStorage).filter(
@@ -126,9 +84,53 @@ const Profile = () => {
       });
       
       // Only replace sample images if we found real ones
-      if (images.length > 0) {
-        setSelfieImages(images);
-      }
+      setSelfieImages(images);
+    } else {
+      // Use sample images only if no real ones exist in localStorage
+      setSelfieImages([
+        {
+          id: "sample-1",
+          url: "https://images.unsplash.com/photo-1599842057874-37393e9342df?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          date: "Today",
+          type: "am",
+          rating: 85
+        },
+        {
+          id: "sample-2",
+          url: "https://images.unsplash.com/photo-1508216310976-c518daae0cdc?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          date: "Today",
+          type: "pm",
+          rating: 78
+        },
+        {
+          id: "sample-3",
+          url: "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          date: "Yesterday",
+          type: "am",
+          rating: 72
+        },
+        {
+          id: "sample-4",
+          url: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          date: "Yesterday",
+          type: "pm",
+          rating: 79
+        },
+        {
+          id: "sample-5",
+          url: "https://images.unsplash.com/photo-1519143591231-28371a10b1c4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          date: "2 days ago",
+          type: "am",
+          rating: 65
+        },
+        {
+          id: "sample-6",
+          url: "https://images.unsplash.com/photo-1526758097130-bab247274f58?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          date: "2 days ago",
+          type: "pm",
+          rating: 71
+        }
+      ]);
     }
   }, []);
 
@@ -165,7 +167,7 @@ const Profile = () => {
           </CardContent>
         </Card>
         
-        {/* Selfie Grid - Always visible now with sample images */}
+        {/* Selfie Grid - Always visible now with images from localStorage */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-3">Your Skin Photos</h2>
           <SelfieGrid images={selfieImages} />
