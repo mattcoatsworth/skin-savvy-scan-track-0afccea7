@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Image, Upload, Trash2, X, Camera } from "lucide-react";
 import {
@@ -27,7 +28,7 @@ interface SelfieCarouselProps {
   compact?: boolean;
 }
 
-const SelfieCarousel = ({
+const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
   type,
   images,
   onAddImage,

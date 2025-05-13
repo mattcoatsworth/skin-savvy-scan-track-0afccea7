@@ -4,9 +4,13 @@ import App from './App.tsx'
 import './index.css'
 import { Toaster } from "@/components/ui/toaster"
 
-createRoot(document.getElementById("root")!).render(
-  <>
-    <App />
-    <Toaster />
-  </>
-);
+const rootElement = document.getElementById("root")
+
+if (rootElement) {
+  createRoot(rootElement).render(
+    <>
+      <App />
+      <Toaster />
+    </>
+  )
+}
