@@ -1,5 +1,14 @@
 
-// Import and re-export the toast hook and functions directly
-import { useToast, toast } from "@/hooks/use-toast";
+// Direct implementation instead of re-export
+// This avoids circular dependencies
+import * as React from "react"
 
-export { useToast, toast };
+import type {
+  ToastActionElement,
+  ToastProps,
+} from "@/components/ui/toast"
+
+// Re-export the hooks and toast function from the real implementation
+import { useToast, toast } from "@/hooks/use-toast"
+
+export { useToast, toast }
