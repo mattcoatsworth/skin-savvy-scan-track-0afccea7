@@ -38,15 +38,15 @@ const getFactorColor = (type: FactorType) => {
   if (theme === 'summer') {
     switch (type) {
       case "Food":
-        return "bg-emerald-600 text-white"; // Darker, more distinct green
+        return "bg-emerald-600/70 text-white"; // Softened emerald with opacity
       case "Supplement":
-        return "bg-blue-600 text-white"; // Darker, more distinct blue
+        return "bg-blue-600/70 text-white"; // Softened blue with opacity
       case "Makeup":
-        return "bg-purple-600 text-white"; // Darker, more distinct purple
+        return "bg-purple-600/70 text-white"; // Softened purple with opacity
       case "Weather":
-        return "bg-amber-600 text-white"; // Darker, more distinct amber
+        return "bg-amber-600/70 text-white"; // Softened amber with opacity
       default:
-        return "bg-gray-600 text-white";
+        return "bg-gray-600/70 text-white";
     }
   } else if (theme === 'spring') {
     switch (type) {
@@ -84,17 +84,17 @@ const getRecommendationColor = (type: RecommendationType) => {
   if (theme === 'summer') {
     switch (type) {
       case "skincare":
-        return "bg-blue-600 text-white"; // Darker blue with white text
+        return "bg-blue-600/70 text-white"; // Softened with opacity
       case "food":
-        return "bg-emerald-600 text-white"; // Darker green with white text
+        return "bg-emerald-600/70 text-white"; // Softened with opacity
       case "supplements":
-        return "bg-slate-600 text-white"; // Darker slate with white text
+        return "bg-slate-600/70 text-white"; // Softened with opacity
       case "makeup":
-        return "bg-violet-600 text-white"; // Darker purple with white text
+        return "bg-violet-600/70 text-white"; // Softened with opacity
       case "lifestyle":
-        return "bg-stone-600 text-white"; // Darker stone with white text
+        return "bg-stone-600/70 text-white"; // Softened with opacity
       default:
-        return "bg-gray-600 text-white";
+        return "bg-gray-600/70 text-white";
     }
   } else if (theme === 'spring') {
     switch (type) {
@@ -297,21 +297,29 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     ? displayRecommendations 
     : displayRecommendations.slice(0, 8);
   
-  // Determine text color for "View Full Analysis" based on theme
+  // Get current theme
   const theme = document.body.getAttribute('data-theme') || 'default';
+  
+  // Theme-specific styling classes
+  const cardClasses = theme === 'summer' 
+    ? "ios-card hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-slate-100" 
+    : "ios-card hover:shadow-lg transition-shadow";
+  
+  const statusTextClass = theme === 'summer' ? 'text-blue-700' : '';
+  const headingTextClass = theme === 'summer' ? 'text-slate-700' : '';
   const viewAnalysisTextClass = theme === 'summer' ? 'text-black' : 'text-skin-teal';
   
   return (
     <Link to="/skin">
-      <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
+      <Card className={cn(cardClasses, className)}>
         <CardContent className="p-4">
           <div className="flex items-center mb-4">
             <div className="text-4xl mr-3">
-              <Smile className="h-8 w-8" />
+              <Smile className={`h-8 w-8 ${theme === 'summer' ? 'text-blue-600' : ''}`} />
             </div>
             <div>
-              <h2 className="font-medium text-lg">Today's Skin</h2>
-              <p className="text-xl font-semibold">{status}</p>
+              <h2 className={`font-medium text-lg ${headingTextClass}`}>Today's Skin</h2>
+              <p className={`text-xl font-semibold ${statusTextClass}`}>{status}</p>
             </div>
           </div>
           
