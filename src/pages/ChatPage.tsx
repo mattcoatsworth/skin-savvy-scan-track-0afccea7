@@ -1,8 +1,8 @@
+
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Menu, PlusCircle, Send } from "lucide-react";
+import { MessageSquare, Menu, PlusCircle, Send, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import BackButton from "@/components/BackButton";
 import { toast } from "sonner";
 import { 
   Drawer, 
@@ -12,7 +12,7 @@ import {
   DrawerTitle,
   DrawerClose
 } from "@/components/ui/drawer";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import ChatInput from "@/components/ChatInput";
 
