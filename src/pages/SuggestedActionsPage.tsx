@@ -81,7 +81,7 @@ const SuggestedActionsPage = () => {
             {suggestedActions.map((action, index) => (
               <Card 
                 key={index} 
-                className="ios-card border-l-4 border-l-skin-teal cursor-pointer hover:shadow-md transition-all"
+                className="ios-card border-l-4 border-l-skin-black cursor-pointer hover:shadow-md transition-all"
                 onClick={() => handleActionClick(action)}
               >
                 <CardContent className="p-4">
@@ -90,7 +90,7 @@ const SuggestedActionsPage = () => {
                       <p className="font-medium">{action.text}</p>
                       <p className="text-sm text-muted-foreground mt-1">{action.description}</p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-skin-teal mt-1 shrink-0" />
+                    <ArrowRight className="h-5 w-5 text-skin-black mt-1 shrink-0" />
                   </div>
                 </CardContent>
               </Card>
