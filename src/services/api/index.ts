@@ -8,3 +8,4 @@
 export * from './skinAdvice';
 export * from './userService';
 export * from './productService';
+export * from './testService';
