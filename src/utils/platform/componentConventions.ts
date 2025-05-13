@@ -61,7 +61,7 @@ export const namingConventions = {
  * 
  * 4. Use Platform Detection
  *    - Import from appropriate path based on platform detection
- *    - Example: import Button from '@/components/ui/${platformType}/Button';
+ *    - Example: import Button from '@/components/ui/' + platformType + '/Button';
  *    - Where platformType is determined at runtime or build time
  */
 
@@ -90,7 +90,7 @@ export const Button = ({ onPress, label, variant = 'primary' }: ButtonProps) => 
 // First, determine the platform:
 const platformType = typeof window !== 'undefined' ? 'web' : 'native';
 // Then import the appropriate component:
-import { Button } from '@/components/ui/${platformType}/Button';
+import { Button } from '@/components/ui/' + platformType + '/Button';
 `;
 
 /**
