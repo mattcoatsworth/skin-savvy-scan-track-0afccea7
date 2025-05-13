@@ -1,64 +1,78 @@
 
-import React from "react";
-import { ArrowLeft } from "lucide-react";
-import { useLocation } from "react-router-dom";
-import { useAppNavigation } from "@/navigation/navigationUtils";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { navigationStyles } from '@/theme/components/navigation.styles';
 
-const BackButton: React.FC = () => {
-  const location = useLocation();
-  const { goBack, navigate } = useAppNavigation();
+/**
+ * BackButton Props
+ * This interface follows our new conventions for cross-platform compatibility
+ */
+export interface BackButtonProps {
+  /**
+   * Custom path to navigate to when clicked
+   * If not provided, it will go back in history
+   */
+  to?: string;
   
-  const handleGoBack = (e: React.MouseEvent) => {
-    // Prevent any default browser behavior that might interfere
-    e.preventDefault();
-    
-    // Special case for log-skin-condition page - always go to /home
-    if (location.pathname === '/log-skin-condition') {
-      navigate('/home');
-      return;
-    }
-    
-    // Special case for day-log pages - always go to /skin
-    if (location.pathname.startsWith('/day-log')) {
-      navigate('/skin');
-      return;
-    }
-    
-    // Special case for Skin page - always go to home
-    if (location.pathname === '/skin') {
-      navigate('/home');
-      return;
-    }
+  /**
+   * Alternative action to perform when clicked
+   * Overrides the default navigation behavior
+   */
+  onPress?: () => void;
+  
+  /**
+   * Additional class names
+   */
+  className?: string;
+  
+  /**
+   * Text to display next to the back icon
+   */
+  label?: string;
+}
 
-    // Special case for Settings page - always go to home
-    if (location.pathname === '/settings') {
-      navigate('/home');
-      return;
+/**
+ * BackButton Component
+ * 
+ * A platform-agnostic back button that can be used in both web and native
+ * The web implementation is shown here; the native implementation would
+ * use React Navigation's goBack() function instead.
+ */
+const BackButton: React.FC<BackButtonProps> = ({
+  to,
+  onPress,
+  className,
+  label,
+}) => {
+  const navigate = useNavigate();
+  
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else if (to) {
+      navigate(to);
+    } else {
+      navigate(-1);
     }
-
-    // Special case for recommendation detail pages - always go to home
-    if (location.pathname.includes('/recommendations-detail/')) {
-      navigate('/home');
-      return;
-    }
-    
-    // Check if we have state from the product card navigation
-    if (location.state?.from) {
-      navigate(location.state.from);
-      return;
-    }
-    
-    // Default behavior - go back
-    goBack();
   };
   
   return (
-    <button 
-      onClick={handleGoBack} 
-      className="mr-4 p-2"
+    <button
+      type="button"
+      onClick={handlePress}
+      className={cn(
+        "flex items-center mr-4 py-1 px-1",
+        className
+      )}
       aria-label="Go back"
     >
-      <ArrowLeft className="h-5 w-5" />
+      <ChevronLeft 
+        className="h-5 w-5 text-foreground" 
+        aria-hidden="true" 
+      />
+      {label && <span className="ml-1">{label}</span>}
     </button>
   );
 };
