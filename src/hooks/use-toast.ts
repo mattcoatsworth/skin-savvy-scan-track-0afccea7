@@ -120,7 +120,6 @@ function dispatch(action: Action) {
   })
 }
 
-// Toast type definition - make sure to include variant and duration
 export type Toast = Partial<Omit<ToasterToast, "id">>
 
 export function toast(props: Toast) {
