@@ -1,20 +1,17 @@
 
 import * as React from "react"
 
-import type {
-  ToastActionElement,
-  ToastProps,
-} from "@/components/ui/toast"
-
-const TOAST_LIMIT = 5
-const TOAST_REMOVE_DELAY = 1000000
-
-type ToasterToast = ToastProps & {
+type ToasterToast = {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
-  action?: ToastActionElement
+  action?: React.ReactElement
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
+
+const TOAST_LIMIT = 5
+const TOAST_REMOVE_DELAY = 1000000
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -121,9 +118,9 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+export type Toast = Omit<ToasterToast, "id">
 
-function toast({ ...props }: Toast) {
+export function toast(props: Toast) {
   const id = genId()
 
   const update = (props: Toast) =>
@@ -152,7 +149,7 @@ function toast({ ...props }: Toast) {
   }
 }
 
-function useToast() {
+export function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
   React.useEffect(() => {
@@ -171,5 +168,3 @@ function useToast() {
     dismiss: (toastId?: string) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
   }
 }
-
-export { useToast, toast }
