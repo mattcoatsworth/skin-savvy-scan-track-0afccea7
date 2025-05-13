@@ -14,7 +14,7 @@ const ScanButton: React.FC = () => {
       >
         <Link to="/log-skin-condition" className="flex items-center justify-center gap-2">
           <Camera className="h-4 w-4" />
-          Log Today's Skin Condition
+          Get Started by Uploading A Selfie
         </Link>
       </Button>
     </div>
