@@ -12,7 +12,7 @@ const OnboardingLayout: React.FC = () => {
   useScrollToTop();
   
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-background min-h-screen">
       <div className="max-w-md mx-auto">
         <Outlet />
       </div>
