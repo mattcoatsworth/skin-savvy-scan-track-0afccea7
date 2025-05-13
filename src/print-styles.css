@@ -38,15 +38,35 @@
     padding: 0 !important;
   }
   
-  /* Hide AppNavigation component */
-  nav, 
-  .bottom-navigation,
-  footer {
-    display: none !important;
+  /* Don't hide AppNavigation when printing */
+  .bottom-navigation {
+    display: block !important; 
+    position: relative !important;
+    bottom: auto !important;
   }
   
   /* Ensure text is readable */
   p, h1, h2, h3, h4, h5, h6, span {
     color: black !important;
+  }
+  
+  /* iOS frame design optimizations for print */
+  .ios-device-frame {
+    border: 2px solid #000 !important;
+    break-inside: avoid;
+  }
+  
+  .ios-notch, .ios-home-indicator {
+    background-color: #000 !important;
+  }
+  
+  .ios-status-bar svg, .ios-status-bar div {
+    color: #000 !important;
+  }
+  
+  /* Make sure we have print borders for the device frame description */
+  .export-description {
+    border: 1px solid #000 !important;
+    margin-top: 1cm !important;
   }
 }
