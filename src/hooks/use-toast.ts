@@ -8,6 +8,8 @@ type ToasterToast = {
   action?: React.ReactElement
   open: boolean
   onOpenChange: (open: boolean) => void
+  variant?: "default" | "destructive" // Add variant property
+  duration?: number // Add duration property
 }
 
 const TOAST_LIMIT = 5
@@ -118,7 +120,7 @@ function dispatch(action: Action) {
   })
 }
 
-export type Toast = Omit<ToasterToast, "id">
+export type Toast = Partial<Omit<ToasterToast, "id">>
 
 export function toast(props: Toast) {
   const id = genId()
@@ -139,7 +141,7 @@ export function toast(props: Toast) {
       onOpenChange: (open) => {
         if (!open) dismiss()
       },
-    },
+    } as ToasterToast,
   })
 
   return {
