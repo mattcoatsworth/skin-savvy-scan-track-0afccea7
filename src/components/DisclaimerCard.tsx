@@ -27,7 +27,7 @@ const DisclaimerCard: React.FC<DisclaimerCardProps> = ({
               </div>
             </div>
           ) : (
-            <p className="text-2xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground">
               {disclaimerText || defaultDisclaimer}
             </p>
           )}
