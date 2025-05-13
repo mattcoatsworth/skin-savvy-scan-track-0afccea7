@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -36,32 +35,32 @@ type SkinSnapshotProps = {
 const getFactorColor = (type: FactorType) => {
   switch (type) {
     case "Food":
-      return "bg-emerald-900 text-emerald-100";
+      return "bg-emerald-100 text-emerald-800";
     case "Supplement":
-      return "bg-blue-900 text-blue-100";
+      return "bg-blue-100 text-blue-800";
     case "Makeup":
-      return "bg-gray-800 text-gray-100";
+      return "bg-gray-100 text-gray-800";
     case "Weather":
-      return "bg-stone-800 text-stone-100";
+      return "bg-stone-100 text-stone-800";
     default:
-      return "bg-gray-800 text-gray-100";
+      return "bg-gray-100 text-gray-800";
   }
 };
 
 const getRecommendationColor = (type: RecommendationType) => {
   switch (type) {
     case "skincare":
-      return "bg-slate-800 text-slate-100";
+      return "bg-slate-100 text-slate-800";
     case "food":
-      return "bg-emerald-900 text-emerald-100";
+      return "bg-emerald-100 text-emerald-800";
     case "supplements":
-      return "bg-blue-900 text-blue-100";
+      return "bg-blue-100 text-blue-800";
     case "makeup":
-      return "bg-gray-800 text-gray-100";
+      return "bg-gray-100 text-gray-800";
     case "lifestyle":
-      return "bg-stone-800 text-stone-100";
+      return "bg-stone-100 text-stone-800";
     default:
-      return "bg-gray-800 text-gray-100";
+      return "bg-gray-100 text-gray-800";
   }
 };
 
