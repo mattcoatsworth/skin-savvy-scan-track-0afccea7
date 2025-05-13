@@ -9,7 +9,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Components
 import AppNavigation from "@/components/AppNavigation";
-import ChatInput from "@/components/ChatInput";
 import SkinAuth from "@/components/SkinAuth";
 
 // Page imports
@@ -78,10 +77,9 @@ const AppLayout = () => {
   return (
     <>
       <div className="bg-slate-50 min-h-screen">
-        <div className="max-w-md mx-auto px-4 py-6 pb-0">
+        <div className="max-w-md mx-auto px-4 py-6 pb-24">
           <Outlet />
         </div>
-        <ChatInput />
         <AppNavigation />
       </div>
     </>

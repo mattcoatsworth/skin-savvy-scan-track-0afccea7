@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Send, Paperclip, File, Camera, Image, MessageCircle } from "lucide-react";
+import { Send, Paperclip, File, Camera, Image, MessageCircle, ChevronRight, ChevronLeft } from "lucide-react";
 import { spacing } from "@/design";
 
 interface ChatInputProps {
@@ -47,17 +47,47 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     // Implementation for photo library would go here
   };
 
-  // Quick suggestion topics
+  // Expanded list of quick suggestion topics to make scrolling more obvious
   const suggestions = [
     "What's my skin type?",
     "Help with acne",
-    "Skincare routine"
+    "Skincare routine",
+    "Recommend moisturizer",
+    "Best sunscreen",
+    "Reduce redness",
+    "Anti-aging tips"
   ];
 
   return (
     <div className="bg-slate-50 shadow-sm fixed bottom-0 left-0 right-0 z-10 pb-8 pt-3">
       <div className="max-w-md mx-auto px-4">
-        <form onSubmit={handleChatSubmit} className="max-w-md mx-auto mb-3">
+        {/* Quick suggestions with scroll indicators */}
+        <div className="relative mb-3">
+          {/* Left scroll indicator */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-slate-50 to-transparent w-8 h-full flex items-center">
+            <ChevronLeft className="h-5 w-5 text-gray-500" />
+          </div>
+          
+          <div className="flex overflow-x-auto gap-2 pb-1.5 px-6 no-scrollbar scroll-smooth">
+            {suggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="flex-shrink-0 px-3 py-1.5 bg-white rounded-full border text-sm text-gray-700 whitespace-nowrap flex items-center gap-1.5 hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                {suggestion}
+              </button>
+            ))}
+          </div>
+          
+          {/* Right scroll indicator */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-l from-slate-50 to-transparent w-8 h-full flex items-center justify-end">
+            <ChevronRight className="h-5 w-5 text-gray-500" />
+          </div>
+        </div>
+
+        <form onSubmit={handleChatSubmit} className="max-w-md mx-auto">
           <div className="relative flex items-center">
             <Input
               type="text"
@@ -108,20 +138,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
             </button>
           </div>
         </form>
-
-        {/* Quick suggestions */}
-        <div className="flex overflow-x-auto gap-2 pb-1.5 mt-3 no-scrollbar">
-          {suggestions.map((suggestion, index) => (
-            <button
-              key={index}
-              onClick={() => handleSuggestionClick(suggestion)}
-              className="flex-shrink-0 px-3 py-1.5 bg-white rounded-full border text-sm text-gray-700 whitespace-nowrap flex items-center gap-1.5 hover:bg-gray-50"
-            >
-              <MessageCircle className="h-3.5 w-3.5" />
-              {suggestion}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );
