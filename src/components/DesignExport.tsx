@@ -4,6 +4,9 @@ import Index from "@/pages/Index";
 import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
+import jspdf from "jspdf";
+import html2canvas from "html2canvas";
 
 const DesignExport: React.FC = () => {
   const navigate = useNavigate();
