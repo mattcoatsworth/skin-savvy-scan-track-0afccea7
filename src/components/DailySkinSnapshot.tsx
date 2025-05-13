@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -35,32 +36,32 @@ type SkinSnapshotProps = {
 const getFactorColor = (type: FactorType) => {
   switch (type) {
     case "Food":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-900 text-emerald-100";
     case "Supplement":
-      return "bg-blue-100 text-blue-800";
+      return "bg-blue-900 text-blue-100";
     case "Makeup":
-      return "bg-purple-100 text-purple-800";
+      return "bg-gray-800 text-gray-100";
     case "Weather":
-      return "bg-orange-100 text-orange-800";
+      return "bg-stone-800 text-stone-100";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-gray-800 text-gray-100";
   }
 };
 
 const getRecommendationColor = (type: RecommendationType) => {
   switch (type) {
     case "skincare":
-      return "bg-blue-100 text-blue-800";
+      return "bg-slate-800 text-slate-100";
     case "food":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-900 text-emerald-100";
     case "supplements":
-      return "bg-indigo-100 text-indigo-800";
+      return "bg-blue-900 text-blue-100";
     case "makeup":
-      return "bg-purple-100 text-purple-800";
+      return "bg-gray-800 text-gray-100";
     case "lifestyle":
-      return "bg-orange-100 text-orange-800";
+      return "bg-stone-800 text-stone-100";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-gray-800 text-gray-100";
   }
 };
 
@@ -258,7 +259,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm text-muted-foreground">For You Recommendations:</p>
                 {isLoadingRecommendations && (
-                  <div className="animate-spin h-4 w-4 border-2 border-skin-teal border-t-transparent rounded-full"></div>
+                  <div className="animate-spin h-4 w-4 border-2 border-skin-black border-t-transparent rounded-full"></div>
                 )}
               </div>
               {!isLoadingRecommendations && displayedRecommendations.length > 0 ? (
@@ -289,7 +290,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                     e.preventDefault();
                     setShowAllRecommendations(!showAllRecommendations);
                   }}
-                  className="mt-2 text-skin-teal text-sm font-medium flex items-center"
+                  className="mt-2 text-skin-black text-sm font-medium flex items-center"
                 >
                   {showAllRecommendations ? "Show less" : `Show ${displayRecommendations.length - 8} more recommendations`}
                 </button>
@@ -297,7 +298,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           )}
           
-          <div className="text-center mt-4 text-skin-teal flex items-center justify-center">
+          <div className="text-center mt-4 text-skin-black flex items-center justify-center">
             View Full Analysis <ChevronRight className="h-4 w-4 ml-1" />
           </div>
         </CardContent>
