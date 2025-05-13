@@ -34,6 +34,9 @@
     --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+
+    /* Common ghost-hover value for consistent behavior across themes */
+    --ghost-hover: 210 40% 96.1%; /* This is the default accent color used for ghost hover */
   }
   
   [data-theme="spring"] {
@@ -65,6 +68,9 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
+    
+    /* Use the same ghost-hover value for consistent behavior */
+    --ghost-hover: 210 40% 96.1%;
     
     /* Additional spring specific colors */
     --spring-blue: 209 100% 71%; /* Skin blue color #6BB9FF */
@@ -100,6 +106,9 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
+    
+    /* Use the same ghost-hover value for consistent behavior */
+    --ghost-hover: 210 40% 96.1%;
     
     /* Additional summer specific colors - updated with theme colors from Today's Skin card */
     --summer-sage: 120 20% 70%;
@@ -165,6 +174,11 @@
 
 .skin-goals-button:hover {
   opacity: 0.9;
+}
+
+/* Update the button ghost variant to use our new consistent ghost-hover variable */
+.button-ghost-hover {
+  @apply hover:bg-[hsl(var(--ghost-hover))];
 }
 
 /* iOS-inspired design components */
