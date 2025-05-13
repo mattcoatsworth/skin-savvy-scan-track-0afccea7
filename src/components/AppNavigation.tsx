@@ -32,23 +32,11 @@ const AppNavigation: React.FC = () => {
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
-  // Get active color based on theme
-  const getActiveColor = () => {
-    if (theme === 'summer') {
-      return "text-theme-summer-navy";
-    } else if (theme === 'spring') {
-      return "text-skin-teal";
-    } else {
-      return "text-skin-teal"; // Default theme
-    }
-  };
-
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
       <div className="flex justify-evenly items-center relative">
         {navItems.map((item, index) => {
-          const isActive = currentPath === item.path;
-          const activeColor = getActiveColor();
+          // All navigation items will be gray (text-gray-500) whether active or not
           
           // Insert the plus button after the second item
           if (index === 2) {
@@ -59,7 +47,7 @@ const AppNavigation: React.FC = () => {
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <Button 
-                        className="rounded-full h-14 w-14 bg-skin-black text-white shadow-lg flex items-center justify-center"
+                        className="rounded-full h-14 w-14 bg-skin-black text-white shadow-lg hover:bg-gray-800 flex items-center justify-center"
                         onClick={() => setOpen(true)}
                       >
                         <Plus className="h-7 w-7" />
@@ -102,7 +90,7 @@ const AppNavigation: React.FC = () => {
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`flex flex-col items-center py-2 flex-1 ${isActive ? activeColor : "text-gray-500 hover:" + activeColor}`}
+                  className="flex flex-col items-center py-2 flex-1 text-gray-500 hover:text-gray-700"
                 >
                   <item.icon className="h-6 w-6" />
                   <span className="text-xs mt-1">{item.label}</span>
@@ -115,7 +103,7 @@ const AppNavigation: React.FC = () => {
             <Link
               key={item.label}
               to={item.path}
-              className={`flex flex-col items-center py-2 flex-1 ${isActive ? activeColor : "text-gray-500 hover:" + activeColor}`}
+              className="flex flex-col items-center py-2 flex-1 text-gray-500 hover:text-gray-700"
             >
               <item.icon className="h-6 w-6" />
               <span className="text-xs mt-1">{item.label}</span>
