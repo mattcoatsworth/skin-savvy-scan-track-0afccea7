@@ -35,6 +35,9 @@ const LogSkinCondition = () => {
   const [notes, setNotes] = useState("");
   const [waterIntake, setWaterIntake] = useState<number>(4);
   
+  // Add state for user gender
+  const [userGender, setUserGender] = useState<string | null>(null);
+  
   // Add state for search inputs
   const [searchInputs, setSearchInputs] = useState({
     food: "",
@@ -58,6 +61,10 @@ const LogSkinCondition = () => {
   
   // Load notes from localStorage on component mount
   useEffect(() => {
+    // Get the user's gender from localStorage
+    const gender = localStorage.getItem("userGender");
+    setUserGender(gender);
+    
     const currentDate = new Date().toISOString().split('T')[0];
     const savedNotes = localStorage.getItem(`skin-notes-${currentDate}`);
     if (savedNotes) {
@@ -723,27 +730,29 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Menstrual Cycle Card */}
-              <Card className="ios-card">
-                <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
-                    <Heart className="h-5 w-5 mr-2 text-skin-black" /> Menstrual Cycle
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["Not Menstruating", "Menstruating", "PMS", "Ovulation", "Spotting"].map(factor => (
-                      <Button 
-                        key={factor}
-                        variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
-                        size="sm" 
-                        className={`rounded-xl ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
-                        onClick={() => handleFactorSelect('menstrualCycle', factor)}
-                      >
-                        {factor}
-                      </Button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Menstrual Cycle Card - Only show for female users */}
+              {userGender !== 'male' && (
+                <Card className="ios-card">
+                  <CardContent className="p-4">
+                    <h3 className="font-medium mb-2 text-skin-black flex items-center">
+                      <Heart className="h-5 w-5 mr-2 text-skin-black" /> Menstrual Cycle
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {["Not Menstruating", "Menstruating", "PMS", "Ovulation", "Spotting"].map(factor => (
+                        <Button 
+                          key={factor}
+                          variant={selectedFactors.menstrualCycle.includes(factor) ? "default" : "outline"} 
+                          size="sm" 
+                          className={`rounded-xl ${selectedFactors.menstrualCycle.includes(factor) ? 'bg-skin-black text-white' : 'text-skin-black border-skin-black/20'}`}
+                          onClick={() => handleFactorSelect('menstrualCycle', factor)}
+                        >
+                          {factor}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               
               {/* Notes Section */}
               <Card className="ios-card">
