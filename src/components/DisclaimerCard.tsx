@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { InfoIcon } from "lucide-react";
 
 interface DisclaimerCardProps {
   disclaimerText?: string;
@@ -28,12 +27,9 @@ const DisclaimerCard: React.FC<DisclaimerCardProps> = ({
               </div>
             </div>
           ) : (
-            <div className="flex items-start space-x-3 text-muted-foreground">
-              <InfoIcon className="h-5 w-5 flex-shrink-0 mt-0.5 text-slate-400" />
-              <p className="text-sm">
-                {disclaimerText || defaultDisclaimer}
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              {disclaimerText || defaultDisclaimer}
+            </p>
           )}
         </CardContent>
       </Card>

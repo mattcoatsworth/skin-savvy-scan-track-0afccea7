@@ -91,14 +91,15 @@ const ProductAITestPage = () => {
         {/* View Scoring Method */}
         <ViewScoringMethod />
         
-        {/* Replace ProductDisclaimer with our standalone DisclaimerCard */}
+        {/* Use DisclaimerCard for disclaimer section */}
         <DisclaimerCard
           isLoading={isLoading.disclaimer}
-          disclaimerText={aiContent.disclaimer?.sections?.["Disclaimer"] || 
-            "Individual responses may vary. Consult a healthcare professional before making changes to your routine."}
+          disclaimerText={typeof aiContent.disclaimer?.sections?.["Disclaimer"] === 'string' 
+            ? aiContent.disclaimer?.sections?.["Disclaimer"] 
+            : "Individual responses may vary. Consult a healthcare professional before making changes to your routine."}
         />
         
-        {/* Add chat box */}
+        {/* Add chat input at bottom */}
         <TestAIChatBox productTitle={product.name} />
       </div>
     </div>
