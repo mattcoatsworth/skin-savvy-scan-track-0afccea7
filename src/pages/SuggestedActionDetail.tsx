@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,14 +7,15 @@ import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import DisclaimerCard from "@/components/DisclaimerCard";
 import TestAIChatBox from "@/components/TestAIChatBox";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+import { toast } from "@/hooks/use-toast";
 
 // This component handles the detail view for suggested actions
 const SuggestedActionDetail = () => {
   const { id } = useParams<{ id?: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   useScrollToTop();
   
   const [action, setAction] = useState<any>(null);
@@ -163,7 +165,10 @@ const SuggestedActionDetail = () => {
               className="w-full mt-6 skin-goals-button" 
               onClick={() => {
                 // Handle adding to skin goals
-                toast.success("Added to your skin goals!");
+                toast({
+                  title: "Success",
+                  description: "Added to your skin goals!",
+                });
               }}
             >
               Add to My Skin Goals
