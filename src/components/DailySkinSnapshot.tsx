@@ -35,13 +35,13 @@ type SkinSnapshotProps = {
 const getFactorColor = (type: FactorType) => {
   switch (type) {
     case "Food":
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-emerald-50 text-emerald-700";
     case "Supplement":
-      return "bg-blue-100 text-blue-800";
+      return "bg-sky-50 text-sky-700";
     case "Makeup":
-      return "bg-gray-100 text-gray-800";
+      return "bg-purple-50 text-purple-700";
     case "Weather":
-      return "bg-stone-100 text-stone-800";
+      return "bg-amber-50 text-amber-700";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -50,15 +50,15 @@ const getFactorColor = (type: FactorType) => {
 const getRecommendationColor = (type: RecommendationType) => {
   switch (type) {
     case "skincare":
-      return "bg-slate-100 text-slate-800";
+      return "bg-indigo-50 text-indigo-700";
     case "food":
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-emerald-50 text-emerald-700";
     case "supplements":
-      return "bg-blue-100 text-blue-800";
+      return "bg-sky-50 text-sky-700";
     case "makeup":
-      return "bg-gray-100 text-gray-800";
+      return "bg-purple-50 text-purple-700";
     case "lifestyle":
-      return "bg-stone-100 text-stone-800";
+      return "bg-amber-50 text-amber-700";
     default:
       return "bg-gray-100 text-gray-800";
   }
