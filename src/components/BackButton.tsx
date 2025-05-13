@@ -19,6 +19,12 @@ const BackButton: React.FC = () => {
       navigate('/home');
       return;
     }
+
+    // Special case for Settings page - always go to home
+    if (location.pathname === '/settings') {
+      navigate('/home');
+      return;
+    }
     
     // Check if we have state from the product card navigation
     if (location.state?.from) {
