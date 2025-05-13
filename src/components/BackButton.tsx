@@ -34,6 +34,12 @@ const BackButton: React.FC = () => {
       navigate('/home');
       return;
     }
+
+    // Special case for recommendation detail pages - always go to home
+    if (location.pathname.includes('/recommendations-detail/')) {
+      navigate('/home');
+      return;
+    }
     
     // Check if we have state from the product card navigation
     if (location.state?.from) {
@@ -50,7 +56,7 @@ const BackButton: React.FC = () => {
     // Fallback behavior using pathname logic
     const getBackPath = () => {
       // Default to home
-      let backPath = "/";
+      let backPath = "/home";
       
       // If the path has multiple segments (like /product/skincare/123)
       // Go back one level if possible
@@ -67,7 +73,7 @@ const BackButton: React.FC = () => {
         
         // Special case for products page - always go back to home
         if (location.pathname === '/products') {
-          backPath = '/';
+          backPath = '/home';
         }
         
         // If we're in a second-level page under a main section, go back to that section
