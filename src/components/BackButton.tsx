@@ -7,7 +7,10 @@ const BackButton: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const handleGoBack = () => {
+  const handleGoBack = (e: React.MouseEvent) => {
+    // Prevent any default browser behavior that might interfere
+    e.preventDefault();
+    
     // Special case for day-log pages - always go to /skin
     if (location.pathname.startsWith('/day-log')) {
       navigate('/skin');
@@ -28,7 +31,8 @@ const BackButton: React.FC = () => {
     
     // Check if we have state from the product card navigation
     if (location.state?.from) {
-      return navigate(location.state.from);
+      navigate(location.state.from);
+      return;
     }
     
     // If there's browser history, go back
@@ -88,7 +92,11 @@ const BackButton: React.FC = () => {
   };
   
   return (
-    <button onClick={handleGoBack} className="mr-4">
+    <button 
+      onClick={handleGoBack} 
+      className="mr-4 p-2"
+      aria-label="Go back"
+    >
       <ArrowLeft className="h-5 w-5" />
     </button>
   );
