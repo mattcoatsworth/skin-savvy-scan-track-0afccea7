@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -6,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
-import { toast } from "@/components/ui/use-toast"; // Make sure this import is correct
+import { toast } from "sonner";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -36,13 +35,13 @@ type SkinSnapshotProps = {
 const getFactorColor = (type: FactorType) => {
   switch (type) {
     case "Food":
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-green-100 text-green-800";
     case "Supplement":
       return "bg-blue-100 text-blue-800";
     case "Makeup":
-      return "bg-gray-100 text-gray-800";
+      return "bg-purple-100 text-purple-800";
     case "Weather":
-      return "bg-stone-100 text-stone-800";
+      return "bg-orange-100 text-orange-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -51,15 +50,15 @@ const getFactorColor = (type: FactorType) => {
 const getRecommendationColor = (type: RecommendationType) => {
   switch (type) {
     case "skincare":
-      return "bg-slate-100 text-slate-800";
-    case "food":
-      return "bg-emerald-100 text-emerald-800";
-    case "supplements":
       return "bg-blue-100 text-blue-800";
+    case "food":
+      return "bg-green-100 text-green-800";
+    case "supplements":
+      return "bg-indigo-100 text-indigo-800";
     case "makeup":
-      return "bg-gray-100 text-gray-800";
+      return "bg-purple-100 text-purple-800";
     case "lifestyle":
-      return "bg-stone-100 text-stone-800";
+      return "bg-orange-100 text-orange-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -209,7 +208,6 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
         console.error("Error fetching AI recommendations:", error);
         // Fallback to provided static recommendations if AI fetch fails
         setAiRecommendations(recommendations);
-        // Fix toast import and usage - imported from sonner in the component
         toast.error("Could not load personalized recommendations");
       } finally {
         setIsLoadingRecommendations(false);
@@ -260,7 +258,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm text-muted-foreground">For You Recommendations:</p>
                 {isLoadingRecommendations && (
-                  <div className="animate-spin h-4 w-4 border-2 border-skin-black border-t-transparent rounded-full"></div>
+                  <div className="animate-spin h-4 w-4 border-2 border-skin-teal border-t-transparent rounded-full"></div>
                 )}
               </div>
               {!isLoadingRecommendations && displayedRecommendations.length > 0 ? (
@@ -291,7 +289,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
                     e.preventDefault();
                     setShowAllRecommendations(!showAllRecommendations);
                   }}
-                  className="mt-2 text-skin-black text-sm font-medium flex items-center"
+                  className="mt-2 text-skin-teal text-sm font-medium flex items-center"
                 >
                   {showAllRecommendations ? "Show less" : `Show ${displayRecommendations.length - 8} more recommendations`}
                 </button>
@@ -299,7 +297,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           )}
           
-          <div className="text-center mt-4 text-skin-black flex items-center justify-center">
+          <div className="text-center mt-4 text-skin-teal flex items-center justify-center">
             View Full Analysis <ChevronRight className="h-4 w-4 ml-1" />
           </div>
         </CardContent>
