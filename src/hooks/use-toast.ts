@@ -8,8 +8,8 @@ type ToasterToast = {
   action?: React.ReactElement
   open: boolean
   onOpenChange: (open: boolean) => void
-  variant?: "default" | "destructive" // Add variant property
-  duration?: number // Add duration property
+  variant?: "default" | "destructive"
+  duration?: number
 }
 
 const TOAST_LIMIT = 5
@@ -120,6 +120,7 @@ function dispatch(action: Action) {
   })
 }
 
+// Toast type definition - make sure to include variant and duration
 export type Toast = Partial<Omit<ToasterToast, "id">>
 
 export function toast(props: Toast) {
