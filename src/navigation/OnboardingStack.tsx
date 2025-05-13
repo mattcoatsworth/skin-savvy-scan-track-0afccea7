@@ -20,6 +20,23 @@ import FemaleOnboardingFamilyHistory from "@/pages/onboarding/FemaleOnboardingFa
 // Layout
 import OnboardingLayout from '@/layouts/OnboardingLayout';
 
+// Export onboarding routes for dropdown menus
+export const onboardingRoutes = [
+  { path: '/onboarding', label: 'Onboarding Start' },
+  { path: '/onboarding/female/birthdate', label: 'Birthdate' },
+  { path: '/onboarding/female/previous-apps', label: 'Previous Apps' },
+  { path: '/onboarding/female/skin-type', label: 'Skin Type' },
+  { path: '/onboarding/female/skin-concerns', label: 'Skin Concerns' },
+  { path: '/onboarding/female/skin-goals', label: 'Skin Goals' },
+  { path: '/onboarding/female/menstrual-cycle', label: 'Menstrual Cycle' },
+  { path: '/onboarding/female/food-allergies', label: 'Food Allergies' },
+  { path: '/onboarding/female/product-allergies', label: 'Product Allergies' },
+  { path: '/onboarding/female/goal-timeline', label: 'Goal Timeline' },
+  { path: '/onboarding/female/current-routine', label: 'Current Routine' },
+  { path: '/onboarding/female/routine-effectiveness', label: 'Routine Effectiveness' },
+  { path: '/onboarding/female/family-history', label: 'Family History' }
+];
+
 /**
  * Onboarding navigation stack
  * Similar to how you'd define a Stack in React Navigation
