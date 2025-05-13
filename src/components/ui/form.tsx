@@ -50,10 +50,15 @@ const useFormField = () => {
   }
 
   // Safely get form state - ensure the context exists before destructuring
-  const { getFieldState, formState } = useFormContext() || {}
+  const formContext = useFormContext()
+  
+  // Create empty/default objects to avoid null reference errors
+  const { getFieldState, formState } = formContext || {}
   
   // Only try to get field state if the getFieldState function exists
-  const fieldState = getFieldState ? getFieldState(fieldContext.name, formState) : {}
+  const fieldState = getFieldState ? 
+    getFieldState(fieldContext.name, formState) : 
+    { error: undefined, isDirty: false, isTouched: false }
 
   const { id } = itemContext || {}
 
