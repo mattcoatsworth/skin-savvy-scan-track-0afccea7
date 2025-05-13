@@ -1,7 +1,8 @@
 
 import * as React from "react"
 
-type ToasterToast = {
+// Toast type definitions
+export type ToasterToast = {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
