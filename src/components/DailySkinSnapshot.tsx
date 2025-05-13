@@ -106,6 +106,23 @@ const getRecommendationColor = (type: RecommendationType) => {
   }
 };
 
+const getRecommendationIcon = (type: RecommendationType) => {
+  switch (type) {
+    case "skincare":
+      return <Droplet className="h-4 w-4" />;
+    case "food":
+      return <Utensils className="h-4 w-4" />;
+    case "supplements":
+      return <Pill className="h-4 w-4" />;
+    case "makeup":
+      return <Circle className="h-4 w-4" />;
+    case "lifestyle":
+      return <Activity className="h-4 w-4" />;
+    default:
+      return <Droplet className="h-4 w-4" />;
+  }
+};
+
 const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   emoji,
   status,
