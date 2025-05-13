@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -298,6 +297,10 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
     ? displayRecommendations 
     : displayRecommendations.slice(0, 8);
   
+  // Determine text color for "View Full Analysis" based on theme
+  const theme = document.body.getAttribute('data-theme') || 'default';
+  const viewAnalysisTextClass = theme === 'summer' ? 'text-black' : 'text-skin-teal';
+  
   return (
     <Link to="/skin">
       <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
@@ -370,8 +373,8 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
             </div>
           )}
           
-          <div className="text-center mt-4 text-skin-teal flex items-center justify-center">
-            View Full Analysis <ChevronRight className="h-4 w-4 ml-1" />
+          <div className="text-center mt-4 flex items-center justify-center">
+            <span className={viewAnalysisTextClass}>View Full Analysis</span> <ChevronRight className={`h-4 w-4 ml-1 ${viewAnalysisTextClass}`} />
           </div>
         </CardContent>
       </Card>
