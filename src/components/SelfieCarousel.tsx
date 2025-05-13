@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { EmptySelfieState } from "@/lib/utils";
 
 interface SelfieCarouselProps {
   type: "am" | "pm";
@@ -28,7 +27,7 @@ interface SelfieCarouselProps {
   compact?: boolean;
 }
 
-const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
+const SelfieCarousel = ({
   type,
   images,
   onAddImage,
@@ -37,7 +36,7 @@ const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
   label = type === "am" ? "Morning" : "Evening",
   readonly = false,
   compact = false,
-}) => {
+}: SelfieCarouselProps) => {
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [viewImageDialogOpen, setViewImageDialogOpen] = useState(false);
@@ -123,7 +122,9 @@ const SelfieCarousel: React.FC<SelfieCarouselProps> = ({
                     )}
                   </>
                 ) : (
-                  <EmptySelfieState />
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <span className="text-gray-400 text-base">No Photo</span>
+                  </div>
                 )}
               </div>
             </CarouselItem>

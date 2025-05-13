@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cn, EmptySelfieState } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface SelfieImage {
   id: string;
@@ -84,7 +84,7 @@ const SelfieGrid: React.FC<SelfieGridProps> = ({ images, className }) => {
               key={`empty-${index}`} 
               className="aspect-square bg-gray-100 rounded-md flex items-center justify-center"
             >
-              <EmptySelfieState />
+              <span className="text-gray-400 font-medium">No Photos</span>
             </div>
           ))
         )}
