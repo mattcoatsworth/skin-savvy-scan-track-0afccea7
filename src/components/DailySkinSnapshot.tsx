@@ -208,6 +208,8 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
         console.error("Error fetching AI recommendations:", error);
         // Fallback to provided static recommendations if AI fetch fails
         setAiRecommendations(recommendations);
+        
+        // Fix the toast implementation to use the correct syntax
         toast({
           title: "Error",
           description: "Could not load personalized recommendations",
