@@ -159,11 +159,6 @@ const SuggestedActionDetail = () => {
           </CardContent>
         </Card>
         
-        {/* Add to My Skin Goals button */}
-        <button className="skin-goals-button mt-6 mb-4">
-          Add to My Skin Goals
-        </button>
-        
         {/* Add Disclaimer section */}
         {isTestAiMode ? (
           <>

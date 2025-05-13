@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -203,7 +204,7 @@ const GentleCleanserPage = () => {
         </Card>
         
         {/* Next Steps */}
-        <Card className="ios-card mb-6">
+        <Card className="ios-card">
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold mb-3">Track Your Progress</h2>
             <p className="text-sm text-gray-600 mb-4">
@@ -226,11 +227,6 @@ const GentleCleanserPage = () => {
             </Link>
           </CardContent>
         </Card>
-        
-        {/* Add to My Skin Goals button */}
-        <button className="skin-goals-button mt-4 mb-2">
-          Add to My Skin Goals
-        </button>
       </div>
     </div>
   );

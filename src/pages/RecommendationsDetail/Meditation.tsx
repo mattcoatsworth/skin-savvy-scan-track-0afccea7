@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -357,11 +358,6 @@ const MeditationPage = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Add to My Skin Goals button */}
-        <button className="skin-goals-button mt-6 mb-8">
-          Add to My Skin Goals
-        </button>
       </div>
     </div>
   );
