@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -346,106 +345,208 @@ const AIRecommendationDetail = () => {
           </Badge>
         </div>
         
-        <Tabs defaultValue="overview" className="w-full mb-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="actions">Actions</TabsTrigger>
-          </TabsList>
-          
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="mt-4">
-            {isLoading ? (
-              <Card>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-4 w-full mb-4" />
-                  <Skeleton className="h-4 w-full mb-4" />
-                  <Skeleton className="h-4 w-3/4" />
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-lg mb-4">{content.overview}</p>
-                  <div className="flex items-center text-muted-foreground text-sm mt-4">
-                    <InfoIcon className="h-4 w-4 mr-2" />
-                    <p>Personalized based on your skin logs</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-          
-          {/* Details Tab */}
-          <TabsContent value="details" className="mt-4">
-            {isLoading ? (
-              <Card>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-4 w-full mb-4" />
-                  <Skeleton className="h-4 w-full mb-4" />
-                  <Skeleton className="h-4 w-3/4" />
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardContent className="pt-6 prose prose-slate prose-sm max-w-none">
-                  <div className="text-base leading-relaxed whitespace-pre-line">
-                    {content.details}
-                  </div>
-                  
-                  <div className="mt-6 text-sm text-muted-foreground p-3 bg-slate-50 border border-slate-100 rounded-md">
-                    {content.disclaimer}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-          
-          {/* Actions Tab */}
-          <TabsContent value="actions" className="mt-4">
-            {isLoading ? (
-              <Card>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-10 w-full mb-4" />
-                  <Skeleton className="h-10 w-full mb-4" />
-                  <Skeleton className="h-10 w-full" />
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardContent className="pt-6">
-                  <h3 className="font-medium text-lg mb-4">Recommended Actions</h3>
-                  
-                  {content.recommendations && content.recommendations.length > 0 ? (
-                    <ul className="space-y-3">
-                      {content.recommendations.map((recommendation, index) => (
-                        <li key={index} className="flex items-start">
-                          <CheckCircle2 className="h-5 w-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span>{recommendation}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="flex items-center justify-center py-6 text-muted-foreground">
-                      <XCircle className="h-5 w-5 mr-2" />
-                      <span>No specific actions available</span>
+        {/* For /testai routes, we stack the sections instead of using tabs */}
+        {isTestAiMode ? (
+          <div className="space-y-6">
+            {/* Overview Section - Stacked */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Overview</h2>
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-lg mb-4">{content.overview}</p>
+                    <div className="flex items-center text-muted-foreground text-sm mt-4">
+                      <InfoIcon className="h-4 w-4 mr-2" />
+                      <p>Personalized based on your skin logs</p>
                     </div>
-                  )}
-                  
-                  <Button 
-                    className="w-full mt-6" 
-                    onClick={() => {
-                      toast.success("Added to your skin goals!");
-                      setTimeout(() => navigate("/skin"), 1500);
-                    }}
-                  >
-                    Add to My Skin Goals
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+            
+            {/* Details Section - Stacked */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Details</h2>
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6 prose prose-slate prose-sm max-w-none">
+                    <div className="text-base leading-relaxed whitespace-pre-line">
+                      {content.details}
+                    </div>
+                    
+                    <div className="mt-6 text-sm text-muted-foreground p-3 bg-slate-50 border border-slate-100 rounded-md">
+                      {content.disclaimer}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+            
+            {/* Actions Section - Stacked */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Actions</h2>
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <Skeleton className="h-10 w-full mb-4" />
+                    <Skeleton className="h-10 w-full mb-4" />
+                    <Skeleton className="h-10 w-full" />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6">
+                    <h3 className="font-medium text-lg mb-4">Recommended Actions</h3>
+                    
+                    {content.recommendations && content.recommendations.length > 0 ? (
+                      <ul className="space-y-3">
+                        {content.recommendations.map((recommendation, index) => (
+                          <li key={index} className="flex items-start">
+                            <CheckCircle2 className="h-5 w-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                            <span>{recommendation}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="flex items-center justify-center py-6 text-muted-foreground">
+                        <XCircle className="h-5 w-5 mr-2" />
+                        <span>No specific actions available</span>
+                      </div>
+                    )}
+                    
+                    <Button 
+                      className="w-full mt-6" 
+                      onClick={() => {
+                        toast.success("Added to your skin goals!");
+                        setTimeout(() => navigate("/skin"), 1500);
+                      }}
+                    >
+                      Add to My Skin Goals
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        ) : (
+          // For non-testai routes, we keep the tabs
+          <Tabs defaultValue="overview" className="w-full mb-8">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="details">Details</TabsTrigger>
+              <TabsTrigger value="actions">Actions</TabsTrigger>
+            </TabsList>
+            
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="mt-4">
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-lg mb-4">{content.overview}</p>
+                    <div className="flex items-center text-muted-foreground text-sm mt-4">
+                      <InfoIcon className="h-4 w-4 mr-2" />
+                      <p>Personalized based on your skin logs</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+            
+            {/* Details Tab */}
+            <TabsContent value="details" className="mt-4">
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6 prose prose-slate prose-sm max-w-none">
+                    <div className="text-base leading-relaxed whitespace-pre-line">
+                      {content.details}
+                    </div>
+                    
+                    <div className="mt-6 text-sm text-muted-foreground p-3 bg-slate-50 border border-slate-100 rounded-md">
+                      {content.disclaimer}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+            
+            {/* Actions Tab */}
+            <TabsContent value="actions" className="mt-4">
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <Skeleton className="h-10 w-full mb-4" />
+                    <Skeleton className="h-10 w-full mb-4" />
+                    <Skeleton className="h-10 w-full" />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6">
+                    <h3 className="font-medium text-lg mb-4">Recommended Actions</h3>
+                    
+                    {content.recommendations && content.recommendations.length > 0 ? (
+                      <ul className="space-y-3">
+                        {content.recommendations.map((recommendation, index) => (
+                          <li key={index} className="flex items-start">
+                            <CheckCircle2 className="h-5 w-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                            <span>{recommendation}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="flex items-center justify-center py-6 text-muted-foreground">
+                        <XCircle className="h-5 w-5 mr-2" />
+                        <span>No specific actions available</span>
+                      </div>
+                    )}
+                    
+                    <Button 
+                      className="w-full mt-6" 
+                      onClick={() => {
+                        toast.success("Added to your skin goals!");
+                        setTimeout(() => navigate("/skin"), 1500);
+                      }}
+                    >
+                      Add to My Skin Goals
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
       
       <AppNavigation />
