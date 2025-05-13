@@ -4,15 +4,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import DisclaimerCard from "@/components/DisclaimerCard";
+import TestAIChatBox from "@/components/TestAIChatBox";
+import { useLocation } from "react-router-dom";
 
 // This component handles the detail view for suggested actions
 const SuggestedActionDetail = () => {
   const { id } = useParams<{ id?: string }>();
+  const location = useLocation();
   useScrollToTop();
   
   const [action, setAction] = useState<any>(null);
   const [aiResponse, setAiResponse] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Check if we're in testai mode
+  const isTestAiMode = location.pathname.includes('/testai');
   
   // Initialize the skin advice hook for action details
   const { getAdvice, getTextContent } = useSkinAdvice({ adviceType: "action" });
@@ -150,6 +157,12 @@ const SuggestedActionDetail = () => {
             )}
           </CardContent>
         </Card>
+        
+        {/* Add Disclaimer section */}
+        <DisclaimerCard />
+        
+        {/* Add chat box for /testai routes */}
+        {isTestAiMode && <TestAIChatBox productTitle={action.title} />}
       </div>
     </div>
   );

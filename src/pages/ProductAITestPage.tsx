@@ -15,6 +15,8 @@ import ProductOverview from "@/components/product/ProductOverview";
 import ProductDetails from "@/components/product/ProductDetails";
 import ProductDisclaimer from "@/components/product/ProductDisclaimer";
 import ProductForYou from "@/components/product/ProductForYou";
+import DisclaimerCard from "@/components/DisclaimerCard";
+import TestAIChatBox from "@/components/TestAIChatBox";
 
 const ProductAITestPage = () => {
   // Add scroll to top functionality
@@ -89,11 +91,15 @@ const ProductAITestPage = () => {
         {/* View Scoring Method */}
         <ViewScoringMethod />
         
-        {/* Shortened Disclaimer Section - AI Generated */}
-        <ProductDisclaimer 
+        {/* Replace ProductDisclaimer with our standalone DisclaimerCard */}
+        <DisclaimerCard
           isLoading={isLoading.disclaimer}
-          aiContent={aiContent}
+          disclaimerText={aiContent.disclaimer?.sections?.["Disclaimer"] || 
+            "Individual responses may vary. Consult a healthcare professional before making changes to your routine."}
         />
+        
+        {/* Add chat box */}
+        <TestAIChatBox productTitle={product.name} />
       </div>
     </div>
   );
