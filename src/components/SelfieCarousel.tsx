@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { createEmptySelfieState } from "@/lib/utils";
+import { EmptySelfieState } from "@/lib/utils";
 
 interface SelfieCarouselProps {
   type: "am" | "pm";
@@ -70,13 +70,6 @@ const SelfieCarousel = ({
     setViewImageDialogOpen(true);
   };
 
-  // Render empty state directly here instead of calling the function
-  const emptySelfieElement = (
-    <div className="flex flex-col items-center justify-center w-full h-full">
-      <span className="text-gray-400 text-base">No Photo</span>
-    </div>
-  );
-
   return (
     <div className="flex flex-col items-center">
       <div className="flex items-center mb-2">
@@ -129,7 +122,7 @@ const SelfieCarousel = ({
                     )}
                   </>
                 ) : (
-                  emptySelfieElement
+                  <EmptySelfieState />
                 )}
               </div>
             </CarouselItem>

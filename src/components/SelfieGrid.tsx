@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cn } from "@/lib/utils";
+import { cn, EmptySelfieState } from "@/lib/utils";
 
 interface SelfieImage {
   id: string;
@@ -55,13 +55,6 @@ const SelfieGrid: React.FC<SelfieGridProps> = ({ images, className }) => {
     imagesByDate[img.date].push(img);
   });
 
-  // Create empty selfie state element directly
-  const emptySelfieElement = (
-    <div className="flex flex-col items-center justify-center w-full h-full">
-      <span className="text-gray-400 text-base">No Photos</span>
-    </div>
-  );
-
   return (
     <div className={cn("", className)}>
       <div className="grid grid-cols-3 gap-1 sm:gap-2">
@@ -91,7 +84,7 @@ const SelfieGrid: React.FC<SelfieGridProps> = ({ images, className }) => {
               key={`empty-${index}`} 
               className="aspect-square bg-gray-100 rounded-md flex items-center justify-center"
             >
-              {emptySelfieElement}
+              <EmptySelfieState />
             </div>
           ))
         )}
