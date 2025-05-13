@@ -52,7 +52,8 @@ export const colors = {
     // Spring theme specific colors
     spring: {
       blue: 'hsl(var(--spring-blue))',
-      teal: 'hsl(var(--spring-teal))'
+      teal: 'hsl(var(--spring-teal))',
+      skinGoalsButton: 'hsl(var(--skin-goals-button))'
     },
     // Summer theme specific colors - updated with new values
     summer: {
@@ -61,11 +62,12 @@ export const colors = {
       sand: 'hsl(var(--summer-sand))',
       stone: 'hsl(var(--summer-stone))',
       steel: 'hsl(var(--summer-steel))',
-      navy: 'hsl(var(--summer-navy))', // Updated masculine navigation color to be less prominent
+      navy: 'hsl(var(--summer-navy))', // Updated to be less prominent, matching gray navigation
       brightBlue: 'hsl(var(--summer-bright-blue))', // Bright blue for indicators
       recBg: 'hsl(var(--summer-rec-bg))', // New background for recommendations
       plusButton: 'hsl(var(--summer-plus-button))', // New color for plus button hover
-      navText: 'hsl(var(--summer-nav-text))' // Gray for navigation text
+      navText: 'hsl(var(--summer-nav-text))', // Gray for navigation text
+      skinGoalsButton: 'hsl(var(--skin-goals-button))' // Black color for Add to My Skin Goals button
     }
   },
 

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -69,6 +68,9 @@
     /* Additional spring specific colors */
     --spring-blue: 209 100% 71%; /* Skin blue color #6BB9FF */
     --spring-teal: 177 69% 41%; /* #20B2AA - teal */
+    
+    /* New color for skin goals button */
+    --skin-goals-button: 0 0% 0%; /* Black color for Add to My Skin Goals button */
   }
   
   [data-theme="summer"] {
@@ -113,11 +115,40 @@
     /* New colors for recommendations with increased opacity */
     --summer-rec-bg: 210 100% 95%; /* Background for recommendations */
     --summer-plus-button: 210 10% 20%; /* Soft black for plus button hover */
-    --summer-nav-text: 210 10% 35%; /* Gray for navigation */
+    --summer-nav-text: 210 10% 35%; /* Gray for navigation text */
+    
+    /* New color for skin goals button */
+    --skin-goals-button: 0 0% 0%; /* Black color for Add to My Skin Goals button */
   }
  
   .dark {
-    /* ... keep existing code */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
  
@@ -130,9 +161,65 @@
   }
 }
 
-/* Keep existing code (iOS-inspired design components) */
+/* Custom Add to My Skin Goals button styling for themed pages */
+.skin-goals-button {
+  @apply text-white rounded-md py-3 px-4 w-full text-center font-medium;
+  background-color: hsl(var(--skin-goals-button));
+  transition: opacity 0.2s ease;
+}
 
-/* Keep existing code (Skin advice content styling) */
+.skin-goals-button:hover {
+  opacity: 0.9;
+}
 
-/* Keep existing code (AI analysis section styling) */
+/* iOS-inspired design components */
+.ios-card {
+  @apply rounded-xl bg-card text-card-foreground shadow-sm overflow-hidden;
+}
 
+/* Skin advice content styling */
+.skin-advice-content {
+  @apply prose prose-sm prose-stone max-w-none;
+}
+
+.skin-advice-content h1 {
+  @apply text-2xl font-bold text-skin-black mb-4;
+}
+
+.skin-advice-content h2 {
+  @apply text-xl font-semibold text-skin-black mt-8 mb-3;
+}
+
+.skin-advice-content h3 {
+  @apply text-lg font-medium text-skin-black mt-6 mb-2;
+}
+
+.skin-advice-content p {
+  @apply text-gray-700 leading-relaxed mb-4;
+}
+
+.skin-advice-content ul,
+.skin-advice-content ol {
+  @apply list-disc pl-5 mb-4;
+}
+
+.skin-advice-content li {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.skin-advice-content a {
+  @apply text-skin-teal font-medium hover:underline;
+}
+
+/* AI analysis section styling */
+.ai-analysis-section {
+  @apply rounded-lg bg-gray-50 p-6 border border-gray-100;
+}
+
+.ai-analysis-section h2 {
+  @apply text-lg font-semibold text-gray-800 mb-4;
+}
+
+.ai-analysis-section p {
+  @apply text-sm text-gray-600 leading-relaxed;
+}
