@@ -1,4 +1,5 @@
 
+import React from "react"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -8,7 +9,6 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Creates a consistent empty selfie state display with proper styling
- * @param type The time of day (am/pm)
  * @returns JSX element with consistent empty state styling
  */
 export function createEmptySelfieState() {

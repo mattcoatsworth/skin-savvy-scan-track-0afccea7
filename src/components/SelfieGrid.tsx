@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import {
@@ -8,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cn } from "@/lib/utils";
+import { cn, createEmptySelfieState } from "@/lib/utils";
 
 interface SelfieImage {
   id: string;

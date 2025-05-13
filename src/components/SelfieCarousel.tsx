@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Image, Upload, Trash2, X, Camera } from "lucide-react";
 import {
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { createEmptySelfieState } from "@/lib/utils";
 
 interface SelfieCarouselProps {
   type: "am" | "pm";
@@ -122,9 +122,7 @@ const SelfieCarousel = ({
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center w-full h-full">
-                    <span className="text-gray-400 text-base">No Photo</span>
-                  </div>
+                  createEmptySelfieState()
                 )}
               </div>
             </CarouselItem>
