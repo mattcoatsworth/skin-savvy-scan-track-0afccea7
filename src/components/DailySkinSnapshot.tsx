@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -208,7 +208,11 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
         console.error("Error fetching AI recommendations:", error);
         // Fallback to provided static recommendations if AI fetch fails
         setAiRecommendations(recommendations);
-        toast.error("Could not load personalized recommendations");
+        toast({
+          title: "Error",
+          description: "Could not load personalized recommendations",
+          variant: "destructive"
+        });
       } finally {
         setIsLoadingRecommendations(false);
       }
