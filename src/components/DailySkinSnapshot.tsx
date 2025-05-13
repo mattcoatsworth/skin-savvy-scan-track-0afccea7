@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import SkinStatusHeader from "./skin/SkinStatusHeader";
 import FactorsList from "./skin/FactorsList";
 import RecommendationList from "./skin/RecommendationList";
-import { Recommendation, getRecommendationIcon } from "./skin/RecommendationTag";
+import { Recommendation, getRecommendationIcon, RecommendationType } from "./skin/RecommendationTag";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
