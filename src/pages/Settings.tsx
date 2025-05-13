@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { Lock, LogOut, Share, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Lock, LogOut, Share, Facebook, Twitter, Linkedin, Palette } from "lucide-react";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useToast } from "@/hooks/use-toast";
 import BackButton from "@/components/BackButton";
 import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "@/hooks/useTheme";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type PasswordFormValues = {
   currentPassword: string;
@@ -28,6 +29,7 @@ const Settings = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [referralData, setReferralData] = useState<ReferralData | null>(null);
 
@@ -177,6 +179,37 @@ const Settings = () => {
       </header>
 
       <main className="space-y-6">
+        {/* Theme Selection Card */}
+        <Card className="ios-card">
+          <CardContent className="p-4">
+            <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+              <Palette className="h-5 w-5" />
+              Theme Settings
+            </h2>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <FormLabel>Website Theme</FormLabel>
+                <Select
+                  value={theme}
+                  onValueChange={(value) => setTheme(value as 'default' | 'spring')}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Default</SelectItem>
+                    <SelectItem value="spring">Spring</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Change the color scheme of the app.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         {/* Referral Card */}
         <Card className="ios-card">
           <CardContent className="p-4">

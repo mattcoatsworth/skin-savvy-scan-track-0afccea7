@@ -14,7 +14,8 @@ export const colors = {
     flame: '#FF6B01',
     red: '#FF4559',
     blue: '#6BB9FF',
-    amber: '#FFC170'
+    amber: '#FFC170',
+    teal: '#20B2AA'
   },
   
   // Theme colors
@@ -47,6 +48,11 @@ export const colors = {
       'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
       border: 'hsl(var(--sidebar-border))',
       ring: 'hsl(var(--sidebar-ring))'
+    },
+    // Spring theme specific colors
+    spring: {
+      blue: 'hsl(var(--spring-blue))',
+      teal: 'hsl(var(--spring-teal))'
     }
   },
 
@@ -63,7 +69,9 @@ export const colors = {
     primary: 'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)',
     energetic: 'linear-gradient(180deg, rgb(254,100,121) 0%, rgb(251,221,186) 100%)',
     calm: 'linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)',
-    warm: 'linear-gradient(111.4deg, rgba(238,113,113,1) 1%, rgba(246,215,148,1) 58%)'
+    warm: 'linear-gradient(111.4deg, rgba(238,113,113,1) 1%, rgba(246,215,148,1) 58%)',
+    // Spring theme gradient 
+    spring: 'linear-gradient(120deg, #FF6B01 0%, #FFC170 100%)'
   }
 };
 
