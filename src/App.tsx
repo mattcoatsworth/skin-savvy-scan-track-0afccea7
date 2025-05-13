@@ -1,20 +1,23 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import CategoryAnalysis from "./pages/CategoryAnalysis";
-import CategoryDetail from "./pages/CategoryDetail";
-import DayLog from "./pages/DayLog";
-import Explore from "./pages/Explore";
-import Product from "./pages/Product";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import SuggestedActions from "./pages/SuggestedActions";
-import AIRecommendationDetail from "./pages/RecommendationsDetail/AIRecommendationDetail";
 import GentleCleanserPage from "./pages/RecommendationsDetail/GentleCleanser";
 import LimitDairyPage from "./pages/RecommendationsDetail/LimitDairy";
 import MeditationPage from "./pages/RecommendationsDetail/Meditation";
 import PersonalizedGentleCleanserPage from "./pages/RecommendationsDetail/PersonalizedGentleCleanser";
 import PersonalizedLimitDairyPage from "./pages/RecommendationsDetail/PersonalizedLimitDairy";
 import PersonalizedMeditationPage from "./pages/RecommendationsDetail/PersonalizedMeditation";
+
+// Create placeholder components for missing pages
+const CategoryDetail = () => <div>Category Detail Page</div>;
+const DayLog = () => <div>Day Log Page</div>;
+const Explore = () => <div>Explore Page</div>;
+const Product = () => <div>Product Page</div>;
+const SuggestedActions = () => <div>Suggested Actions Page</div>;
+const AIRecommendationDetail = () => <div>AI Recommendation Detail Page</div>;
 
 const App = () => {
   return (
