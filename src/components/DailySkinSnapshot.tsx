@@ -84,15 +84,15 @@ const getRecommendationColor = (type: RecommendationType) => {
   if (theme === 'summer') {
     switch (type) {
       case "skincare":
-        return "bg-sky-50 text-sky-800"; // Soft blue
+        return "bg-sky-100 text-sky-800"; // Increased opacity from 50 to 100
       case "food":
-        return "bg-emerald-50 text-emerald-800"; // Soft green
+        return "bg-emerald-100 text-emerald-800"; // Increased opacity from 50 to 100
       case "supplements":
-        return "bg-slate-50 text-slate-800"; // Soft slate
+        return "bg-slate-100 text-slate-800"; // Increased opacity from 50 to 100
       case "makeup":
-        return "bg-violet-50 text-violet-800"; // Soft purple
+        return "bg-violet-100 text-violet-800"; // Increased opacity from 50 to 100
       case "lifestyle":
-        return "bg-stone-50 text-stone-800"; // Soft stone
+        return "bg-stone-100 text-stone-800"; // Increased opacity from 50 to 100
       default:
         return "bg-gray-100 text-gray-800";
     }
