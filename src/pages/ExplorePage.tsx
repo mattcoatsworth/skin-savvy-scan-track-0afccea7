@@ -98,7 +98,7 @@ const ExplorePage = () => {
             className="block"
           >
             <Card className="ios-card overflow-hidden hover:shadow-md transition-all">
-              <div className="h-32 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
+              <div className="h-32 bg-gradient-to-r from-skin-black/40 to-skin-black/10 flex items-center justify-center">
                 {item.image ? (
                   <img src={item.image} alt={item.title} className="object-cover w-full h-full" />
                 ) : (
@@ -109,7 +109,7 @@ const ExplorePage = () => {
                 <h3 className="font-medium text-lg">{item.title}</h3>
                 <p className="text-sm text-muted-foreground mb-3">{item.subtitle}</p>
                 <p className="text-sm">{item.content}</p>
-                <div className="text-skin-teal text-sm font-medium mt-3 inline-block">
+                <div className="text-skin-black text-sm font-medium mt-3 inline-block">
                   Read more
                 </div>
               </CardContent>

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -325,7 +326,7 @@ const ExploreItemDetail = () => {
           <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
         </div>
       ) : (
-        <div className="mb-6 rounded-lg overflow-hidden h-48 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
+        <div className="mb-6 rounded-lg overflow-hidden h-48 bg-gradient-to-r from-skin-black/40 to-skin-black/10 flex items-center justify-center">
           <div className="text-4xl">✨</div>
         </div>
       )}

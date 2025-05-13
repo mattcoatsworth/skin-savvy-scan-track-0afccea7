@@ -56,7 +56,7 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
         <h2 className="text-xl font-semibold">Explore</h2>
         <Link 
           to="/explore" 
-          className="text-sm text-skin-teal"
+          className="text-sm text-skin-black"
           onClick={() => window.scrollTo(0, 0)}
         >
           View all
@@ -73,7 +73,7 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ items, className }) => 
                 onClick={() => handleExploreItemClick(item)}
               >
                 <Card className="ios-card overflow-hidden hover:shadow-md transition-all">
-                  <div className="h-24 bg-gradient-to-r from-skin-teal/40 to-skin-lavender/60 flex items-center justify-center">
+                  <div className="h-24 bg-gradient-to-r from-skin-black/40 to-skin-black/10 flex items-center justify-center">
                     {item.image ? (
                       <img src={item.image} alt={item.title} className="object-cover w-full h-full" />
                     ) : (
