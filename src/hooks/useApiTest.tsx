@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { testService } from '@/services/api';
+import { isPlatform } from '@/utils/platform';
 
 interface ApiTestOptions {
   endpoint?: string;
@@ -21,6 +22,7 @@ export const useApiTest = () => {
     latency: number;
     message: string;
     data?: any;
+    platform?: string;
   } | null>(null);
 
   /**
@@ -36,20 +38,26 @@ export const useApiTest = () => {
         retries: options.retries
       });
       
-      setResults(result);
+      const resultWithPlatform = {
+        ...result,
+        platform: isPlatform.web() ? 'web' : 'native'
+      };
+      
+      setResults(resultWithPlatform);
       
       if (result.success && options.onSuccess) {
-        options.onSuccess(result);
+        options.onSuccess(resultWithPlatform);
       } else if (!result.success && options.onError) {
-        options.onError(result);
+        options.onError(resultWithPlatform);
       }
       
-      return result;
+      return resultWithPlatform;
     } catch (error) {
       const errorResult = {
         success: false,
         latency: 0,
-        message: error instanceof Error ? error.message : "Unknown error"
+        message: error instanceof Error ? error.message : "Unknown error",
+        platform: isPlatform.web() ? 'web' : 'native'
       };
       setResults(errorResult);
       
@@ -83,20 +91,26 @@ export const useApiTest = () => {
         }
       );
       
-      setResults(result);
+      const resultWithPlatform = {
+        ...result,
+        platform: isPlatform.web() ? 'web' : 'native'
+      };
+      
+      setResults(resultWithPlatform);
       
       if (result.success && options.onSuccess) {
-        options.onSuccess(result);
+        options.onSuccess(resultWithPlatform);
       } else if (!result.success && options.onError) {
-        options.onError(result);
+        options.onError(resultWithPlatform);
       }
       
-      return result;
+      return resultWithPlatform;
     } catch (error) {
       const errorResult = {
         success: false,
         latency: 0,
-        message: error instanceof Error ? error.message : "Unknown error"
+        message: error instanceof Error ? error.message : "Unknown error",
+        platform: isPlatform.web() ? 'web' : 'native'
       };
       setResults(errorResult);
       

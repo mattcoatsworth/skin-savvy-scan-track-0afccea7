@@ -2,9 +2,11 @@
 /**
  * Test service for API endpoints
  * This service provides methods to test API connectivity and functionality
+ * across both web and mobile platforms
  */
 
 import { toast } from "sonner";
+import { isPlatform } from "@/utils/platform";
 
 interface TestServiceOptions {
   endpoint?: string;
@@ -46,6 +48,7 @@ export const testService = {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), timeout);
           
+          // Platform-agnostic fetch approach
           const response = await fetch(endpoint, {
             method: "GET",
             signal: controller.signal,
@@ -67,7 +70,7 @@ export const testService = {
           return {
             success: true,
             latency,
-            message: "Connection successful",
+            message: `Connection successful on ${isPlatform.web() ? 'web' : 'mobile'}`,
             data
           };
         } catch (error) {
@@ -131,7 +134,7 @@ export const testService = {
         ...testResult,
         success: isDataValid,
         message: isDataValid 
-          ? "Endpoint validation successful" 
+          ? `Endpoint validation successful on ${isPlatform.web() ? 'web' : 'mobile'}` 
           : "Endpoint returned unexpected data structure"
       };
     } catch (error) {
