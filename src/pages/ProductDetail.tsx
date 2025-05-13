@@ -74,14 +74,6 @@ const ProductDetail = () => {
           askAiAboutProduct={askAiAboutProduct}
         />
         
-        {/* For You Section - Personalized recommendation */}
-        <ProductForYou
-          isLoading={isLoading.overview}
-          product={product}
-          type={type || ""}
-          productId={id || ""}
-        />
-        
         {/* Details Section - AI Generated */}
         <ProductDetails 
           isLoading={isLoading.details}

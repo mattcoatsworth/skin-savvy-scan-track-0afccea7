@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, StarHalf, StarOff } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import LoadingIndicator from "./LoadingIndicator";
 import { supabase } from "@/integrations/supabase/client";
-import { Progress } from "@/components/ui/progress";
 
 interface ProductForYouProps {
   isLoading: boolean;
