@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Menu, PlusCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import BackButton from "@/components/BackButton";
 import { toast } from "sonner";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import ChatInput from "@/components/ChatInput";
 
 type Message = {
   id: string;
@@ -354,7 +354,7 @@ const ChatPage: React.FC = () => {
         </Drawer>
       </div>
       
-      <div className="flex-1 overflow-hidden bg-white flex flex-col pb-20">
+      <div className="flex-1 overflow-hidden bg-white flex flex-col">
         <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
           <div className="flex flex-col space-y-4">
             {activeChat.messages.map((msg) => (
@@ -388,30 +388,10 @@ const ChatPage: React.FC = () => {
             )}
           </div>
         </ScrollArea>
-        
-        {/* Suggestion chips */}
-        <div className="p-4 pb-5">
-          <div className="flex gap-3 overflow-x-auto">
-            <div 
-              className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer"
-              onClick={() => handleSendMessage("Best food for breakouts during the summer")}
-            >
-              <p className="font-medium text-black text-sm">Best food for breakouts</p>
-              <p className="text-gray-500 text-xs mt-1">during the summer</p>
-            </div>
-            <div 
-              className="flex-shrink-0 bg-gray-50 rounded-2xl p-4 cursor-pointer"
-              onClick={() => handleSendMessage("Face cream to ease inflammation")}
-            >
-              <p className="font-medium text-black text-sm">Face cream to</p>
-              <p className="text-gray-500 text-xs mt-1">ease inflammation</p>
-            </div>
-          </div>
-        </div>
       </div>
       
-      {/* Chat input area is now handled by the ChatInput component */}
-      <div className="h-16"></div> {/* Spacer for the fixed position input */}
+      {/* Add ChatInput component at the bottom */}
+      <ChatInput onSendMessage={handleSendMessage} />
     </div>
   );
 };

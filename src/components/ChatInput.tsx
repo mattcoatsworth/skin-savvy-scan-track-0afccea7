@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useNavigate } from "react-router-dom";
 import { Send, Paperclip, File, Camera, Image, MessageCircle } from "lucide-react";
 import { spacing } from "@/design";
 
-const ChatInput = () => {
-  const navigate = useNavigate();
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+}
+
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [chatInput, setChatInput] = useState("");
   const [attachmentMenuOpen, setAttachmentMenuOpen] = useState(false);
   
@@ -16,19 +18,14 @@ const ChatInput = () => {
     e.preventDefault();
     
     if (chatInput.trim()) {
-      // Navigate to chat page with the input as state
-      navigate("/chat", { 
-        state: { initialMessage: chatInput }
-      });
+      onSendMessage(chatInput);
       setChatInput("");
     }
   };
 
   // Handle suggestion clicks
   const handleSuggestionClick = (suggestion: string) => {
-    navigate("/chat", { 
-      state: { initialMessage: suggestion }
-    });
+    onSendMessage(suggestion);
   };
 
   // Handle attachment options
