@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
