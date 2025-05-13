@@ -1,4 +1,3 @@
-
 /**
  * Color palette definitions for the application.
  * These colors are configured in the Tailwind config and can be accessed via CSS variables.
@@ -60,7 +59,9 @@ export const colors = {
       slate: 'hsl(var(--summer-slate))',
       sand: 'hsl(var(--summer-sand))',
       stone: 'hsl(var(--summer-stone))',
-      steel: 'hsl(var(--summer-steel))'
+      steel: 'hsl(var(--summer-steel))',
+      navy: 'hsl(var(--summer-navy))', // Added masculine navigation color
+      brightBlue: 'hsl(var(--summer-bright-blue))' // Added more noticeable indicator color
     }
   },
 
