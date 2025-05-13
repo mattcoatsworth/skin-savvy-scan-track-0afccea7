@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -5,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast"; // Make sure this import is correct
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -208,6 +209,7 @@ const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
         console.error("Error fetching AI recommendations:", error);
         // Fallback to provided static recommendations if AI fetch fails
         setAiRecommendations(recommendations);
+        // Fix toast import and usage - imported from sonner in the component
         toast.error("Could not load personalized recommendations");
       } finally {
         setIsLoadingRecommendations(false);
