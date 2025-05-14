@@ -46,30 +46,47 @@ const DesignExport: React.FC = () => {
         title: "Generating PNG",
         description: "Please wait while we create your PNG..."
       });
+
+      // Force set width before capture to ensure consistent sizing
+      const originalWidth = contentElement.style.width;
+      contentElement.style.width = "390px";
       
       // Use html2canvas with improved settings
       const canvas = await html2canvas(contentElement, {
-        scale: 3, // Higher scale for better quality
+        scale: 2, // Better quality but not too large
         useCORS: true, // Allow cross-origin images
         logging: false, // Disable logging
         backgroundColor: "#ffffff", // White background
-        width: contentElement.offsetWidth,
+        width: 390, // Fixed iPhone width
         height: contentElement.offsetHeight,
+        windowWidth: 390, // Force viewport width
         onclone: (documentClone) => {
-          // Apply direct styles to ensure consistency
+          // Apply direct styles to ensure consistency in the cloned DOM
           const clonedElement = documentClone.querySelector('.home-screen-preview') as HTMLElement;
           if (clonedElement) {
-            // Force apply consistent styles to ensure matching appearance
+            // Force width for consistent capture
+            clonedElement.style.width = "390px";
+            clonedElement.style.maxWidth = "390px";
+            clonedElement.style.padding = "16px";
+            clonedElement.style.boxShadow = "none";
+            clonedElement.style.border = "none";
+            clonedElement.style.backgroundColor = "white";
+            
+            // Add style element with required CSS
             const styleElement = documentClone.createElement('style');
             styleElement.textContent = `
               /* Force consistent styling for export */
               .home-screen-preview {
                 width: 390px !important;
+                max-width: 390px !important;
                 box-shadow: none !important;
                 background-color: white !important;
                 padding: 16px !important;
                 border: none !important;
+                overflow: visible !important;
               }
+              
+              /* Nav bar positioning */
               .app-navigation-bar {
                 position: relative !important;
                 bottom: 0 !important;
@@ -78,8 +95,11 @@ const DesignExport: React.FC = () => {
                 border-top: 1px solid #eaeaea !important;
                 margin-top: 20px !important;
                 padding: 8px 0 !important;
-                display: block !important;
+                display: flex !important;
+                justify-content: space-evenly !important;
+                width: 100% !important;
               }
+              
               /* Fix recommendation styling */
               .recommendation-item {
                 display: flex !important;
@@ -89,6 +109,14 @@ const DesignExport: React.FC = () => {
                 gap: 8px !important;
                 align-items: center !important;
               }
+              
+              /* Make sure we capture all recommendations */
+              .space-y-2 {
+                display: block !important;
+                width: 100% !important;
+              }
+              
+              /* Ensure recommendation colors are correct */
               .recommendation-item.skincare {
                 background-color: #e0edff !important;
                 color: #2563eb !important;
@@ -105,11 +133,21 @@ const DesignExport: React.FC = () => {
                 background-color: #e0e7ff !important;
                 color: #4f46e5 !important;
               }
+              
+              /* Ensure all icons are visible */
+              .recommendation-item svg {
+                width: 16px !important;
+                height: 16px !important;
+                display: inline-block !important;
+              }
             `;
             documentClone.head.appendChild(styleElement);
           }
         }
       });
+      
+      // Restore original width
+      contentElement.style.width = originalWidth;
       
       // Convert the canvas to a data URL
       const dataUrl = canvas.toDataURL('image/png');

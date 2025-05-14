@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useSkinAdvice } from "@/hooks/useSkinAdvice";
+import { useSkinAdvice, Recommendation, RecommendationType } from "@/hooks/useSkinAdvice";
 
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
@@ -12,15 +12,6 @@ type Factor = {
   type: FactorType;
   status: string;
   icon: React.ReactNode;
-};
-
-export type RecommendationType = "skincare" | "food" | "lifestyle" | "supplements";
-
-export type Recommendation = {
-  type: RecommendationType;
-  text: string;
-  icon?: React.ReactNode;
-  linkTo?: string;
 };
 
 type DailySkinSnapshotProps = {
@@ -37,13 +28,11 @@ const DailySkinSnapshot: React.FC<DailySkinSnapshotProps> = ({
   recommendations: initialRecommendations = []
 }) => {
   // Use the skin advice hook to get recommendations
-  const { recommendations: aiRecommendations, isLoading } = useSkinAdvice();
+  const { isLoading, getAdvice } = useSkinAdvice();
   
-  // Combine recommendations, prioritizing AI recommendations if available,
-  // falling back to provided recommendations
-  const recommendations = aiRecommendations && aiRecommendations.length > 0
-    ? aiRecommendations
-    : initialRecommendations;
+  // In a real app, we'd use getAdvice to fetch recommendations dynamically
+  // For now, we'll use the provided initialRecommendations
+  const recommendations = initialRecommendations;
 
   // Get the background class based on recommendation type
   const getRecommendationClass = (type: RecommendationType) => {
