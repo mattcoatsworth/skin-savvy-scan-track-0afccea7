@@ -25,11 +25,11 @@ const LogSkinCondition = () => {
     makeup: [],
     weather: [],
     menstrualCycle: [],
-    stressors: [] // Add stressors to the state
+    stressors: []
   });
   
-  // Add state for personalized skin plan
-  const [wantsPersonalizedPlan, setWantsPersonalizedPlan] = useState<string>("yes");
+  // Change this to null instead of "yes" so no option is pre-selected
+  const [wantsPersonalizedPlan, setWantsPersonalizedPlan] = useState<string | null>(null);
   
   const [sleepHours, setSleepHours] = useState<number>(7);
   const [stressLevel, setStressLevel] = useState<number>(3);
