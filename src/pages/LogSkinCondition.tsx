@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText, ScanBarcode, Brain } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -733,12 +732,24 @@ const LogSkinCondition = () => {
                 </CardContent>
               </Card>
               
-              {/* Stressors Card */}
+              {/* Stressors Card - Updated to use Popover component */}
               <Card className="ios-card">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2 text-skin-black flex items-center">
-                    <Brain className="h-5 w-5 mr-2 text-skin-black" /> Stressors
+                  <h3 className="font-medium mb-2 text-skin-black flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Brain className="h-5 w-5 mr-2 text-skin-black" /> Stressors
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="flex items-center gap-1 text-xs"
+                      onClick={() => handleStartScan('stressors')}
+                    >
+                      <ScanBarcode className="h-3.5 w-3.5" />
+                      Scan
+                    </Button>
                   </h3>
+                  
                   <p className="text-sm text-muted-foreground mb-3">What's causing your stress today?</p>
                   <div className="flex flex-wrap gap-2">
                     {getDefaultOptions('stressors').map(factor => (
@@ -753,21 +764,84 @@ const LogSkinCondition = () => {
                       </Button>
                     ))}
                   </div>
+                  
                   <div className="mt-3 pt-3 border-t border-gray-100">
                     <div className="relative">
-                      <Input
-                        placeholder="Add other stressor..."
-                        value={searchInputs.stressors || ''}
-                        onChange={(e) => handleSearchChange('stressors', e.target.value)}
-                        className="text-sm h-9 pr-10"
-                      />
-                      <button 
-                        onClick={() => handleAddCustomFactor('stressors')}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 flex items-center justify-center rounded-full bg-skin-black text-white disabled:opacity-50 disabled:bg-gray-400"
-                        disabled={!searchInputs.stressors}
+                      <Popover 
+                        open={searchOpen.stressors} 
+                        onOpenChange={(open) => {
+                          setSearchOpen(prev => ({ ...prev, stressors: open }));
+                        }}
                       >
-                        <Plus className="h-4 w-4" />
-                      </button>
+                        <PopoverTrigger asChild>
+                          <div className="relative flex-grow cursor-pointer w-full">
+                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Add other stressor..."
+                              value={searchInputs.stressors || ''}
+                              onChange={(e) => handleSearchChange('stressors', e.target.value)}
+                              onClick={() => {
+                                setSearchOpen(prev => ({ ...prev, stressors: true }));
+                              }}
+                              className="pl-8 py-2 text-sm h-9 w-full pr-10"
+                            />
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddCustomFactor('stressors');
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 flex items-center justify-center rounded-full bg-skin-black text-white disabled:opacity-50 disabled:bg-gray-400"
+                              disabled={!searchInputs.stressors}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </PopoverTrigger>
+                        
+                        <PopoverContent 
+                          className="p-0 w-[var(--radix-popover-trigger-width)]" 
+                          align="start"
+                          sideOffset={5}
+                        >
+                          <Command className="w-full">
+                            <CommandList className="max-h-[200px] overflow-auto">
+                              {searchInputs.stressors && (
+                                <CommandItem 
+                                  onSelect={() => handleAddCustomFactor('stressors')}
+                                  className="flex items-center justify-center h-10"
+                                >
+                                  <div className="flex items-center w-full">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    <span>Add "{searchInputs.stressors}"</span>
+                                  </div>
+                                </CommandItem>
+                              )}
+                              <CommandGroup>
+                                {getDefaultOptions('stressors')
+                                  .filter(option => option.toLowerCase().includes((searchInputs.stressors || '').toLowerCase()))
+                                  .map(option => (
+                                    <CommandItem 
+                                      key={option} 
+                                      onSelect={() => {
+                                        handleFactorSelect('stressors', option);
+                                        setSearchInputs(prev => ({ ...prev, stressors: "" }));
+                                        setSearchOpen(prev => ({ ...prev, stressors: false }));
+                                      }}
+                                    >
+                                      {option}
+                                    </CommandItem>
+                                  ))
+                                }
+                              </CommandGroup>
+                              {getDefaultOptions('stressors').filter(option => 
+                                option.toLowerCase().includes((searchInputs.stressors || '').toLowerCase())).length === 0 &&
+                                !searchInputs.stressors && (
+                                <CommandEmpty>No options found</CommandEmpty>
+                              )}
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   </div>
                 </CardContent>
