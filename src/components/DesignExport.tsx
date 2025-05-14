@@ -21,8 +21,7 @@ const DesignExport: React.FC = () => {
   };
 
   // PDF download functionality removed as requested
-  // const handleDownload = async () => { ... }
-
+  
   const handleGoBack = () => {
     navigate("/home");
   };
