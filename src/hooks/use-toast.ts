@@ -1,173 +1,102 @@
 
-import * as React from "react"
+/**
+ * Platform-agnostic toast hook
+ * Can be implemented differently on web and native platforms
+ */
 
-// Toast type definitions
-export type ToasterToast = {
-  id: string
-  title?: React.ReactNode
-  description?: React.ReactNode
-  action?: React.ReactElement
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  variant?: "default" | "destructive"
-  duration?: number
+import { toast as sonnerToast } from "sonner";
+import { isPlatform } from "@/utils/platform";
+
+// Toast variant types
+export type ToastVariant = "default" | "destructive" | "success" | "warning" | "loading";
+
+// Toast props interface
+export interface Toast {
+  id?: string;
+  title?: string;
+  description?: string;
+  variant?: ToastVariant;
+  action?: React.ReactNode;
+  duration?: number;
 }
 
-const TOAST_LIMIT = 5
-const TOAST_REMOVE_DELAY = 1000000
-
-const actionTypes = {
-  ADD_TOAST: "ADD_TOAST",
-  UPDATE_TOAST: "UPDATE_TOAST",
-  DISMISS_TOAST: "DISMISS_TOAST",
-  REMOVE_TOAST: "REMOVE_TOAST",
-} as const
-
-let count = 0
-
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER
-  return count.toString()
+// ToasterToast includes more properties than what we need for cross-platform compatibility
+export interface ToasterToast extends Toast {
+  id: string;
+  className?: string;
+  actionAltText?: string;
+  onDismiss?: () => void;
 }
 
-type ActionType = typeof actionTypes
-
-type Action =
-  | {
-      type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
-    }
-  | {
-      type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
-    }
-  | {
-      type: ActionType["DISMISS_TOAST"]
-      toastId?: string
-    }
-  | {
-      type: ActionType["REMOVE_TOAST"]
-      toastId?: string
-    }
-
-interface State {
+// Define an array to store toasts in our hook implementation
+type State = {
   toasts: ToasterToast[]
 }
 
-const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+const TOAST_LIMIT = 20
+let count = 0
 
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case actionTypes.ADD_TOAST:
-      return {
-        ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
-      }
-
-    case actionTypes.UPDATE_TOAST:
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t
-        ),
-      }
-
-    case actionTypes.DISMISS_TOAST: {
-      const { toastId } = action
-
-      if (toastId) {
-        toastTimeouts.set(
-          toastId,
-          setTimeout(() => {
-            toastTimeouts.delete(toastId)
-          }, TOAST_REMOVE_DELAY)
-        )
-      }
-
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === toastId || toastId === undefined
-            ? {
-                ...t,
-                open: false,
-              }
-            : t
-        ),
-      }
-    }
-    case actionTypes.REMOVE_TOAST:
-      if (action.toastId === undefined) {
-        return {
-          ...state,
-          toasts: [],
-        }
-      }
-      return {
-        ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId),
-      }
-  }
+const toastState: State = {
+  toasts: [],
 }
 
-const listeners: Array<(state: State) => void> = []
-
-let memoryState: State = { toasts: [] }
-
-function dispatch(action: Action) {
-  memoryState = reducer(memoryState, action)
-  listeners.forEach((listener) => {
-    listener(memoryState)
-  })
-}
-
-export type Toast = Partial<Omit<ToasterToast, "id">>
-
-export function toast(props: Toast) {
-  const id = genId()
-
-  const update = (props: Toast) =>
-    dispatch({
-      type: actionTypes.UPDATE_TOAST,
-      toast: { ...props, id },
-    })
-  const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
-
-  dispatch({
-    type: actionTypes.ADD_TOAST,
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss()
-      },
-    } as ToasterToast,
-  })
-
+/**
+ * The actual toast implementation for the current platform
+ */
+export const useToast = () => {
+  // On web, use the existing toast system
+  // This would be replaced with a native toast implementation in React Native
+  
   return {
-    id: id,
-    dismiss,
-    update,
-  }
-}
-
-export function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
-
-  React.useEffect(() => {
-    listeners.push(setState)
-    return () => {
-      const index = listeners.indexOf(setState)
-      if (index > -1) {
-        listeners.splice(index, 1)
+    toast: (props: Toast) => {
+      // Check if we're on web or native
+      if (isPlatform.web()) {
+        // Use the sonner toast on web
+        const id = props.id || `toast-${count++}`
+        const newToast = { ...props, id }
+        
+        // Store the toast in our state
+        toastState.toasts = [
+          ...toastState.toasts.filter(
+            (toast) => toast.id !== id,
+          ),
+          newToast,
+        ].slice(-TOAST_LIMIT)
+        
+        // Use sonner for display
+        return sonnerToast(props.title || '', {
+          id,
+          description: props.description,
+          action: props.action,
+          duration: props.duration,
+        });
+      } else {
+        // This would be replaced with native implementation
+        console.log("Toast would show on native:", props);
+        // Placeholder for native implementation
+        return { id: "native-toast-placeholder", dismiss: () => {} };
       }
+    },
+    dismiss: (toastId: string) => {
+      if (isPlatform.web()) {
+        // Dismiss on web
+        sonnerToast.dismiss(toastId);
+      } else {
+        // This would be the native implementation
+        console.log("Dismissing toast on native:", toastId);
+      }
+    },
+    // Add the toasts array getter for compatibility with the UI component
+    get toasts() {
+      return toastState.toasts;
     }
-  }, [state])
+  };
+};
 
-  return {
-    ...state,
-    toast,
-    dismiss: (toastId?: string) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
-  }
-}
+/**
+ * Simpler toast function for direct use
+ */
+export const toast = (props: Toast) => {
+  const { toast: showToast } = useToast();
+  return showToast(props);
+};
