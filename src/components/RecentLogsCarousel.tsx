@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -62,7 +61,7 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-xl font-semibold">Recent Logs & Scans</h2>
+        <h2 className="text-xl font-semibold">Recent Scans</h2>
         <Link to="/recent-logs" className="text-sm text-skin-black">
           View all
         </Link>

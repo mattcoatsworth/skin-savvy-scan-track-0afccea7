@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -106,7 +105,7 @@ const RecentLogs = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         <header className="mb-6 flex items-center">
           <BackButton />
-          <h1 className="text-2xl font-bold">Recent Logs & Scans</h1>
+          <h1 className="text-2xl font-bold">Recent Scans</h1>
         </header>
         
         <Tabs defaultValue="all" className="w-full mb-6" onValueChange={setActiveTab}>
