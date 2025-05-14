@@ -78,10 +78,11 @@ const DesignExport: React.FC = () => {
               navBar.style.position = "relative";
               navBar.style.marginTop = "20px";
               navBar.style.display = "flex";
-              navBar.style.justifyContent = "space-evenly";
+              navBar.style.justifyContent = "space-around";
               navBar.style.width = "100%";
               navBar.style.borderTop = "1px solid #eaeaea";
-              navBar.style.padding = "8px 0";
+              navBar.style.padding = "4px 0";
+              navBar.style.backgroundColor = "white";
             }
             
             // Add style element with required CSS
@@ -106,10 +107,11 @@ const DesignExport: React.FC = () => {
                 right: 0 !important;
                 border-top: 1px solid #eaeaea !important;
                 margin-top: 20px !important;
-                padding: 8px 0 !important;
+                padding: 4px 0 !important;
                 display: flex !important;
-                justify-content: space-evenly !important;
+                justify-content: space-around !important;
                 width: 100% !important;
+                background-color: white !important;
               }
               
               /* Nav links */
@@ -118,7 +120,6 @@ const DesignExport: React.FC = () => {
                 flex-direction: column !important;
                 align-items: center !important;
                 padding: 8px 0 !important;
-                flex: 1 !important;
                 text-align: center !important;
                 text-decoration: none !important;
                 color: #6b7280 !important;
@@ -127,11 +128,13 @@ const DesignExport: React.FC = () => {
               .app-navigation-bar a span {
                 font-size: 0.75rem !important;
                 margin-top: 0.25rem !important;
+                color: #6b7280 !important;
               }
               
               .app-navigation-bar svg {
                 height: 1.5rem !important;
                 width: 1.5rem !important;
+                color: #6b7280 !important;
               }
               
               /* Fix recommendation styling */
@@ -175,16 +178,12 @@ const DesignExport: React.FC = () => {
                 display: inline-block !important;
               }
               
-              /* Button styling */
-              .flex-1 {
-                flex: 1 !important;
-              }
-              
               /* Center plus button styling */
               [key="plus-button"] {
                 position: relative !important;
                 display: flex !important;
                 justify-content: center !important;
+                top: -1.25rem !important;
               }
               
               /* Center plus button */
@@ -197,7 +196,6 @@ const DesignExport: React.FC = () => {
                 justify-content: center !important;
                 background-color: black !important;
                 color: white !important;
-                margin-top: -1.25rem !important;
               }
             `;
             documentClone.head.appendChild(styleElement);

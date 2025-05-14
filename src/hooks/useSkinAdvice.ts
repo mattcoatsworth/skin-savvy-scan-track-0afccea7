@@ -18,6 +18,8 @@ export type AIResponse = {
   patterns?: any[];
   insights?: any[];
   advice?: string;
+  formattedHtml?: string; // Add this for compatibility
+  sections?: any[]; // Add this for compatibility
   [key: string]: any;
 };
 
@@ -48,6 +50,7 @@ export function useSkinAdvice(options?: {
         context: context || {}
       };
       
+      // Fix the function call to match the expected parameters
       const result = await getOrGenerate(cacheKey, async () => {
         // The implementation details might be different,
         // but here we're adding typing for the return value
@@ -58,7 +61,11 @@ export function useSkinAdvice(options?: {
       return result as AIResponse;
     } catch (error) {
       console.error("Error getting skin advice:", error);
-      return {} as AIResponse;
+      return {
+        recommendations: [],
+        formattedHtml: "",
+        sections: []
+      } as AIResponse;
     } finally {
       setIsLoading(false);
     }
