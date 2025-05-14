@@ -33,7 +33,7 @@ const AppNavigation: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 app-navigation-bar">
       <div className="flex justify-evenly items-center relative">
         {navItems.map((item, index) => {
           // All navigation items will be gray (text-gray-500) whether active or not

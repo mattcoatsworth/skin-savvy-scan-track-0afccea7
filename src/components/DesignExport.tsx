@@ -6,6 +6,7 @@ import { Download, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import html2canvas from "html2canvas";
+import AppNavigation from "@/components/AppNavigation";
 
 const DesignExport: React.FC = () => {
   const navigate = useNavigate();
@@ -39,11 +40,23 @@ const DesignExport: React.FC = () => {
       });
       
       // Use html2canvas to capture the element as an image
+      // Increasing the scale for better quality and setting useCORS to true
       const canvas = await html2canvas(contentElement, {
         scale: 2, // Higher scale for better quality
         useCORS: true, // Allow cross-origin images
         logging: false, // Disable logging
-        backgroundColor: "#ffffff" // White background
+        backgroundColor: "#ffffff", // White background
+        windowHeight: contentElement.scrollHeight, // Ensure entire height is captured
+        windowWidth: contentElement.scrollWidth, // Ensure entire width is captured
+        onclone: (documentClone) => {
+          // Make sure the navigation bar is visible in the cloned document
+          const navBar = documentClone.querySelector('.app-navigation-bar');
+          if (navBar && navBar instanceof HTMLElement) {
+            navBar.style.position = 'relative';
+            navBar.style.bottom = '0';
+            navBar.style.display = 'block';
+          }
+        }
       });
       
       // Convert the canvas to a data URL
@@ -117,9 +130,12 @@ const DesignExport: React.FC = () => {
           </p>
         </div>
         
-        {/* Include the actual Home Screen component */}
-        <div className="home-screen-preview">
+        {/* Include the actual Home Screen component with navigation */}
+        <div className="home-screen-preview relative">
           <Index />
+          <div className="app-navigation-bar">
+            <AppNavigation />
+          </div>
         </div>
       </div>
     </div>

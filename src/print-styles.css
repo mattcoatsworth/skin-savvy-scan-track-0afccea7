@@ -61,3 +61,38 @@
     border: 1px solid #eaeaea;
   }
 }
+
+/* Fix for AppNavigation in export view */
+.app-navigation-bar {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 20px;
+  border-top: 1px solid #eaeaea;
+}
+
+/* Ensure the correct spacing for Today's Skin card factors */
+.home-screen-preview .ios-card {
+  display: block;
+  padding: 16px;
+}
+
+/* Fix for Contributing Factors grid layout */
+.home-screen-preview .text-gray-600,
+.home-screen-preview .text-gray-700 {
+  margin-bottom: 8px;
+}
+
+.home-screen-preview .flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Ensure the bottom nav is visible and properly positioned */
+.home-screen-preview .app-navigation-bar {
+  display: block;
+  width: 100%;
+  background-color: white;
+}
