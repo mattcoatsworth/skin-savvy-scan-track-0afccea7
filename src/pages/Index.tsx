@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -7,7 +6,7 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
-import { Salad, Pill, Palette, CloudSun, Droplet } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import BottomTemplate from "@/components/BottomTemplate";
 
 const Index = () => {
@@ -25,46 +24,46 @@ const Index = () => {
   // Add fallback static recommendations in case AI fails
   const fallbackRecommendations = [
     { 
-      type: "lifestyle" as RecommendationType, 
-      text: "water intake to at least 8 cups (64 ounces) daily to support hydration.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/water-intake" 
-    },
-    { 
       type: "skincare" as RecommendationType, 
-      text: "a daily moisturizer with hyaluronic acid to retain skin moisture effectively.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/hyaluronic-acid"
-    },
-    { 
-      type: "skincare" as RecommendationType, 
-      text: "a gentle cleanser to remove makeup and impurities without stripping your skin's natural oils.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/gentle-cleanser"
-    },
-    { 
-      type: "supplements" as RecommendationType, 
-      text: "omega-3 supplements to your diet to enhance skin barrier function and combat dryness.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/omega-3-supplements" 
+      text: "Use gentle cleanser", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/gentle-cleanser" 
     },
     { 
       type: "food" as RecommendationType, 
-      text: "Include foods rich in antioxidants (like berries and nuts) to protect your skin from environmental stressors.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/antioxidant-foods"
+      text: "Limit dairy intake", 
+      icon: <Salad className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/limit-dairy"
     },
     { 
       type: "lifestyle" as RecommendationType, 
-      text: "a humidifier in your living space to combat dry air and maintain skin hydration.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/humidifier"
+      text: "Practice meditation", 
+      icon: <CloudSun className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/meditation"
     },
     { 
       type: "skincare" as RecommendationType, 
-      text: "Apply a nourishing overnight mask or facial oil weekly.", 
-      icon: <Droplet className="h-4 w-4" />,
-      linkTo: "/recommendations-detail/overnight-mask" 
+      text: "Try vitamin C serum", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/vitamin-c-serum/testai" 
+    },
+    { 
+      type: "food" as RecommendationType, 
+      text: "Add antioxidant foods", 
+      icon: <Salad className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/antioxidants/testai"
+    },
+    { 
+      type: "lifestyle" as RecommendationType, 
+      text: "Morning hydration", 
+      icon: <CloudSun className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/hydration/testai"
+    },
+    { 
+      type: "skincare" as RecommendationType, 
+      text: "SPF reapplication", 
+      icon: <Pill className="h-4 w-4" />,
+      linkTo: "/recommendations-detail/spf/testai" 
     },
     { 
       type: "supplements" as RecommendationType, 

@@ -1,171 +1,388 @@
-
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "lucide-react";
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useAIDetailCache } from "@/hooks/useAIDetailCache";
+import { toast } from "@/hooks/use-toast";
 
-// Define the factor types
 type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
 
-interface Factor {
+type Factor = {
   type: FactorType;
   status: string;
   icon: React.ReactNode;
-}
+};
 
-// Define the recommendation types
-export type RecommendationType = "skincare" | "food" | "lifestyle" | "supplements";
+type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
-interface Recommendation {
+type Recommendation = {
   type: RecommendationType;
   text: string;
-  icon?: React.ReactNode;
-  linkTo?: string;
-}
+  icon: React.ReactNode;
+  linkTo: string;
+};
 
-interface DailySkinSnapshotProps {
+type SkinSnapshotProps = {
   emoji: string;
   status: string;
   factors: Factor[];
-  recommendations: Recommendation[];
-}
+  recommendations?: Recommendation[];
+  className?: string;
+};
 
-// Helper function to get background color class based on factor type
-const getFactorBgColor = (type: FactorType): string => {
-  switch (type) {
-    case "Food":
-      return "bg-green-100";
-    case "Supplement":
-      return "bg-blue-100";
-    case "Makeup":
-      return "bg-purple-100";
-    case "Weather":
-      return "bg-orange-100";
-    default:
-      return "bg-gray-100";
+const getFactorColor = (type: FactorType) => {
+  const theme = document.body.getAttribute('data-theme') || 'default';
+  
+  if (theme === 'summer') {
+    switch (type) {
+      case "Food":
+        return "bg-emerald-50 text-emerald-800"; // Soft green
+      case "Supplement":
+        return "bg-sky-50 text-sky-800"; // Soft blue
+      case "Makeup":
+        return "bg-violet-50 text-violet-800"; // Soft purple
+      case "Weather":
+        return "bg-amber-50 text-amber-800"; // Soft amber
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  } else if (theme === 'spring') {
+    switch (type) {
+      case "Food":
+        return "bg-green-100 text-green-800";
+      case "Supplement":
+        return "bg-blue-100 text-blue-800";
+      case "Makeup":
+        return "bg-purple-100 text-purple-800";
+      case "Weather":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  } else {
+    // Default theme
+    switch (type) {
+      case "Food":
+        return "bg-green-100 text-green-800";
+      case "Supplement":
+        return "bg-blue-100 text-blue-800";
+      case "Makeup":
+        return "bg-purple-100 text-purple-800";
+      case "Weather":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   }
 };
 
-// Helper function to get background color class based on recommendation type
-const getRecommendationBgColor = (type: RecommendationType): string => {
+const getRecommendationColor = (type: RecommendationType) => {
+  const theme = document.body.getAttribute('data-theme') || 'default';
+  
+  if (theme === 'summer') {
+    switch (type) {
+      case "skincare":
+        return "bg-sky-100 text-sky-800"; // Increased opacity from 50 to 100
+      case "food":
+        return "bg-emerald-100 text-emerald-800"; // Increased opacity from 50 to 100
+      case "supplements":
+        return "bg-slate-100 text-slate-800"; // Increased opacity from 50 to 100
+      case "makeup":
+        return "bg-violet-100 text-violet-800"; // Increased opacity from 50 to 100
+      case "lifestyle":
+        return "bg-stone-100 text-stone-800"; // Increased opacity from 50 to 100
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  } else if (theme === 'spring') {
+    switch (type) {
+      case "skincare":
+        return "bg-blue-100 text-blue-800";
+      case "food":
+        return "bg-green-100 text-green-800";
+      case "supplements":
+        return "bg-indigo-100 text-indigo-800";
+      case "makeup":
+        return "bg-purple-100 text-purple-800";
+      case "lifestyle":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  } else {
+    // Default theme
+    switch (type) {
+      case "skincare":
+        return "bg-blue-100 text-blue-800";
+      case "food":
+        return "bg-green-100 text-green-800";
+      case "supplements":
+        return "bg-indigo-100 text-indigo-800";
+      case "makeup":
+        return "bg-purple-100 text-purple-800";
+      case "lifestyle":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  }
+};
+
+// Icon mapping function to get the right icon for each recommendation
+const getRecommendationIcon = (type: RecommendationType): React.ReactNode => {
   switch (type) {
     case "skincare":
-      return "bg-blue-100";
+      return <Droplet className="h-4 w-4" />;
     case "food":
-      return "bg-orange-100";
+      return <Utensils className="h-4 w-4" />;
     case "supplements":
-      return "bg-purple-100";
+      return <Pill className="h-4 w-4" />;
+    case "makeup":
+      return <Circle className="h-4 w-4" />;
     case "lifestyle":
-      return "bg-green-100";
+      return <Activity className="h-4 w-4" />;
     default:
-      return "bg-gray-100";
+      return <Circle className="h-4 w-4" />;
   }
 };
 
-// Helper function to get text color class based on recommendation type
-const getRecommendationTextColor = (type: RecommendationType): string => {
-  switch (type) {
-    case "skincare":
-      return "text-blue-700";
-    case "food":
-      return "text-orange-700";
-    case "supplements":
-      return "text-purple-700";
-    case "lifestyle":
-      return "text-green-700";
-    default:
-      return "text-gray-700";
-  }
-};
-
-const DailySkinSnapshot: React.FC<DailySkinSnapshotProps> = ({
+const DailySkinSnapshot: React.FC<SkinSnapshotProps> = ({
   emoji,
   status,
   factors,
-  recommendations,
+  recommendations = [],
+  className,
 }) => {
-  const { isLoading, aiRecommendations } = useSkinAdvice({ adviceType: "daily" });
-
-  // Combine static recommendations with AI recommendations if available
-  const displayRecommendations = aiRecommendations?.length 
-    ? aiRecommendations 
-    : recommendations;
-
+  // State for AI-generated recommendations
+  const [aiRecommendations, setAiRecommendations] = useState<Recommendation[]>([]);
+  const [showAllRecommendations, setShowAllRecommendations] = useState(false);
+  const { getAdvice, isLoading } = useSkinAdvice({ adviceType: "recommendation" });
+  const { preGenerateMultipleDetails } = useAIDetailCache();
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(true);
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
+  
+  // Fetch AI recommendations on component mount
+  useEffect(() => {
+    // Only run once to prevent infinite loop
+    if (hasAttemptedFetch) return;
+    
+    const fetchRecommendations = async () => {
+      try {
+        setIsLoadingRecommendations(true);
+        setHasAttemptedFetch(true);
+        
+        // Try to get cached recommendations from localStorage first
+        const today = new Date().toISOString().split('T')[0];
+        const cacheKey = `home-recommendations-${today}`;
+        const cachedRecommendations = localStorage.getItem(cacheKey);
+        
+        if (cachedRecommendations) {
+          const parsed = JSON.parse(cachedRecommendations);
+          setAiRecommendations(parsed);
+          setIsLoadingRecommendations(false);
+          return;
+        }
+        
+        // If no cache, fetch from AI
+        const aiResponse = await getAdvice(
+          "Based on my recent skin logs, provide personalized recommendations for improving my skin health. Focus on actionable suggestions spanning skincare products, diet, supplements, and lifestyle changes. PROVIDE AT LEAST 8 distinct recommendations.",
+          { factors }
+        );
+        
+        if (aiResponse) {
+          // Extract recommended actions from AI response
+          const recommendedActions = aiResponse.sections["Recommended Actions"];
+          
+          // Process recommendations based on the format they come in (string or string[])
+          const processedRecommendations: Recommendation[] = [];
+          
+          if (Array.isArray(recommendedActions)) {
+            // Process array of recommendations
+            recommendedActions.forEach((action, index) => {
+              // Check if the action contains classification hints
+              const typeMatches = {
+                "skincare": ["serum", "cleanser", "moisturizer", "exfoliant", "spf", "sunscreen", "face", "skin"],
+                "food": ["food", "diet", "eat", "dairy", "meal", "nutrition", "fruit", "vegetable", "omega", "antioxidant"],
+                "supplements": ["supplement", "vitamin", "mineral", "zinc", "collagen", "primrose"],
+                "makeup": ["makeup", "foundation", "concealer", "cosmetic"],
+                "lifestyle": ["sleep", "stress", "hydration", "water", "exercise", "routine", "habit"]
+              };
+              
+              // Determine the type based on keywords in the action
+              let determinedType: RecommendationType = "skincare"; // Default
+              for (const [type, keywords] of Object.entries(typeMatches)) {
+                if (keywords.some(keyword => action.toLowerCase().includes(keyword))) {
+                  determinedType = type as RecommendationType;
+                  break;
+                }
+              }
+              
+              // Clean up the recommendation text (extract only the key part)
+              const cleanText = action.replace(/^(Try|Use|Add|Increase|Consider|Limit|Avoid|Switch to|Incorporate)\s+/i, "");
+              
+              // Create ID with consistent format that matches our router paths
+              const recId = `${index + 1}`;
+              
+              // Create a sanitized recommendation object
+              processedRecommendations.push({
+                type: determinedType,
+                text: cleanText,
+                icon: getRecommendationIcon(determinedType),
+                // Use consistent URL path format /recommendations-detail/action-1 for all recommendations
+                linkTo: `/recommendations-detail/action-${recId}`
+              });
+            });
+          } else if (typeof recommendedActions === 'string') {
+            // If it's just a single string, add it as one recommendation
+            processedRecommendations.push({
+              type: "skincare", 
+              text: recommendedActions,
+              icon: <Droplet className="h-4 w-4" />,
+              linkTo: "/recommendations-detail/action-1"
+            });
+          }
+          
+          console.log(`Processed ${processedRecommendations.length} recommendations`);
+          
+          // Save processed recommendations in state
+          setAiRecommendations(processedRecommendations);
+          
+          // Pre-generate detail pages for all recommendations in the background
+          // IMPORTANT: This ensures detail pages are created as soon as recommendations are generated
+          const detailsToGenerate = processedRecommendations.map((rec, index) => ({
+            type: "action",  // Use consistent "action" type
+            id: `${index + 1}`, // Use numeric IDs
+            text: rec.text,
+            contextData: { factors }
+          }));
+          
+          // Run in the background without awaiting
+          preGenerateMultipleDetails(detailsToGenerate).then(({ generatedCount }) => {
+            console.log(`Pre-generated ${generatedCount} new recommendation details`);
+          });
+          
+          // Cache the recommendations in localStorage
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(processedRecommendations));
+          } catch (error) {
+            console.error("Failed to cache recommendations:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching AI recommendations:", error);
+        // Fallback to provided static recommendations if AI fetch fails
+        setAiRecommendations(recommendations);
+        
+        // Fix the toast implementation to use the correct syntax
+        toast({
+          title: "Error",
+          description: "Could not load personalized recommendations",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoadingRecommendations(false);
+      }
+    };
+    
+    fetchRecommendations();
+  }, [hasAttemptedFetch, preGenerateMultipleDetails]); // Only depend on hasAttemptedFetch to prevent infinite loop
+  
+  // Use AI recommendations if available, otherwise fall back to static recommendations
+  const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
+  
+  // Show 8 recommendations by default instead of 5
+  const displayedRecommendations = showAllRecommendations 
+    ? displayRecommendations 
+    : displayRecommendations.slice(0, 8);
+  
+  // Get the current theme for conditional styling
+  const currentTheme = document.body.getAttribute('data-theme') || 'default';
+  
+  // Define the text color class for the "View Full Analysis" text based on theme
+  const viewAnalysisTextClass = currentTheme === 'summer' ? 'text-black' : 'text-skin-teal';
+  
   return (
-    <div className="mb-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Today's Skin</h2>
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/skin" className="text-skin-teal flex items-center gap-1">
-            View Details <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Button>
-      </div>
-      
-      <Card>
-        <CardContent className="p-5">
-          <div className="flex items-center mb-5">
-            <span className="text-3xl mr-3">{emoji}</span>
-            <span className="font-medium text-lg">{status}</span>
-          </div>
-
-          {/* Contributing Factors */}
-          <h3 className="font-medium text-gray-700 mb-2">Contributing Factors:</h3>
-          <div className="flex flex-wrap gap-2 mb-6">
-            {factors.map((factor, index) => (
-              <div 
-                key={index} 
-                className={`${getFactorBgColor(factor.type)} rounded-full px-4 py-1.5 flex items-center`}
-              >
-                <span className="mr-1.5">{factor.icon}</span>
-                <span>{factor.status}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* For You Recommendations */}
-          <h3 className="font-medium text-gray-700 mb-2">For You Recommendations:</h3>
-          {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
+    <Link to="/skin">
+      <Card className={cn("ios-card hover:shadow-lg transition-shadow", className)}>
+        <CardContent className="p-4">
+          <div className="flex items-center mb-4">
+            <div className="text-4xl mr-3">
+              <Smile className="h-8 w-8" />
             </div>
-          ) : (
-            <div className="flex flex-col space-y-2">
-              {displayRecommendations.slice(0, 3).map((recommendation, index) => (
-                <Link 
+            <div>
+              <h2 className="font-medium text-lg">Today's Skin</h2>
+              <p className="text-xl font-semibold">{status}</p>
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground mb-2">Contributing Factors:</p>
+            <div className="flex flex-wrap gap-2">
+              {factors.map((factor, index) => (
+                <span 
                   key={index} 
-                  to={recommendation.linkTo || "#"} 
-                  className="no-underline"
+                  className={`${getFactorColor(factor.type)} flex items-center px-3 py-1.5 rounded-full text-sm`}
                 >
-                  <div 
-                    className={`${getRecommendationBgColor(recommendation.type)} rounded-full px-4 py-2.5 flex items-center`}
-                  >
-                    <span className={`${getRecommendationTextColor(recommendation.type)} mr-2 flex-shrink-0`}>
-                      {recommendation.icon}
-                    </span>
-                    <span className={getRecommendationTextColor(recommendation.type)}>
-                      {recommendation.text}
-                    </span>
-                  </div>
-                </Link>
+                  <span className="mr-1.5">{factor.icon}</span> {factor.status}
+                </span>
               ))}
             </div>
+          </div>
+          
+          {(displayRecommendations.length > 0 || isLoadingRecommendations) && (
+            <div className="mb-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm text-muted-foreground">For You Recommendations:</p>
+                {isLoadingRecommendations && (
+                  <div className="animate-spin h-4 w-4 border-2 border-skin-teal border-t-transparent rounded-full"></div>
+                )}
+              </div>
+              {!isLoadingRecommendations && displayedRecommendations.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {displayedRecommendations.map((recommendation, index) => (
+                    <Link 
+                      key={index} 
+                      to={recommendation.linkTo}
+                      className={`${getRecommendationColor(recommendation.type)} flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer hover:opacity-80 transition-opacity`}
+                      onClick={(e) => {
+                        // Prevent parent link navigation when clicking on a recommendation
+                        e.stopPropagation();
+                      }}
+                    >
+                      <span className="mr-1.5">{recommendation.icon}</span> {recommendation.text}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                !isLoadingRecommendations && (
+                  <p className="text-sm text-muted-foreground italic">No recommendations available</p>
+                )
+              )}
+              
+              {displayRecommendations.length > 8 && (
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowAllRecommendations(!showAllRecommendations);
+                  }}
+                  className="mt-2 text-skin-teal text-sm font-medium flex items-center"
+                >
+                  {showAllRecommendations ? "Show less" : `Show ${displayRecommendations.length - 8} more recommendations`}
+                </button>
+              )}
+            </div>
           )}
-
-          <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-            <Link to="/recommendations">
-              View All Recommendations
-            </Link>
-          </Button>
+          
+          <div className="text-center mt-4 flex items-center justify-center">
+            <span className={`${viewAnalysisTextClass} font-medium`}>
+              View Full Analysis <ChevronRight className="h-4 w-4 ml-1 inline-block" />
+            </span>
+          </div>
         </CardContent>
       </Card>
-    </div>
+    </Link>
   );
 };
 
