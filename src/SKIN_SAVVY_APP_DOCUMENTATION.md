@@ -1,4 +1,3 @@
-
 # Skin Savvy App Documentation
 
 ## Introduction
@@ -14,6 +13,47 @@ The application follows a user journey that begins with onboarding, followed by 
 3. **Skin History** → Tracking of skin condition over time
 4. **Products** → Product analysis and recommendations
 5. **Profile** → User settings and preferences
+
+## AI Integration
+
+Skin Savvy integrates two primary AI services to provide personalized recommendations and interactive experiences:
+
+1. **OpenAI API** - Powers personalized recommendation generation and detailed analysis including:
+   - "For You" recommendations on the home screen
+   - Daily skin analysis and insights
+   - Product compatibility analysis
+   - Trending recommendations
+   - AI Analysis tab in Skin Analysis page
+   - Detailed recommendation pages
+
+2. **TogetherAI API** - Powers all interactive chat experiences including:
+   - Chat interface in the Chat page
+   - Product and recommendation detail page chat boxes marked with "TestAI"
+   - Interactive Q&A within specific recommendation detail pages
+
+### Recommendation Flow
+
+The app's personalized recommendation system works as follows:
+
+1. User data is collected from multiple sources:
+   - Daily logs in `/day-log` pages
+   - Product usage history
+   - Logged factors (diet, sleep, stress, etc.)
+   - Environmental data
+   
+2. OpenAI processes this data to generate personalized recommendations that appear in:
+   - Home page "For You" section
+   - Skin Analysis page AI tab
+   - Daily Analysis section in `/skin` page
+   
+3. All recommendation cards are clickable and lead to detailed pages similar to `/recommendations-detail/limit-dairy` with thorough information including:
+   - Scientific explanation
+   - Implementation steps
+   - Expected benefits
+   - Timeline for results
+   - Related recommendations
+
+4. The same core set of personalized recommendations sync across the app, appearing in both the home "For You" section and the Daily Analysis section of the `/skin` page.
 
 ## Screen-by-Screen Breakdown
 
@@ -173,17 +213,23 @@ The application follows a user journey that begins with onboarding, followed by 
   - Scientific background
   - Implementation steps
   - Related products/factors
+  - AI-generated content (using OpenAI API)
+  - Optional chat box for questions (using TogetherAI API)
 - **Interactions**:
   - Action buttons based on recommendation type
+  - Chat functionality on pages marked with "TestAI"
 - **Navigation**: Back button returns to previous screen
 
 ### 15. AI Recommendation Detail (`/recommendations-detail/:type/:id`)
 - **Purpose**: AI-generated specific recommendation
 - **Components**:
   - Similar to standard recommendation but dynamically generated
-  - More personalized content
+  - More personalized content based on user's skin logs
+  - AI-generated implementation steps
+  - TestAI chat box (using TogetherAI API) on pages with "/testai" in URL
 - **Interactions**:
   - Same as standard recommendations
+  - Interactive Q&A with AI about the recommendation
 - **Navigation**: Back button returns to previous screen
 
 ### 16. Profile (`/profile`)
@@ -251,9 +297,11 @@ The application follows a user journey that begins with onboarding, followed by 
   - Chat interface
   - Message history
   - Suggestion chips
+  - TogetherAI API integration
 - **Interactions**:
   - Text input for questions
   - Tap suggestion chips for quick queries
+  - AI responses based on user's skin profile
 - **Navigation**: Back button returns to Home
 
 ### 22. Explore (`/explore`)
@@ -447,3 +495,32 @@ The application follows a user journey that begins with onboarding, followed by 
 - Focus states for interactive elements
 - Alternative text for images
 - Appropriate ARIA attributes where needed
+
+## Data Flow and AI Integration
+
+### User Data Collection
+- Daily skin logs (`/day-log/:id`)
+- Product usage tracking
+- Factor logging (diet, sleep, supplements, etc.)
+- Environment data
+
+### AI Processing
+- OpenAI API processes collected data to:
+  - Generate personalized recommendations
+  - Analyze product compatibility
+  - Identify skin trends and correlations
+  - Create detailed scientific explanations
+
+### Personalized Recommendation Flow
+1. User logs data regularly through daily logs
+2. OpenAI processes this data in the background
+3. Personalized recommendations appear in the "For You" section on the home page
+4. The same recommendations sync to the Daily Analysis section in `/skin` page
+5. Clicking any recommendation card opens a detailed page with AI-generated content
+6. On pages with the "TestAI" feature, users can interact with TogetherAI-powered chat
+
+### API Usage
+- OpenAI API: Handles all content generation, analysis, and personalization features
+- TogetherAI API: Powers all interactive chat experiences throughout the app
+
+This integrated approach ensures users receive consistent, personalized advice based on their actual skin data, while being able to ask follow-up questions through the chat interfaces when needed.
