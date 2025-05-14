@@ -1,0 +1,124 @@
+
+/* Additional Factors Cards Design - /log-skin-conditions */
+
+/* Card Container */
+.factor-card {
+  @apply bg-white rounded-3xl border border-gray-100 shadow-sm p-4 mb-3 w-full;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Card Header */
+.factor-card-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+/* Card Title */
+.factor-card-title {
+  @apply font-medium text-skin-black flex items-center;
+}
+
+/* Card Title Icon */
+.factor-card-icon {
+  @apply h-5 w-5 mr-2 text-skin-black;
+}
+
+/* Card Badge */
+.factor-card-badge {
+  @apply text-xs px-2 py-0.5 rounded;
+}
+
+/* Card Content */
+.factor-card-content {
+  @apply space-y-4;
+}
+
+/* Card Input Container */
+.factor-card-input {
+  @apply relative w-full;
+}
+
+/* Card Slider */
+.factor-card-slider {
+  @apply cursor-pointer;
+}
+
+/* Card Labels */
+.factor-card-labels {
+  @apply flex justify-between text-xs text-muted-foreground;
+}
+
+/* Card Button Container */
+.factor-card-buttons {
+  @apply flex flex-wrap gap-2;
+}
+
+/* Card Tag Button */
+.factor-tag {
+  @apply rounded-xl text-sm;
+}
+
+/* Card Tag Button - Selected */
+.factor-tag-selected {
+  @apply bg-skin-black text-white;
+}
+
+/* Card Tag Button - Unselected */
+.factor-tag-unselected {
+  @apply text-skin-black border-skin-black/20 hover:bg-gray-50;
+}
+
+/* Card Search Container */
+.factor-card-search {
+  @apply relative flex-grow w-full cursor-pointer;
+}
+
+/* Card Search Input */
+.factor-card-search-input {
+  @apply pl-8 py-2 text-sm h-9 w-full pr-10;
+}
+
+/* Card Search Icon */
+.factor-card-search-icon {
+  @apply absolute left-2 top-2.5 h-4 w-4 text-muted-foreground;
+}
+
+/* Card Dropdown */
+.factor-card-dropdown {
+  @apply w-full p-0;
+}
+
+/* Card Add Button */
+.factor-card-add-button {
+  @apply absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 flex items-center justify-center rounded-full bg-skin-black text-white disabled:opacity-50 disabled:bg-gray-400;
+}
+
+/* Scan Button */
+.scan-button {
+  @apply flex items-center gap-1 text-xs;
+}
+
+/* Card with scan modal */
+.scan-modal-content {
+  @apply flex flex-col items-center justify-center py-8 space-y-6;
+}
+
+.scan-icon-container {
+  @apply rounded-full p-6;
+}
+
+/* Category colors */
+.food-color {
+  @apply bg-green-600;
+}
+
+.supplement-color {
+  @apply bg-blue-600;
+}
+
+.makeup-color {
+  @apply bg-pink-600;
+}
+
+.stressor-color {
+  @apply bg-purple-600;
+}
