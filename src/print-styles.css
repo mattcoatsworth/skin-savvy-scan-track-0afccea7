@@ -60,6 +60,11 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #eaeaea;
   }
+  
+  /* Special styling for the export preview mode */
+  .export-preview {
+    padding: 16px;
+  }
 }
 
 /* Fix for AppNavigation in export view */
@@ -70,6 +75,7 @@
   right: 0;
   margin-top: 20px;
   border-top: 1px solid #eaeaea;
+  padding: 8px 0;
 }
 
 /* Ensure the correct spacing for Today's Skin card factors */
@@ -95,4 +101,40 @@
   display: block;
   width: 100%;
   background-color: white;
+}
+
+/* Enhanced styles for recommendations */
+.recommendation-item {
+  display: flex;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 9999px;
+  gap: 8px;
+  align-items: center;
+}
+
+.recommendation-item.skincare {
+  background-color: #e0edff;
+  color: #2563eb;
+}
+
+.recommendation-item.food {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.recommendation-item.lifestyle {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+.recommendation-item.supplements {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+/* Special styles for design export view */
+.design-export-view .home-screen-preview {
+  border: none;
+  box-shadow: none;
 }

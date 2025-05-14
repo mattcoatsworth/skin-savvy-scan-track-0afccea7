@@ -14,6 +14,14 @@ const DesignExport: React.FC = () => {
   useEffect(() => {
     // Add title for the export page
     document.title = "Skin Savvy - Design Export";
+    
+    // Apply specific styles for export view
+    document.body.classList.add('design-export-view');
+    
+    return () => {
+      // Clean up styles when component unmounts
+      document.body.classList.remove('design-export-view');
+    };
   }, []);
 
   const handlePrint = () => {
@@ -39,22 +47,66 @@ const DesignExport: React.FC = () => {
         description: "Please wait while we create your PNG..."
       });
       
-      // Use html2canvas to capture the element as an image
-      // Increasing the scale for better quality and setting useCORS to true
+      // Use html2canvas with improved settings
       const canvas = await html2canvas(contentElement, {
-        scale: 2, // Higher scale for better quality
+        scale: 3, // Higher scale for better quality
         useCORS: true, // Allow cross-origin images
         logging: false, // Disable logging
         backgroundColor: "#ffffff", // White background
-        windowHeight: contentElement.scrollHeight, // Ensure entire height is captured
-        windowWidth: contentElement.scrollWidth, // Ensure entire width is captured
+        width: contentElement.offsetWidth,
+        height: contentElement.offsetHeight,
         onclone: (documentClone) => {
-          // Make sure the navigation bar is visible in the cloned document
-          const navBar = documentClone.querySelector('.app-navigation-bar');
-          if (navBar && navBar instanceof HTMLElement) {
-            navBar.style.position = 'relative';
-            navBar.style.bottom = '0';
-            navBar.style.display = 'block';
+          // Apply direct styles to ensure consistency
+          const clonedElement = documentClone.querySelector('.home-screen-preview') as HTMLElement;
+          if (clonedElement) {
+            // Force apply consistent styles to ensure matching appearance
+            const styleElement = documentClone.createElement('style');
+            styleElement.textContent = `
+              /* Force consistent styling for export */
+              .home-screen-preview {
+                width: 390px !important;
+                box-shadow: none !important;
+                background-color: white !important;
+                padding: 16px !important;
+                border: none !important;
+              }
+              .app-navigation-bar {
+                position: relative !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                border-top: 1px solid #eaeaea !important;
+                margin-top: 20px !important;
+                padding: 8px 0 !important;
+                display: block !important;
+              }
+              /* Fix recommendation styling */
+              .recommendation-item {
+                display: flex !important;
+                padding: 12px 16px !important;
+                margin-bottom: 8px !important;
+                border-radius: 9999px !important;
+                gap: 8px !important;
+                align-items: center !important;
+              }
+              .recommendation-item.skincare {
+                background-color: #e0edff !important;
+                color: #2563eb !important;
+              }
+              .recommendation-item.food {
+                background-color: #dcfce7 !important;
+                color: #16a34a !important;
+              }
+              .recommendation-item.lifestyle {
+                background-color: #ffedd5 !important;
+                color: #c2410c !important;
+              }
+              .recommendation-item.supplements {
+                background-color: #e0e7ff !important;
+                color: #4f46e5 !important;
+              }
+            `;
+            documentClone.head.appendChild(styleElement);
           }
         }
       });
@@ -131,7 +183,7 @@ const DesignExport: React.FC = () => {
         </div>
         
         {/* Include the actual Home Screen component with navigation */}
-        <div className="home-screen-preview relative">
+        <div className="home-screen-preview relative export-preview">
           <Index />
           <div className="app-navigation-bar">
             <AppNavigation />
