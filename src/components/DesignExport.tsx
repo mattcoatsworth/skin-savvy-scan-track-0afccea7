@@ -22,7 +22,7 @@ const DesignExport: React.FC = () => {
   const handleExportPNG = async () => {
     try {
       // Find the content to capture
-      const contentElement = document.querySelector('.home-screen-preview');
+      const contentElement = document.querySelector('.home-screen-preview') as HTMLElement;
       
       if (!contentElement) {
         toast({
