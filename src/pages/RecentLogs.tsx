@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -28,67 +29,67 @@ const getRatingLabel = (rating: number) => {
 const RecentLogs = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
   
-  // Sample data
+  // Updated sample data with more diverse scan types
   const recentLogs: LogType[] = [
     { 
-      id: "retinol-cream",
-      title: "Retinol Cream", 
+      id: "face-scan-morning",
+      title: "Morning Face Scan", 
       status: "positive", 
-      description: "No reaction after 3 days",
+      description: "No irritation detected",
       date: "Today",
-      details: "Applied a pea-sized amount before bed. Skin feels smoother in the morning with no irritation.",
-      rating: 85,
+      details: "Morning scan showed reduced redness around nose and cheeks. Hydration levels improved from yesterday.",
+      rating: 88,
+      category: "daily"
+    },
+    { 
+      id: "moisturizer-scan",
+      title: "Moisturizer Ingredient Scan", 
+      status: "negative", 
+      description: "Found 2 potential irritants",
+      date: "Yesterday",
+      details: "Detected methylparaben and fragrance compounds that may cause sensitivity for your skin type.",
+      rating: 35,
       category: "product"
     },
     { 
-      id: "whey-protein",
-      title: "Whey Protein", 
-      status: "negative", 
-      description: "Possible acne trigger",
-      date: "Yesterday",
-      details: "Noticed small breakouts along jawline 24 hours after consuming whey protein shake.",
-      rating: 30,
-      category: "daily"
-    },
-    { 
-      id: "avocado",
-      title: "Avocado", 
+      id: "skin-barrier-scan",
+      title: "Skin Barrier Analysis", 
       status: "positive", 
-      description: "Skin hydration improved",
+      description: "Barrier improving",
       date: "2 days ago",
-      details: "Ate half an avocado with lunch. Noticed skin felt more hydrated by evening.",
-      rating: 92,
+      details: "Skin barrier analysis shows improvement in moisture retention and reduced TEWL.",
+      rating: 82,
       category: "daily"
     },
     { 
-      id: "new-foundation",
-      title: "New Foundation", 
+      id: "sunscreen-scan",
+      title: "Sunscreen SPF Scan", 
       status: "neutral", 
-      description: "No noticeable change",
+      description: "Adequate protection",
       date: "3 days ago",
-      details: "Tried new mineral foundation. Coverage is good, no reaction but no improvement either.",
+      details: "SPF coverage is good but could be improved around the hairline and ears.",
       rating: 65,
       category: "product"
     },
     { 
-      id: "vitamin-c-serum",
-      title: "Vitamin C Serum", 
+      id: "evening-face-scan",
+      title: "Evening Face Scan", 
       status: "positive", 
-      description: "Brightening effect",
+      description: "Reduced inflammation",
       date: "4 days ago",
-      details: "Morning application of vitamin C serum. Noticed skin looks brighter after consistent use.",
+      details: "Evening scan shows decrease in inflammation around chin area after new routine.",
       rating: 78,
-      category: "product"
+      category: "daily"
     },
     { 
-      id: "late-night",
-      title: "Late Night", 
+      id: "serum-compatibility",
+      title: "Serum Compatibility Scan", 
       status: "negative", 
-      description: "Skin looks tired",
+      description: "Poor match for skin type",
       date: "5 days ago",
-      details: "Only got 5 hours of sleep. Under-eye circles more prominent and skin looks dull.",
+      details: "This serum contains high concentration of niacinamide which conflicts with your existing routine.",
       rating: 40,
-      category: "daily"
+      category: "product"
     },
   ];
 

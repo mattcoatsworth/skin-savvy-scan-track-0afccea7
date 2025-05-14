@@ -98,35 +98,35 @@ const Index = () => {
     };
   });
 
-  // Define sample recent logs for the RecentLogsCarousel
+  // Updated sample data with diverse scan types for the RecentLogsCarousel
   const recentLogs = [
     {
-      title: "Morning Skincare Routine",
+      title: "Face Scan Analysis",
       status: "positive" as const,
-      description: "Used new cleanser",
-      rating: 85,
-      id: "morning-routine-1"
+      description: "No irritation detected",
+      rating: 88,
+      id: "face-scan-morning"
     },
     {
-      title: "Afternoon Check",
+      title: "Moisturizer Scan",
+      status: "negative" as const,
+      description: "Found 2 potential irritants",
+      rating: 35,
+      id: "moisturizer-scan"
+    },
+    {
+      title: "Skin Barrier Analysis",
+      status: "positive" as const,
+      description: "Barrier improving",
+      rating: 82,
+      id: "skin-barrier-scan"
+    },
+    {
+      title: "Sunscreen SPF Scan",
       status: "neutral" as const,
-      description: "Slight dryness noted",
+      description: "Adequate protection",
       rating: 65,
-      id: "afternoon-check-1"
-    },
-    {
-      title: "Evening Routine",
-      status: "positive" as const,
-      description: "Added new serum",
-      rating: 78,
-      id: "evening-routine-1"
-    },
-    {
-      title: "Weekend Mask",
-      status: "positive" as const,
-      description: "Hydration improved",
-      rating: 90,
-      id: "weekend-mask-1"
+      id: "sunscreen-scan"
     }
   ];
 
