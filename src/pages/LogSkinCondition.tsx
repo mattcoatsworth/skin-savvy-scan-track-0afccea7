@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import SelfieCarousel from "@/components/SelfieCarousel";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const LogSkinCondition = () => {
   const { toast } = useToast();
@@ -410,7 +411,7 @@ const LogSkinCondition = () => {
     }
   };
 
-  // Render a category section with search box
+  // Render a category section with search box - Updated with Popover component
   const renderCategoryWithSearch = (category: string, icon: React.ReactNode, title: string) => {
     // Skip rendering if user is male and category is makeup
     if (category === 'makeup' && userGender === 'male') {
@@ -440,28 +441,36 @@ const LogSkinCondition = () => {
           </h3>
           
           <div className="relative mb-2">
-            <div className="relative flex-grow">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={`Search or add ${category} items`}
-                value={inputValue}
-                onChange={(e) => {
-                  handleSearchChange(category, e.target.value);
-                  if (!searchOpen[categoryKey]) {
-                    setSearchOpen(prev => ({ ...prev, [category]: true }));
-                  }
-                }}
-                onClick={() => {
-                  setSearchOpen(prev => ({ ...prev, [category]: !prev[category] }));
-                }}
-                className="pl-8 py-2 text-sm h-9 w-full pr-4"
-              />
-            </div>
-            
-            {searchOpen[categoryKey] && (
-              <div className="absolute z-50 mt-1 w-full bg-white border shadow-md">
+            <Popover 
+              open={searchOpen[categoryKey]} 
+              onOpenChange={(open) => {
+                setSearchOpen(prev => ({ ...prev, [category]: open }));
+              }}
+            >
+              <PopoverTrigger asChild>
+                <div className="relative flex-grow cursor-pointer">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={`Search or add ${category} items`}
+                    value={inputValue}
+                    onChange={(e) => {
+                      handleSearchChange(category, e.target.value);
+                    }}
+                    onClick={() => {
+                      setSearchOpen(prev => ({ ...prev, [category]: true }));
+                    }}
+                    className="pl-8 py-2 text-sm h-9 w-full pr-4"
+                  />
+                </div>
+              </PopoverTrigger>
+              
+              <PopoverContent 
+                className="p-0 w-full" 
+                align="start"
+                sideOffset={5}
+              >
                 <Command>
-                  <CommandList className="py-0">
+                  <CommandList className="max-h-[200px] overflow-auto">
                     {inputValue && (
                       <CommandItem 
                         onSelect={() => handleAddCustomFactor(category)}
@@ -497,8 +506,8 @@ const LogSkinCondition = () => {
                     )}
                   </CommandList>
                 </Command>
-              </div>
-            )}
+              </PopoverContent>
+            </Popover>
           </div>
           
           <div className="flex flex-wrap gap-2">

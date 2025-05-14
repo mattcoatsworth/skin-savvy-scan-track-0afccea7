@@ -89,6 +89,69 @@ export type Database = {
           },
         ]
       }
+      daily_logs: {
+        Row: {
+          created_at: string | null
+          cycle: string | null
+          date: string
+          food: string | null
+          id: string
+          makeup: string | null
+          notes: string | null
+          personalized_plan: boolean | null
+          selfie_evening: string | null
+          selfie_morning: string | null
+          skin_feel: string | null
+          sleep_hours: number | null
+          stress_level: number | null
+          stressors: string | null
+          supplements: string | null
+          user_id: string | null
+          water_intake: number | null
+          weather: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cycle?: string | null
+          date: string
+          food?: string | null
+          id?: string
+          makeup?: string | null
+          notes?: string | null
+          personalized_plan?: boolean | null
+          selfie_evening?: string | null
+          selfie_morning?: string | null
+          skin_feel?: string | null
+          sleep_hours?: number | null
+          stress_level?: number | null
+          stressors?: string | null
+          supplements?: string | null
+          user_id?: string | null
+          water_intake?: number | null
+          weather?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cycle?: string | null
+          date?: string
+          food?: string | null
+          id?: string
+          makeup?: string | null
+          notes?: string | null
+          personalized_plan?: boolean | null
+          selfie_evening?: string | null
+          selfie_morning?: string | null
+          skin_feel?: string | null
+          sleep_hours?: number | null
+          stress_level?: number | null
+          stressors?: string | null
+          supplements?: string | null
+          user_id?: string | null
+          water_intake?: number | null
+          weather?: string | null
+        }
+        Relationships: []
+      }
       food_intake: {
         Row: {
           created_at: string | null
