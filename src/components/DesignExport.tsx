@@ -3,11 +3,10 @@ import React, { useEffect } from "react";
 import Index from "@/pages/Index";
 import AppNavigation from "@/components/AppNavigation";
 import { Button } from "@/components/ui/button";
-import { Download, ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+// Removed jsPDF and html2canvas imports
 
 const DesignExport: React.FC = () => {
   const navigate = useNavigate();
@@ -21,55 +20,8 @@ const DesignExport: React.FC = () => {
     window.print();
   };
 
-  const handleDownload = async () => {
-    try {
-      toast({
-        title: "Preparing PDF...",
-        description: "Please wait while we generate your PDF file."
-      });
-      
-      const contentElement = document.querySelector('.export-content');
-      if (!contentElement) {
-        toast({
-          title: "Error",
-          description: "Could not find the content to export.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Create canvas from the design element
-      const canvas = await html2canvas(contentElement as HTMLElement, {
-        scale: 2, // Higher scale for better quality
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff"
-      });
-      
-      // Create PDF with proper dimensions
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.width/2, canvas.height/2]
-      });
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-      pdf.save('skin-savvy-mobile-design.pdf');
-      
-      toast({
-        title: "PDF Downloaded",
-        description: "Your design has been saved as a PDF."
-      });
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast({
-        title: "Error",
-        description: "Could not generate PDF. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
+  // PDF download functionality removed as requested
+  // const handleDownload = async () => { ... }
 
   const handleGoBack = () => {
     navigate("/home");
@@ -88,13 +40,10 @@ const DesignExport: React.FC = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold">Mobile Design Export</h1>
-            <p className="text-sm text-muted-foreground">Save your design as a PDF</p>
+            <p className="text-sm text-muted-foreground">Print your design</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleDownload} variant="default" className="flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              Save as PDF
-            </Button>
+            {/* PDF download button removed */}
             <Button onClick={handlePrint} variant="outline" className="flex items-center gap-2">
               <Printer className="w-4 h-4" />
               Print
