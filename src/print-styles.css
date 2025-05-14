@@ -1,52 +1,63 @@
 
-/* Print-specific styles */
 @media print {
-  /* Hide navigation and other UI elements */
+  /* Hide browser UI elements when printing */
+  @page {
+    margin: 0.5cm;
+  }
+  
+  /* Hide non-essential elements during print */
   .print\:hidden {
     display: none !important;
   }
   
+  /* Show elements that should only appear in print */
   .print\:block {
     display: block !important;
   }
   
-  /* Reset page margins and background */
-  @page {
-    size: A4;
-    margin: 1cm;
+  /* Remove shadows in print */
+  .print\:shadow-none {
+    box-shadow: none !important;
   }
   
+  /* Make sure all text is visible in print */
+  * {
+    color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  /* Set the background color of the page to white */
   body {
     background-color: white !important;
-    padding: 0 !important;
-    margin: 0 !important;
   }
-  
-  /* Remove shadows, animations and interactive styles */
-  * {
-    box-shadow: none !important;
-    text-shadow: none !important;
-    transition: none !important;
-    animation: none !important;
-  }
-  
-  /* Ensure the content expands properly */
+
+  /* Make the export content fit the page properly */
   .export-content {
     width: 100% !important;
-    max-width: 100% !important;
-    box-shadow: none !important;
+    margin: 0 !important;
     padding: 0 !important;
   }
   
-  /* Hide AppNavigation component */
-  nav, 
-  .bottom-navigation,
-  footer {
-    display: none !important;
+  /* Ensure the navigation bar appears in print */
+  .fixed {
+    position: relative !important; 
   }
-  
-  /* Ensure text is readable */
-  p, h1, h2, h3, h4, h5, h6, span {
-    color: black !important;
+}
+
+/* Export PNG styling */
+.home-screen-preview {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: white;
+}
+
+/* Set fixed width for PNG export to ensure consistency */
+@media screen {
+  .home-screen-preview {
+    max-width: 390px; /* iPhone 12/13/14 width */
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eaeaea;
   }
 }

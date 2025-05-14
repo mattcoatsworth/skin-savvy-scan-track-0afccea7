@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
-import jspdf from "jspdf";
 import html2canvas from "html2canvas";
 
 const DesignExport: React.FC = () => {
@@ -18,6 +17,60 @@ const DesignExport: React.FC = () => {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleExportPNG = async () => {
+    try {
+      // Find the content to capture
+      const contentElement = document.querySelector('.home-screen-preview');
+      
+      if (!contentElement) {
+        toast({
+          title: "Error",
+          description: "Could not find content to export",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      toast({
+        title: "Generating PNG",
+        description: "Please wait while we create your PNG..."
+      });
+      
+      // Use html2canvas to capture the element as an image
+      const canvas = await html2canvas(contentElement, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true, // Allow cross-origin images
+        logging: false, // Disable logging
+        backgroundColor: "#ffffff" // White background
+      });
+      
+      // Convert the canvas to a data URL
+      const dataUrl = canvas.toDataURL('image/png');
+      
+      // Create a link element to download the image
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `skin-savvy-home-${new Date().toISOString().split('T')[0]}.png`;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "PNG Generated",
+        description: "Your PNG has been successfully downloaded",
+      });
+    } catch (error) {
+      console.error("PNG export error:", error);
+      toast({
+        title: "Export Failed",
+        description: "There was an error generating the PNG",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleGoBack = () => {
@@ -37,9 +90,13 @@ const DesignExport: React.FC = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold">Design Export</h1>
-            <p className="text-sm text-muted-foreground">Use your browser's print function to save as PDF</p>
+            <p className="text-sm text-muted-foreground">Export as PNG or print to save as PDF</p>
           </div>
           <div className="flex gap-2">
+            <Button onClick={handleExportPNG} variant="outline" className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              Save as PNG
+            </Button>
             <Button onClick={handlePrint} variant="outline" className="flex items-center gap-2">
               <Printer className="w-4 h-4" />
               Print / Save PDF
