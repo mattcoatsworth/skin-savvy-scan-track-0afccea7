@@ -159,9 +159,18 @@ The app's personalized recommendation system works as follows:
   - Rating sliders
   - Factor selection (products used, diet, etc.)
   - Notes field
+  - Dynamic rating badges for wellness metrics
 - **Interactions**:
   - Submitting creates new entry
   - Cancel returns to previous screen
+  - Sliders update metric values and dynamically change badge colors/ratings
+  - Personalized skin plan options (not pre-selected by default)
+- **Dynamic Badges Feature**:
+  - Water Intake badge: Changes from red ("Low") to orange ("Adequate") to yellow ("Good") to green ("Excellent") as the user increases water intake cups
+  - Sleep Hours badge: Changes from red ("Low") to orange ("Adequate") to yellow ("Good") to green ("Excellent") as sleep hours increase
+  - Stress Level badge: Changes from green ("Low" - which is good for stress) to yellow ("Moderate") to orange ("High") to red ("Severe") as stress levels increase
+  - Each badge has both color and text changes to provide visual and textual feedback
+  - Badge background colors use 20% opacity of the main color for a subtle appearance
 - **Navigation**: Back button returns to Home
 
 ### 10. Products (`/products`)
