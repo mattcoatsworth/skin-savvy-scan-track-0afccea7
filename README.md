@@ -31,6 +31,32 @@ When a user selects their gender during onboarding:
 
 This gender-based customization is implemented through conditional rendering throughout the app, with state persisted in localStorage for consistency across sessions.
 
+## "Ask a Question" Chat Integration
+
+### Dynamic Chat Interface
+The "Ask a Question" chat component that appears at the bottom of recommendation detail pages (especially in `/testai` routes) features:
+
+- **Context-Aware Placeholders**: The input field's placeholder text automatically adapts to the current page's topic (e.g., "Ask about Hydration..." when viewing hydration recommendations)
+- **Quick Suggestion Pills**: Horizontal scrollable suggestion buttons with common questions related to skin health
+- **Visual Scroll Indicators**: Gradient fade effects with chevron icons indicate when more suggestions are available by scrolling
+- **Seamless Navigation**: When a user submits a question, they're directed to the full chat interface with their question pre-populated
+
+### Implementation Details
+- The component accepts a `productTitle` prop that dynamically changes the placeholder text
+- Questions are routed to the AI chat page with the initial query preserved in the navigation state
+- Suggestion pills provide one-click access to common questions about the current topic
+- The same component can be reused across different product and recommendation pages while maintaining contextual awareness
+
+### User Flow
+1. User views a recommendation detail (e.g., `/recommendations-detail/hydration/testai`)
+2. The chat box displays with "Ask about Hydration..." placeholder
+3. User can either:
+   - Type a custom question about the topic
+   - Click a suggestion pill for a pre-formulated question
+4. Upon submission, user is directed to the full chat interface with their question ready for AI response
+
+This context-aware chat integration creates a seamless transition between browsing recommendations and getting personalized AI guidance specific to the user's current interests.
+
 ## Rating System
 
 ### Overview
