@@ -4,6 +4,39 @@
 
 **URL**: https://lovable.dev/projects/14c3a734-fac8-4607-8ab1-319e2e218f4f
 
+## Rating System
+
+### Overview
+Skin Savvy uses a comprehensive rating system (0-100 scale) to evaluate products, activities, and skin conditions. This standardized approach provides users with clear, actionable insights across the app.
+
+### Rating Scale Design
+- **0-19**: Poor compatibility/effect (Red indicators)
+- **20-39**: Fair compatibility/effect (Orange-red indicators)
+- **40-59**: OK compatibility/effect (Yellow indicators)
+- **60-79**: Good compatibility/effect (Light green indicators)
+- **80-100**: Excellent compatibility/effect (Bright green indicators)
+
+### Visual Design Elements
+- **Circular Progress Indicators**: Used throughout the app to display ratings with color-coded progress rings
+- **Background Colors**: Light versions (20% opacity) of the main color provide subtle context
+- **Label System**: Each numeric rating includes a text label (Poor, Fair, OK, Good, Great)
+- **Personalization**: "For You" badge appears when the rating is personalized to the user
+
+### Rating Sources
+1. **General Ratings**: Based on scientific research and ingredient analysis
+2. **Personalized Ratings**: Modified based on user's skin type, concerns, and historical data
+3. **Impact Analysis**: Products and activities are categorized as having "Positive," "Neutral," or "Negative" impact
+
+### Rating Calculation
+Ratings are derived from multiple factors:
+- Ingredient safety profiles from regulatory databases
+- Scientific research on effectiveness for skin health
+- Aggregate user reporting from our community
+- Personalized factors based on your skin type and concerns
+- Historical skin log correlations
+
+The rating system integrates with both the OpenAI API (for personalized recommendations and analysis) and TogetherAI API (for interactive chat experiences) to provide comprehensive skin health insights.
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
