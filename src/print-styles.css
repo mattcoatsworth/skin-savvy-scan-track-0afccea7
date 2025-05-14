@@ -97,6 +97,37 @@
   padding: 8px 0;
   flex: 1;
   text-align: center;
+  text-decoration: none;
+  color: #6b7280;
+}
+
+.app-navigation-bar a svg {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.app-navigation-bar a span {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Fix for the plus button in the navigation */
+[key="plus-button"] {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+[key="plus-button"] button {
+  height: 3.5rem;
+  width: 3.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+  margin-top: -1.25rem;
 }
 
 /* Ensure the correct spacing for Today's Skin card factors */

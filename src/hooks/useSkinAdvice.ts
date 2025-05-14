@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAIContentCache } from './useAIContentCache';
 
@@ -20,6 +21,12 @@ export type AIResponse = {
   [key: string]: any;
 };
 
+// Define ContentOptions type for cache
+type ContentOptions = {
+  model?: string;
+  context?: Record<string, any>;
+}
+
 export function useSkinAdvice(options?: {
   adviceType?: string;
   model?: string;
@@ -35,12 +42,18 @@ export function useSkinAdvice(options?: {
     
     try {
       const cacheKey = `${adviceType}-${question}`;
+      // Create proper ContentOptions object
+      const contentOptions: ContentOptions = {
+        model: defaultModel,
+        context: context || {}
+      };
+      
       const result = await getOrGenerate(cacheKey, async () => {
         // The implementation details might be different,
         // but here we're adding typing for the return value
         // This is a placeholder for the existing implementation
         return {} as AIResponse;
-      });
+      }, contentOptions);
       
       return result as AIResponse;
     } catch (error) {

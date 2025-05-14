@@ -53,12 +53,12 @@ const DesignExport: React.FC = () => {
       
       // Use html2canvas with improved settings
       const canvas = await html2canvas(contentElement, {
-        scale: 2, // Better quality but not too large
+        scale: 3, // Higher quality
         useCORS: true, // Allow cross-origin images
         logging: false, // Disable logging
         backgroundColor: "#ffffff", // White background
         width: 390, // Fixed iPhone width
-        height: contentElement.offsetHeight,
+        height: contentElement.scrollHeight + 80, // Add extra space for the navigation bar
         windowWidth: 390, // Force viewport width
         onclone: (documentClone) => {
           // Apply direct styles to ensure consistency in the cloned DOM
@@ -71,6 +71,18 @@ const DesignExport: React.FC = () => {
             clonedElement.style.boxShadow = "none";
             clonedElement.style.border = "none";
             clonedElement.style.backgroundColor = "white";
+            
+            // Make sure the navigation bar is visible
+            const navBar = documentClone.querySelector('.app-navigation-bar') as HTMLElement;
+            if (navBar) {
+              navBar.style.position = "relative";
+              navBar.style.marginTop = "20px";
+              navBar.style.display = "flex";
+              navBar.style.justifyContent = "space-evenly";
+              navBar.style.width = "100%";
+              navBar.style.borderTop = "1px solid #eaeaea";
+              navBar.style.padding = "8px 0";
+            }
             
             // Add style element with required CSS
             const styleElement = documentClone.createElement('style');
@@ -98,6 +110,28 @@ const DesignExport: React.FC = () => {
                 display: flex !important;
                 justify-content: space-evenly !important;
                 width: 100% !important;
+              }
+              
+              /* Nav links */
+              .app-navigation-bar a {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                padding: 8px 0 !important;
+                flex: 1 !important;
+                text-align: center !important;
+                text-decoration: none !important;
+                color: #6b7280 !important;
+              }
+              
+              .app-navigation-bar a span {
+                font-size: 0.75rem !important;
+                margin-top: 0.25rem !important;
+              }
+              
+              .app-navigation-bar svg {
+                height: 1.5rem !important;
+                width: 1.5rem !important;
               }
               
               /* Fix recommendation styling */
@@ -139,6 +173,31 @@ const DesignExport: React.FC = () => {
                 width: 16px !important;
                 height: 16px !important;
                 display: inline-block !important;
+              }
+              
+              /* Button styling */
+              .flex-1 {
+                flex: 1 !important;
+              }
+              
+              /* Center plus button styling */
+              [key="plus-button"] {
+                position: relative !important;
+                display: flex !important;
+                justify-content: center !important;
+              }
+              
+              /* Center plus button */
+              [key="plus-button"] button {
+                height: 3.5rem !important;
+                width: 3.5rem !important;
+                border-radius: 9999px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background-color: black !important;
+                color: white !important;
+                margin-top: -1.25rem !important;
               }
             `;
             documentClone.head.appendChild(styleElement);
@@ -223,9 +282,7 @@ const DesignExport: React.FC = () => {
         {/* Include the actual Home Screen component with navigation */}
         <div className="home-screen-preview relative export-preview">
           <Index />
-          <div className="app-navigation-bar">
-            <AppNavigation />
-          </div>
+          <AppNavigation />
         </div>
       </div>
     </div>
