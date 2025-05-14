@@ -1,3 +1,4 @@
+
 # Welcome to your Lovable project
 
 ## Project info
@@ -36,6 +37,89 @@ Ratings are derived from multiple factors:
 - Historical skin log correlations
 
 The rating system integrates with both the OpenAI API (for personalized recommendations and analysis) and TogetherAI API (for interactive chat experiences) to provide comprehensive skin health insights.
+
+## Insights & Trends Badge Design
+
+The Insights & Trends section features a specialized badge system to help users quickly identify the nature and impact of each insight:
+
+### Category Badges
+- **Positive Impact**: Green background (#E6F7EE) with dark green text (#1E7C45), indicating beneficial insights
+- **Negative Impact**: Light red background (#FBE9E9) with dark red text (#C92D2D), indicating areas of concern
+- **Neutral Impact**: Light gray background (#F2F2F7) with dark gray text (#6E6E73), indicating general information
+
+### Icon System
+Each insight card comes with a context-appropriate icon that visually represents the insight type:
+- **Hydration**: Droplet icon in sky blue (#6BB9FF)
+- **Sun Exposure**: Sun icon in amber (#FFC170)
+- **Temperature**: Thermometer icon in red (#FF4559)
+- **Weather**: Cloud-sun icon in blue (#6BB9FF)
+- **Quality**: Star icon in amber (#FFC170)
+- **Verified**: Badge-check icon in teal (#20B2AA)
+- **Activity**: Activity icon in blue (#6BB9FF)
+- **Wellness**: Heart icon in red (#FF4559)
+- **Treatments**: Bandage icon in teal (#20B2AA)
+- **Positive Reactions**: Smile icon in amber (#FFC170)
+- **Negative Reactions**: Frown icon in red (#FF4559)
+- **Consumption**: Wine/food icon in amber (#FFC170)
+
+### Hover & Interaction States
+- Cards feature subtle shadow enhancement on hover
+- Background lightens slightly on hover
+- Cards expand with a smooth transition when clicked
+
+## Icon & Emoji Design System
+
+The application uses a cohesive icon and emoji system following iOS-inspired design principles:
+
+### Icon System
+
+#### Icon Style Guidelines
+- **Line Style**: Consistent 1.5px stroke width
+- **Corners**: Slightly rounded corners (2px radius)
+- **Size**: Standard 24x24px with 16x16px and 32x32px variants
+- **Color**: Icons inherit the text color by default unless specifically themed
+- **Touch Target**: Minimum 44x44px for all interactive icons
+
+#### Icon Categories and Color Coding
+- **Navigation Icons**: Simplified line icons in neutral gray (#6E6E73)
+- **Action Icons**: Solid or filled icons in primary colors
+- **Status Icons**: 
+  - Success: Teal (#20B2AA)
+  - Warning: Amber (#FFC170)
+  - Error: Red (#FF4559)
+  - Info: Blue (#6BB9FF)
+- **Functional Icons**: Stroke icons in neutral gray that match the UI context
+
+#### Specific Icon Usage
+- **Bottom Navigation**: Simple line icons that switch to filled versions when active
+- **Buttons**: Smaller 16px icons paired with text for clarity
+- **Headers**: 24px icons for consistent header layout
+- **Cards**: 20px icons in card headers and actions
+- **Lists**: 16px icons in list items for visual hierarchy
+
+### Emoji Design System
+
+Skin Savvy uses a carefully curated set of emojis to communicate emotional and status information:
+
+#### Emoji Style
+- **Aesthetic**: iOS-style emojis for platform consistency
+- **Size**: 18px for inline text, 24px for standalone usage
+- **Background**: Emojis occasionally appear with circular light backgrounds (10% opacity)
+
+#### Emoji Usage Context
+- **Skin Condition**: 😊 (Good), 😐 (Neutral), 😟 (Poor)
+- **Reaction Indicators**: ✨ (Improvement), 🔥 (Irritation), 💧 (Hydration)
+- **Progress Markers**: 🎯 (Goal), 🏆 (Achievement), 📈 (Progress)
+- **Daily Factors**: 🌞 (Sun), 💤 (Sleep), 🥗 (Diet), 💪 (Exercise)
+
+#### Emoji Combinations
+Standardized emoji combinations are used for specific insights:
+- **💧+📈**: Improved hydration
+- **🥗+✨**: Positive diet impact
+- **😴+👎**: Poor sleep impact
+- **☀️+🔥**: Sun irritation
+
+The icon and emoji systems are designed to work together, creating a visual language that is both functional and emotionally resonant, enhancing the user experience throughout the app.
 
 ## How can I edit this code?
 
