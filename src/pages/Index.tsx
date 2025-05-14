@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";

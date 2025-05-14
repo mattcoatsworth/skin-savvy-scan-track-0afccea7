@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledCard as Card, StyledCardContent as CardContent } from "@/components/ui/styled/Card";
+import { Card, CardContent } from "@/components/ui/styled/Card";
 import BackButton from "@/components/BackButton";
 import { ArrowRight, Check, Info } from "lucide-react";
 import { Link } from "react-router-dom";

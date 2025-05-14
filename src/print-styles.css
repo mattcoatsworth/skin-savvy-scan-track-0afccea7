@@ -1,0 +1,77 @@
+
+/* Print-specific styles */
+@media print {
+  /* Hide navigation and other UI elements */
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  .print\:block {
+    display: block !important;
+  }
+  
+  /* Set page to portrait mode with minimal margins */
+  @page {
+    size: portrait;
+    margin: 0.5cm;
+  }
+  
+  body {
+    background-color: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Remove shadows, animations and interactive styles */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Ensure the content expands properly */
+  .export-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure AppNavigation is visible in the PDF */
+  .navigation-container {
+    position: relative !important;
+    bottom: auto !important;
+    page-break-before: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Fix AppNavigation position at the bottom of the page */
+  .home-screen-content {
+    page-break-after: avoid;
+  }
+  
+  /* Ensure text is readable */
+  p, h1, h2, h3, h4, h5, h6, span {
+    color: black !important;
+  }
+  
+  /* Make sure we have print borders for the device frame description */
+  .export-description {
+    border: 1px solid #000 !important;
+    margin-top: 1cm !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Remove any device frame styling */
+  .ios-device-frame,
+  .ios-notch,
+  .ios-home-indicator {
+    display: none !important;
+  }
+  
+  /* Ensure consistent spacing */
+  .export-content {
+    margin-bottom: 0 !important;
+  }
+}

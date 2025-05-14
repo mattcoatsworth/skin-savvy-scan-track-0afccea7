@@ -1,20 +1,46 @@
 
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { getCachedContent, cacheContent } from "@/services/content/aiContentService";
-import type { ContentOptions } from "@/services/content/aiContentService";
+import { Json } from "@/integrations/supabase/types";
+
+interface ContentOptions {
+  productId: string;
+  productType: string;
+  contentType: string;
+}
 
 export const useAIContentCache = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [cacheStatus, setCacheStatus] = useState<"idle" | "fetching" | "caching" | "error">("idle");
 
   // Get cached content or return null if not found
-  const getContent = async (options: ContentOptions) => {
+  const getCachedContent = async ({ productId, productType, contentType }: ContentOptions) => {
     try {
       setCacheStatus("fetching");
-      const content = await getCachedContent(options);
+      
+      // Using "as any" to bypass TypeScript type issues temporarily
+      const { data, error } = await supabase
+        .from('ai_generated_content')
+        .select('content, updated_at')
+        .eq('product_id', productId as any)
+        .eq('product_type', productType as any)
+        .eq('content_type', contentType as any)
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Error fetching cached content:", error);
+        setCacheStatus("error");
+        return null;
+      }
+
+      // If data exists, log when it was last updated
+      if (data && 'updated_at' in data && data.updated_at) {
+        console.log(`Found cached ${contentType} from ${new Date(data.updated_at).toLocaleString()}`);
+      }
+      
       setCacheStatus("idle");
-      return content;
+      return data && 'content' in data ? data.content : null;
     } catch (error) {
       console.error("Exception fetching cached content:", error);
       setCacheStatus("error");
@@ -23,17 +49,38 @@ export const useAIContentCache = () => {
   };
 
   // Cache content in the database
-  const saveContent = async (options: ContentOptions, content: any): Promise<boolean> => {
+  const cacheContent = async ({ 
+    productId, 
+    productType, 
+    contentType 
+  }: ContentOptions, content: any): Promise<boolean> => {
     try {
       setCacheStatus("caching");
-      const result = await cacheContent(options, content);
       
-      if (!result) {
+      // Ensure content is JSON-serializable
+      const jsonContent = JSON.parse(JSON.stringify(content));
+      
+      // Use type assertion to fix TypeScript errors
+      const { error } = await supabase
+        .from('ai_generated_content')
+        .upsert({
+          product_id: productId,
+          product_type: productType,
+          content_type: contentType,
+          content: jsonContent as Json,
+          updated_at: new Date().toISOString()
+        } as any, {
+          onConflict: 'product_id, product_type, content_type'
+        });
+      
+      if (error) {
+        console.error("Error caching content:", error);
         setCacheStatus("error");
         toast.error("Failed to cache AI content");
         return false;
       }
       
+      console.log(`Successfully cached ${contentType} for ${productType}/${productId}`);
       setCacheStatus("idle");
       return true;
     } catch (error) {
@@ -44,58 +91,72 @@ export const useAIContentCache = () => {
   };
 
   // Get content from cache or generate it with the provided function
-  const getOrGenerate = async (
-    options: ContentOptions, 
-    generateFn: () => Promise<any>
-  ): Promise<any> => {
+  const getOrGenerate = async ({ 
+    productId, 
+    productType, 
+    contentType 
+  }: ContentOptions, generateFn: () => Promise<any>): Promise<any> => {
     setIsLoading(true);
     
     try {
       // Try to get from cache first
-      const cachedContent = await getContent(options);
+      const cachedContent = await getCachedContent({ 
+        productId, 
+        productType, 
+        contentType 
+      });
       
       if (cachedContent) {
-        console.log(`Using cached ${options.contentType} for ${options.productType}/${options.productId}`);
+        console.log(`Using cached ${contentType} for ${productType}/${productId}`);
         setIsLoading(false);
         return cachedContent;
       }
       
       // Generate new content if not in cache
-      console.log(`Generating new ${options.contentType} for ${options.productType}/${options.productId}`);
+      console.log(`Generating new ${contentType} for ${productType}/${productId}`);
       const generatedContent = await generateFn();
       
       // Cache the generated content
-      await saveContent(options, generatedContent);
+      await cacheContent({ 
+        productId, 
+        productType, 
+        contentType 
+      }, generatedContent);
       
       setIsLoading(false);
       return generatedContent;
     } catch (error) {
       console.error("Error in getOrGenerate:", error);
-      toast.error(`Failed to generate ${options.contentType}`);
+      toast.error(`Failed to generate ${contentType}`);
       setIsLoading(false);
       return null;
     }
   };
 
   // Force refresh the content by regenerating and updating the cache
-  const forceRefresh = async (
-    options: ContentOptions, 
-    generateFn: () => Promise<any>
-  ): Promise<any> => {
+  const forceRefresh = async ({
+    productId,
+    productType,
+    contentType
+  }: ContentOptions, generateFn: () => Promise<any>): Promise<any> => {
     setIsLoading(true);
     
     try {
-      console.log(`Force refreshing ${options.contentType} for ${options.productType}/${options.productId}`);
+      console.log(`Force refreshing ${contentType} for ${productType}/${productId}`);
       const generatedContent = await generateFn();
       
-      await saveContent(options, generatedContent);
+      await cacheContent({
+        productId,
+        productType,
+        contentType
+      }, generatedContent);
       
       setIsLoading(false);
-      toast.success(`Refreshed ${options.contentType} content`);
+      toast.success(`Refreshed ${contentType} content`);
       return generatedContent;
     } catch (error) {
       console.error("Error in forceRefresh:", error);
-      toast.error(`Failed to refresh ${options.contentType}`);
+      toast.error(`Failed to refresh ${contentType}`);
       setIsLoading(false);
       return null;
     }
@@ -104,8 +165,8 @@ export const useAIContentCache = () => {
   return {
     isLoading,
     cacheStatus,
-    getCachedContent: getContent,
-    cacheContent: saveContent,
+    getCachedContent,
+    cacheContent,
     getOrGenerate,
     forceRefresh
   };

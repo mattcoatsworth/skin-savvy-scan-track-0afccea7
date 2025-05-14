@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatDisplayDate, toStorageFormat } from "@/utils/formatting/dateUtils";
 
 type BirthdateFormValues = {
   birthdate: Date | undefined;
@@ -28,8 +28,8 @@ const FemaleOnboardingBirthdate: React.FC = () => {
 
   const onSubmit = (data: BirthdateFormValues) => {
     if (date) {
-      // Save birthdate to localStorage using cross-platform storage format
-      localStorage.setItem("userBirthdate", toStorageFormat(date));
+      // Save birthdate to localStorage for future reference
+      localStorage.setItem("userBirthdate", date.toISOString());
       
       // Navigate to the next step in the female onboarding flow
       navigate("/onboarding/female/skin-type");
@@ -66,7 +66,7 @@ const FemaleOnboardingBirthdate: React.FC = () => {
                 )}
               >
                 {date ? (
-                  formatDisplayDate(date)
+                  format(date, "MMMM d, yyyy")
                 ) : (
                   <span>Pick a date</span>
                 )}
@@ -91,7 +91,7 @@ const FemaleOnboardingBirthdate: React.FC = () => {
         {date && (
           <div className="mt-6 text-center">
             <p className="text-lg">
-              You selected: <span className="font-medium">{formatDisplayDate(date)}</span>
+              You selected: <span className="font-medium">{format(date, "MMMM d, yyyy")}</span>
             </p>
           </div>
         )}

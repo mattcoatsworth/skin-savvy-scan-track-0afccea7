@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -5,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { CircleCheck, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
-import { formatDate } from "@/utils/formatting/dateUtils";
 
 type DayRating = {
   day: string;

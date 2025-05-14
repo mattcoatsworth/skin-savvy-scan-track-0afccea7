@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import LoadingIndicator from "./LoadingIndicator";
-import { productService } from "@/services/api/productService";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProductForYouProps {
   isLoading: boolean;
@@ -21,14 +20,67 @@ const ProductForYou = ({ isLoading, product, type, productId }: ProductForYouPro
   } | null>(null);
   const [loadingInsight, setLoadingInsight] = useState(false);
 
-  // Generate personalized insights using our API service
+  // Function to get user's skin logs
+  const fetchUserData = async () => {
+    try {
+      // Get user skin logs
+      const { data: skinLogs, error: skinLogsError } = await supabase
+        .from('skin_logs')
+        .select('*')
+        .order('log_date', { ascending: false })
+        .limit(10);
+
+      if (skinLogsError) throw skinLogsError;
+      return { skinLogs };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return { skinLogs: [] };
+    }
+  };
+
+  // Generate personalized insights using OpenAI
   const generatePersonalizedInsights = async () => {
     try {
       setLoadingInsight(true);
 
-      const insightData = await productService.getProductForUserInsights(product, type, productId);
-      setPersonalInsight(insightData);
+      // Get user's data
+      const { skinLogs } = await fetchUserData();
       
+      if (skinLogs.length === 0) {
+        setPersonalInsight({
+          recommendation: "We don't have enough data from your skin logs to provide a personalized recommendation.",
+          reasoning: "Start logging your skin condition daily for personalized insights.",
+          rating: 50 // Default to middle rating when no data
+        });
+        return;
+      }
+
+      // Call the OpenAI function through Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('analyze-product-for-user', {
+        body: {
+          product: {
+            name: product.name,
+            type: type,
+            id: productId,
+            impact: product.impact || 'neutral',
+            brand: product.brand || 'unknown'
+          },
+          skinLogs
+        }
+      });
+
+      if (error) throw error;
+
+      // Convert the 1-5 scale rating to 1-100 scale if needed
+      if (data && typeof data.rating === 'number') {
+        // If the rating is already on a 1-100 scale, use it directly
+        // Otherwise, convert from 1-5 scale to 1-100 scale
+        if (data.rating <= 5) {
+          data.rating = Math.round(data.rating * 20);
+        }
+      }
+
+      setPersonalInsight(data);
     } catch (error) {
       console.error("Error generating insights:", error);
       toast.error("Failed to generate personal insights");
