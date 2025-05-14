@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Camera, Plus, Search, Utensils, Pill, Palette, CloudSun, Heart, Smile, Frown, Droplet, Droplets, Thermometer, Bandage, Sun, Clock, FileText, ScanBarcode, Brain } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -448,7 +449,7 @@ const LogSkinCondition = () => {
               }}
             >
               <PopoverTrigger asChild>
-                <div className="relative flex-grow cursor-pointer">
+                <div className="relative flex-grow cursor-pointer w-full">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder={`Search or add ${category} items`}
@@ -465,11 +466,11 @@ const LogSkinCondition = () => {
               </PopoverTrigger>
               
               <PopoverContent 
-                className="p-0 w-full" 
+                className="p-0 w-[var(--radix-popover-trigger-width)]" 
                 align="start"
                 sideOffset={5}
               >
-                <Command>
+                <Command className="w-full">
                   <CommandList className="max-h-[200px] overflow-auto">
                     {inputValue && (
                       <CommandItem 
