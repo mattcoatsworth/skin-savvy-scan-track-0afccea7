@@ -5,6 +5,32 @@
 
 **URL**: https://lovable.dev/projects/14c3a734-fac8-4607-8ab1-319e2e218f4f
 
+## Onboarding Flow
+
+### Dynamic Progress Bar
+The onboarding flow features a responsive progress bar that:
+- Shows the user's current position in the multi-step onboarding process
+- Updates automatically as users advance through screens
+- Calculates progress percentage based on current step and total steps
+- Uses a smooth transition animation when advancing between steps
+
+### Gender-Specific Customization
+When a user selects their gender during onboarding:
+
+**Male Selection:**
+- Automatically skips the menstrual cycle question in the onboarding sequence
+- Sets default theme to "Summer" (stored in localStorage)
+- Removes gender-specific UI elements from the entire app including:
+  - Makeup cards in the daily logging interface
+  - Menstrual cycle tracking cards in the daily logging interface
+- Maintains the same step count in the progress bar for a seamless experience
+
+**Female Selection:**
+- Includes complete onboarding flow with menstrual cycle questions
+- Displays all tracking options including makeup and menstrual cycle cards
+
+This gender-based customization is implemented through conditional rendering throughout the app, with state persisted in localStorage for consistency across sessions.
+
 ## Rating System
 
 ### Overview
