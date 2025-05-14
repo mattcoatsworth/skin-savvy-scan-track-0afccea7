@@ -6,7 +6,6 @@ import { Download, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import html2canvas from "html2canvas";
-import AppNavigation from "@/components/AppNavigation";
 
 const DesignExport: React.FC = () => {
   const navigate = useNavigate();
@@ -14,14 +13,6 @@ const DesignExport: React.FC = () => {
   useEffect(() => {
     // Add title for the export page
     document.title = "Skin Savvy - Design Export";
-    
-    // Apply specific styles for export view
-    document.body.classList.add('design-export-view');
-    
-    return () => {
-      // Clean up styles when component unmounts
-      document.body.classList.remove('design-export-view');
-    };
   }, []);
 
   const handlePrint = () => {
@@ -46,165 +37,14 @@ const DesignExport: React.FC = () => {
         title: "Generating PNG",
         description: "Please wait while we create your PNG..."
       });
-
-      // Force set width before capture to ensure consistent sizing
-      const originalWidth = contentElement.style.width;
-      contentElement.style.width = "390px";
       
-      // Use html2canvas with improved settings
+      // Use html2canvas to capture the element as an image
       const canvas = await html2canvas(contentElement, {
-        scale: 3, // Higher quality
+        scale: 2, // Higher scale for better quality
         useCORS: true, // Allow cross-origin images
         logging: false, // Disable logging
-        backgroundColor: "#ffffff", // White background
-        width: 390, // Fixed iPhone width
-        height: contentElement.scrollHeight + 80, // Add extra space for the navigation bar
-        windowWidth: 390, // Force viewport width
-        onclone: (documentClone) => {
-          // Apply direct styles to ensure consistency in the cloned DOM
-          const clonedElement = documentClone.querySelector('.home-screen-preview') as HTMLElement;
-          if (clonedElement) {
-            // Force width for consistent capture
-            clonedElement.style.width = "390px";
-            clonedElement.style.maxWidth = "390px";
-            clonedElement.style.padding = "16px";
-            clonedElement.style.boxShadow = "none";
-            clonedElement.style.border = "none";
-            clonedElement.style.backgroundColor = "white";
-            
-            // Make sure the navigation bar is visible
-            const navBar = documentClone.querySelector('.app-navigation-bar') as HTMLElement;
-            if (navBar) {
-              navBar.style.position = "relative";
-              navBar.style.marginTop = "20px";
-              navBar.style.display = "flex";
-              navBar.style.justifyContent = "space-around";
-              navBar.style.width = "100%";
-              navBar.style.borderTop = "1px solid #eaeaea";
-              navBar.style.padding = "4px 0";
-              navBar.style.backgroundColor = "white";
-            }
-            
-            // Add style element with required CSS
-            const styleElement = documentClone.createElement('style');
-            styleElement.textContent = `
-              /* Force consistent styling for export */
-              .home-screen-preview {
-                width: 390px !important;
-                max-width: 390px !important;
-                box-shadow: none !important;
-                background-color: white !important;
-                padding: 16px !important;
-                border: none !important;
-                overflow: visible !important;
-              }
-              
-              /* Nav bar positioning */
-              .app-navigation-bar {
-                position: relative !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                border-top: 1px solid #eaeaea !important;
-                margin-top: 20px !important;
-                padding: 4px 0 !important;
-                display: flex !important;
-                justify-content: space-around !important;
-                width: 100% !important;
-                background-color: white !important;
-              }
-              
-              /* Nav links */
-              .app-navigation-bar a {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                padding: 8px 0 !important;
-                text-align: center !important;
-                text-decoration: none !important;
-                color: #6b7280 !important;
-              }
-              
-              .app-navigation-bar a span {
-                font-size: 0.75rem !important;
-                margin-top: 0.25rem !important;
-                color: #6b7280 !important;
-              }
-              
-              .app-navigation-bar svg {
-                height: 1.5rem !important;
-                width: 1.5rem !important;
-                color: #6b7280 !important;
-              }
-              
-              /* Fix recommendation styling */
-              .recommendation-item {
-                display: flex !important;
-                padding: 12px 16px !important;
-                margin-bottom: 8px !important;
-                border-radius: 9999px !important;
-                gap: 8px !important;
-                align-items: center !important;
-              }
-              
-              /* Make sure we capture all recommendations */
-              .space-y-2 {
-                display: block !important;
-                width: 100% !important;
-              }
-              
-              /* Ensure recommendation colors are correct */
-              .recommendation-item.skincare {
-                background-color: #e0edff !important;
-                color: #2563eb !important;
-              }
-              .recommendation-item.food {
-                background-color: #dcfce7 !important;
-                color: #16a34a !important;
-              }
-              .recommendation-item.lifestyle {
-                background-color: #ffedd5 !important;
-                color: #c2410c !important;
-              }
-              .recommendation-item.supplements {
-                background-color: #e0e7ff !important;
-                color: #4f46e5 !important;
-              }
-              
-              /* Ensure all icons are visible */
-              .recommendation-item svg {
-                width: 16px !important;
-                height: 16px !important;
-                display: inline-block !important;
-              }
-              
-              /* Center plus button styling */
-              [key="plus-button"] {
-                position: relative !important;
-                display: flex !important;
-                justify-content: center !important;
-                top: -1.25rem !important;
-              }
-              
-              /* Center plus button */
-              [key="plus-button"] button {
-                height: 3.5rem !important;
-                width: 3.5rem !important;
-                border-radius: 9999px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                background-color: black !important;
-                color: white !important;
-              }
-            `;
-            documentClone.head.appendChild(styleElement);
-          }
-        }
+        backgroundColor: "#ffffff" // White background
       });
-      
-      // Restore original width
-      contentElement.style.width = originalWidth;
       
       // Convert the canvas to a data URL
       const dataUrl = canvas.toDataURL('image/png');
@@ -277,10 +117,9 @@ const DesignExport: React.FC = () => {
           </p>
         </div>
         
-        {/* Include the actual Home Screen component with navigation */}
-        <div className="home-screen-preview relative export-preview">
+        {/* Include the actual Home Screen component */}
+        <div className="home-screen-preview">
           <Index />
-          <AppNavigation />
         </div>
       </div>
     </div>
