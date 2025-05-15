@@ -75,6 +75,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate', // Add cache control headers
         },
         body: JSON.stringify({ 
           image: selectedImage,
