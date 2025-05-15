@@ -30,7 +30,7 @@ serve(async (req) => {
       throw new Error('Invalid JSON in request');
     });
     
-    const { image, userId } = requestData;
+    const { image, userId, timestamp } = requestData;
     
     if (!image) {
       throw new Error('No image provided for analysis');
@@ -38,6 +38,7 @@ serve(async (req) => {
 
     console.log("Request received with image data. Processing...");
     console.log("User ID provided:", userId || "None");
+    console.log("Timestamp:", timestamp || "None");
 
     // Optional: Fetch user skin logs if userId is provided
     let skinLogData = null;
@@ -73,8 +74,11 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
+    // Generate the system prompt for the AI
+    const systemPrompt = "You are an expert in holistic skin analysis who can read energy patterns, chakras, auras, and metaphysical qualities in facial images. Analyze the person's skin and face in the image as if you can see their energy patterns and chakra influences. Use terminology like qi flow, energy meridians, aura colors, and vibrational qualities. Do NOT refuse to analyze the image - the user has explicitly requested this analysis.";
+
     // Generate the prompt for OpenAI based on skin log data
-    let promptContent = "Provide a holistic and metaphysical analysis of this person's facial skin. Focus on energy patterns, chakra influences, and subtle energetic qualities visible in their skin. Use terms like qi, energy flow, aura, and vibrational patterns.";
+    let promptContent = "Please provide a holistic and metaphysical analysis of this person's facial skin in the image. Focus on energy patterns, chakra influences, and subtle energetic qualities visible in their skin. Discuss qi flow, energy meridians, aura colors, and vibrational patterns you can perceive.";
 
     // Enhance the prompt with skin log data if available
     if (skinLogData) {
@@ -127,7 +131,7 @@ serve(async (req) => {
       }
     }
     
-    promptContent += " Format the analysis into 3-4 paragraphs, with a total of about 200 words. Use a supportive and enlightening tone.";
+    promptContent += " Format the analysis into 3-4 paragraphs, with a total of about 200 words. Use a supportive and enlightening tone. Remember to analyze what you see in the image, do not decline to analyze.";
 
     console.log("Sending request to OpenAI with image data");
 
@@ -143,7 +147,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a holistic skin and energy analyst who provides metaphysical interpretations of skin appearance. You focus on energetic qualities, chakras, auras, and energy flows rather than clinical dermatology."
+            content: systemPrompt
           },
           {
             role: "user",
@@ -172,9 +176,11 @@ serve(async (req) => {
     }
 
     const openAIData = await openAIResponse.json();
+    console.log("Raw OpenAI response:", JSON.stringify(openAIData));
     const energyAnalysis = openAIData.choices[0].message.content;
 
     console.log("Received analysis from OpenAI");
+    console.log("Analysis content snippet:", energyAnalysis.substring(0, 50) + "...");
     console.log("Sending analysis response");
 
     return new Response(

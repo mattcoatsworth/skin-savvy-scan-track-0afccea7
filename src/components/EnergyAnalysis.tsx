@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,8 +67,8 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       const userId = await getUserId();
       console.log("Current user ID:", userId);
 
-      // Add a unique identifier to prevent caching
-      const imageWithUniqueId = `${selectedImage}#${uuidv4()}`;
+      // Generate a unique request ID to prevent caching
+      const requestId = uuidv4();
 
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
@@ -78,9 +77,10 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          image: selectedImage, // Use the original image
+          image: selectedImage,
           userId: userId, // Send the userId if available
-          timestamp: Date.now() // Add timestamp to prevent caching
+          timestamp: Date.now(), // Add timestamp to prevent caching
+          requestId: requestId // Add unique request ID
         }),
       });
       
