@@ -18,18 +18,21 @@ const RecipeIdeas = () => {
   const [savedRecipes, setSavedRecipes] = useState<string[]>([]);
   const { toast } = useToast();
 
-  // Collection of placeholder images for recipes
-  const placeholderImages = [
-    "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", // orange flowers (colorful dish)
-    "https://images.unsplash.com/photo-1501854140801-50d01698950b", // bird's eye view of green mountains (green vegetables)
-    "https://images.unsplash.com/photo-1582562124811-c09040d0a901", // orange and white tabby cat (warm comfort food)
+  // Collection of food-related placeholder images for recipes
+  const foodImages = [
+    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop&q=80", // Healthy food on plate (vegetables)
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop&q=80", // Food plate with steak and vegetables
+    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop&q=80", // Healthy vegetable bowl
+    "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&h=400&fit=crop&q=80", // Baked dish in pan
+    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop&q=80", // Pizza
+    "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&h=400&fit=crop&q=80", // Healthy breakfast with fruits
   ];
 
   // Function to select an appropriate image based on recipe name or description
   const getImageForRecipe = (recipe: any, index: number) => {
-    // Simple rotation of placeholder images
-    return `${placeholderImages[index % placeholderImages.length]}?w=600&h=400&fit=crop&q=80`;
-  }
+    // Simple rotation of food images
+    return foodImages[index % foodImages.length];
+  };
 
   // Format meal type for display
   const formatMealType = (type: string) => {
@@ -287,3 +290,4 @@ const RecipeIdeas = () => {
 };
 
 export default RecipeIdeas;
+
