@@ -82,6 +82,17 @@ const AppNavigation: React.FC = () => {
                             <span>Ask Anything</span>
                           </Link>
                         </Button>
+                        <Button 
+                          variant="ghost" 
+                          className="flex items-center justify-start gap-2"
+                          onClick={() => setOpen(false)}
+                          asChild
+                        >
+                          <Link to="/profile">
+                            <User className="h-5 w-5 text-skin-teal" />
+                            <span>Profile Page</span>
+                          </Link>
+                        </Button>
                       </div>
                     </PopoverContent>
                   </Popover>
