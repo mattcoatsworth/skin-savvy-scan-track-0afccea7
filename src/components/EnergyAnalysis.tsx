@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Image, Zap } from "lucide-react";
@@ -17,7 +16,6 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
-  const [model, setModel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const location = useLocation();
@@ -29,51 +27,12 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const handleImageSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      
-      // Check file size (limit to 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Please select an image smaller than 5MB",
-          variant: "destructive",
-        });
-        return;
-      }
-      
       const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        try {
-          if (event.target && event.target.result) {
-            const imageData = event.target.result.toString();
-            console.log("Image loaded successfully, length:", imageData.length);
-            setSelectedImage(imageData);
-            setAnalysis(null); // Reset any previous analysis
-            setError(null); // Reset any previous errors
-            setModel(null); // Reset model info
-          } else {
-            throw new Error("Failed to read image data");
-          }
-        } catch (err) {
-          console.error("Error processing image:", err);
-          toast({
-            title: "Image processing error",
-            description: "There was an issue processing your image",
-            variant: "destructive",
-          });
-        }
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+        setAnalysis(null); // Reset any previous analysis
+        setError(null); // Reset any previous errors
       };
-      
-      reader.onerror = (err) => {
-        console.error("FileReader error:", err);
-        toast({
-          title: "Image read error",
-          description: "Failed to read the selected image",
-          variant: "destructive",
-        });
-      };
-      
-      // Read the image as a data URL
       reader.readAsDataURL(file);
     }
   };
@@ -102,7 +61,6 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 
     setIsAnalyzing(true);
     setError(null);
-    setModel(null);
     
     try {
       // Get the user ID if available
@@ -111,43 +69,44 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 
       // Generate a unique request ID to prevent caching
       const requestId = uuidv4();
-      const timestamp = Date.now();
-      
-      console.log("Sending image for analysis, data length:", selectedImage.length);
 
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate', 
-          'Pragma': 'no-cache',
-          'Expires': '0'
+          'Cache-Control': 'no-cache, no-store, must-revalidate', // Add cache control headers
         },
         body: JSON.stringify({ 
           image: selectedImage,
-          userId: userId,
-          timestamp: timestamp,
-          requestId: requestId
+          userId: userId, // Send the userId if available
+          timestamp: Date.now(), // Add timestamp to prevent caching
+          requestId: requestId // Add unique request ID
         }),
       });
       
       console.log("Response status:", response.status);
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error response:", errorText);
         throw new Error(`Server responded with status: ${response.status}`);
       }
       
-      const data = await response.json();
+      const responseText = await response.text();
+      console.log("Raw response:", responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Error parsing JSON:", parseError);
+        throw new Error("Failed to parse server response");
+      }
       
       if (data.error) {
         throw new Error(data.error);
       }
       
       setAnalysis(data.analysis);
-      setModel(data.model || "gpt-4o");
       
       // Show toast about whether skin log data was included
       if (isOnLogSkinPage && data.includedSkinData) {
@@ -160,12 +119,6 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         toast({
           title: "Basic Analysis Complete",
           description: "Continue logging your skin conditions for a more personalized analysis",
-          variant: "default",
-        });
-      } else {
-        toast({
-          title: "Analysis Complete",
-          description: "Your energetic skin analysis is ready",
           variant: "default",
         });
       }
@@ -235,7 +188,6 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
                   setSelectedImage(null);
                   setAnalysis(null);
                   setError(null);
-                  setModel(null);
                 }}
               >
                 Change Image
@@ -268,10 +220,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         
         {analysis && !error && (
           <div className="mt-4 border border-purple-100 bg-purple-50 rounded-md p-4">
-            <h3 className="text-md font-medium mb-1 text-purple-800">Energetic Analysis</h3>
-            {model && (
-              <p className="text-xs text-purple-600 mb-2">Analyzed using {model}</p>
-            )}
+            <h3 className="text-md font-medium mb-2 text-purple-800">Energetic Analysis</h3>
             <div className="text-sm text-purple-900 whitespace-pre-line">
               {analysis}
             </div>
