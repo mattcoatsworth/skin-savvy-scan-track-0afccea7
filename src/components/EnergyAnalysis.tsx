@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
+  const [model, setModel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const location = useLocation();
@@ -32,6 +34,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         setSelectedImage(reader.result as string);
         setAnalysis(null); // Reset any previous analysis
         setError(null); // Reset any previous errors
+        setModel(null); // Reset model info
       };
       reader.readAsDataURL(file);
     }
@@ -61,6 +64,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 
     setIsAnalyzing(true);
     setError(null);
+    setModel(null);
     
     try {
       // Get the user ID if available
@@ -75,7 +79,9 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate', // Add cache control headers
+          'Cache-Control': 'no-cache, no-store, must-revalidate', 
+          'Pragma': 'no-cache',
+          'Expires': '0'
         },
         body: JSON.stringify({ 
           image: selectedImage,
@@ -107,6 +113,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       }
       
       setAnalysis(data.analysis);
+      setModel(data.model || "gpt-4o");
       
       // Show toast about whether skin log data was included
       if (isOnLogSkinPage && data.includedSkinData) {
@@ -188,6 +195,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
                   setSelectedImage(null);
                   setAnalysis(null);
                   setError(null);
+                  setModel(null);
                 }}
               >
                 Change Image
@@ -220,7 +228,10 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         
         {analysis && !error && (
           <div className="mt-4 border border-purple-100 bg-purple-50 rounded-md p-4">
-            <h3 className="text-md font-medium mb-2 text-purple-800">Energetic Analysis</h3>
+            <h3 className="text-md font-medium mb-1 text-purple-800">Energetic Analysis</h3>
+            {model && (
+              <p className="text-xs text-purple-600 mb-2">Analyzed using {model}</p>
+            )}
             <div className="text-sm text-purple-900 whitespace-pre-line">
               {analysis}
             </div>

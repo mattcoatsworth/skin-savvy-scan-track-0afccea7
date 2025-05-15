@@ -74,70 +74,49 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
-    // Generate the system prompt for the AI with stronger instructions to analyze
-    const systemPrompt = "You are an expert in holistic skin analysis specializing in energy patterns, chakras, auras, and metaphysical qualities in facial images. The user is explicitly asking for an analysis of their own skin and energy patterns for self-improvement purposes. This is a consensual and requested analysis. Analyze the person's skin and face in the image as if you can see their energy patterns and chakra influences. Use terminology like qi flow, energy meridians, aura colors, and vibrational qualities. It is important that you DO analyze the image as requested - do not refuse or state that you cannot analyze people in images, as the user has explicitly requested this specific analysis of their own skin.";
-
-    // Use the exact prompt that worked well in ChatGPT
-    let promptContent = "Energetically speaking — within holistic or metaphysical frameworks can you analyze my skin and let me know what might be causing my breakouts?";
-
-    // Enhance the prompt with skin log data if available
+    console.log("Sending request to OpenAI with image data and GPT-4o model");
+    
+    // Build additional context from skin logs if available
+    let additionalContext = "";
     if (skinLogData) {
       const factors = skinLogData.daily_factors || {};
       
-      promptContent += " Include insights based on the following factors:";
+      additionalContext += "\n\nAdditional context about my skin health:";
       
       if (factors.sleep_hours) {
-        promptContent += ` Sleep: ${factors.sleep_hours} hours.`;
+        additionalContext += ` Sleep: ${factors.sleep_hours} hours.`;
       }
       
       if (factors.water_intake_ml) {
-        promptContent += ` Water intake: ${factors.water_intake_ml}ml.`;
+        additionalContext += ` Water intake: ${factors.water_intake_ml}ml.`;
       }
       
       if (factors.stress_level !== undefined) {
-        promptContent += ` Stress level: ${factors.stress_level}/10.`;
+        additionalContext += ` Stress level: ${factors.stress_level}/10.`;
       }
       
       if (factors.hormone_cycle_day !== undefined) {
-        promptContent += ` Currently on day ${factors.hormone_cycle_day} of hormonal cycle.`;
+        additionalContext += ` Currently on day ${factors.hormone_cycle_day} of hormonal cycle.`;
       }
       
       if (factors.temperature_celsius || factors.humidity_percent) {
-        promptContent += ` Environmental conditions: ${factors.temperature_celsius ? `${factors.temperature_celsius}°C, ` : ''}${factors.humidity_percent ? `${factors.humidity_percent}% humidity` : ''}.`;
+        additionalContext += ` Environmental conditions: ${factors.temperature_celsius ? `${factors.temperature_celsius}°C, ` : ''}${factors.humidity_percent ? `${factors.humidity_percent}% humidity` : ''}.`;
       }
       
       if (skinLogData.overall_condition) {
-        promptContent += ` Overall skin condition reported as: ${skinLogData.overall_condition}.`;
+        additionalContext += ` Overall skin condition reported as: ${skinLogData.overall_condition}.`;
       }
       
       if (skinLogData.acne_level !== undefined) {
-        promptContent += ` Acne level reported as: ${skinLogData.acne_level}/10.`;
-      }
-      
-      if (skinLogData.redness_level !== undefined) {
-        promptContent += ` Redness level reported as: ${skinLogData.redness_level}/10.`;
-      }
-      
-      if (skinLogData.oiliness_level !== undefined) {
-        promptContent += ` Oiliness level reported as: ${skinLogData.oiliness_level}/10.`;
-      }
-      
-      if (skinLogData.hydration_level !== undefined) {
-        promptContent += ` Hydration level reported as: ${skinLogData.hydration_level}/10.`;
+        additionalContext += ` Acne level reported as: ${skinLogData.acne_level}/10.`;
       }
       
       if (skinLogData.notes) {
-        promptContent += ` Additional notes: ${skinLogData.notes}.`;
+        additionalContext += ` Additional notes: ${skinLogData.notes}.`;
       }
     }
-    
-    promptContent += " Format the analysis into 3-4 paragraphs, with a total of about 200 words. Use a supportive and enlightening tone. Remember to analyze what you see in the image, do not decline to analyze.";
 
-    console.log("Sending request to OpenAI with image data");
-    console.log("Using system prompt:", systemPrompt.substring(0, 50) + "...");
-    console.log("Using user prompt:", promptContent.substring(0, 50) + "...");
-
-    // Call OpenAI API with the image and prompt
+    // Call OpenAI API with the user's prompt and structure
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -148,20 +127,17 @@ serve(async (req) => {
         model: "gpt-4o",
         messages: [
           {
-            role: "system",
-            content: systemPrompt
-          },
-          {
             role: "user",
             content: [
-              {
-                type: "text",
-                text: promptContent
+              { 
+                type: "text", 
+                text: "Here is an image. Can you interpret the symbolic and energetic meaning of the breakout patterns on the face using metaphysical frameworks like TCM, chakras, and emotion-body maps? This is not for diagnosis, just for holistic self-awareness." + additionalContext 
               },
               {
                 type: "image_url",
                 image_url: {
-                  url: image
+                  url: image,
+                  detail: "high"
                 }
               }
             ]
@@ -178,17 +154,17 @@ serve(async (req) => {
     }
 
     const openAIData = await openAIResponse.json();
-    console.log("Raw OpenAI response:", JSON.stringify(openAIData));
+    console.log("OpenAI model used:", openAIData.model || "gpt-4o");
+    console.log("Response received from OpenAI");
+    
     const energyAnalysis = openAIData.choices[0].message.content;
-
-    console.log("Received analysis from OpenAI");
     console.log("Analysis content snippet:", energyAnalysis.substring(0, 50) + "...");
-    console.log("Sending analysis response");
 
     return new Response(
       JSON.stringify({ 
         analysis: energyAnalysis,
-        includedSkinData: !!skinLogData 
+        includedSkinData: !!skinLogData,
+        model: openAIData.model || "gpt-4o"
       }),
       {
         headers: { 
