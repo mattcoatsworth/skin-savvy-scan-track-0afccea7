@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Image, Zap } from "lucide-react";
@@ -41,21 +41,39 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       }
       
       const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.result) {
-          setSelectedImage(reader.result.toString());
-          setAnalysis(null); // Reset any previous analysis
-          setError(null); // Reset any previous errors
-          setModel(null); // Reset model info
+      
+      reader.onload = (event) => {
+        try {
+          if (event.target && event.target.result) {
+            const imageData = event.target.result.toString();
+            console.log("Image loaded successfully, length:", imageData.length);
+            setSelectedImage(imageData);
+            setAnalysis(null); // Reset any previous analysis
+            setError(null); // Reset any previous errors
+            setModel(null); // Reset model info
+          } else {
+            throw new Error("Failed to read image data");
+          }
+        } catch (err) {
+          console.error("Error processing image:", err);
+          toast({
+            title: "Image processing error",
+            description: "There was an issue processing your image",
+            variant: "destructive",
+          });
         }
       };
-      reader.onerror = () => {
+      
+      reader.onerror = (err) => {
+        console.error("FileReader error:", err);
         toast({
           title: "Image read error",
           description: "Failed to read the selected image",
           variant: "destructive",
         });
       };
+      
+      // Read the image as a data URL
       reader.readAsDataURL(file);
     }
   };
@@ -94,6 +112,8 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       // Generate a unique request ID to prevent caching
       const requestId = uuidv4();
       const timestamp = Date.now();
+      
+      console.log("Sending image for analysis, data length:", selectedImage.length);
 
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
@@ -106,9 +126,9 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         },
         body: JSON.stringify({ 
           image: selectedImage,
-          userId: userId, // Send the userId if available
-          timestamp: timestamp, // Add timestamp to prevent caching
-          requestId: requestId // Add unique request ID
+          userId: userId,
+          timestamp: timestamp,
+          requestId: requestId
         }),
       });
       
@@ -120,16 +140,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         throw new Error(`Server responded with status: ${response.status}`);
       }
       
-      const responseText = await response.text();
-      console.log("Raw response:", responseText.substring(0, 100) + "...");
-      
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Error parsing JSON:", parseError);
-        throw new Error("Failed to parse server response");
-      }
+      const data = await response.json();
       
       if (data.error) {
         throw new Error(data.error);

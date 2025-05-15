@@ -30,7 +30,7 @@ serve(async (req) => {
       throw new Error('Invalid JSON in request');
     });
     
-    const { image, userId, timestamp } = requestData;
+    const { image, userId, timestamp, requestId } = requestData;
     
     if (!image) {
       throw new Error('No image provided for analysis');
@@ -39,6 +39,7 @@ serve(async (req) => {
     console.log("Request received with image data. Processing...");
     console.log("User ID provided:", userId || "None");
     console.log("Timestamp:", timestamp || "None");
+    console.log("Request ID:", requestId || "None"); 
     console.log("Image data length:", image.length);
 
     // Optional: Fetch user skin logs if userId is provided
@@ -117,18 +118,27 @@ serve(async (req) => {
       }
     }
 
-    // Process and format the image data 
-    let formattedImage = image;
-    // Check if the image is already a proper data URL
-    if (!formattedImage.startsWith('data:image/')) {
-      console.log("Image is not properly formatted as a data URL, fixing format");
-      // Remove any existing data URL prefix if present
-      const base64Data = formattedImage.replace(/^data:image\/[a-z]+;base64,/, '');
+    // Process and format the image data
+    let formattedImage;
+    // First, check if the image data is valid and in the right format
+    if (!image || typeof image !== 'string') {
+      throw new Error('Invalid image data format');
+    }
+    
+    // Ensure image data starts with the proper data URL prefix
+    if (image.startsWith('data:image/')) {
+      console.log("Image already has proper data URL format");
+      formattedImage = image;
+    } else {
+      // Clean the base64 string and add proper prefix
+      console.log("Image is not properly formatted, fixing format");
+      // Remove any potential prefixes to get clean base64
+      const base64Data = image.replace(/^data:image\/[a-z]+;base64,/, '');
       // Add the proper data URL prefix
       formattedImage = `data:image/jpeg;base64,${base64Data}`;
     }
 
-    console.log("Image properly formatted");
+    console.log("Image properly formatted, sending to OpenAI");
     
     // Call OpenAI API with the structured prompt
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -157,7 +167,7 @@ serve(async (req) => {
             ]
           }
         ],
-        max_tokens: 500
+        max_tokens: 800
       })
     });
 
