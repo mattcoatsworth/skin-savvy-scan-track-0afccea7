@@ -1,10 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Image, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { supabase } from "@/integrations/supabase/client";
+import { useLocation } from "react-router-dom";
 
 interface EnergyAnalysisProps {
   className?: string;
@@ -16,6 +18,10 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const location = useLocation();
+  
+  // Check if we're on the log-skin-condition page
+  const isOnLogSkinPage = location.pathname.includes('log-skin-condition');
 
   // Function to handle image selection
   const handleImageSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +34,17 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         setError(null); // Reset any previous errors
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // Function to get user ID if logged in
+  const getUserId = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.user?.id || null;
+    } catch (error) {
+      console.log("Error getting user session:", error);
+      return null;
     }
   };
 
@@ -55,6 +72,10 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         setIsAnalyzing(false);
         return;
       }
+      
+      // Get the user ID if available
+      const userId = await getUserId();
+      console.log("Current user ID:", userId);
 
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
@@ -63,16 +84,19 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          image: selectedImage 
+          image: selectedImage,
+          userId: userId // Send the userId if available
         }),
       });
-
-      const responseText = await response.text();
-      console.log("Raw response:", responseText);
+      
+      console.log("Response status:", response.status);
       
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
+      
+      const responseText = await response.text();
+      console.log("Raw response:", responseText);
       
       let data;
       try {
@@ -90,6 +114,21 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       
       // Cache the result
       localStorage.setItem(cacheKey, data.analysis);
+      
+      // Show toast about whether skin log data was included
+      if (isOnLogSkinPage && data.includedSkinData) {
+        toast({
+          title: "Holistic Analysis Complete",
+          description: "Your analysis includes your recent skin logs and factors",
+          variant: "default",
+        });
+      } else if (isOnLogSkinPage && !data.includedSkinData) {
+        toast({
+          title: "Basic Analysis Complete",
+          description: "Continue logging your skin conditions for a more personalized analysis",
+          variant: "default",
+        });
+      }
       
     } catch (error) {
       console.error("Error analyzing image:", error);
@@ -113,7 +152,8 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         </div>
         
         <p className="text-sm text-muted-foreground mb-4">
-          Upload a selfie to receive a holistic and metaphysical analysis of your skin's energy.
+          Upload a selfie to receive a holistic and metaphysical analysis of your skin's energy
+          {isOnLogSkinPage && " that considers your skin logs and daily factors"}.
         </p>
         
         {!selectedImage ? (
