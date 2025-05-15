@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChefHat, Loader2, Save, FileImage } from 'lucide-react';
@@ -9,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getRelevantRecipeImage, getDefaultFoodImage } from '@/utils/recipeImageService';
 
 const RecipeIdeas = () => {
   const { day, mealType } = useParams();
@@ -16,22 +16,13 @@ const RecipeIdeas = () => {
   const [error, setError] = useState<string | null>(null);
   const [recipe, setRecipe] = useState<any>(null);
   const [savedRecipes, setSavedRecipes] = useState<string[]>([]);
+  const [imageLoading, setImageLoading] = useState<{[key: number]: boolean}>({});
   const { toast } = useToast();
 
-  // Collection of food-related placeholder images for recipes
-  const foodImages = [
-    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop&q=80", // Healthy food on plate (vegetables)
-    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop&q=80", // Food plate with steak and vegetables
-    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop&q=80", // Healthy vegetable bowl
-    "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&h=400&fit=crop&q=80", // Baked dish in pan
-    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop&q=80", // Pizza
-    "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&h=400&fit=crop&q=80", // Healthy breakfast with fruits
-  ];
-
-  // Function to select an appropriate image based on recipe name or description
+  // Function to get an image for a recipe
   const getImageForRecipe = (recipe: any, index: number) => {
-    // Simple rotation of food images
-    return foodImages[index % foodImages.length];
+    // Use the recipe image service to get a relevant image
+    return getRelevantRecipeImage(recipe);
   };
 
   // Format meal type for display
@@ -102,6 +93,24 @@ const RecipeIdeas = () => {
         variant: "destructive",
       });
     }
+  };
+
+  // Handle image load errors
+  const handleImageError = (index: number) => {
+    return (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+      console.log(`Image for recipe ${index} failed to load, using fallback`);
+      (e.target as HTMLImageElement).src = getDefaultFoodImage();
+    };
+  };
+
+  // Handle image load start
+  const handleImageLoadStart = (index: number) => {
+    setImageLoading(prev => ({ ...prev, [index]: true }));
+  };
+
+  // Handle image load complete
+  const handleImageLoadComplete = (index: number) => {
+    setImageLoading(prev => ({ ...prev, [index]: false }));
   };
 
   useEffect(() => {
@@ -213,14 +222,19 @@ const RecipeIdeas = () => {
                   {/* Recipe Image */}
                   <div className="w-full h-48 relative overflow-hidden">
                     <AspectRatio ratio={16/9}>
+                      {imageLoading[i] && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Skeleton className="w-full h-full absolute" />
+                          <FileImage className="h-12 w-12 text-muted-foreground opacity-20" />
+                        </div>
+                      )}
                       <img 
                         src={getImageForRecipe(r, i)}
                         alt={r.name}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // Fallback if image fails to load
-                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=600&h=400&fit=crop&q=80";
-                        }}
+                        onError={handleImageError(i)}
+                        onLoad={() => handleImageLoadComplete(i)}
+                        onLoadStart={() => handleImageLoadStart(i)}
                       />
                     </AspectRatio>
                   </div>
@@ -290,4 +304,3 @@ const RecipeIdeas = () => {
 };
 
 export default RecipeIdeas;
-
