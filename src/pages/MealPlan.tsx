@@ -1,13 +1,16 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
   const [mealPlan, setMealPlan] = useState<any>(null);
+  const [activeDay, setActiveDay] = useState("Monday");
   const { toast } = useToast();
   
   const generateMealPlan = async () => {
@@ -38,8 +41,108 @@ const MealPlan = () => {
               snacks: ["Handful of almonds", "Sliced cucumber with hummus"],
               hydration: "2-3 liters of water, green tea"
             },
-            // Dummy data for other days would follow the same pattern
-            // Only showing one day to keep the example concise
+            {
+              day: "Tuesday",
+              breakfast: {
+                meal: "Overnight oats with chia seeds and blueberries",
+                benefits: "Fiber and antioxidants for skin repair"
+              },
+              lunch: {
+                meal: "Quinoa bowl with roasted vegetables and tahini",
+                benefits: "Vitamin E and minerals for skin health"
+              },
+              dinner: {
+                meal: "Baked cod with lemon, asparagus and brown rice",
+                benefits: "Lean protein and zinc for collagen production"
+              },
+              snacks: ["Apple slices with almond butter", "Carrot sticks"],
+              hydration: "2-3 liters of water, herbal tea"
+            },
+            {
+              day: "Wednesday",
+              breakfast: {
+                meal: "Smoothie with spinach, banana, and flax seeds",
+                benefits: "Vitamins and omega-3 fatty acids"
+              },
+              lunch: {
+                meal: "Mediterranean chickpea salad with olive oil",
+                benefits: "Antioxidants and healthy fats"
+              },
+              dinner: {
+                meal: "Stir-fried tofu with broccoli and bell peppers",
+                benefits: "Plant protein and vitamin C for collagen"
+              },
+              snacks: ["Greek yogurt with honey", "Mixed nuts"],
+              hydration: "2-3 liters of water, green tea"
+            },
+            {
+              day: "Thursday",
+              breakfast: {
+                meal: "Avocado toast with poached egg on whole grain bread",
+                benefits: "Healthy fats and protein for skin elasticity"
+              },
+              lunch: {
+                meal: "Lentil soup with leafy greens and turmeric",
+                benefits: "Anti-inflammatory compounds and iron"
+              },
+              dinner: {
+                meal: "Grilled wild salmon with sweet potato and kale",
+                benefits: "Omega-3 and beta-carotene for skin renewal"
+              },
+              snacks: ["Blueberries", "Unsalted pumpkin seeds"],
+              hydration: "2-3 liters of water, chamomile tea"
+            },
+            {
+              day: "Friday",
+              breakfast: {
+                meal: "Chia seed pudding with coconut milk and berries",
+                benefits: "Omega-3 fatty acids and antioxidants"
+              },
+              lunch: {
+                meal: "Grilled chicken salad with olive oil and lemon",
+                benefits: "Lean protein and vitamin C"
+              },
+              dinner: {
+                meal: "Baked sweet potato with black beans and avocado",
+                benefits: "Beta-carotene and plant protein"
+              },
+              snacks: ["Celery with hummus", "Orange slices"],
+              hydration: "2-3 liters of water, rooibos tea"
+            },
+            {
+              day: "Saturday",
+              breakfast: {
+                meal: "Steel-cut oatmeal with walnuts and cinnamon",
+                benefits: "Fiber and anti-inflammatory properties"
+              },
+              lunch: {
+                meal: "Tuna poke bowl with brown rice and vegetables",
+                benefits: "Omega-3 fatty acids and antioxidants"
+              },
+              dinner: {
+                meal: "Roasted vegetable and quinoa bowl with tahini",
+                benefits: "Minerals and healthy fats for skin repair"
+              },
+              snacks: ["Kiwi fruit", "Small handful of almonds"],
+              hydration: "2-3 liters of water, mint tea"
+            },
+            {
+              day: "Sunday",
+              breakfast: {
+                meal: "Scrambled eggs with spinach and whole grain toast",
+                benefits: "Protein and iron for skin regeneration"
+              },
+              lunch: {
+                meal: "Vegetable soup with lentils and turmeric",
+                benefits: "Anti-inflammatory properties and hydration"
+              },
+              dinner: {
+                meal: "Baked trout with roasted brussels sprouts and quinoa",
+                benefits: "Omega-3 fatty acids and vitamin K"
+              },
+              snacks: ["Apple with cinnamon", "Yogurt with honey"],
+              hydration: "2-3 liters of water, ginger tea"
+            }
           ]
         };
         
@@ -56,6 +159,16 @@ const MealPlan = () => {
       setLoading(false);
     }
   };
+
+  // Function to get currently active day data
+  const getActiveDayData = () => {
+    if (!mealPlan || !mealPlan.days) return null;
+    return mealPlan.days.find((day: any) => day.day === activeDay);
+  };
+
+  // List of days for the tabs
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const dayAbbreviations = ["M", "T", "W", "T", "F", "S", "S"];
 
   return (
     <div className="pb-24">
@@ -121,25 +234,36 @@ const MealPlan = () => {
             <p className="text-sm font-medium">Skin Focus: {mealPlan.skinFocus}</p>
           </div>
           
-          <div className="grid grid-cols-7 gap-1 mb-3">
-            {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
-              <div key={i} className={`text-center py-1 rounded-md text-xs font-medium ${i === 0 ? 'bg-sky-100 text-sky-700' : ''}`}>
-                {day}
-              </div>
-            ))}
-          </div>
+          <Tabs 
+            defaultValue="Monday" 
+            value={activeDay}
+            onValueChange={setActiveDay}
+            className="w-full"
+          >
+            <TabsList className="grid grid-cols-7 w-full mb-2">
+              {daysOfWeek.map((day, i) => (
+                <TabsTrigger 
+                  key={day} 
+                  value={day}
+                  className="text-xs py-1"
+                >
+                  {dayAbbreviations[i]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
           
           <p className="text-xs text-muted-foreground">
-            Tap on each day below to see your personalized meals
+            Tap on each day above to see your personalized meals
           </p>
         </div>
       )}
       
-      {/* Daily Meal Cards (appear after generation) */}
-      {mealPlan && mealPlan.days && mealPlan.days.map((day, index) => (
-        <div key={index} className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
+      {/* Daily Meal Card (shows the active day) */}
+      {mealPlan && getActiveDayData() && (
+        <div className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
           <div className="bg-gradient-to-r from-sky-500 to-sky-400 p-4 text-white">
-            <h3 className="font-semibold">{day.day}</h3>
+            <h3 className="font-semibold">{activeDay}</h3>
           </div>
           
           {/* Breakfast */}
@@ -150,10 +274,10 @@ const MealPlan = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Breakfast</p>
-                <p className="font-medium">{day.breakfast.meal}</p>
+                <p className="font-medium">{getActiveDayData().breakfast.meal}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground ml-12">{day.breakfast.benefits}</p>
+            <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().breakfast.benefits}</p>
           </div>
           
           {/* Lunch */}
@@ -164,10 +288,10 @@ const MealPlan = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Lunch</p>
-                <p className="font-medium">{day.lunch.meal}</p>
+                <p className="font-medium">{getActiveDayData().lunch.meal}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground ml-12">{day.lunch.benefits}</p>
+            <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().lunch.benefits}</p>
           </div>
           
           {/* Dinner */}
@@ -178,26 +302,26 @@ const MealPlan = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Dinner</p>
-                <p className="font-medium">{day.dinner.meal}</p>
+                <p className="font-medium">{getActiveDayData().dinner.meal}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground ml-12">{day.dinner.benefits}</p>
+            <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().dinner.benefits}</p>
           </div>
           
           {/* Snacks & Hydration */}
           <div className="p-4">
             <p className="text-sm font-medium mb-2">Snacks & Hydration</p>
             <ul className="list-disc list-inside text-sm text-muted-foreground pl-2 mb-3">
-              {day.snacks.map((snack, i) => (
+              {getActiveDayData().snacks.map((snack: string, i: number) => (
                 <li key={i}>{snack}</li>
               ))}
             </ul>
             <p className="text-xs bg-blue-50 p-2 rounded-md">
-              <span className="font-medium">Hydration:</span> {day.hydration}
+              <span className="font-medium">Hydration:</span> {getActiveDayData().hydration}
             </p>
           </div>
         </div>
-      ))}
+      )}
       
       {/* Loading States */}
       {loading && (
