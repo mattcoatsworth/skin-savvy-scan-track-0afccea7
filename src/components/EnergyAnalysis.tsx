@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 interface EnergyAnalysisProps {
   className?: string;
@@ -63,19 +64,12 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     setError(null);
     
     try {
-      // Attempt to get analysis from localStorage cache first
-      const cacheKey = `energy-analysis-${selectedImage.substring(0, 50)}`;
-      const cachedAnalysis = localStorage.getItem(cacheKey);
-      
-      if (cachedAnalysis) {
-        setAnalysis(cachedAnalysis);
-        setIsAnalyzing(false);
-        return;
-      }
-      
       // Get the user ID if available
       const userId = await getUserId();
       console.log("Current user ID:", userId);
+
+      // Add a unique identifier to prevent caching
+      const imageWithUniqueId = `${selectedImage}#${uuidv4()}`;
 
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
@@ -84,8 +78,9 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          image: selectedImage,
-          userId: userId // Send the userId if available
+          image: selectedImage, // Use the original image
+          userId: userId, // Send the userId if available
+          timestamp: Date.now() // Add timestamp to prevent caching
         }),
       });
       
@@ -111,9 +106,6 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       }
       
       setAnalysis(data.analysis);
-      
-      // Cache the result
-      localStorage.setItem(cacheKey, data.analysis);
       
       // Show toast about whether skin log data was included
       if (isOnLogSkinPage && data.includedSkinData) {
