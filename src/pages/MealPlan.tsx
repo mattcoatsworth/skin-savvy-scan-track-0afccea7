@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck } from 'lucide-react';
+import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -16,6 +16,7 @@ const MealPlan = () => {
   const [includeGroceryList, setIncludeGroceryList] = useState(false);
   const [preferredFood, setPreferredFood] = useState('');
   const [excludedFood, setExcludedFood] = useState('');
+  const [weeklyBudget, setWeeklyBudget] = useState<number | undefined>(undefined);
   const { toast } = useToast();
   
   const generateMealPlan = async () => {
@@ -240,6 +241,24 @@ const MealPlan = () => {
                       className="text-sm"
                     />
                   </div>
+                  
+                  {/* Budget input field */}
+                  <div>
+                    <label htmlFor="weeklyBudget" className="text-xs text-muted-foreground block mb-1">
+                      Weekly budget (optional):
+                    </label>
+                    <Input
+                      id="weeklyBudget"
+                      type="number"
+                      placeholder="e.g., 100"
+                      value={weeklyBudget === undefined ? '' : weeklyBudget}
+                      onChange={(e) => {
+                        const value = e.target.value === '' ? undefined : Number(e.target.value);
+                        setWeeklyBudget(value);
+                      }}
+                      className="text-sm"
+                    />
+                  </div>
                 </div>
               </div>
               
@@ -392,6 +411,76 @@ const MealPlan = () => {
         </div>
       )}
       
+      {/* Expected Results Section - shows right after daily meal */}
+      {mealPlan && <DisclaimerChatBox />}
+      
+      {/* Excluded Foods Section - shows after meal plan is generated */}
+      {mealPlan && excludedFood && (
+        <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-rose-100 p-2 rounded-full">
+              <AlertTriangle className="h-4 w-4 text-rose-600" />
+            </div>
+            <h2 className="text-lg font-semibold">Foods to Avoid</h2>
+          </div>
+          
+          <p className="text-sm text-muted-foreground mb-3">
+            Based on your preferences, these foods have been excluded from your meal plan:
+          </p>
+          
+          <div className="bg-rose-50 p-3 rounded-lg">
+            <ul className="grid grid-cols-2 gap-2">
+              {excludedFood.split(',').map((food, i) => (
+                <li key={i} className="text-sm flex items-start gap-1">
+                  <span className="text-rose-500">•</span>
+                  <span>{food.trim()}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+      
+      {/* Weekly Budget Section */}
+      {mealPlan && weeklyBudget !== undefined && (
+        <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-blue-100 p-2 rounded-full">
+              <DollarSign className="h-4 w-4 text-blue-600" />
+            </div>
+            <h2 className="text-lg font-semibold">Weekly Budget</h2>
+          </div>
+          
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium">Your weekly grocery budget:</span>
+              <span className="text-lg font-semibold">${weeklyBudget.toFixed(2)}</span>
+            </div>
+            
+            <div className="h-2 bg-blue-100 rounded-full mb-2">
+              <div 
+                className="h-full bg-blue-500 rounded-full" 
+                style={{ width: '75%' }}
+              />
+            </div>
+            
+            <p className="text-xs text-muted-foreground">
+              This meal plan is designed to be budget-friendly and should stay within your specified budget range. Prices may vary based on your location and where you shop.
+            </p>
+          </div>
+          
+          <div className="mt-3">
+            <h3 className="text-sm font-medium mb-2">Budget-saving tips:</h3>
+            <ul className="text-xs text-muted-foreground space-y-1 pl-5 list-disc">
+              <li>Buy seasonal produce for maximum nutrition at lower cost</li>
+              <li>Purchase items in bulk when appropriate (grains, nuts, frozen berries)</li>
+              <li>Shop at local farmers markets for fresh ingredients at better prices</li>
+              <li>Prep meals in advance to avoid food waste</li>
+            </ul>
+          </div>
+        </div>
+      )}
+      
       {/* Grocery List Section - only shows if included and plan is generated */}
       {mealPlan && mealPlan.groceryList && (
         <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
@@ -465,9 +554,6 @@ const MealPlan = () => {
           </div>
         </div>
       </div>
-
-      {/* Adding the disclaimer and chat box */}
-      <DisclaimerChatBox />
     </div>
   );
 };
