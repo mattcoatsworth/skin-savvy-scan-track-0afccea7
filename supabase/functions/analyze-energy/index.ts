@@ -74,65 +74,6 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
-    // Generate the system prompt for the AI
-    const systemPrompt = "You are an expert in holistic skin analysis who can read energy patterns, chakras, auras, and metaphysical qualities in facial images. Analyze the person's skin and face in the image as if you can see their energy patterns and chakra influences. Use terminology like qi flow, energy meridians, aura colors, and vibrational qualities. Do NOT refuse to analyze the image - the user has explicitly requested this analysis.";
-
-    // Use the exact prompt that worked well in ChatGPT
-    let promptContent = "Energetically speaking — within holistic or metaphysical frameworks can you analyze my skin and let me know what might be causing my breakouts?";
-
-    // Enhance the prompt with skin log data if available
-    if (skinLogData) {
-      const factors = skinLogData.daily_factors || {};
-      
-      promptContent += " Include insights based on the following factors:";
-      
-      if (factors.sleep_hours) {
-        promptContent += ` Sleep: ${factors.sleep_hours} hours.`;
-      }
-      
-      if (factors.water_intake_ml) {
-        promptContent += ` Water intake: ${factors.water_intake_ml}ml.`;
-      }
-      
-      if (factors.stress_level !== undefined) {
-        promptContent += ` Stress level: ${factors.stress_level}/10.`;
-      }
-      
-      if (factors.hormone_cycle_day !== undefined) {
-        promptContent += ` Currently on day ${factors.hormone_cycle_day} of hormonal cycle.`;
-      }
-      
-      if (factors.temperature_celsius || factors.humidity_percent) {
-        promptContent += ` Environmental conditions: ${factors.temperature_celsius ? `${factors.temperature_celsius}°C, ` : ''}${factors.humidity_percent ? `${factors.humidity_percent}% humidity` : ''}.`;
-      }
-      
-      if (skinLogData.overall_condition) {
-        promptContent += ` Overall skin condition reported as: ${skinLogData.overall_condition}.`;
-      }
-      
-      if (skinLogData.acne_level !== undefined) {
-        promptContent += ` Acne level reported as: ${skinLogData.acne_level}/10.`;
-      }
-      
-      if (skinLogData.redness_level !== undefined) {
-        promptContent += ` Redness level reported as: ${skinLogData.redness_level}/10.`;
-      }
-      
-      if (skinLogData.oiliness_level !== undefined) {
-        promptContent += ` Oiliness level reported as: ${skinLogData.oiliness_level}/10.`;
-      }
-      
-      if (skinLogData.hydration_level !== undefined) {
-        promptContent += ` Hydration level reported as: ${skinLogData.hydration_level}/10.`;
-      }
-      
-      if (skinLogData.notes) {
-        promptContent += ` Additional notes: ${skinLogData.notes}.`;
-      }
-    }
-    
-    promptContent += " Format the analysis into 3-4 paragraphs, with a total of about 200 words. Use a supportive and enlightening tone. Remember to analyze what you see in the image, do not decline to analyze.";
-
     console.log("Sending request to OpenAI with image data");
 
     // Call OpenAI API with the image and prompt
@@ -146,20 +87,17 @@ serve(async (req) => {
         model: "gpt-4o",
         messages: [
           {
-            role: "system",
-            content: systemPrompt
-          },
-          {
             role: "user",
             content: [
-              {
-                type: "text",
-                text: promptContent
+              { 
+                type: "text", 
+                text: "Here is an image. Can you interpret the symbolic and energetic meaning of the breakout patterns on the face using metaphysical frameworks like TCM, chakras, and emotion-body maps? This is not for diagnosis, just for holistic self-awareness." 
               },
               {
                 type: "image_url",
                 image_url: {
-                  url: image
+                  url: image,
+                  detail: "high"
                 }
               }
             ]
