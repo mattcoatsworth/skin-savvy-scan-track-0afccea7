@@ -412,7 +412,53 @@ const MealPlan = () => {
       )}
       
       {/* Expected Results Section - shows right after daily meal */}
-      {mealPlan && <DisclaimerChatBox />}
+      {mealPlan && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold">Expected Results</h3>
+            <div className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full text-sm font-medium">
+              ~85% Improvement
+            </div>
+          </div>
+          <Card className="border-slate-200">
+            <CardContent className="p-4 text-muted-foreground text-sm">
+              <p>
+                Following this personalized meal plan consistently may result in approximately 
+                85% improvement in your skin health metrics over time. Results may vary based on 
+                individual factors, consistency, and other lifestyle elements.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+      
+      {/* Grocery List Section - only shows if included and plan is generated */}
+      {mealPlan && mealPlan.groceryList && (
+        <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-amber-100 p-2 rounded-full">
+              <ShoppingCart className="h-4 w-4 text-amber-600" />
+            </div>
+            <h2 className="text-lg font-semibold">Grocery List</h2>
+          </div>
+          
+          <div className="space-y-4">
+            {mealPlan.groceryList.map((category: any, i: number) => (
+              <div key={i}>
+                <h3 className="text-sm font-medium mb-1">{category.category}</h3>
+                <ul className="grid grid-cols-2 gap-2">
+                  {category.items.map((item: string, j: number) => (
+                    <li key={j} className="text-xs text-muted-foreground flex items-center gap-1">
+                      <ListCheck className="h-3 w-3 text-emerald-500 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       
       {/* Excluded Foods Section - shows after meal plan is generated */}
       {mealPlan && excludedFood && (
@@ -481,31 +527,24 @@ const MealPlan = () => {
         </div>
       )}
       
-      {/* Grocery List Section - only shows if included and plan is generated */}
-      {mealPlan && mealPlan.groceryList && (
-        <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="bg-amber-100 p-2 rounded-full">
-              <ShoppingCart className="h-4 w-4 text-amber-600" />
-            </div>
-            <h2 className="text-lg font-semibold">Grocery List</h2>
-          </div>
-          
-          <div className="space-y-4">
-            {mealPlan.groceryList.map((category: any, i: number) => (
-              <div key={i}>
-                <h3 className="text-sm font-medium mb-1">{category.category}</h3>
-                <ul className="grid grid-cols-2 gap-2">
-                  {category.items.map((item: string, j: number) => (
-                    <li key={j} className="text-xs text-muted-foreground flex items-center gap-1">
-                      <ListCheck className="h-3 w-3 text-emerald-500 flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+      {/* Chat box and Disclaimer moved to the bottom */}
+      {mealPlan && (
+        <TestAIChatBox productTitle="Skin-Focused Meal Plan" />
+      )}
+      
+      {mealPlan && (
+        <div className="mt-2 mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-muted-foreground">Disclaimer</h3>
+          <Card className="border-slate-200">
+            <CardContent className="p-4 text-muted-foreground text-xs">
+              <p>
+                This information is for educational purposes only and is not intended as
+                medical advice. Always consult with a healthcare professional or
+                dermatologist for personalized recommendations and treatment options
+                regarding skin concerns.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       )}
       
