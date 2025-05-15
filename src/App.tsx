@@ -62,6 +62,7 @@ import CategoryAnalysisDetail from "@/pages/CategoryAnalysisDetail";
 import MonthlyAnalysisDetail from "@/pages/MonthlyAnalysisDetail";
 import CorrelationsDetail from "@/pages/CorrelationsDetail";
 import ProductAITestPage from "@/pages/ProductAITestPage";
+import MealPlan from "@/pages/MealPlan";
 
 // Custom recommendation pages
 import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
@@ -154,6 +155,7 @@ const App = () => (
               <Route path="/products" element={<Insights />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/meal-plan" element={<MealPlan />} />
               <Route path="/skin-analysis" element={<SkinAnalysis />} />
               <Route path="/recent-logs" element={<RecentLogs />} />
               <Route path="/recent-logs/:logId" element={<RecentLogDetail />} />
