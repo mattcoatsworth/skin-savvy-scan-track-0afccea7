@@ -64,6 +64,7 @@ import CorrelationsDetail from "@/pages/CorrelationsDetail";
 import ProductAITestPage from "@/pages/ProductAITestPage";
 import MealPlan from "@/pages/MealPlan";
 import FYP from "@/pages/FYP";
+import RecipeIdeas from "@/pages/RecipeIdeas";
 
 // Custom recommendation pages
 import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
@@ -158,6 +159,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/meal-plan" element={<MealPlan />} />
+              <Route path="/recipe-ideas/:day/:mealType" element={<RecipeIdeas />} />
               <Route path="/skin-analysis" element={<SkinAnalysis />} />
               <Route path="/recent-logs" element={<RecentLogs />} />
               <Route path="/recent-logs/:logId" element={<RecentLogDetail />} />

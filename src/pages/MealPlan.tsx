@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle, DollarSign } from 'lucide-react';
+import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle, DollarSign, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -161,6 +162,9 @@ const MealPlan = () => {
           ] : null
         };
         
+        // Store the meal plan in localStorage for use in the RecipeIdeas page
+        localStorage.setItem('mealPlan', JSON.stringify(dummyData));
+        
         setMealPlan(dummyData);
         setLoading(false);
       }, 1500);
@@ -184,6 +188,20 @@ const MealPlan = () => {
   // List of days for the tabs
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const dayAbbreviations = ["M", "T", "W", "T", "F", "S", "S"];
+
+  // Recipe ideas button component
+  const RecipeIdeasButton = ({ mealType, day }: { mealType: string; day: string }) => (
+    <Link to={`/recipe-ideas/${day}/${mealType}`}>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className="text-xs bg-emerald-50 border-emerald-100 text-emerald-700 hover:bg-emerald-100"
+      >
+        <BookOpen className="h-3 w-3 mr-1" />
+        Recipe Ideas
+      </Button>
+    </Link>
+  );
 
   return (
     <div className="pb-24">
@@ -357,49 +375,64 @@ const MealPlan = () => {
           
           {/* Breakfast */}
           <div className="p-4 border-b">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-amber-100 p-2 rounded-full">
-                <Apple className="h-4 w-4 text-amber-600" />
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <div className="bg-amber-100 p-2 rounded-full">
+                  <Apple className="h-4 w-4 text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Breakfast</p>
+                  <p className="font-medium">{getActiveDayData().breakfast.meal}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Breakfast</p>
-                <p className="font-medium">{getActiveDayData().breakfast.meal}</p>
-              </div>
+              <RecipeIdeasButton mealType="breakfast" day={activeDay} />
             </div>
             <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().breakfast.benefits}</p>
           </div>
           
           {/* Lunch */}
           <div className="p-4 border-b">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-green-100 p-2 rounded-full">
-                <Utensils className="h-4 w-4 text-green-600" />
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <div className="bg-green-100 p-2 rounded-full">
+                  <Utensils className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Lunch</p>
+                  <p className="font-medium">{getActiveDayData().lunch.meal}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Lunch</p>
-                <p className="font-medium">{getActiveDayData().lunch.meal}</p>
-              </div>
+              <RecipeIdeasButton mealType="lunch" day={activeDay} />
             </div>
             <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().lunch.benefits}</p>
           </div>
           
           {/* Dinner */}
           <div className="p-4 border-b">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-purple-100 p-2 rounded-full">
-                <ChefHat className="h-4 w-4 text-purple-600" />
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <div className="bg-purple-100 p-2 rounded-full">
+                  <ChefHat className="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dinner</p>
+                  <p className="font-medium">{getActiveDayData().dinner.meal}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Dinner</p>
-                <p className="font-medium">{getActiveDayData().dinner.meal}</p>
-              </div>
+              <RecipeIdeasButton mealType="dinner" day={activeDay} />
             </div>
             <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().dinner.benefits}</p>
           </div>
           
           {/* Snacks & Hydration */}
           <div className="p-4">
-            <p className="text-sm font-medium mb-2">Snacks & Hydration</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">Snacks & Hydration</p>
+              <div className="flex gap-2">
+                <RecipeIdeasButton mealType="snacks" day={activeDay} />
+                <RecipeIdeasButton mealType="hydration" day={activeDay} />
+              </div>
+            </div>
             <ul className="list-disc list-inside text-sm text-muted-foreground pl-2 mb-3">
               {getActiveDayData().snacks.map((snack: string, i: number) => (
                 <li key={i}>{snack}</li>
