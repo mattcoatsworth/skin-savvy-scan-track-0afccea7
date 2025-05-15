@@ -53,7 +53,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       }
 
       // Call the Supabase Function for analysis
-      const response = await fetch('/api/analyze-energy', {
+      const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,11 +64,19 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to analyze image');
+        throw new Error(`Server responded with status: ${response.status}`);
       }
       
-      const data = await response.json();
+      const responseText = await response.text();
+      console.log("Raw response:", responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Error parsing JSON:", parseError);
+        throw new Error("Failed to parse server response");
+      }
       
       if (data.error) {
         throw new Error(data.error);

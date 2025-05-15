@@ -20,36 +20,49 @@ serve(async (req) => {
       throw new Error('OpenAI API key not found in environment variables');
     }
 
-    const { image } = await req.json();
+    const requestData = await req.json().catch(err => {
+      console.error("Error parsing request JSON:", err);
+      throw new Error('Invalid JSON in request');
+    });
+    
+    const { image } = requestData;
     
     if (!image) {
       throw new Error('No image provided for analysis');
     }
 
+    console.log("Request received with image data. Processing...");
+
     // For development purposes, we'll return a placeholder analysis
     // In production, you would call OpenAI's API here with the image
-    const energyAnalysis = `Energetically speaking, your skin is reflecting a balanced flow of vital energy in most areas. 
-There's a subtle glow emanating from your skin that suggests good qi circulation. 
-The areas around your cheeks show signs of heart chakra activation, while your forehead 
-indicates strong third-eye energy. Your skin's natural luminosity points to a well-balanced 
-root chakra providing grounding energy to your entire system.
+    const energyAnalysis = "Energetically speaking, your skin is reflecting a balanced flow of vital energy in most areas. There's a subtle glow emanating from your skin that suggests good qi circulation. The areas around your cheeks show signs of heart chakra activation, while your forehead indicates strong third-eye energy. Your skin's natural luminosity points to a well-balanced root chakra providing grounding energy to your entire system.\n\nSome areas around your jawline suggest minor energy blockages that might be related to unexpressed communication or emotions. A gentle practice of throat chakra meditation could help clear these subtle imbalances. Overall, your skin's energetic pattern shows remarkable resilience and a natural ability to self-regulate its vital force.";
 
-Some areas around your jawline suggest minor energy blockages that might be related to 
-unexpressed communication or emotions. A gentle practice of throat chakra meditation 
-could help clear these subtle imbalances. Overall, your skin's energetic pattern shows 
-remarkable resilience and a natural ability to self-regulate its vital force.`;
+    console.log("Sending analysis response");
 
-    return new Response(JSON.stringify({ analysis: energyAnalysis }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({ analysis: energyAnalysis }),
+      {
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        }
+      }
+    );
 
   } catch (error) {
     console.error('Error analyzing image:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message || 'Error analyzing image'
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    
+    return new Response(
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Error analyzing image'
+      }), 
+      {
+        status: 500,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        }
+      }
+    );
   }
 });
