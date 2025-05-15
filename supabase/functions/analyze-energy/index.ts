@@ -116,6 +116,13 @@ serve(async (req) => {
       }
     }
 
+    // Ensure the image URL is correctly formatted with a proper data URL prefix
+    let formattedImage = image;
+    if (!image.startsWith('data:')) {
+      console.log("Image is not properly formatted as a data URL, adding prefix");
+      formattedImage = `data:image/jpeg;base64,${image.replace(/^data:image\/[a-z]+;base64,/, '')}`;
+    }
+
     // Call OpenAI API with the user's prompt and structure
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -136,7 +143,7 @@ serve(async (req) => {
               {
                 type: "image_url",
                 image_url: {
-                  url: image,
+                  url: formattedImage,
                   detail: "high"
                 }
               }

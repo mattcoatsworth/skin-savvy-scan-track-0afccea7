@@ -29,6 +29,17 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const handleImageSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImage(reader.result as string);
@@ -73,6 +84,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 
       // Generate a unique request ID to prevent caching
       const requestId = uuidv4();
+      const timestamp = Date.now();
 
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
@@ -86,7 +98,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         body: JSON.stringify({ 
           image: selectedImage,
           userId: userId, // Send the userId if available
-          timestamp: Date.now(), // Add timestamp to prevent caching
+          timestamp: timestamp, // Add timestamp to prevent caching
           requestId: requestId // Add unique request ID
         }),
       });
@@ -94,11 +106,13 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       console.log("Response status:", response.status);
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
         throw new Error(`Server responded with status: ${response.status}`);
       }
       
       const responseText = await response.text();
-      console.log("Raw response:", responseText);
+      console.log("Raw response:", responseText.substring(0, 100) + "...");
       
       let data;
       try {
@@ -126,6 +140,12 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         toast({
           title: "Basic Analysis Complete",
           description: "Continue logging your skin conditions for a more personalized analysis",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Analysis Complete",
+          description: "Your energetic skin analysis is ready",
           variant: "default",
         });
       }
