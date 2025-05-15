@@ -31,15 +31,31 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle }) => {
     navigate("/chat", { state: { initialMessage: suggestion } });
   };
   
-  // Common quick suggestions
-  const suggestions = [
-    "Tell me more about this",
-    "Is this right for me?",
-    "How does this work?",
-    "Side effects?",
-    "Best practices",
-    "Alternatives"
-  ];
+  // Get context-specific suggestions based on productTitle
+  const getSuggestions = () => {
+    if (productTitle?.includes("Meal Plan")) {
+      return [
+        "Adjust for allergies?",
+        "Recipe details?",
+        "Substitute ingredients?",
+        "Food portion sizes?",
+        "Best meal timing?",
+        "Weekly shopping tips"
+      ];
+    }
+    
+    // Default suggestions
+    return [
+      "Tell me more about this",
+      "Is this right for me?",
+      "How does this work?",
+      "Side effects?",
+      "Best practices",
+      "Alternatives"
+    ];
+  };
+
+  const suggestions = getSuggestions();
 
   return (
     <div className="mt-8 mb-20">
@@ -95,7 +111,9 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle }) => {
           </form>
           
           <div className="mt-2 text-xs text-muted-foreground">
-            Ask our AI anything about this recommendation or your skin health
+            {productTitle?.includes("Meal Plan") 
+              ? "Ask our AI anything about this meal plan or your nutritional needs"
+              : "Ask our AI anything about this recommendation or your skin health"}
           </div>
         </CardContent>
       </Card>

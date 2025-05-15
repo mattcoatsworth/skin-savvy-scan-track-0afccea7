@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import DisclaimerChatBox from '@/components/MealPlan/DisclaimerChatBox';
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
@@ -440,7 +440,7 @@ const MealPlan = () => {
       )}
       
       {/* Nutrition Tips Card (always visible) */}
-      <div className="bg-white rounded-xl p-5 shadow-sm">
+      <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
         <div className="flex items-center gap-3 mb-3">
           <div className="bg-green-100 p-2 rounded-full">
             <Apple className="h-4 w-4 text-green-600" />
@@ -465,6 +465,9 @@ const MealPlan = () => {
           </div>
         </div>
       </div>
+
+      {/* Adding the disclaimer and chat box */}
+      <DisclaimerChatBox />
     </div>
   );
 };
