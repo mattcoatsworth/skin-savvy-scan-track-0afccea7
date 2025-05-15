@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import EnergyAnalysis from "@/components/EnergyAnalysis";
 
 const FYP = () => {
   // Add scroll to top functionality
@@ -24,6 +25,9 @@ const FYP = () => {
             </p>
           </CardContent>
         </Card>
+        
+        {/* Energy Analysis Section */}
+        <EnergyAnalysis />
       </main>
     </div>
   );
