@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ChefHat, Loader2 } from 'lucide-react';
+import { ArrowLeft, ChefHat, Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +13,7 @@ const RecipeIdeas = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [recipe, setRecipe] = useState<any>(null);
+  const [savedRecipes, setSavedRecipes] = useState<string[]>([]);
   const { toast } = useToast();
 
   // Format meal type for display
@@ -49,7 +51,48 @@ const RecipeIdeas = () => {
     }
   };
 
+  // Save recipe to user's saved recipes in localStorage
+  const saveRecipe = (recipeName: string) => {
+    try {
+      // Get existing saved recipes or initialize empty array
+      const savedRecipesStr = localStorage.getItem('savedRecipes');
+      let savedRecipesArray: string[] = savedRecipesStr ? JSON.parse(savedRecipesStr) : [];
+      
+      // Check if recipe is already saved
+      if (savedRecipesArray.includes(recipeName)) {
+        toast({
+          title: "Already saved",
+          description: `"${recipeName}" is already in your saved recipes.`,
+        });
+        return;
+      }
+      
+      // Add new recipe and save back to localStorage
+      savedRecipesArray.push(recipeName);
+      localStorage.setItem('savedRecipes', JSON.stringify(savedRecipesArray));
+      setSavedRecipes(savedRecipesArray);
+      
+      toast({
+        title: "Recipe saved!",
+        description: `"${recipeName}" has been added to your saved recipes.`,
+      });
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      toast({
+        title: "Error",
+        description: "Could not save the recipe. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
+    // Load saved recipes from localStorage
+    const savedRecipesStr = localStorage.getItem('savedRecipes');
+    if (savedRecipesStr) {
+      setSavedRecipes(JSON.parse(savedRecipesStr));
+    }
+    
     const fetchRecipeIdeas = async () => {
       try {
         setLoading(true);
@@ -149,7 +192,17 @@ const RecipeIdeas = () => {
             {recipe.recipes.map((r: any, i: number) => (
               <Card key={i} className="mb-4">
                 <CardContent className="p-4">
-                  <h3 className="font-medium text-emerald-700 mb-1">{r.name}</h3>
+                  <div className="flex justify-between items-center mb-1">
+                    <h3 className="font-medium text-emerald-700">{r.name}</h3>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => saveRecipe(r.name)}
+                      className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50"
+                    >
+                      <Save className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <div className="mb-3">
                     <p className="text-xs text-muted-foreground mb-1">Prep time: {r.prepTime} • Difficulty: {r.difficulty}</p>
                   </div>
