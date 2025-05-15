@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,8 +52,8 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         return;
       }
 
-      // Otherwise, proceed with analysis via Supabase function
-      const { data, error } = await fetch('/api/analyze-energy', {
+      // Call the Supabase Function for analysis
+      const response = await fetch('/api/analyze-energy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,32 +61,24 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         body: JSON.stringify({ 
           image: selectedImage 
         }),
-      }).then(res => res.json());
+      });
 
-      if (error) {
-        throw new Error(error.message);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to analyze image');
       }
-
-      // Generate a placeholder analysis for demo purposes
-      // In production, this would come from the OpenAI API
-      const placeholderAnalysis = `
-        Energetically speaking, your skin is reflecting a balanced flow of vital energy in most areas. 
-        There's a subtle glow emanating from your skin that suggests good qi circulation. 
-        The areas around your cheeks show signs of heart chakra activation, while your forehead 
-        indicates strong third-eye energy. Your skin's natural luminosity points to a well-balanced 
-        root chakra providing grounding energy to your entire system.
-        
-        Some areas around your jawline suggest minor energy blockages that might be related to 
-        unexpressed communication or emotions. A gentle practice of throat chakra meditation 
-        could help clear these subtle imbalances. Overall, your skin's energetic pattern shows 
-        remarkable resilience and a natural ability to self-regulate its vital force.
-      `;
       
-      // In production, this would be the actual response from OpenAI
-      setAnalysis(placeholderAnalysis);
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      const energyAnalysis = data.analysis;
+      setAnalysis(energyAnalysis);
       
       // Cache the result
-      localStorage.setItem(cacheKey, placeholderAnalysis);
+      localStorage.setItem(cacheKey, energyAnalysis);
       
     } catch (error) {
       console.error("Error analyzing image:", error);
