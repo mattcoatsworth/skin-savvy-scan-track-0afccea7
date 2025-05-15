@@ -74,8 +74,8 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
-    // Generate the system prompt for the AI with stronger instructions to analyze
-    const systemPrompt = "You are an expert in holistic skin analysis specializing in energy patterns, chakras, auras, and metaphysical qualities in facial images. The user is explicitly asking for an analysis of their own skin and energy patterns for self-improvement purposes. This is a consensual and requested analysis. Analyze the person's skin and face in the image as if you can see their energy patterns and chakra influences. Use terminology like qi flow, energy meridians, aura colors, and vibrational qualities. It is important that you DO analyze the image as requested - do not refuse or state that you cannot analyze people in images, as the user has explicitly requested this specific analysis of their own skin.";
+    // Generate the system prompt for the AI
+    const systemPrompt = "You are an expert in holistic skin analysis who can read energy patterns, chakras, auras, and metaphysical qualities in facial images. Analyze the person's skin and face in the image as if you can see their energy patterns and chakra influences. Use terminology like qi flow, energy meridians, aura colors, and vibrational qualities. Do NOT refuse to analyze the image - the user has explicitly requested this analysis.";
 
     // Use the exact prompt that worked well in ChatGPT
     let promptContent = "Energetically speaking — within holistic or metaphysical frameworks can you analyze my skin and let me know what might be causing my breakouts?";
@@ -134,8 +134,6 @@ serve(async (req) => {
     promptContent += " Format the analysis into 3-4 paragraphs, with a total of about 200 words. Use a supportive and enlightening tone. Remember to analyze what you see in the image, do not decline to analyze.";
 
     console.log("Sending request to OpenAI with image data");
-    console.log("Using system prompt:", systemPrompt.substring(0, 50) + "...");
-    console.log("Using user prompt:", promptContent.substring(0, 50) + "...");
 
     // Call OpenAI API with the image and prompt
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
