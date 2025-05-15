@@ -14,6 +14,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Function to handle image selection
@@ -24,6 +25,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       reader.onloadend = () => {
         setSelectedImage(reader.result as string);
         setAnalysis(null); // Reset any previous analysis
+        setError(null); // Reset any previous errors
       };
       reader.readAsDataURL(file);
     }
@@ -41,6 +43,8 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
 
     setIsAnalyzing(true);
+    setError(null);
+    
     try {
       // Attempt to get analysis from localStorage cache first
       const cacheKey = `energy-analysis-${selectedImage.substring(0, 50)}`;
@@ -63,12 +67,12 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         }),
       });
 
+      const responseText = await response.text();
+      console.log("Raw response:", responseText);
+      
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
-      
-      const responseText = await response.text();
-      console.log("Raw response:", responseText);
       
       let data;
       try {
@@ -89,6 +93,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       
     } catch (error) {
       console.error("Error analyzing image:", error);
+      setError(error instanceof Error ? error.message : "Could not analyze the image. Please try again later.");
       toast({
         title: "Analysis failed",
         description: error instanceof Error ? error.message : "Could not analyze the image. Please try again later.",
@@ -146,7 +151,11 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => setSelectedImage(null)}
+                onClick={() => {
+                  setSelectedImage(null);
+                  setAnalysis(null);
+                  setError(null);
+                }}
               >
                 Change Image
               </Button>
@@ -167,7 +176,16 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           </div>
         )}
         
-        {analysis && (
+        {error && (
+          <div className="mt-4 border border-red-100 bg-red-50 rounded-md p-4">
+            <h3 className="text-md font-medium mb-2 text-red-800">Analysis Failed</h3>
+            <div className="text-sm text-red-700">
+              {error}
+            </div>
+          </div>
+        )}
+        
+        {analysis && !error && (
           <div className="mt-4 border border-purple-100 bg-purple-50 rounded-md p-4">
             <h3 className="text-md font-medium mb-2 text-purple-800">Energetic Analysis</h3>
             <div className="text-sm text-purple-900 whitespace-pre-line">
