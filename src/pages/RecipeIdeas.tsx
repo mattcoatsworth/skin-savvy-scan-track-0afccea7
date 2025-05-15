@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ChefHat, Loader2, Save } from 'lucide-react';
+import { ArrowLeft, ChefHat, Loader2, Save, FileImage } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const RecipeIdeas = () => {
   const { day, mealType } = useParams();
@@ -15,6 +17,19 @@ const RecipeIdeas = () => {
   const [recipe, setRecipe] = useState<any>(null);
   const [savedRecipes, setSavedRecipes] = useState<string[]>([]);
   const { toast } = useToast();
+
+  // Collection of placeholder images for recipes
+  const placeholderImages = [
+    "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", // orange flowers (colorful dish)
+    "https://images.unsplash.com/photo-1501854140801-50d01698950b", // bird's eye view of green mountains (green vegetables)
+    "https://images.unsplash.com/photo-1582562124811-c09040d0a901", // orange and white tabby cat (warm comfort food)
+  ];
+
+  // Function to select an appropriate image based on recipe name or description
+  const getImageForRecipe = (recipe: any, index: number) => {
+    // Simple rotation of placeholder images
+    return `${placeholderImages[index % placeholderImages.length]}?w=600&h=400&fit=crop&q=80`;
+  }
 
   // Format meal type for display
   const formatMealType = (type: string) => {
@@ -191,40 +206,57 @@ const RecipeIdeas = () => {
             <h2 className="text-lg font-semibold mb-3">Recipe Ideas</h2>
             {recipe.recipes.map((r: any, i: number) => (
               <Card key={i} className="mb-4">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-center mb-1">
-                    <h3 className="font-medium text-emerald-700">{r.name}</h3>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => saveRecipe(r.name)}
-                      className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50"
-                    >
-                      <Save className="h-4 w-4" />
-                    </Button>
+                <CardContent className="p-0">
+                  {/* Recipe Image */}
+                  <div className="w-full h-48 relative overflow-hidden">
+                    <AspectRatio ratio={16/9}>
+                      <img 
+                        src={getImageForRecipe(r, i)}
+                        alt={r.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=600&h=400&fit=crop&q=80";
+                        }}
+                      />
+                    </AspectRatio>
                   </div>
-                  <div className="mb-3">
-                    <p className="text-xs text-muted-foreground mb-1">Prep time: {r.prepTime} • Difficulty: {r.difficulty}</p>
-                  </div>
-                  <Separator className="my-3" />
-                  <div className="mb-3">
-                    <p className="text-sm font-medium mb-1">Ingredients:</p>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                      {r.ingredients.map((ingredient: string, idx: number) => (
-                        <li key={idx}>{ingredient}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <Separator className="my-3" />
-                  <div>
-                    <p className="text-sm font-medium mb-1">Instructions:</p>
-                    <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-2">
-                      {r.instructions.map((step: string, idx: number) => (
-                        <li key={idx} className="pl-1">
-                          <span className="pl-2">{step}</span>
-                        </li>
-                      ))}
-                    </ol>
+                  
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-1">
+                      <h3 className="font-medium text-emerald-700">{r.name}</h3>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => saveRecipe(r.name)}
+                        className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50"
+                      >
+                        <Save className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="mb-3">
+                      <p className="text-xs text-muted-foreground mb-1">Prep time: {r.prepTime} • Difficulty: {r.difficulty}</p>
+                    </div>
+                    <Separator className="my-3" />
+                    <div className="mb-3">
+                      <p className="text-sm font-medium mb-1">Ingredients:</p>
+                      <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                        {r.ingredients.map((ingredient: string, idx: number) => (
+                          <li key={idx}>{ingredient}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <Separator className="my-3" />
+                    <div>
+                      <p className="text-sm font-medium mb-1">Instructions:</p>
+                      <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-2">
+                        {r.instructions.map((step: string, idx: number) => (
+                          <li key={idx} className="pl-1">
+                            <span className="pl-2">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
