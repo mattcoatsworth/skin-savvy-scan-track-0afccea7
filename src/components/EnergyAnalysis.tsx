@@ -74,17 +74,16 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         throw new Error(data.error);
       }
       
-      const energyAnalysis = data.analysis;
-      setAnalysis(energyAnalysis);
+      setAnalysis(data.analysis);
       
       // Cache the result
-      localStorage.setItem(cacheKey, energyAnalysis);
+      localStorage.setItem(cacheKey, data.analysis);
       
     } catch (error) {
       console.error("Error analyzing image:", error);
       toast({
         title: "Analysis failed",
-        description: "Could not analyze the image. Please try again later.",
+        description: error instanceof Error ? error.message : "Could not analyze the image. Please try again later.",
         variant: "destructive",
       });
     } finally {

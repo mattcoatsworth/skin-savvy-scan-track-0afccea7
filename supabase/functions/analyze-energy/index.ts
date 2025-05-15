@@ -28,18 +28,16 @@ serve(async (req) => {
 
     // For development purposes, we'll return a placeholder analysis
     // In production, you would call OpenAI's API here with the image
-    const energyAnalysis = `
-      Energetically speaking, your skin is reflecting a balanced flow of vital energy in most areas. 
-      There's a subtle glow emanating from your skin that suggests good qi circulation. 
-      The areas around your cheeks show signs of heart chakra activation, while your forehead 
-      indicates strong third-eye energy. Your skin's natural luminosity points to a well-balanced 
-      root chakra providing grounding energy to your entire system.
-      
-      Some areas around your jawline suggest minor energy blockages that might be related to 
-      unexpressed communication or emotions. A gentle practice of throat chakra meditation 
-      could help clear these subtle imbalances. Overall, your skin's energetic pattern shows 
-      remarkable resilience and a natural ability to self-regulate its vital force.
-    `;
+    const energyAnalysis = `Energetically speaking, your skin is reflecting a balanced flow of vital energy in most areas. 
+There's a subtle glow emanating from your skin that suggests good qi circulation. 
+The areas around your cheeks show signs of heart chakra activation, while your forehead 
+indicates strong third-eye energy. Your skin's natural luminosity points to a well-balanced 
+root chakra providing grounding energy to your entire system.
+
+Some areas around your jawline suggest minor energy blockages that might be related to 
+unexpressed communication or emotions. A gentle practice of throat chakra meditation 
+could help clear these subtle imbalances. Overall, your skin's energetic pattern shows 
+remarkable resilience and a natural ability to self-regulate its vital force.`;
 
     return new Response(JSON.stringify({ analysis: energyAnalysis }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
