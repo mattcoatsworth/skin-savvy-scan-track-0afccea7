@@ -63,6 +63,7 @@ import MonthlyAnalysisDetail from "@/pages/MonthlyAnalysisDetail";
 import CorrelationsDetail from "@/pages/CorrelationsDetail";
 import ProductAITestPage from "@/pages/ProductAITestPage";
 import MealPlan from "@/pages/MealPlan";
+import FYP from "@/pages/FYP";
 
 // Custom recommendation pages
 import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
@@ -152,6 +153,7 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/home" element={<Index />} />
               <Route path="/skin" element={<History />} />
+              <Route path="/fyp" element={<FYP />} />
               <Route path="/products" element={<Insights />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
