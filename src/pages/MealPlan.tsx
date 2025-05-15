@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck } from 'lucide-react';
+import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import DisclaimerChatBox from '@/components/MealPlan/DisclaimerChatBox';
+import { Card, CardContent } from "@/components/ui/card";
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
@@ -392,6 +393,54 @@ const MealPlan = () => {
         </div>
       )}
       
+      {/* Expected Results Section - moved here */}
+      {mealPlan && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold">Expected Results</h3>
+            <div className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full text-sm font-medium">
+              ~85% Improvement
+            </div>
+          </div>
+          <Card className="border-slate-200">
+            <CardContent className="p-4 text-muted-foreground text-sm">
+              <p>
+                Following this personalized meal plan consistently may result in approximately 
+                85% improvement in your skin health metrics over time. Results may vary based on 
+                individual factors, consistency, and other lifestyle elements.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+      
+      {/* Excluded Foods Section - shows after meal plan is generated */}
+      {mealPlan && excludedFood && (
+        <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-rose-100 p-2 rounded-full">
+              <AlertTriangle className="h-4 w-4 text-rose-600" />
+            </div>
+            <h2 className="text-lg font-semibold">Foods to Avoid</h2>
+          </div>
+          
+          <p className="text-sm text-muted-foreground mb-3">
+            Based on your preferences, these foods have been excluded from your meal plan:
+          </p>
+          
+          <div className="bg-rose-50 p-3 rounded-lg">
+            <ul className="grid grid-cols-2 gap-2">
+              {excludedFood.split(',').map((food, i) => (
+                <li key={i} className="text-sm flex items-start gap-1">
+                  <span className="text-rose-500">•</span>
+                  <span>{food.trim()}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+      
       {/* Grocery List Section - only shows if included and plan is generated */}
       {mealPlan && mealPlan.groceryList && (
         <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
@@ -466,8 +515,26 @@ const MealPlan = () => {
         </div>
       </div>
 
-      {/* Adding the disclaimer and chat box */}
-      <DisclaimerChatBox />
+      {/* Disclaimer and Chat Box */}
+      {mealPlan && (
+        <div className="mt-2 mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-muted-foreground">Disclaimer</h3>
+          <Card className="border-slate-200">
+            <CardContent className="p-4 text-muted-foreground text-xs">
+              <p>
+                This information is for educational purposes only and is not intended as
+                medical advice. Always consult with a healthcare professional or
+                dermatologist for personalized recommendations and treatment options
+                regarding skin concerns.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <div className="mt-6">
+            <TestAIChatBox productTitle="Skin-Focused Meal Plan" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
