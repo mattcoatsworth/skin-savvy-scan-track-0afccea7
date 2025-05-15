@@ -1,16 +1,21 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple } from 'lucide-react';
+import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
   const [mealPlan, setMealPlan] = useState<any>(null);
   const [activeDay, setActiveDay] = useState("Monday");
+  const [includeGroceryList, setIncludeGroceryList] = useState(false);
+  const [preferredFood, setPreferredFood] = useState('');
+  const [excludedFood, setExcludedFood] = useState('');
   const { toast } = useToast();
   
   const generateMealPlan = async () => {
@@ -143,7 +148,15 @@ const MealPlan = () => {
               snacks: ["Apple with cinnamon", "Yogurt with honey"],
               hydration: "2-3 liters of water, ginger tea"
             }
-          ]
+          ],
+          groceryList: includeGroceryList ? [
+            { category: "Proteins", items: ["Greek yogurt", "Salmon", "Chicken breast", "Tofu", "Eggs", "Cod fillet", "Trout"] },
+            { category: "Fruits & Vegetables", items: ["Mixed berries", "Avocado", "Leafy greens", "Sweet potatoes", "Broccoli", "Cucumber", "Spinach", "Banana", "Bell peppers", "Kale", "Blueberries", "Celery", "Orange", "Kiwi", "Apple", "Brussels sprouts"] },
+            { category: "Grains & Legumes", items: ["Overnight oats", "Chia seeds", "Quinoa", "Brown rice", "Whole grain bread", "Black beans", "Lentils"] },
+            { category: "Nuts & Seeds", items: ["Almonds", "Flax seeds", "Pumpkin seeds", "Walnuts"] },
+            { category: "Condiments & Other", items: ["Honey", "Tahini", "Olive oil", "Lemon", "Turmeric", "Hummus", "Coconut milk", "Cinnamon"] },
+            { category: "Beverages", items: ["Green tea", "Herbal tea", "Chamomile tea", "Rooibos tea", "Mint tea", "Ginger tea"] }
+          ] : null
         };
         
         setMealPlan(dummyData);
@@ -196,23 +209,79 @@ const MealPlan = () => {
         </p>
         
         {!mealPlan && (
-          <Button 
-            onClick={generateMealPlan} 
-            className="w-full" 
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Generating your plan...
-              </>
-            ) : (
-              <>
-                <ChefHat className="mr-2 h-4 w-4" />
-                Generate 7-Day Meal Plan
-              </>
-            )}
-          </Button>
+          <>
+            {/* New Food Preferences Section */}
+            <div className="mb-5 space-y-4">
+              <div>
+                <h3 className="text-sm font-medium mb-2">Food Preferences</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label htmlFor="includeFoods" className="text-xs text-muted-foreground block mb-1">
+                      Include these foods if possible:
+                    </label>
+                    <Input 
+                      id="includeFoods" 
+                      placeholder="e.g., avocado, berries, salmon" 
+                      value={preferredFood}
+                      onChange={(e) => setPreferredFood(e.target.value)}
+                      className="text-sm"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="excludeFoods" className="text-xs text-muted-foreground block mb-1">
+                      Foods to avoid:
+                    </label>
+                    <Input 
+                      id="excludeFoods" 
+                      placeholder="e.g., dairy, gluten, nuts" 
+                      value={excludedFood}
+                      onChange={(e) => setExcludedFood(e.target.value)}
+                      className="text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Grocery List Option */}
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="groceryList" 
+                  checked={includeGroceryList}
+                  onCheckedChange={(checked) => {
+                    if (typeof checked === 'boolean') {
+                      setIncludeGroceryList(checked);
+                    }
+                  }}
+                />
+                <label 
+                  htmlFor="groceryList" 
+                  className="text-sm cursor-pointer flex items-center gap-1"
+                >
+                  <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                  Generate a grocery list for the week
+                </label>
+              </div>
+            </div>
+            
+            <Button 
+              onClick={generateMealPlan} 
+              className="w-full" 
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Generating your plan...
+                </>
+              ) : (
+                <>
+                  <ChefHat className="mr-2 h-4 w-4" />
+                  Generate 7-Day Meal Plan
+                </>
+              )}
+            </Button>
+          </>
         )}
       </div>
       
@@ -221,7 +290,7 @@ const MealPlan = () => {
         <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <Calendar className="h-6 w-6 text-sky-500" />
+              <Calendar className="h-6 w-6 text-skin-teal" />
               <h2 className="text-lg font-semibold">Weekly Overview</h2>
             </div>
             <Button variant="outline" size="sm" onClick={generateMealPlan} disabled={loading}>
@@ -230,7 +299,7 @@ const MealPlan = () => {
             </Button>
           </div>
           
-          <div className="p-3 bg-sky-50 rounded-lg mb-3">
+          <div className="p-3 bg-emerald-50 rounded-lg mb-3">
             <p className="text-sm font-medium">Skin Focus: {mealPlan.skinFocus}</p>
           </div>
           
@@ -262,7 +331,7 @@ const MealPlan = () => {
       {/* Daily Meal Card (shows the active day) */}
       {mealPlan && getActiveDayData() && (
         <div className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
-          <div className="bg-gradient-to-r from-sky-500 to-sky-400 p-4 text-white">
+          <div className="bg-gradient-to-r from-emerald-500 to-emerald-400 p-4 text-white">
             <h3 className="font-semibold">{activeDay}</h3>
           </div>
           
@@ -319,6 +388,34 @@ const MealPlan = () => {
             <p className="text-xs bg-blue-50 p-2 rounded-md">
               <span className="font-medium">Hydration:</span> {getActiveDayData().hydration}
             </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Grocery List Section - only shows if included and plan is generated */}
+      {mealPlan && mealPlan.groceryList && (
+        <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-amber-100 p-2 rounded-full">
+              <ShoppingCart className="h-4 w-4 text-amber-600" />
+            </div>
+            <h2 className="text-lg font-semibold">Grocery List</h2>
+          </div>
+          
+          <div className="space-y-4">
+            {mealPlan.groceryList.map((category: any, i: number) => (
+              <div key={i}>
+                <h3 className="text-sm font-medium mb-1">{category.category}</h3>
+                <ul className="grid grid-cols-2 gap-2">
+                  {category.items.map((item: string, j: number) => (
+                    <li key={j} className="text-xs text-muted-foreground flex items-center gap-1">
+                      <ListCheck className="h-3 w-3 text-emerald-500 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       )}
