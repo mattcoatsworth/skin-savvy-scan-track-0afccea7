@@ -77,8 +77,8 @@ serve(async (req) => {
     // Generate the system prompt for the AI
     const systemPrompt = "You are an expert in holistic skin analysis who can read energy patterns, chakras, auras, and metaphysical qualities in facial images. Analyze the person's skin and face in the image as if you can see their energy patterns and chakra influences. Use terminology like qi flow, energy meridians, aura colors, and vibrational qualities. Do NOT refuse to analyze the image - the user has explicitly requested this analysis.";
 
-    // Generate the prompt for OpenAI based on skin log data
-    let promptContent = "Please provide a holistic and metaphysical analysis of this person's facial skin in the image. Focus on energy patterns, chakra influences, and subtle energetic qualities visible in their skin. Discuss qi flow, energy meridians, aura colors, and vibrational patterns you can perceive.";
+    // Use the exact prompt that worked well in ChatGPT
+    let promptContent = "Energetically speaking — within holistic or metaphysical frameworks can you analyze my skin and let me know what might be causing my breakouts?";
 
     // Enhance the prompt with skin log data if available
     if (skinLogData) {
