@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChefHat, Loader2 } from 'lucide-react';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { supabase } from '@/integrations/supabase/client';
 
 const RecipeIdeas = () => {
   const { day, mealType } = useParams();
@@ -61,24 +61,19 @@ const RecipeIdeas = () => {
           return;
         }
 
-        // Call the edge function to get recipe ideas
-        const response = await fetch('/api/generate-recipe-ideas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        // Use Supabase to invoke the edge function instead of direct fetch
+        const { data, error: fnError } = await supabase.functions.invoke('generate-recipe-ideas', {
+          body: {
             mealName: mealData.meal,
             mealType: mealType,
             day: day
-          }),
+          }
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to generate recipe ideas');
+        if (fnError) {
+          throw new Error(fnError.message);
         }
 
-        const data = await response.json();
         setRecipe(data);
         setLoading(false);
       } catch (error) {
