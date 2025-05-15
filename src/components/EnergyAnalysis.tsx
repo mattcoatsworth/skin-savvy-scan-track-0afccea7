@@ -41,11 +41,20 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       }
       
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-        setAnalysis(null); // Reset any previous analysis
-        setError(null); // Reset any previous errors
-        setModel(null); // Reset model info
+      reader.onload = () => {
+        if (reader.result) {
+          setSelectedImage(reader.result.toString());
+          setAnalysis(null); // Reset any previous analysis
+          setError(null); // Reset any previous errors
+          setModel(null); // Reset model info
+        }
+      };
+      reader.onerror = () => {
+        toast({
+          title: "Image read error",
+          description: "Failed to read the selected image",
+          variant: "destructive",
+        });
       };
       reader.readAsDataURL(file);
     }

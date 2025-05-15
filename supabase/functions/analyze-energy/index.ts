@@ -39,6 +39,7 @@ serve(async (req) => {
     console.log("Request received with image data. Processing...");
     console.log("User ID provided:", userId || "None");
     console.log("Timestamp:", timestamp || "None");
+    console.log("Image data length:", image.length);
 
     // Optional: Fetch user skin logs if userId is provided
     let skinLogData = null;
@@ -116,14 +117,20 @@ serve(async (req) => {
       }
     }
 
-    // Ensure the image URL is correctly formatted with a proper data URL prefix
+    // Process and format the image data 
     let formattedImage = image;
-    if (!image.startsWith('data:')) {
-      console.log("Image is not properly formatted as a data URL, adding prefix");
-      formattedImage = `data:image/jpeg;base64,${image.replace(/^data:image\/[a-z]+;base64,/, '')}`;
+    // Check if the image is already a proper data URL
+    if (!formattedImage.startsWith('data:image/')) {
+      console.log("Image is not properly formatted as a data URL, fixing format");
+      // Remove any existing data URL prefix if present
+      const base64Data = formattedImage.replace(/^data:image\/[a-z]+;base64,/, '');
+      // Add the proper data URL prefix
+      formattedImage = `data:image/jpeg;base64,${base64Data}`;
     }
 
-    // Call OpenAI API with the user's prompt and structure
+    console.log("Image properly formatted");
+    
+    // Call OpenAI API with the structured prompt
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
