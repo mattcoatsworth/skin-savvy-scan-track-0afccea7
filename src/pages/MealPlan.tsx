@@ -7,7 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import DisclaimerChatBox from '@/components/MealPlan/DisclaimerChatBox';
+import { Card, CardContent } from '@/components/ui/card';
+import TestAIChatBox from '@/components/TestAIChatBox';
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
@@ -432,7 +433,7 @@ const MealPlan = () => {
         </div>
       )}
       
-      {/* Grocery List Section - only shows if included and plan is generated */}
+      {/* Grocery List Section - moved below Expected Results but above disclaimer/chat box */}
       {mealPlan && mealPlan.groceryList && (
         <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
@@ -527,11 +528,12 @@ const MealPlan = () => {
         </div>
       )}
       
-      {/* Chat box and Disclaimer moved to the bottom */}
+      {/* Chat box moved to the bottom */}
       {mealPlan && (
         <TestAIChatBox productTitle="Skin-Focused Meal Plan" />
       )}
       
+      {/* Disclaimer moved to the bottom */}
       {mealPlan && (
         <div className="mt-2 mb-6">
           <h3 className="text-lg font-semibold mb-3 text-muted-foreground">Disclaimer</h3>
