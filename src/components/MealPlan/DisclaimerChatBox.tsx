@@ -26,7 +26,7 @@ const DisclaimerChatBox = () => {
 
       <TestAIChatBox productTitle="Skin-Focused Meal Plan" />
       
-      <div className="mt-6 mb-6">
+      <div className="mt-0 mb-6">
         <h3 className="text-lg font-semibold mb-3 text-muted-foreground">Disclaimer</h3>
         <Card className="border-slate-200">
           <CardContent className="p-4 text-muted-foreground text-xs">

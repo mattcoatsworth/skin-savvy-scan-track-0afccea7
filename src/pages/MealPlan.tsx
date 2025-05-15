@@ -433,6 +433,33 @@ const MealPlan = () => {
         </div>
       )}
       
+      {/* Nutrition Tips Card - Moved up before chat box */}
+      <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="bg-green-100 p-2 rounded-full">
+            <Apple className="h-4 w-4 text-green-600" />
+          </div>
+          <h2 className="text-lg font-semibold">Skin Nutrition Tips</h2>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="p-3 bg-slate-50 rounded-lg">
+            <p className="text-sm font-medium mb-1">Stay Hydrated</p>
+            <p className="text-xs text-muted-foreground">Drink plenty of water throughout the day to maintain skin elasticity and flush out toxins.</p>
+          </div>
+          
+          <div className="p-3 bg-slate-50 rounded-lg">
+            <p className="text-sm font-medium mb-1">Antioxidant-Rich Foods</p>
+            <p className="text-xs text-muted-foreground">Berries, leafy greens, and colorful vegetables help combat free radicals that damage skin cells.</p>
+          </div>
+          
+          <div className="p-3 bg-slate-50 rounded-lg">
+            <p className="text-sm font-medium mb-1">Healthy Fats</p>
+            <p className="text-xs text-muted-foreground">Avocados, nuts, and fatty fish provide essential fatty acids that support your skin's lipid barrier.</p>
+          </div>
+        </div>
+      </div>
+      
       {/* Grocery List Section - moved below Expected Results but above disclaimer/chat box */}
       {mealPlan && mealPlan.groceryList && (
         <div className="bg-white rounded-xl p-5 mb-6 shadow-sm">
@@ -533,9 +560,9 @@ const MealPlan = () => {
         <TestAIChatBox productTitle="Skin-Focused Meal Plan" />
       )}
       
-      {/* Disclaimer moved to the bottom */}
+      {/* Disclaimer moved to the bottom with reduced top margin */}
       {mealPlan && (
-        <div className="mt-2 mb-6">
+        <div className="mt-0 mb-6">
           <h3 className="text-lg font-semibold mb-3 text-muted-foreground">Disclaimer</h3>
           <Card className="border-slate-200">
             <CardContent className="p-4 text-muted-foreground text-xs">
@@ -568,33 +595,6 @@ const MealPlan = () => {
           </div>
         </div>
       )}
-      
-      {/* Nutrition Tips Card (always visible) */}
-      <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="bg-green-100 p-2 rounded-full">
-            <Apple className="h-4 w-4 text-green-600" />
-          </div>
-          <h2 className="text-lg font-semibold">Skin Nutrition Tips</h2>
-        </div>
-        
-        <div className="space-y-3">
-          <div className="p-3 bg-slate-50 rounded-lg">
-            <p className="text-sm font-medium mb-1">Stay Hydrated</p>
-            <p className="text-xs text-muted-foreground">Drink plenty of water throughout the day to maintain skin elasticity and flush out toxins.</p>
-          </div>
-          
-          <div className="p-3 bg-slate-50 rounded-lg">
-            <p className="text-sm font-medium mb-1">Antioxidant-Rich Foods</p>
-            <p className="text-xs text-muted-foreground">Berries, leafy greens, and colorful vegetables help combat free radicals that damage skin cells.</p>
-          </div>
-          
-          <div className="p-3 bg-slate-50 rounded-lg">
-            <p className="text-sm font-medium mb-1">Healthy Fats</p>
-            <p className="text-xs text-muted-foreground">Avocados, nuts, and fatty fish provide essential fatty acids that support your skin's lipid barrier.</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
