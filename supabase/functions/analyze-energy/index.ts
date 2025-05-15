@@ -68,10 +68,113 @@ serve(async (req) => {
       }
     }
 
-    // For development purposes, we'll generate a holistic analysis based on the image and skin data
-    // In production, you would call OpenAI's API here with the image and skin log data
-    let energyAnalysis = generateHolisticAnalysis(skinLogData);
+    // Check for OpenAI API Key
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
 
+    // Generate the prompt for OpenAI based on skin log data
+    let promptContent = "Provide a holistic and metaphysical analysis of this person's facial skin. Focus on energy patterns, chakra influences, and subtle energetic qualities visible in their skin. Use terms like qi, energy flow, aura, and vibrational patterns.";
+
+    // Enhance the prompt with skin log data if available
+    if (skinLogData) {
+      const factors = skinLogData.daily_factors || {};
+      
+      promptContent += " Include insights based on the following factors:";
+      
+      if (factors.sleep_hours) {
+        promptContent += ` Sleep: ${factors.sleep_hours} hours.`;
+      }
+      
+      if (factors.water_intake_ml) {
+        promptContent += ` Water intake: ${factors.water_intake_ml}ml.`;
+      }
+      
+      if (factors.stress_level !== undefined) {
+        promptContent += ` Stress level: ${factors.stress_level}/10.`;
+      }
+      
+      if (factors.hormone_cycle_day !== undefined) {
+        promptContent += ` Currently on day ${factors.hormone_cycle_day} of hormonal cycle.`;
+      }
+      
+      if (factors.temperature_celsius || factors.humidity_percent) {
+        promptContent += ` Environmental conditions: ${factors.temperature_celsius ? `${factors.temperature_celsius}°C, ` : ''}${factors.humidity_percent ? `${factors.humidity_percent}% humidity` : ''}.`;
+      }
+      
+      if (skinLogData.overall_condition) {
+        promptContent += ` Overall skin condition reported as: ${skinLogData.overall_condition}.`;
+      }
+      
+      if (skinLogData.acne_level !== undefined) {
+        promptContent += ` Acne level reported as: ${skinLogData.acne_level}/10.`;
+      }
+      
+      if (skinLogData.redness_level !== undefined) {
+        promptContent += ` Redness level reported as: ${skinLogData.redness_level}/10.`;
+      }
+      
+      if (skinLogData.oiliness_level !== undefined) {
+        promptContent += ` Oiliness level reported as: ${skinLogData.oiliness_level}/10.`;
+      }
+      
+      if (skinLogData.hydration_level !== undefined) {
+        promptContent += ` Hydration level reported as: ${skinLogData.hydration_level}/10.`;
+      }
+      
+      if (skinLogData.notes) {
+        promptContent += ` Additional notes: ${skinLogData.notes}.`;
+      }
+    }
+    
+    promptContent += " Format the analysis into 3-4 paragraphs, with a total of about 200 words. Use a supportive and enlightening tone.";
+
+    console.log("Sending request to OpenAI with image data");
+
+    // Call OpenAI API with the image and prompt
+    const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${openAIApiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "You are a holistic skin and energy analyst who provides metaphysical interpretations of skin appearance. You focus on energetic qualities, chakras, auras, and energy flows rather than clinical dermatology."
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: promptContent
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: image
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 500
+      })
+    });
+
+    if (!openAIResponse.ok) {
+      const errorText = await openAIResponse.text();
+      console.error("OpenAI API error:", errorText);
+      throw new Error(`OpenAI API error: ${openAIResponse.status} ${errorText}`);
+    }
+
+    const openAIData = await openAIResponse.json();
+    const energyAnalysis = openAIData.choices[0].message.content;
+
+    console.log("Received analysis from OpenAI");
     console.log("Sending analysis response");
 
     return new Response(
@@ -104,59 +207,3 @@ serve(async (req) => {
     );
   }
 });
-
-// Function to generate a holistic analysis based on the image and skin log data
-function generateHolisticAnalysis(skinLogData: any): string {
-  // Base energy analysis
-  let baseAnalysis = "Energetically speaking, your skin is reflecting a balanced flow of vital energy in most areas. There's a subtle glow emanating from your skin that suggests good qi circulation. The areas around your cheeks show signs of heart chakra activation, while your forehead indicates strong third-eye energy. Your skin's natural luminosity points to a well-balanced root chakra providing grounding energy to your entire system.";
-  
-  // If we don't have skin log data, return the basic analysis
-  if (!skinLogData) {
-    return baseAnalysis + "\n\nFor a more personalized analysis, continue logging your skin conditions regularly.";
-  }
-
-  const factors = skinLogData.daily_factors || {};
-  let additionalAnalysis = "\n\n";
-  
-  // Add insights based on sleep
-  if (factors.sleep_hours) {
-    if (factors.sleep_hours < 7) {
-      additionalAnalysis += `Your recent sleep patterns (${factors.sleep_hours} hours) may be contributing to slight energy stagnation in your skin. Your body's natural restoration cycles need more time to complete, which affects your skin's vital force. Consider extending your rest period to revitalize your natural glow.\n\n`;
-    } else {
-      additionalAnalysis += `Your healthy sleep patterns (${factors.sleep_hours} hours) are supporting your skin's natural energy renewal process, allowing for proper chi circulation throughout your facial meridians.\n\n`;
-    }
-  }
-  
-  // Add insights based on water intake
-  if (factors.water_intake_ml) {
-    if (factors.water_intake_ml < 2000) {
-      additionalAnalysis += `Your hydration level could be affecting your skin's ability to channel and transmit energy. Consider increasing your water intake to enhance the flow of healing energies through your system.\n\n`;
-    } else {
-      additionalAnalysis += `Your excellent hydration habits are supporting your skin's energy field, creating a protective moisture barrier that helps retain your natural auric vibration.\n\n`;
-    }
-  }
-  
-  // Add insights based on stress
-  if (factors.stress_level !== undefined) {
-    if (factors.stress_level > 7) {
-      additionalAnalysis += `The high stress levels recorded in your log are visible in your skin's energy field, particularly around the jaw and forehead. These areas show energy blockages that may benefit from mindfulness practices to restore balance.\n\n`;
-    } else if (factors.stress_level > 4) {
-      additionalAnalysis += `Your moderate stress levels are showing as slight energy disruptions in your skin's natural flow. Some gentle facial massage may help redistribute this energy more harmoniously.\n\n`;
-    } else {
-      additionalAnalysis += `Your low stress levels are reflected in the even distribution of energy across your skin, particularly in the smooth flow visible across your cheeks and forehead.\n\n`;
-    }
-  }
-  
-  // Add insights based on hormone cycle if available
-  if (factors.hormone_cycle_day !== undefined) {
-    additionalAnalysis += `Your current position in your hormonal cycle (day ${factors.hormone_cycle_day}) is influencing your skin's energetic pattern, particularly in how it processes and distributes vital nutrients.\n\n`;
-  }
-  
-  // Add insights on environmental factors
-  if (factors.temperature_celsius || factors.humidity_percent) {
-    additionalAnalysis += `The environmental conditions you've been exposed to (${factors.temperature_celsius ? `${factors.temperature_celsius}°C, ` : ''}${factors.humidity_percent ? `${factors.humidity_percent}% humidity` : ''}) are interacting with your skin's energy field in subtle ways that affect its ability to breathe and process external influences.\n\n`;
-  }
-  
-  // Return combined analysis
-  return baseAnalysis + additionalAnalysis + "Continue your journey of self-awareness through regular skin logging to receive increasingly personalized energy insights.";
-}
