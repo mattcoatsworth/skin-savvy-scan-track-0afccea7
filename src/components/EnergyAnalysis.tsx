@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -201,13 +202,18 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       // Debug the response data structure
       console.log("Analysis data structure:", JSON.stringify(data.analysis));
       
-      // Process the response data to create our analysis object
+      // Check if analysis data is null or undefined
+      if (!data.analysis) {
+        throw new Error("The analysis could not be generated. The AI may have refused to analyze the image.");
+      }
+      
+      // Process the response data to create our analysis object with safety checks
       const processedAnalysis: AnalysisData = {
-        traditionalChineseMedicine: formatAnalysisSection(data.analysis.traditionalChineseMedicine),
-        chakraTheory: formatAnalysisSection(data.analysis.chakraTheory),
-        metaphysicalSymbolism: formatAnalysisSection(data.analysis.metaphysicalSymbolism),
-        holisticRemedies: formatAnalysisSection(data.analysis.holisticRemedies),
-        suggestedFoods: formatAnalysisSection(data.analysis.suggestedFoods)
+        traditionalChineseMedicine: formatAnalysisSection(data.analysis.traditionalChineseMedicine || "No traditional Chinese medicine insights available."),
+        chakraTheory: formatAnalysisSection(data.analysis.chakraTheory || "No chakra theory insights available."),
+        metaphysicalSymbolism: formatAnalysisSection(data.analysis.metaphysicalSymbolism || "No metaphysical symbolism insights available."),
+        holisticRemedies: formatAnalysisSection(data.analysis.holisticRemedies || "No holistic remedies available."),
+        suggestedFoods: formatAnalysisSection(data.analysis.suggestedFoods || "No food suggestions available.")
       };
       
       setAnalysis(processedAnalysis);
@@ -248,13 +254,14 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 
   // Unified helper function to format any analysis section
   const formatAnalysisSection = (data: any): string => {
-    if (!data) return "No data available";
+    // If there's no data, return a default message
+    if (!data) return "No information available";
     
     // If it's already a string, return it directly
     if (typeof data === 'string') return data;
     
     // If it's an object, we'll format it as key-value pairs
-    if (typeof data === 'object') {
+    if (typeof data === 'object' && data !== null) {
       let result = '';
       
       // Handle different possible structures in the API response
@@ -307,11 +314,11 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         }
       });
       
-      return result.trim();
+      return result.trim() || "No details available";
     }
     
     // Fallback for any other data type
-    return String(data);
+    return String(data) || "No information available";
   };
   
   // Helper function to format category titles nicely

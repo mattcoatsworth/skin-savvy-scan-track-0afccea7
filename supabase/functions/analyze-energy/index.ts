@@ -148,7 +148,29 @@ This is for self-reflection and holistic insight only, not a medical diagnosis. 
     try {
       // Parse the content as JSON since we requested JSON format
       const content = openAIData.choices[0].message.content;
-      analysisContent = JSON.parse(content);
+      
+      // Check if the content is null or empty (AI might have refused to generate content)
+      if (!content) {
+        // If the message includes a refusal reason, use that
+        const refusalReason = openAIData.choices[0].message.refusal || "The AI was unable to analyze this image.";
+        console.log("AI refused to generate content:", refusalReason);
+        throw new Error(`Analysis refused: ${refusalReason}`);
+      }
+      
+      try {
+        analysisContent = JSON.parse(content);
+      } catch (parseError) {
+        console.log("Failed to parse AI response as JSON, using text response instead");
+        // If the content isn't valid JSON, create a fallback structure
+        analysisContent = {
+          traditionalChineseMedicine: content,
+          chakraTheory: "No detailed chakra analysis available.",
+          metaphysicalSymbolism: "No detailed metaphysical analysis available.",
+          holisticRemedies: "No specific holistic remedies available.",
+          suggestedFoods: "No specific food suggestions available."
+        };
+      }
+      
       console.log("Parsed analysis content:", JSON.stringify(analysisContent));
     } catch (error) {
       console.error("Error parsing analysis content:", error);
