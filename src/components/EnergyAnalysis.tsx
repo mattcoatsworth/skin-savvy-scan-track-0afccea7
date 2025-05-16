@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -206,6 +205,12 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           description: "Continue logging your skin conditions for a more personalized analysis",
           variant: "default",
         });
+      } else {
+        toast({
+          title: "Energy Analysis Complete",
+          description: "Your holistic skin reading is ready",
+          variant: "default",
+        });
       }
       
     } catch (error) {
@@ -221,28 +226,39 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
   };
 
+  // Helper function to format analysis text by splitting paragraphs
+  const formatAnalysisText = (text: string) => {
+    return text.split('\n\n').map((paragraph, index) => (
+      <p key={index} className="mb-3 last:mb-0">{paragraph}</p>
+    ));
+  };
+
   return (
-    <Card className={className}>
+    <Card className={`${className} overflow-hidden`}>
       <CardContent className="p-4 space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Zap className="h-5 w-5 text-purple-500" />
-          <h2 className="text-lg font-semibold">Energy Analysis</h2>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-white">
+            <Zap className="h-4 w-4" />
+          </div>
+          <h2 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Energy Analysis</h2>
         </div>
         
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-muted-foreground mb-6">
           Upload a selfie to receive a holistic and metaphysical analysis of your skin's energy
           {isOnLogSkinPage && " that considers your skin logs and daily factors"}.
         </p>
         
         {!selectedImage ? (
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md p-6 bg-gray-50">
-            <ImageIcon className="h-8 w-8 text-gray-400 mb-2" />
-            <p className="text-sm text-center text-gray-500 mb-3">
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8 bg-gray-50 transition-all hover:bg-gray-100 hover:border-purple-300">
+            <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 mb-3">
+              <ImageIcon className="h-6 w-6" />
+            </div>
+            <p className="text-sm font-medium text-center text-gray-700 mb-4">
               Select a selfie for energy analysis
             </p>
             <Button 
               variant="outline" 
-              className="relative"
+              className="relative bg-white border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-colors"
               onClick={() => document.getElementById('selfie-upload')?.click()}
             >
               Choose Image
@@ -257,18 +273,21 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           </div>
         ) : (
           <div className="space-y-4">
-            <AspectRatio ratio={1/1} className="bg-muted rounded-md overflow-hidden">
-              <img 
-                src={selectedImage} 
-                alt="Selected selfie" 
-                className="w-full h-full object-cover"
-              />
-            </AspectRatio>
+            <div className="rounded-lg overflow-hidden shadow-md">
+              <AspectRatio ratio={1/1} className="bg-muted rounded-md overflow-hidden">
+                <img 
+                  src={selectedImage} 
+                  alt="Selected selfie" 
+                  className="w-full h-full object-cover"
+                />
+              </AspectRatio>
+            </div>
             
             <div className="flex justify-between">
               <Button 
                 variant="outline" 
                 size="sm"
+                className="border-gray-200 hover:bg-gray-50 text-gray-600"
                 onClick={() => {
                   setSelectedImage(null);
                   setAnalysis(null);
@@ -281,7 +300,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
               <Button 
                 onClick={analyzeImage}
                 disabled={isAnalyzing}
-                className="bg-purple-500 hover:bg-purple-600"
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all"
               >
                 {isAnalyzing ? (
                   <>
@@ -295,7 +314,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         )}
         
         {error && (
-          <div className="mt-4 border border-red-100 bg-red-50 rounded-md p-4">
+          <div className="mt-4 border border-red-100 bg-red-50 rounded-md p-4 shadow-sm">
             <h3 className="text-md font-medium mb-2 text-red-800">Analysis Failed</h3>
             <div className="text-sm text-red-700">
               {error}
@@ -304,10 +323,23 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         )}
         
         {analysis && !error && (
-          <div className="mt-4 border border-purple-100 bg-purple-50 rounded-md p-4">
-            <h3 className="text-md font-medium mb-2 text-purple-800">Energetic Analysis</h3>
-            <div className="text-sm text-purple-900 whitespace-pre-line">
-              {analysis}
+          <div className="mt-6 border border-purple-100 rounded-lg overflow-hidden shadow-md">
+            <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3">
+              <h3 className="text-md font-medium text-white flex items-center gap-2">
+                <Zap className="h-4 w-4" /> Energetic Analysis
+              </h3>
+            </div>
+            
+            <div className="p-5 bg-gradient-to-b from-purple-50 to-white">
+              <div className="prose prose-sm text-gray-800 leading-relaxed">
+                {formatAnalysisText(analysis)}
+              </div>
+            </div>
+            
+            <div className="bg-white px-4 py-3 border-t border-purple-100">
+              <p className="text-xs text-gray-500 italic">
+                This analysis is based on holistic principles and is for personal insight only, not medical advice.
+              </p>
             </div>
           </div>
         )}
@@ -317,4 +349,3 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 };
 
 export default EnergyAnalysis;
-
