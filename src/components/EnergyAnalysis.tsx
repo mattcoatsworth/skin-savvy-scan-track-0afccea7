@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -199,13 +198,16 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         throw new Error(data.error);
       }
       
+      // Debug the response data structure
+      console.log("Analysis data structure:", JSON.stringify(data.analysis));
+      
       // Process the response data to create our analysis object
       const processedAnalysis: AnalysisData = {
-        traditionalChineseMedicine: formatTCM(data.analysis.traditionalChineseMedicine),
-        chakraTheory: formatChakra(data.analysis.chakraTheory),
-        metaphysicalSymbolism: formatSymbolism(data.analysis.metaphysicalSymbolism),
-        holisticRemedies: formatRemedies(data.analysis.holisticRemedies),
-        suggestedFoods: formatFoods(data.analysis.suggestedFoods)
+        traditionalChineseMedicine: formatAnalysisSection(data.analysis.traditionalChineseMedicine),
+        chakraTheory: formatAnalysisSection(data.analysis.chakraTheory),
+        metaphysicalSymbolism: formatAnalysisSection(data.analysis.metaphysicalSymbolism),
+        holisticRemedies: formatAnalysisSection(data.analysis.holisticRemedies),
+        suggestedFoods: formatAnalysisSection(data.analysis.suggestedFoods)
       };
       
       setAnalysis(processedAnalysis);
@@ -244,108 +246,80 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
   };
 
-  // Helper functions to format the nested response data
-  const formatTCM = (tcm: any): string => {
-    if (typeof tcm === 'string') return tcm;
+  // Unified helper function to format any analysis section
+  const formatAnalysisSection = (data: any): string => {
+    if (!data) return "No data available";
     
-    let result = '';
-    if (tcm.organAssociations) {
-      result += 'Organ Associations:\n';
-      Object.entries(tcm.organAssociations).forEach(([key, value]) => {
-        result += `• ${key}: ${value}\n`;
-      });
-      result += '\n';
-    }
+    // If it's already a string, return it directly
+    if (typeof data === 'string') return data;
     
-    if (tcm.TCMInsights) {
-      result += `${tcm.TCMInsights}`;
-    }
-    
-    return result;
-  };
-  
-  const formatChakra = (chakra: any): string => {
-    if (typeof chakra === 'string') return chakra;
-    
-    let result = '';
-    if (chakra.energyConnections) {
-      result += 'Energy Connections:\n';
-      Object.entries(chakra.energyConnections).forEach(([key, value]) => {
-        result += `• ${key}: ${value}\n`;
-      });
-      result += '\n';
-    }
-    
-    if (chakra.chakraInsights) {
-      result += `${chakra.chakraInsights}`;
-    }
-    
-    return result;
-  };
-  
-  const formatSymbolism = (symbolism: any): string => {
-    if (typeof symbolism === 'string') return symbolism;
-    
-    let result = '';
-    if (symbolism.skinConditions) {
-      result += 'Skin Conditions:\n';
-      Object.entries(symbolism.skinConditions).forEach(([key, value]) => {
-        result += `• ${key}: ${value}\n`;
-      });
-      result += '\n';
-    }
-    
-    if (symbolism.symbolicMeanings) {
-      result += `${symbolism.symbolicMeanings}`;
-    }
-    
-    return result;
-  };
-  
-  const formatRemedies = (remedies: any): string => {
-    if (typeof remedies === 'string') return remedies;
-    
-    let result = '';
-    if (remedies.naturalPractices && Array.isArray(remedies.naturalPractices)) {
-      result += 'Natural Practices:\n';
-      remedies.naturalPractices.forEach((practice: string) => {
-        result += `• ${practice}\n`;
-      });
-      result += '\n';
-    }
-    
-    if (remedies.lifestyleChanges && Array.isArray(remedies.lifestyleChanges)) {
-      result += 'Lifestyle Changes:\n';
-      remedies.lifestyleChanges.forEach((change: string) => {
-        result += `• ${change}\n`;
-      });
-    }
-    
-    return result;
-  };
-  
-  const formatFoods = (foods: any): string => {
-    if (typeof foods === 'string') return foods;
-    
-    let result = '';
-    
-    Object.entries(foods).forEach(([category, items]) => {
-      const formattedCategory = category
-        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-        .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
+    // If it's an object, we'll format it as key-value pairs
+    if (typeof data === 'object') {
+      let result = '';
       
-      result += `${formattedCategory}:\n`;
+      // Handle different possible structures in the API response
+      Object.entries(data).forEach(([key, value]) => {
+        // If the key is a known nested object structure
+        if (['organAssociations', 'energyConnections', 'skinConditions', 'visibleSkinConditions'].includes(key)) {
+          result += `${formatTitle(key)}:\n`;
+          
+          if (typeof value === 'object' && value !== null) {
+            Object.entries(value as object).forEach(([subKey, subValue]) => {
+              result += `• ${subKey}: ${subValue}\n`;
+            });
+          }
+          result += '\n';
+        } 
+        // If the value is an array (like for remedies or foods)
+        else if (Array.isArray(value)) {
+          result += `${formatTitle(key)}:\n`;
+          value.forEach((item: string) => {
+            result += `• ${item}\n`;
+          });
+          result += '\n';
+        } 
+        // For simple key-value pairs like strings
+        else if (typeof value === 'string') {
+          // If it looks like a descriptive field rather than a category
+          if (['TCMInsights', 'chakraInsights', 'symbolicInsights', 'symbolicMeanings'].includes(key)) {
+            result += `${value}\n\n`;
+          } else {
+            // Otherwise treat it as a titled section
+            result += `${formatTitle(key)}: ${value}\n\n`;
+          }
+        }
+        // If it's a nested object that's not recognized above
+        else if (typeof value === 'object' && value !== null) {
+          result += `${formatTitle(key)}:\n`;
+          
+          Object.entries(value as object).forEach(([subKey, subValue]) => {
+            if (Array.isArray(subValue)) {
+              result += `${formatTitle(subKey)}:\n`;
+              (subValue as string[]).forEach(item => {
+                result += `• ${item}\n`;
+              });
+            } else if (typeof subValue === 'string') {
+              result += `• ${formatTitle(subKey)}: ${subValue}\n`;
+            }
+          });
+          
+          result += '\n';
+        }
+      });
       
-      if (Array.isArray(items)) {
-        items.forEach((item: string) => {
-          result += `• ${item}\n`;
-        });
-      }
-      
-      result += '\n';
-    });
+      return result.trim();
+    }
     
-    return result.trim();
+    // Fallback for any other data type
+    return String(data);
+  };
+  
+  // Helper function to format category titles nicely
+  const formatTitle = (text: string): string => {
+    return text
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+      .trim();
   };
 
   // Component for displaying a section of the analysis
@@ -378,7 +352,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         </div>
         <CardContent className="p-5 bg-white">
           <div className="prose prose-sm text-gray-800 leading-relaxed whitespace-pre-line">
-            {content}
+            {content || "No information available."}
           </div>
         </CardContent>
       </Card>
