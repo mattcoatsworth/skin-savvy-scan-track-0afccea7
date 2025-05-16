@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,13 +24,83 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   // Check if we're on the log-skin-condition page
   const isOnLogSkinPage = location.pathname.includes('log-skin-condition');
 
+  // Function to validate and optimize image
+  const processImage = async (imageDataUrl: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      // Create an image object to work with
+      const img = new Image();
+      img.onload = () => {
+        // Check dimensions and resize if needed
+        const maxDimension = 2048;
+        let width = img.width;
+        let height = img.height;
+        let needsResize = false;
+        
+        if (width > maxDimension || height > maxDimension) {
+          needsResize = true;
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+        
+        // If we don't need to resize, just return the original
+        if (!needsResize) {
+          resolve(imageDataUrl);
+          return;
+        }
+        
+        // Create a canvas to resize the image
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to JPEG with reasonable quality to reduce size
+        try {
+          const resizedImageData = canvas.toDataURL('image/jpeg', 0.85);
+          resolve(resizedImageData);
+        } catch (err) {
+          reject(new Error('Failed to resize image'));
+        }
+      };
+      
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = imageDataUrl;
+    });
+  };
+
   // Function to handle image selection
   const handleImageSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      
+      // Check file size (limit to 10MB to be safe)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        setError(`Image size (${(file.size / (1024 * 1024)).toFixed(2)}MB) exceeds the 10MB limit.`);
+        toast({
+          title: "Image too large",
+          description: "Please select an image smaller than 10MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
+        const imageData = reader.result as string;
+        setSelectedImage(imageData);
         setAnalysis(null); // Reset any previous analysis
         setError(null); // Reset any previous errors
       };
@@ -63,6 +134,9 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     setError(null);
     
     try {
+      // Optimize the image before sending
+      const processedImage = await processImage(selectedImage);
+      
       // Get the user ID if available
       const userId = await getUserId();
       console.log("Current user ID:", userId);
@@ -77,7 +151,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          image: selectedImage,
+          image: processedImage,
           userId: userId, // Send the userId if available
           timestamp: Date.now(), // Add timestamp to prevent caching
           requestId: requestId // Add unique request ID
@@ -87,7 +161,19 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       console.log("Response status:", response.status);
       
       if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
+        const errorData = await response.text();
+        console.error("Server response:", errorData);
+        let errorMessage = "Error analyzing image";
+        
+        try {
+          const parsedError = JSON.parse(errorData);
+          errorMessage = parsedError.error || errorMessage;
+        } catch (e) {
+          // If parsing fails, use the raw error text
+          errorMessage = errorData || errorMessage;
+        }
+        
+        throw new Error(errorMessage);
       }
       
       const responseText = await response.text();

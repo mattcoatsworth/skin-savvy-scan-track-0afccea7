@@ -40,6 +40,25 @@ serve(async (req) => {
     console.log("User ID provided:", userId || "None");
     console.log("Timestamp:", timestamp || "None");
 
+    // Verify image format - should be base64 or a public https URL
+    let imageUrl = image;
+    if (!image.startsWith('data:image/') && !image.startsWith('https://')) {
+      console.error("Invalid image format. Must be base64 or public HTTPS URL");
+      throw new Error('Invalid image format. Must be base64 data URI or public HTTPS URL');
+    }
+
+    // Optional: Check image size if possible (client-side validation is better)
+    // For base64, we can roughly estimate size
+    if (image.startsWith('data:image/')) {
+      const base64Size = Math.ceil((image.length - image.indexOf(',') - 1) * 3 / 4);
+      const sizeMB = base64Size / (1024 * 1024);
+      if (sizeMB > 20) {
+        console.error("Image too large:", sizeMB.toFixed(2), "MB");
+        throw new Error('Image exceeds 20MB size limit');
+      }
+      console.log("Estimated image size:", sizeMB.toFixed(2), "MB");
+    }
+
     // Optional: Fetch user skin logs if userId is provided
     let skinLogData = null;
     if (userId) {
@@ -76,7 +95,7 @@ serve(async (req) => {
 
     console.log("Sending request to OpenAI with image data");
 
-    // Call OpenAI API with the image and prompt
+    // Call OpenAI API with the image and prompt - using improved prompt as suggested
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -91,12 +110,12 @@ serve(async (req) => {
             content: [
               { 
                 type: "text", 
-                text: "Here is an image. Can you interpret the symbolic and energetic meaning of the breakout patterns on the face using metaphysical frameworks like TCM, chakras, and emotion-body maps? This is not for diagnosis, just for holistic self-awareness." 
+                text: "Using Traditional Chinese Medicine, chakra theory, and metaphysical symbolism, provide an energetic interpretation of the skin zones and breakout locations visible in this image. This is for self-reflection and holistic insight only, not a medical diagnosis." 
               },
               {
                 type: "image_url",
                 image_url: {
-                  url: image,
+                  url: imageUrl,
                   detail: "high"
                 }
               }
