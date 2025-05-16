@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
@@ -95,7 +94,7 @@ serve(async (req) => {
 
     console.log("Sending request to OpenAI with image data");
 
-    // Call OpenAI API with the image and updated prompt
+    // Call OpenAI API with the image and updated prompt for enhanced analysis
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -106,19 +105,15 @@ serve(async (req) => {
         model: "gpt-4o",
         messages: [
           {
+            role: "system",
+            content: "You are a holistic skin analysis expert who understands the energetic, metaphysical, and traditional medicine connections between skin conditions and overall wellbeing. You provide detailed, insightful analyses that help people understand the deeper meaning behind their skin conditions. You should focus on Traditional Chinese Medicine (TCM), chakra theory, emotional connections, and holistic remedies. Your tone should be compassionate, insightful and empowering."
+          },
+          {
             role: "user",
             content: [
               { 
                 type: "text", 
-                text: `Analyze this selfie and provide a holistic energy interpretation based on visible skin zones and breakout locations. Format your response as a clean JSON object with these sections:
-
-1. "traditionalChineseMedicine": Focus on organ associations and TCM insights related to visible skin areas
-2. "chakraTheory": Explain chakra energy connections to the visible skin areas
-3. "metaphysicalSymbolism": Describe metaphysical meanings of the visible skin conditions
-4. "holisticRemedies": Suggest natural remedies, practices, or lifestyle changes
-5. "suggestedFoods": Recommend specific foods that may support healing for affected organs or energy systems
-
-This is for self-reflection and holistic insight only, not a medical diagnosis. Do not use markdown formatting like ### or *** in your response.`
+                text: `Energetically speaking — within holistic and metaphysical frameworks, can you analyze my skin and let me know what might be causing my breakouts? Focus on both TCM organ associations and chakra energy connections. Format your response with emojis for key sections, include metaphysical interpretations, and suggest holistic healing approaches. End with a follow-up question about creating a personalized healing plan.`
               },
               {
                 type: "image_url",
@@ -130,8 +125,7 @@ This is for self-reflection and holistic insight only, not a medical diagnosis. 
             ]
           }
         ],
-        max_tokens: 800,
-        response_format: { type: "json_object" }
+        max_tokens: 1500
       })
     });
 
@@ -142,11 +136,11 @@ This is for self-reflection and holistic insight only, not a medical diagnosis. 
     }
 
     const openAIData = await openAIResponse.json();
-    console.log("Raw OpenAI response:", JSON.stringify(openAIData));
+    console.log("Raw OpenAI response received");
     
     let analysisContent;
     try {
-      // Parse the content as JSON since we requested JSON format
+      // Get the content from the OpenAI response
       const content = openAIData.choices[0].message.content;
       
       // Check if the content is null or empty (AI might have refused to generate content)
@@ -157,27 +151,23 @@ This is for self-reflection and holistic insight only, not a medical diagnosis. 
         throw new Error(`Analysis refused: ${refusalReason}`);
       }
       
-      try {
-        analysisContent = JSON.parse(content);
-      } catch (parseError) {
-        console.log("Failed to parse AI response as JSON, using text response instead");
-        // If the content isn't valid JSON, create a fallback structure
-        analysisContent = {
-          traditionalChineseMedicine: content,
-          chakraTheory: "No detailed chakra analysis available.",
-          metaphysicalSymbolism: "No detailed metaphysical analysis available.",
-          holisticRemedies: "No specific holistic remedies available.",
-          suggestedFoods: "No specific food suggestions available."
-        };
-      }
+      // This time we're keeping the response as a full text rather than parsing as JSON
+      analysisContent = {
+        fullAnalysis: content,
+        // We'll still create these sections from the full text later in the frontend
+        traditionalChineseMedicine: "See full analysis above",
+        chakraTheory: "See full analysis above",
+        metaphysicalSymbolism: "See full analysis above",
+        holisticRemedies: "See full analysis above",
+        suggestedFoods: "See full analysis above"
+      };
       
-      console.log("Parsed analysis content:", JSON.stringify(analysisContent));
+      console.log("Processed analysis content successfully");
     } catch (error) {
-      console.error("Error parsing analysis content:", error);
-      throw new Error("Failed to parse analysis content");
+      console.error("Error processing analysis content:", error);
+      throw new Error("Failed to process analysis content");
     }
 
-    console.log("Received analysis from OpenAI");
     console.log("Sending analysis response");
 
     return new Response(

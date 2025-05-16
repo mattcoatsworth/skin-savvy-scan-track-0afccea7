@@ -2,18 +2,20 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Image as ImageIcon, Zap, Leaf, BookOpen, Heart, Circle, Utensils } from "lucide-react";
+import { Loader2, Image as ImageIcon, Zap, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface EnergyAnalysisProps {
   className?: string;
 }
 
 interface AnalysisData {
+  fullAnalysis: string;
   traditionalChineseMedicine: string;
   chakraTheory: string;
   metaphysicalSymbolism: string;
@@ -25,6 +27,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [showHealingPlan, setShowHealingPlan] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const location = useLocation();
@@ -111,6 +114,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         setSelectedImage(imageData);
         setAnalysis(null); // Reset any previous analysis
         setError(null); // Reset any previous errors
+        setShowHealingPlan(false); // Reset healing plan state
       };
       reader.readAsDataURL(file);
     }
@@ -160,9 +164,9 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         },
         body: JSON.stringify({ 
           image: processedImage,
-          userId: userId, // Send the userId if available
-          timestamp: Date.now(), // Add timestamp to prevent caching
-          requestId: requestId // Add unique request ID
+          userId: userId, 
+          timestamp: Date.now(), 
+          requestId: requestId 
         }),
       });
       
@@ -185,7 +189,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
       }
       
       const responseText = await response.text();
-      console.log("Raw response:", responseText);
+      console.log("Raw response received");
       
       let data;
       try {
@@ -199,24 +203,13 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         throw new Error(data.error);
       }
       
-      // Debug the response data structure
-      console.log("Analysis data structure:", JSON.stringify(data.analysis));
-      
       // Check if analysis data is null or undefined
       if (!data.analysis) {
         throw new Error("The analysis could not be generated. The AI may have refused to analyze the image.");
       }
       
-      // Process the response data to create our analysis object with safety checks
-      const processedAnalysis: AnalysisData = {
-        traditionalChineseMedicine: formatAnalysisSection(data.analysis.traditionalChineseMedicine || "No traditional Chinese medicine insights available."),
-        chakraTheory: formatAnalysisSection(data.analysis.chakraTheory || "No chakra theory insights available."),
-        metaphysicalSymbolism: formatAnalysisSection(data.analysis.metaphysicalSymbolism || "No metaphysical symbolism insights available."),
-        holisticRemedies: formatAnalysisSection(data.analysis.holisticRemedies || "No holistic remedies available."),
-        suggestedFoods: formatAnalysisSection(data.analysis.suggestedFoods || "No food suggestions available.")
-      };
-      
-      setAnalysis(processedAnalysis);
+      // Process the full analysis text
+      setAnalysis(data.analysis);
       
       // Show toast about whether skin log data was included
       if (isOnLogSkinPage && data.includedSkinData) {
@@ -252,118 +245,14 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
   };
 
-  // Unified helper function to format any analysis section
-  const formatAnalysisSection = (data: any): string => {
-    // If there's no data, return a default message
-    if (!data) return "No information available";
-    
-    // If it's already a string, return it directly
-    if (typeof data === 'string') return data;
-    
-    // If it's an object, we'll format it as key-value pairs
-    if (typeof data === 'object' && data !== null) {
-      let result = '';
-      
-      // Handle different possible structures in the API response
-      Object.entries(data).forEach(([key, value]) => {
-        // If the key is a known nested object structure
-        if (['organAssociations', 'energyConnections', 'skinConditions', 'visibleSkinConditions'].includes(key)) {
-          result += `${formatTitle(key)}:\n`;
-          
-          if (typeof value === 'object' && value !== null) {
-            Object.entries(value as object).forEach(([subKey, subValue]) => {
-              result += `• ${subKey}: ${subValue}\n`;
-            });
-          }
-          result += '\n';
-        } 
-        // If the value is an array (like for remedies or foods)
-        else if (Array.isArray(value)) {
-          result += `${formatTitle(key)}:\n`;
-          value.forEach((item: string) => {
-            result += `• ${item}\n`;
-          });
-          result += '\n';
-        } 
-        // For simple key-value pairs like strings
-        else if (typeof value === 'string') {
-          // If it looks like a descriptive field rather than a category
-          if (['TCMInsights', 'chakraInsights', 'symbolicInsights', 'symbolicMeanings'].includes(key)) {
-            result += `${value}\n\n`;
-          } else {
-            // Otherwise treat it as a titled section
-            result += `${formatTitle(key)}: ${value}\n\n`;
-          }
-        }
-        // If it's a nested object that's not recognized above
-        else if (typeof value === 'object' && value !== null) {
-          result += `${formatTitle(key)}:\n`;
-          
-          Object.entries(value as object).forEach(([subKey, subValue]) => {
-            if (Array.isArray(subValue)) {
-              result += `${formatTitle(subKey)}:\n`;
-              (subValue as string[]).forEach(item => {
-                result += `• ${item}\n`;
-              });
-            } else if (typeof subValue === 'string') {
-              result += `• ${formatTitle(subKey)}: ${subValue}\n`;
-            }
-          });
-          
-          result += '\n';
-        }
-      });
-      
-      return result.trim() || "No details available";
-    }
-    
-    // Fallback for any other data type
-    return String(data) || "No information available";
-  };
-  
-  // Helper function to format category titles nicely
-  const formatTitle = (text: string): string => {
-    return text
-      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-      .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
-      .trim();
-  };
-
-  // Component for displaying a section of the analysis
-  const AnalysisCard = ({ 
-    title, 
-    content, 
-    icon, 
-    gradientFrom = "from-purple-500", 
-    gradientTo = "to-indigo-600",
-    iconBgFrom = "from-purple-400",
-    iconBgTo = "to-indigo-600"
-  }: { 
-    title: string; 
-    content: string; 
-    icon: React.ReactNode;
-    gradientFrom?: string;
-    gradientTo?: string;
-    iconBgFrom?: string;
-    iconBgTo?: string;
-  }) => {
-    return (
-      <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
-        <div className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} px-4 py-3.5 rounded-t-lg`}>
-          <h3 className="text-md font-medium text-white flex items-center gap-2.5">
-            <div className={`h-6 w-6 rounded-full bg-gradient-to-br ${iconBgFrom} ${iconBgTo} flex items-center justify-center text-white shadow-sm`}>
-              {icon}
-            </div>
-            {title}
-          </h3>
-        </div>
-        <CardContent className="p-5 bg-white">
-          <div className="prose prose-sm text-gray-800 leading-relaxed whitespace-pre-line">
-            {content || "No information available."}
-          </div>
-        </CardContent>
-      </Card>
-    );
+  // Show healing plan section
+  const handleShowHealingPlan = () => {
+    setShowHealingPlan(true);
+    toast({
+      title: "7-Day Healing Plan",
+      description: "Your personalized healing ritual plan is now available",
+      variant: "default",
+    });
   };
 
   return (
@@ -425,6 +314,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
                   setSelectedImage(null);
                   setAnalysis(null);
                   setError(null);
+                  setShowHealingPlan(false);
                 }}
               >
                 Change Image
@@ -459,55 +349,120 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           <div className="mt-6 space-y-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Your Energetic Analysis</h3>
             
-            <AnalysisCard 
-              title="Traditional Chinese Medicine" 
-              content={analysis.traditionalChineseMedicine}
-              icon={<BookOpen className="h-3 w-3" />}
-              gradientFrom="from-amber-400"
-              gradientTo="to-orange-500"
-              iconBgFrom="from-amber-300"
-              iconBgTo="to-orange-400"
-            />
+            <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
+              <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3.5 rounded-t-lg">
+                <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+                  <div className="h-6 w-6 rounded-full bg-gradient-to-br from-purple-300 to-indigo-500 flex items-center justify-center text-white shadow-sm">
+                    <Zap className="h-3 w-3" />
+                  </div>
+                  Holistic Skin Analysis
+                </h3>
+              </div>
+              <CardContent className="p-5 bg-white">
+                <div className="prose prose-sm text-gray-800 leading-relaxed whitespace-pre-line">
+                  {analysis.fullAnalysis ? (
+                    <div 
+                      dangerouslySetInnerHTML={{ 
+                        __html: analysis.fullAnalysis
+                          .replace(/\n\n/g, '<br/><br/>')
+                          .replace(/🔮|🧬|🌫️|🔥|🌿|🧘‍♀️/g, '<span class="text-xl">$&</span>') 
+                      }} 
+                    />
+                  ) : (
+                    <p>No analysis available.</p>
+                  )}
+                </div>
+                
+                {!showHealingPlan && (
+                  <div className="mt-8">
+                    <Button
+                      onClick={handleShowHealingPlan}
+                      className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md hover:shadow-lg transition-all rounded-md"
+                    >
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Yes, I want a 7-day ritual healing plan
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
             
-            <AnalysisCard 
-              title="Chakra Theory" 
-              content={analysis.chakraTheory}
-              icon={<Circle className="h-3 w-3" />}
-              gradientFrom="from-purple-400"
-              gradientTo="to-purple-700"
-              iconBgFrom="from-purple-300"
-              iconBgTo="to-purple-600"
-            />
-            
-            <AnalysisCard 
-              title="Metaphysical Symbolism" 
-              content={analysis.metaphysicalSymbolism}
-              icon={<Heart className="h-3 w-3" />}
-              gradientFrom="from-indigo-400"
-              gradientTo="to-blue-600"
-              iconBgFrom="from-indigo-300"
-              iconBgTo="to-blue-500"
-            />
-            
-            <AnalysisCard 
-              title="Suggested Holistic Remedies" 
-              content={analysis.holisticRemedies}
-              icon={<Leaf className="h-3 w-3" />}
-              gradientFrom="from-green-400"
-              gradientTo="to-teal-500"
-              iconBgFrom="from-green-300"
-              iconBgTo="to-teal-400"
-            />
-            
-            <AnalysisCard 
-              title="Suggested Foods" 
-              content={analysis.suggestedFoods}
-              icon={<Utensils className="h-3 w-3" />}
-              gradientFrom="from-yellow-400"
-              gradientTo="to-amber-500"
-              iconBgFrom="from-yellow-300"
-              iconBgTo="to-amber-400"
-            />
+            {showHealingPlan && (
+              <Collapsible className="mb-4">
+                <Card className="overflow-hidden shadow-md border border-gray-100">
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-3.5 rounded-t-lg">
+                    <CollapsibleTrigger className="w-full text-left">
+                      <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-300 to-teal-500 flex items-center justify-center text-white shadow-sm">
+                          <MessageSquare className="h-3 w-3" />
+                        </div>
+                        Your 7-Day Ritual Healing Plan
+                      </h3>
+                    </CollapsibleTrigger>
+                  </div>
+                  <CollapsibleContent>
+                    <CardContent className="p-5 bg-white">
+                      <div className="prose prose-sm text-gray-800 leading-relaxed">
+                        <h4 className="font-medium text-teal-800">Day 1: Grounding & Awareness</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: 5-minute facial massage with intention to release</li>
+                          <li>Evening practice: Journal about what emotions you're holding in your face</li>
+                          <li>Healing foods: Add leafy greens for liver support</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-teal-800 mt-4">Day 2: Expression Release</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: Throat chakra humming meditation (5 mins)</li>
+                          <li>Evening practice: Speak aloud 3 things you've been holding back</li>
+                          <li>Healing drink: Dandelion tea for liver detoxification</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-teal-800 mt-4">Day 3: Emotional Detoxification</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: Dry brushing lymphatic system</li>
+                          <li>Evening practice: Castor oil pack over liver area (20 mins)</li>
+                          <li>Healing foods: Bitter foods for liver cleansing</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-teal-800 mt-4">Day 4: Energy Circulation</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: Gua sha facial release with rose quartz</li>
+                          <li>Evening practice: Full-body stretching focused on chest opening</li>
+                          <li>Healing drink: Spearmint tea for hormonal balance</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-teal-800 mt-4">Day 5: Boundary Setting</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: Mirror affirmations - "I honor my needs"</li>
+                          <li>Evening practice: Identify and write down one boundary to set</li>
+                          <li>Healing foods: Omega-rich seeds and nuts</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-teal-800 mt-4">Day 6: Emotional Release</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: EFT tapping on face meridian points</li>
+                          <li>Evening practice: Sound bath or humming</li>
+                          <li>Healing activity: Write a release letter (not to send)</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-teal-800 mt-4">Day 7: Integration</h4>
+                        <ul className="pl-5 list-disc space-y-1">
+                          <li>Morning ritual: Full face massage with gratitude</li>
+                          <li>Evening practice: Candlelit meditation reflecting on the week</li>
+                          <li>Healing food: Prepare a meal with intention for skin healing</li>
+                        </ul>
+                        
+                        <div className="bg-teal-50 p-4 rounded-md mt-4">
+                          <p className="text-teal-800 italic">
+                            Remember that holistic healing takes time - continue practices that resonate with you. Your skin is reflecting your inner journey, not defining your worth.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            )}
             
             <div className="bg-white px-4 py-3 border border-gray-100 rounded-lg mt-4">
               <p className="text-xs text-gray-500 italic">
