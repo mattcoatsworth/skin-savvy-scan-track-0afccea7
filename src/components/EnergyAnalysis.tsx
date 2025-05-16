@@ -254,10 +254,10 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     iconBgTo?: string;
   }) => {
     return (
-      <Card className="mb-4 overflow-hidden shadow-md">
-        <div className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} px-4 py-3`}>
-          <h3 className="text-md font-medium text-white flex items-center gap-2">
-            <div className={`h-6 w-6 rounded-full bg-gradient-to-br ${iconBgFrom} ${iconBgTo} flex items-center justify-center text-white`}>
+      <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
+        <div className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} px-4 py-3.5 rounded-t-lg`}>
+          <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+            <div className={`h-6 w-6 rounded-full bg-gradient-to-br ${iconBgFrom} ${iconBgTo} flex items-center justify-center text-white shadow-sm`}>
               {icon}
             </div>
             {title}
@@ -273,23 +273,23 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   };
 
   return (
-    <Card className={`${className} overflow-hidden`}>
-      <CardContent className="p-4 space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-white">
+    <Card className={`${className} overflow-hidden border-gray-100 shadow-md`}>
+      <CardContent className="p-5 space-y-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white shadow-sm">
             <Zap className="h-4 w-4" />
           </div>
-          <h2 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Energy Analysis</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Energy Analysis</h2>
         </div>
         
-        <p className="text-sm text-muted-foreground mb-6">
+        <p className="text-sm text-gray-600 mb-6">
           Upload a selfie to receive a holistic and metaphysical analysis of your skin's energy
           {isOnLogSkinPage && " that considers your skin logs and daily factors"}.
         </p>
         
         {!selectedImage ? (
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8 bg-gray-50 transition-all hover:bg-gray-100 hover:border-purple-300">
-            <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 mb-3">
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-8 bg-gray-50 transition-all hover:bg-gray-100 hover:border-purple-200">
+            <div className="h-12 w-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 mb-4">
               <ImageIcon className="h-6 w-6" />
             </div>
             <p className="text-sm font-medium text-center text-gray-700 mb-4">
@@ -297,7 +297,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
             </p>
             <Button 
               variant="outline" 
-              className="relative bg-white border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-colors"
+              className="relative bg-white border-purple-100 text-purple-700 hover:bg-purple-50 hover:border-purple-200 transition-colors shadow-sm"
               onClick={() => document.getElementById('selfie-upload')?.click()}
             >
               Choose Image
@@ -312,8 +312,8 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg overflow-hidden shadow-md">
-              <AspectRatio ratio={1/1} className="bg-muted rounded-md overflow-hidden">
+            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100">
+              <AspectRatio ratio={1/1} className="bg-gray-50 rounded-xl overflow-hidden">
                 <img 
                   src={selectedImage} 
                   alt="Selected selfie" 
@@ -322,7 +322,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
               </AspectRatio>
             </div>
             
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-4">
               <Button 
                 variant="outline" 
                 size="sm"
@@ -339,7 +339,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
               <Button 
                 onClick={analyzeImage}
                 disabled={isAnalyzing}
-                className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all"
+                className="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all rounded-md"
               >
                 {isAnalyzing ? (
                   <>
@@ -353,7 +353,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         )}
         
         {error && (
-          <div className="mt-4 border border-red-100 bg-red-50 rounded-md p-4 shadow-sm">
+          <div className="mt-4 border border-red-100 bg-red-50 rounded-lg p-4 shadow-sm">
             <h3 className="text-md font-medium mb-2 text-red-800">Analysis Failed</h3>
             <div className="text-sm text-red-700">
               {error}
@@ -363,12 +363,16 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         
         {analysis && !error && (
           <div className="mt-6 space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Your Energetic Analysis</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Your Energetic Analysis</h3>
             
             <AnalysisCard 
               title="Traditional Chinese Medicine" 
               content={analysis.traditionalChineseMedicine}
               icon={<BookOpen className="h-3 w-3" />}
+              gradientFrom="from-amber-400"
+              gradientTo="to-orange-500"
+              iconBgFrom="from-amber-300"
+              iconBgTo="to-orange-400"
             />
             
             <AnalysisCard 
@@ -377,24 +381,28 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
               icon={<Circle className="h-3 w-3" />}
               gradientFrom="from-purple-400"
               gradientTo="to-purple-700"
+              iconBgFrom="from-purple-300"
+              iconBgTo="to-purple-600"
             />
             
             <AnalysisCard 
               title="Metaphysical Symbolism" 
               content={analysis.metaphysicalSymbolism}
               icon={<Heart className="h-3 w-3" />}
-              gradientFrom="from-indigo-500"
+              gradientFrom="from-indigo-400"
               gradientTo="to-blue-600"
+              iconBgFrom="from-indigo-300"
+              iconBgTo="to-blue-500"
             />
             
             <AnalysisCard 
               title="Suggested Holistic Remedies" 
               content={analysis.holisticRemedies}
               icon={<Leaf className="h-3 w-3" />}
-              gradientFrom="from-green-500"
-              gradientTo="to-teal-600"
-              iconBgFrom="from-green-400"
-              iconBgTo="to-teal-600"
+              gradientFrom="from-green-400"
+              gradientTo="to-teal-500"
+              iconBgFrom="from-green-300"
+              iconBgTo="to-teal-400"
             />
             
             <AnalysisCard 
@@ -402,12 +410,12 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
               content={analysis.suggestedFoods}
               icon={<Utensils className="h-3 w-3" />}
               gradientFrom="from-yellow-400"
-              gradientTo="to-amber-600"
-              iconBgFrom="from-yellow-400"
-              iconBgTo="to-amber-600"
+              gradientTo="to-amber-500"
+              iconBgFrom="from-yellow-300"
+              iconBgTo="to-amber-400"
             />
             
-            <div className="bg-white px-4 py-3 border border-purple-100 rounded-lg">
+            <div className="bg-white px-4 py-3 border border-gray-100 rounded-lg mt-4">
               <p className="text-xs text-gray-500 italic">
                 This analysis is based on holistic principles and is for personal insight only, not medical advice.
               </p>
