@@ -95,7 +95,7 @@ serve(async (req) => {
 
     console.log("Sending request to OpenAI with image data");
 
-    // Call OpenAI API with the image and prompt - using updated prompt as suggested
+    // Call OpenAI API with the image and updated prompt
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -110,7 +110,15 @@ serve(async (req) => {
             content: [
               { 
                 type: "text", 
-                text: "Using Traditional Chinese Medicine, chakra theory, and metaphysical symbolism, provide an energetic interpretation of the skin zones and breakout locations visible in this image. This is for self-reflection and holistic insight only, not a medical diagnosis." 
+                text: `Analyze this selfie and provide a holistic energy interpretation based on visible skin zones and breakout locations. Format your response as a clean JSON object with these sections:
+
+1. "traditionalChineseMedicine": Focus on organ associations and TCM insights related to visible skin areas
+2. "chakraTheory": Explain chakra energy connections to the visible skin areas
+3. "metaphysicalSymbolism": Describe metaphysical meanings of the visible skin conditions
+4. "holisticRemedies": Suggest natural remedies, practices, or lifestyle changes
+5. "suggestedFoods": Recommend specific foods that may support healing for affected organs or energy systems
+
+This is for self-reflection and holistic insight only, not a medical diagnosis. Do not use markdown formatting like ### or *** in your response.`
               },
               {
                 type: "image_url",
@@ -122,7 +130,8 @@ serve(async (req) => {
             ]
           }
         ],
-        max_tokens: 500
+        max_tokens: 800,
+        response_format: { type: "json_object" }
       })
     });
 
@@ -134,15 +143,24 @@ serve(async (req) => {
 
     const openAIData = await openAIResponse.json();
     console.log("Raw OpenAI response:", JSON.stringify(openAIData));
-    const energyAnalysis = openAIData.choices[0].message.content;
+    
+    let analysisContent;
+    try {
+      // Parse the content as JSON since we requested JSON format
+      const content = openAIData.choices[0].message.content;
+      analysisContent = JSON.parse(content);
+      console.log("Parsed analysis content:", JSON.stringify(analysisContent));
+    } catch (error) {
+      console.error("Error parsing analysis content:", error);
+      throw new Error("Failed to parse analysis content");
+    }
 
     console.log("Received analysis from OpenAI");
-    console.log("Analysis content snippet:", energyAnalysis.substring(0, 50) + "...");
     console.log("Sending analysis response");
 
     return new Response(
       JSON.stringify({ 
-        analysis: energyAnalysis,
+        analysis: analysisContent,
         includedSkinData: !!skinLogData 
       }),
       {

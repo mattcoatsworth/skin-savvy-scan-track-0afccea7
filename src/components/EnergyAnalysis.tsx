@@ -1,7 +1,8 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Image as ImageIcon, Zap } from "lucide-react";
+import { Loader2, Image as ImageIcon, Zap, Leaf, BookOpen, Heart, Circle, Utensils } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,10 +13,18 @@ interface EnergyAnalysisProps {
   className?: string;
 }
 
+interface AnalysisData {
+  traditionalChineseMedicine: string;
+  chakraTheory: string;
+  metaphysicalSymbolism: string;
+  holisticRemedies: string;
+  suggestedFoods: string;
+}
+
 const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const location = useLocation();
@@ -27,7 +36,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const processImage = async (imageDataUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Create an image object to work with
-      const img = document.createElement('img');
+      const img = new Image();
       img.onload = () => {
         // Check dimensions and resize if needed
         const maxDimension = 2048;
@@ -226,11 +235,41 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
   };
 
-  // Helper function to format analysis text by splitting paragraphs
-  const formatAnalysisText = (text: string) => {
-    return text.split('\n\n').map((paragraph, index) => (
-      <p key={index} className="mb-3 last:mb-0">{paragraph}</p>
-    ));
+  // Component for displaying a section of the analysis
+  const AnalysisCard = ({ 
+    title, 
+    content, 
+    icon, 
+    gradientFrom = "from-purple-500", 
+    gradientTo = "to-indigo-600",
+    iconBgFrom = "from-purple-400",
+    iconBgTo = "to-indigo-600"
+  }: { 
+    title: string; 
+    content: string; 
+    icon: React.ReactNode;
+    gradientFrom?: string;
+    gradientTo?: string;
+    iconBgFrom?: string;
+    iconBgTo?: string;
+  }) => {
+    return (
+      <Card className="mb-4 overflow-hidden shadow-md">
+        <div className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} px-4 py-3`}>
+          <h3 className="text-md font-medium text-white flex items-center gap-2">
+            <div className={`h-6 w-6 rounded-full bg-gradient-to-br ${iconBgFrom} ${iconBgTo} flex items-center justify-center text-white`}>
+              {icon}
+            </div>
+            {title}
+          </h3>
+        </div>
+        <CardContent className="p-5 bg-white">
+          <div className="prose prose-sm text-gray-800 leading-relaxed">
+            {content}
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
@@ -323,20 +362,52 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         )}
         
         {analysis && !error && (
-          <div className="mt-6 border border-purple-100 rounded-lg overflow-hidden shadow-md">
-            <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3">
-              <h3 className="text-md font-medium text-white flex items-center gap-2">
-                <Zap className="h-4 w-4" /> Energetic Analysis
-              </h3>
-            </div>
+          <div className="mt-6 space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Your Energetic Analysis</h3>
             
-            <div className="p-5 bg-gradient-to-b from-purple-50 to-white">
-              <div className="prose prose-sm text-gray-800 leading-relaxed">
-                {formatAnalysisText(analysis)}
-              </div>
-            </div>
+            <AnalysisCard 
+              title="Traditional Chinese Medicine" 
+              content={analysis.traditionalChineseMedicine}
+              icon={<BookOpen className="h-3 w-3" />}
+            />
             
-            <div className="bg-white px-4 py-3 border-t border-purple-100">
+            <AnalysisCard 
+              title="Chakra Theory" 
+              content={analysis.chakraTheory}
+              icon={<Circle className="h-3 w-3" />}
+              gradientFrom="from-purple-400"
+              gradientTo="to-purple-700"
+            />
+            
+            <AnalysisCard 
+              title="Metaphysical Symbolism" 
+              content={analysis.metaphysicalSymbolism}
+              icon={<Heart className="h-3 w-3" />}
+              gradientFrom="from-indigo-500"
+              gradientTo="to-blue-600"
+            />
+            
+            <AnalysisCard 
+              title="Suggested Holistic Remedies" 
+              content={analysis.holisticRemedies}
+              icon={<Leaf className="h-3 w-3" />}
+              gradientFrom="from-green-500"
+              gradientTo="to-teal-600"
+              iconBgFrom="from-green-400"
+              iconBgTo="to-teal-600"
+            />
+            
+            <AnalysisCard 
+              title="Suggested Foods" 
+              content={analysis.suggestedFoods}
+              icon={<Utensils className="h-3 w-3" />}
+              gradientFrom="from-yellow-400"
+              gradientTo="to-amber-600"
+              iconBgFrom="from-yellow-400"
+              iconBgTo="to-amber-600"
+            />
+            
+            <div className="bg-white px-4 py-3 border border-purple-100 rounded-lg">
               <p className="text-xs text-gray-500 italic">
                 This analysis is based on holistic principles and is for personal insight only, not medical advice.
               </p>
