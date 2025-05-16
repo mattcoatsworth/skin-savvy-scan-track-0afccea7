@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Image, Zap } from "lucide-react";
+import { Loader2, Image as ImageIcon, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +28,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
   const processImage = async (imageDataUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Create an image object to work with
-      const img = new Image();
+      const img = document.createElement('img');
       img.onload = () => {
         // Check dimensions and resize if needed
         const maxDimension = 2048;
@@ -236,7 +236,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         
         {!selectedImage ? (
           <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md p-6 bg-gray-50">
-            <Image className="h-8 w-8 text-gray-400 mb-2" />
+            <ImageIcon className="h-8 w-8 text-gray-400 mb-2" />
             <p className="text-sm text-center text-gray-500 mb-3">
               Select a selfie for energy analysis
             </p>
@@ -317,3 +317,4 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
 };
 
 export default EnergyAnalysis;
+

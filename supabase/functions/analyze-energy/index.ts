@@ -95,7 +95,7 @@ serve(async (req) => {
 
     console.log("Sending request to OpenAI with image data");
 
-    // Call OpenAI API with the image and prompt - using improved prompt as suggested
+    // Call OpenAI API with the image and prompt - using updated prompt as suggested
     const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
