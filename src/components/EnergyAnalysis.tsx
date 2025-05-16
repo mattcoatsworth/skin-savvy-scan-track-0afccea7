@@ -199,7 +199,16 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
         throw new Error(data.error);
       }
       
-      setAnalysis(data.analysis);
+      // Process the response data to create our analysis object
+      const processedAnalysis: AnalysisData = {
+        traditionalChineseMedicine: formatTCM(data.analysis.traditionalChineseMedicine),
+        chakraTheory: formatChakra(data.analysis.chakraTheory),
+        metaphysicalSymbolism: formatSymbolism(data.analysis.metaphysicalSymbolism),
+        holisticRemedies: formatRemedies(data.analysis.holisticRemedies),
+        suggestedFoods: formatFoods(data.analysis.suggestedFoods)
+      };
+      
+      setAnalysis(processedAnalysis);
       
       // Show toast about whether skin log data was included
       if (isOnLogSkinPage && data.includedSkinData) {
@@ -235,6 +244,110 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
   };
 
+  // Helper functions to format the nested response data
+  const formatTCM = (tcm: any): string => {
+    if (typeof tcm === 'string') return tcm;
+    
+    let result = '';
+    if (tcm.organAssociations) {
+      result += 'Organ Associations:\n';
+      Object.entries(tcm.organAssociations).forEach(([key, value]) => {
+        result += `• ${key}: ${value}\n`;
+      });
+      result += '\n';
+    }
+    
+    if (tcm.TCMInsights) {
+      result += `${tcm.TCMInsights}`;
+    }
+    
+    return result;
+  };
+  
+  const formatChakra = (chakra: any): string => {
+    if (typeof chakra === 'string') return chakra;
+    
+    let result = '';
+    if (chakra.energyConnections) {
+      result += 'Energy Connections:\n';
+      Object.entries(chakra.energyConnections).forEach(([key, value]) => {
+        result += `• ${key}: ${value}\n`;
+      });
+      result += '\n';
+    }
+    
+    if (chakra.chakraInsights) {
+      result += `${chakra.chakraInsights}`;
+    }
+    
+    return result;
+  };
+  
+  const formatSymbolism = (symbolism: any): string => {
+    if (typeof symbolism === 'string') return symbolism;
+    
+    let result = '';
+    if (symbolism.skinConditions) {
+      result += 'Skin Conditions:\n';
+      Object.entries(symbolism.skinConditions).forEach(([key, value]) => {
+        result += `• ${key}: ${value}\n`;
+      });
+      result += '\n';
+    }
+    
+    if (symbolism.symbolicMeanings) {
+      result += `${symbolism.symbolicMeanings}`;
+    }
+    
+    return result;
+  };
+  
+  const formatRemedies = (remedies: any): string => {
+    if (typeof remedies === 'string') return remedies;
+    
+    let result = '';
+    if (remedies.naturalPractices && Array.isArray(remedies.naturalPractices)) {
+      result += 'Natural Practices:\n';
+      remedies.naturalPractices.forEach((practice: string) => {
+        result += `• ${practice}\n`;
+      });
+      result += '\n';
+    }
+    
+    if (remedies.lifestyleChanges && Array.isArray(remedies.lifestyleChanges)) {
+      result += 'Lifestyle Changes:\n';
+      remedies.lifestyleChanges.forEach((change: string) => {
+        result += `• ${change}\n`;
+      });
+    }
+    
+    return result;
+  };
+  
+  const formatFoods = (foods: any): string => {
+    if (typeof foods === 'string') return foods;
+    
+    let result = '';
+    
+    Object.entries(foods).forEach(([category, items]) => {
+      const formattedCategory = category
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
+      
+      result += `${formattedCategory}:\n`;
+      
+      if (Array.isArray(items)) {
+        items.forEach((item: string) => {
+          result += `• ${item}\n`;
+        });
+      }
+      
+      result += '\n';
+    });
+    
+    return result.trim();
+  };
+
   // Component for displaying a section of the analysis
   const AnalysisCard = ({ 
     title, 
@@ -264,7 +377,7 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
           </h3>
         </div>
         <CardContent className="p-5 bg-white">
-          <div className="prose prose-sm text-gray-800 leading-relaxed">
+          <div className="prose prose-sm text-gray-800 leading-relaxed whitespace-pre-line">
             {content}
           </div>
         </CardContent>
