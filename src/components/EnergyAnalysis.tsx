@@ -245,6 +245,22 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
     }
   };
 
+  // Format the analysis text to enhance display of emojis and structure
+  const formatAnalysisText = (text: string | undefined) => {
+    if (!text) return null;
+    
+    // First, preserve line breaks but convert double line breaks to HTML breaks
+    let formattedText = text.replace(/\n\n/g, '<br/><br/>');
+    
+    // Make emojis stand out more
+    formattedText = formattedText.replace(/🔮|🧬|🌫️|🔥|🌿|🧘‍♀️|⚡|🌊|💫|🌀/g, '<span class="text-xl">$&</span>');
+    
+    // Make headings slightly larger and bolder
+    formattedText = formattedText.replace(/^(.*?\:)/gm, '<strong class="text-md">$1</strong>');
+    
+    return { __html: formattedText };
+  };
+
   // Show healing plan section
   const handleShowHealingPlan = () => {
     setShowHealingPlan(true);
@@ -359,21 +375,15 @@ const EnergyAnalysis = ({ className }: EnergyAnalysisProps) => {
                 </h3>
               </div>
               <CardContent className="p-5 bg-white">
-                <div className="prose prose-sm text-gray-800 leading-relaxed whitespace-pre-line">
+                <div className="prose prose-sm text-gray-800 leading-relaxed">
                   {analysis.fullAnalysis ? (
-                    <div 
-                      dangerouslySetInnerHTML={{ 
-                        __html: analysis.fullAnalysis
-                          .replace(/\n\n/g, '<br/><br/>')
-                          .replace(/🔮|🧬|🌫️|🔥|🌿|🧘‍♀️/g, '<span class="text-xl">$&</span>') 
-                      }} 
-                    />
+                    <div dangerouslySetInnerHTML={formatAnalysisText(analysis.fullAnalysis)} />
                   ) : (
                     <p>No analysis available.</p>
                   )}
                 </div>
                 
-                {!showHealingPlan && (
+                {!showHealingPlan && analysis.fullAnalysis && analysis.fullAnalysis.toLowerCase().includes("7-day") && (
                   <div className="mt-8">
                     <Button
                       onClick={handleShowHealingPlan}

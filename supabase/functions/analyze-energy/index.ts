@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
@@ -106,14 +107,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a holistic skin analysis expert who understands the energetic, metaphysical, and traditional medicine connections between skin conditions and overall wellbeing. You provide detailed, insightful analyses that help people understand the deeper meaning behind their skin conditions. You should focus on Traditional Chinese Medicine (TCM), chakra theory, emotional connections, and holistic remedies. Your tone should be compassionate, insightful and empowering."
+            content: "You are a holistic skin analysis expert who understands the energetic, metaphysical, and traditional medicine connections between skin conditions and overall wellbeing. You provide detailed, insightful analyses that help people understand the deeper meaning behind their skin conditions. You should focus on Traditional Chinese Medicine (TCM), chakra theory, emotional connections, and holistic remedies. Your tone should be compassionate, insightful and empowering. Always end with a follow-up question asking if they would like a 7-day ritual healing plan."
           },
           {
             role: "user",
             content: [
               { 
                 type: "text", 
-                text: `Energetically speaking — within holistic and metaphysical frameworks, can you analyze my skin and let me know what might be causing my breakouts? Focus on both TCM organ associations and chakra energy connections. Format your response with emojis for key sections, include metaphysical interpretations, and suggest holistic healing approaches. End with a follow-up question about creating a personalized healing plan.`
+                text: "Using Traditional Chinese Medicine, chakra theory, and metaphysical symbolism, provide an energetic interpretation of the skin zones and breakout locations visible in this image. Focus on both TCM organ associations and chakra energy connections. Format your response with emojis for key sections, include metaphysical interpretations, and suggest holistic healing approaches. This is for self-reflection and holistic insight only, not a medical diagnosis. End with asking if I'd like a 7-day ritual plan that blends metaphysical healing with gentle physical practices."
               },
               {
                 type: "image_url",
