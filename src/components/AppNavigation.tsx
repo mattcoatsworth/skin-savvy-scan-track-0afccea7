@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Home, User, Plus, Camera, Image, Scan, Smile, MessageSquare, ListTodo } from "lucide-react";
+import { Home, User, Plus, Camera, Image, Scan, Smile, MessageSquare, ListTodo, FileEdit } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { 
@@ -55,6 +55,17 @@ const AppNavigation: React.FC = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-48 p-2" align="center">
                       <div className="flex flex-col space-y-1">
+                        <Button 
+                          variant="ghost" 
+                          className="flex items-center justify-start gap-2"
+                          onClick={() => setOpen(false)}
+                          asChild
+                        >
+                          <Link to="/log-skin-condition">
+                            <FileEdit className="h-5 w-5 text-skin-teal" />
+                            <span>Log Today's Skin</span>
+                          </Link>
+                        </Button>
                         <Button 
                           variant="ghost" 
                           className="flex items-center justify-start gap-2"
