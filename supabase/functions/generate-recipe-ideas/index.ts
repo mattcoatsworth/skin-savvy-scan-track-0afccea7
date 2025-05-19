@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
@@ -32,6 +33,8 @@ serve(async (req) => {
       prompt = generateRecipePrompt(mealName, mealType, day);
     }
 
+    console.log("Sending request to OpenAI with prompt:", prompt);
+
     // Call OpenAI API to generate recipe ideas or skin benefits
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -62,6 +65,8 @@ serve(async (req) => {
     const data = await response.json();
     const content = data.choices[0].message.content;
 
+    console.log("OpenAI response content:", content);
+
     // Parse the response based on request type
     if (onlyBenefits) {
       const parsedBenefits = parseBenefitsResponse(content, mealName);
@@ -71,6 +76,7 @@ serve(async (req) => {
       );
     } else {
       const parsedRecipes = parseRecipeResponse(content, mealName);
+      console.log("Parsed recipes:", JSON.stringify(parsedRecipes));
       return new Response(
         JSON.stringify(parsedRecipes),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -83,7 +89,29 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Failed to generate content', 
-        details: error.message 
+        details: error.message,
+        fallback: {
+          recipes: [
+            {
+              name: "Fallback Recipe",
+              prepTime: "30 minutes",
+              difficulty: "Medium",
+              ingredients: ["Sample ingredient 1", "Sample ingredient 2"],
+              instructions: ["Sample step 1", "Sample step 2"]
+            },
+            {
+              name: "Another Fallback Recipe",
+              prepTime: "20 minutes",
+              difficulty: "Easy",
+              ingredients: ["Sample ingredient 1", "Sample ingredient 2"],
+              instructions: ["Sample step 1", "Sample step 2"]
+            }
+          ],
+          nutritionInfo: {
+            summary: "Fallback nutrition information",
+            benefits: ["Fallback benefit 1", "Fallback benefit 2"]
+          }
+        }
       }),
       { 
         status: 500, 
@@ -171,6 +199,8 @@ function generateSkinBenefitsPrompt(mealName: string, mealType: string) {
 
 function parseRecipeResponse(content: string, fallbackMealName: string) {
   try {
+    console.log("Parsing recipe response:", content);
+
     // Try to parse the response as JSON directly
     // Extract JSON from the response
     const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || 
@@ -179,8 +209,11 @@ function parseRecipeResponse(content: string, fallbackMealName: string) {
     let parsedData;
     
     if (jsonMatch) {
-      parsedData = JSON.parse(jsonMatch[0].replace(/```json|```/g, '').trim());
+      const jsonString = jsonMatch[0].replace(/```json|```/g, '').trim();
+      console.log("Extracted JSON string:", jsonString);
+      parsedData = JSON.parse(jsonString);
     } else {
+      console.log("No JSON found in response, using fallback");
       // If unable to parse JSON, return a fallback structure
       return {
         recipes: [
@@ -204,6 +237,26 @@ function parseRecipeResponse(content: string, fallbackMealName: string) {
           benefits: [
             "Benefits information not available. Please try again."
           ]
+        }
+      };
+    }
+
+    // Validate that the parsed data has the expected structure
+    if (!parsedData.recipes || !Array.isArray(parsedData.recipes) || !parsedData.nutritionInfo) {
+      console.log("Parsed data missing required fields, using fallback");
+      return {
+        recipes: [
+          {
+            name: `${fallbackMealName} - Recipe 1`,
+            prepTime: "30 minutes", 
+            difficulty: "Medium",
+            ingredients: ["Ingredient information not available"],
+            instructions: ["Recipe details could not be generated. Please try again."]
+          }
+        ],
+        nutritionInfo: {
+          summary: "Nutrition information could not be generated.",
+          benefits: ["Benefits information not available. Please try again."]
         }
       };
     }

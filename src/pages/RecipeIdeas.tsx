@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChefHat, Loader2, Save, FileImage } from 'lucide-react';
@@ -144,6 +145,7 @@ const RecipeIdeas = () => {
           throw new Error(fnError.message);
         }
 
+        console.log("Recipe data received:", data); // Add debugging log
         setRecipe(data);
         setLoading(false);
       } catch (error) {
@@ -212,7 +214,7 @@ const RecipeIdeas = () => {
       )}
 
       {/* Recipe Content */}
-      {!loading && recipe && (
+      {!loading && recipe && recipe.recipes && (
         <div className="space-y-6">
           <div>
             <h2 className="text-lg font-semibold mb-3">Recipe Ideas</h2>
@@ -280,19 +282,21 @@ const RecipeIdeas = () => {
             ))}
           </div>
 
-          <div>
-            <h2 className="text-lg font-semibold mb-3">Nutrition Benefits</h2>
-            <Card>
-              <CardContent className="p-4">
-                <p className="text-sm mb-3">{recipe.nutritionInfo.summary}</p>
-                <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
-                  {recipe.nutritionInfo.benefits.map((benefit: string, idx: number) => (
-                    <li key={idx}>{benefit}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+          {recipe.nutritionInfo && (
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Nutrition Benefits</h2>
+              <Card>
+                <CardContent className="p-4">
+                  <p className="text-sm mb-3">{recipe.nutritionInfo.summary}</p>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+                    {recipe.nutritionInfo.benefits && recipe.nutritionInfo.benefits.map((benefit: string, idx: number) => (
+                      <li key={idx}>{benefit}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           <div className="bg-emerald-50 p-4 rounded-lg text-xs text-muted-foreground">
             <p>These recipes are suggestions based on your meal plan. Feel free to adjust ingredients to match your dietary needs and preferences.</p>
