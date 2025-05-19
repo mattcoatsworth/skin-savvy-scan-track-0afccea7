@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
@@ -16,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { mealName, mealType, day } = await req.json();
+    const { mealName, mealType, day, onlyBenefits } = await req.json();
 
     if (!mealName || !mealType || !day) {
       return new Response(
@@ -25,10 +24,15 @@ serve(async (req) => {
       );
     }
 
-    // Generate the prompt for OpenAI
-    const prompt = generatePrompt(mealName, mealType, day);
+    // Choose the appropriate prompt based on the request type
+    let prompt;
+    if (onlyBenefits) {
+      prompt = generateSkinBenefitsPrompt(mealName, mealType);
+    } else {
+      prompt = generateRecipePrompt(mealName, mealType, day);
+    }
 
-    // Call OpenAI API to generate recipe ideas
+    // Call OpenAI API to generate recipe ideas or skin benefits
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,7 +44,9 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'You are a nutritionist specialized in skin health. Provide detailed recipe ideas for skin-friendly meals, including ingredients, steps, and skin benefits.'
+            content: onlyBenefits 
+              ? 'You are a nutritionist specialized in skin health. Provide detailed information about how specific foods benefit skin health.'
+              : 'You are a nutritionist specialized in skin health. Provide detailed recipe ideas for skin-friendly meals, including ingredients, steps, and skin benefits.'
           },
           { role: 'user', content: prompt }
         ],
@@ -56,20 +62,27 @@ serve(async (req) => {
     const data = await response.json();
     const content = data.choices[0].message.content;
 
-    // Parse the OpenAI response into a structured format
-    const parsedRecipes = parseRecipeResponse(content, mealName);
-
-    return new Response(
-      JSON.stringify(parsedRecipes),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    // Parse the response based on request type
+    if (onlyBenefits) {
+      const parsedBenefits = parseBenefitsResponse(content, mealName);
+      return new Response(
+        JSON.stringify(parsedBenefits),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } else {
+      const parsedRecipes = parseRecipeResponse(content, mealName);
+      return new Response(
+        JSON.stringify(parsedRecipes),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
   } catch (error) {
-    console.error('Error generating recipe ideas:', error);
+    console.error('Error generating content:', error);
     
     return new Response(
       JSON.stringify({ 
-        error: 'Failed to generate recipe ideas', 
+        error: 'Failed to generate content', 
         details: error.message 
       }),
       { 
@@ -80,7 +93,7 @@ serve(async (req) => {
   }
 });
 
-function generatePrompt(mealName: string, mealType: string, day: string) {
+function generateRecipePrompt(mealName: string, mealType: string, day: string) {
   let mealContext = "";
   
   if (mealType === "breakfast") {
@@ -132,6 +145,27 @@ function generatePrompt(mealName: string, mealType: string, day: string) {
         "benefits": ["benefit 1", "benefit 2", ...]
       }
     }
+  `;
+}
+
+function generateSkinBenefitsPrompt(mealName: string, mealType: string) {
+  return `
+    Analyze the following foods/drinks from ${mealType}: "${mealName}"
+
+    For each distinct food or ingredient mentioned, provide specific skin health benefits.
+    Focus on:
+    1. How each ingredient benefits the skin
+    2. Key nutrients that impact skin health
+    3. How they may address specific skin concerns
+
+    Format the response as a JSON array of benefit descriptions, with one detailed sentence per item:
+    [
+      "Food item: Specific benefit and mechanism relevant to skin health",
+      "Food item: Specific benefit and mechanism relevant to skin health",
+      ...
+    ]
+
+    Keep each benefit description concise but informative. Include 5-8 items in total.
   `;
 }
 
@@ -195,6 +229,51 @@ function parseRecipeResponse(content: string, fallbackMealName: string) {
           "Benefits information not available. Please try again."
         ]
       }
+    };
+  }
+}
+
+function parseBenefitsResponse(content: string, fallbackMealName: string) {
+  try {
+    // Try to extract JSON array from the response
+    const jsonMatch = content.match(/\[[\s\S]*?\]/);
+    
+    let benefits;
+    
+    if (jsonMatch) {
+      benefits = JSON.parse(jsonMatch[0]);
+      
+      // Ensure it's an array with at least one item
+      if (!Array.isArray(benefits) || benefits.length === 0) {
+        throw new Error("Parsed content is not a valid benefits array");
+      }
+    } else {
+      // If no JSON array found, try to extract bullet points or paragraphs
+      const lines = content.split(/\n+/);
+      benefits = lines
+        .filter(line => line.trim().startsWith('-') || line.trim().startsWith('•') || line.trim().length > 15)
+        .map(line => line.trim().replace(/^[-•]\s*/, ''))
+        .filter(line => line.length > 0)
+        .slice(0, 8); // Limit to 8 items
+        
+      if (benefits.length === 0) {
+        throw new Error("Could not extract benefits from the response");
+      }
+    }
+    
+    return { benefits };
+  } catch (error) {
+    console.error("Error parsing benefits response:", error);
+    
+    // Return fallback data
+    return {
+      benefits: [
+        `${fallbackMealName} contains nutrients that support healthy skin`,
+        "Rich in antioxidants that protect skin cells from damage",
+        "Provides hydration which is essential for skin elasticity",
+        "Contains vitamins that promote collagen production",
+        "May help reduce inflammation associated with skin conditions"
+      ]
     };
   }
 }

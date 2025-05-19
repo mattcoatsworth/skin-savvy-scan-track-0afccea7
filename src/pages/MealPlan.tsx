@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle, DollarSign, BookOpen } from 'lucide-react';
+import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle, DollarSign, BookOpen, Plus, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,6 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import TestAIChatBox from '@/components/TestAIChatBox';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { supabase } from '@/integrations/supabase/client';
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
@@ -19,8 +21,112 @@ const MealPlan = () => {
   const [preferredFood, setPreferredFood] = useState('');
   const [excludedFood, setExcludedFood] = useState('');
   const [weeklyBudget, setWeeklyBudget] = useState<number | undefined>(undefined);
+  const [loadingBenefits, setLoadingBenefits] = useState<{[key: string]: boolean}>({});
+  const [foodBenefits, setFoodBenefits] = useState<{[key: string]: string[]}>({});
   const { toast } = useToast();
   
+  // Generate a unique key for storing benefits data
+  const getBenefitsKey = (day: string, mealType: string) => {
+    return `${day}-${mealType}`;
+  };
+  
+  // Function to get skin benefits for specific foods
+  const getFoodSkinBenefits = async (day: string, mealType: string, foods: string) => {
+    const benefitsKey = getBenefitsKey(day, mealType);
+    
+    // If already loading benefits for this meal, don't start another request
+    if (loadingBenefits[benefitsKey]) return;
+    
+    // If we already have benefits for this meal, don't fetch again
+    if (foodBenefits[benefitsKey]) return;
+    
+    // Start loading state
+    setLoadingBenefits(prev => ({ ...prev, [benefitsKey]: true }));
+    
+    try {
+      // In a real implementation, call your Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('generate-recipe-ideas', {
+        body: {
+          mealName: foods,
+          mealType: mealType,
+          day: day,
+          onlyBenefits: true // Special flag to request only benefits
+        }
+      });
+      
+      if (error) throw new Error(error.message);
+      
+      // For now, we'll simulate the response with sample data
+      setTimeout(() => {
+        // Sample food benefits (in production, this would come from the API)
+        const sampleBenefits: {[key: string]: string[]} = {
+          breakfast: [
+            "Greek yogurt: Rich in probiotics that support gut health, which connects directly to clear skin",
+            "Berries: High in antioxidants that protect skin cells from damage and reduce inflammation",
+            "Honey: Natural antibacterial properties can help prevent breakouts",
+            "Chia seeds: Omega-3 fatty acids help maintain skin's lipid barrier and reduce inflammation",
+            "Whole grains: Complex carbohydrates with low glycemic index help regulate insulin levels"
+          ],
+          lunch: [
+            "Salmon: Omega-3 fatty acids strengthen skin cell membranes and reduce inflammation",
+            "Avocado: Vitamin E protects against oxidative damage and supports skin moisture",
+            "Leafy greens: Rich in vitamins A and K, important for cell regeneration and reducing dark circles",
+            "Olive oil: Polyphenols have anti-aging benefits and reduce inflammation",
+            "Quinoa: Complete protein supporting collagen production and skin repair"
+          ],
+          dinner: [
+            "Turmeric: Curcumin has powerful anti-inflammatory properties to calm skin irritation",
+            "Sweet potatoes: Beta-carotene supports skin cell turnover and protects against sun damage",
+            "Broccoli: Vitamin C is essential for collagen production and antioxidant protection",
+            "Wild-caught fish: Source of selenium and zinc that support skin healing",
+            "Plant proteins: Help repair tissue damage and support elasticity without triggering inflammation"
+          ],
+          snacks: [
+            "Almonds: Vitamin E and healthy fats support skin barrier function",
+            "Cucumber: High water content helps maintain hydration and flush toxins",
+            "Hummus: Chickpeas contain zinc and protein for tissue repair",
+            "Blueberries: Anthocyanins protect collagen from degradation",
+            "Greek yogurt: Probiotics reduce inflammatory skin conditions"
+          ],
+          hydration: [
+            "Green tea: Catechins have anti-inflammatory and antioxidant benefits for clear skin",
+            "Water: Essential for skin cell turnover, hydration, and toxin elimination",
+            "Herbal tea: Anti-inflammatory compounds support skin healing",
+            "Lemon water: Vitamin C supports collagen production and detoxification pathways",
+            "Coconut water: Electrolytes help maintain cellular hydration"
+          ]
+        };
+        
+        // Get the right benefits based on meal type
+        const benefits = sampleBenefits[mealType] || [
+          "This food is high in antioxidants that protect skin from damage",
+          "Contains essential vitamins that support skin cell renewal",
+          "Provides hydration and nutrients that maintain skin elasticity"
+        ];
+        
+        // Store the benefits
+        setFoodBenefits(prev => ({
+          ...prev,
+          [benefitsKey]: benefits
+        }));
+        
+        // End loading state
+        setLoadingBenefits(prev => ({ ...prev, [benefitsKey]: false }));
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error fetching food benefits:', error);
+      toast({
+        title: "Couldn't load skin benefits",
+        description: "There was an error loading the skin benefits. Please try again.",
+        variant: "destructive"
+      });
+      
+      // End loading state
+      setLoadingBenefits(prev => ({ ...prev, [benefitsKey]: false }));
+    }
+  };
+
   const generateMealPlan = async () => {
     setLoading(true);
     
@@ -202,6 +308,52 @@ const MealPlan = () => {
       </Button>
     </Link>
   );
+
+  // Benefits Section component
+  const SkinBenefitsButton = ({ day, mealType, foods }: { day: string, mealType: string, foods: string }) => {
+    const benefitsKey = getBenefitsKey(day, mealType);
+    const isLoading = loadingBenefits[benefitsKey];
+    const benefits = foodBenefits[benefitsKey];
+    
+    return (
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-none">
+          <AccordionTrigger 
+            onClick={() => !benefits && getFoodSkinBenefits(day, mealType, foods)}
+            className="py-1 px-0 text-xs font-medium text-emerald-600 hover:text-emerald-800 hover:no-underline"
+          >
+            {isLoading ? (
+              <span className="flex items-center">
+                <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                Loading benefits...
+              </span>
+            ) : (
+              <span className="flex items-center">
+                <Plus className="h-3 w-3 mr-1" />
+                See Skin Benefits
+              </span>
+            )}
+          </AccordionTrigger>
+          <AccordionContent className="pb-1 pt-2">
+            {benefits ? (
+              <ul className="text-xs text-muted-foreground space-y-1.5 pl-2">
+                {benefits.map((benefit, idx) => (
+                  <li key={idx} className="flex items-start gap-1.5">
+                    <span className="text-emerald-500 text-xs mt-0.5">•</span>
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-xs text-muted-foreground italic">
+                Click to load skin benefits for these foods.
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    );
+  };
 
   return (
     <div className="pb-24">
@@ -387,7 +539,14 @@ const MealPlan = () => {
               </div>
               <RecipeIdeasButton mealType="breakfast" day={activeDay} />
             </div>
-            <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().breakfast.benefits}</p>
+            <p className="text-xs text-muted-foreground ml-12 mb-1.5">{getActiveDayData().breakfast.benefits}</p>
+            <div className="ml-12">
+              <SkinBenefitsButton 
+                day={activeDay} 
+                mealType="breakfast" 
+                foods={getActiveDayData().breakfast.meal} 
+              />
+            </div>
           </div>
           
           {/* Lunch */}
@@ -404,7 +563,14 @@ const MealPlan = () => {
               </div>
               <RecipeIdeasButton mealType="lunch" day={activeDay} />
             </div>
-            <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().lunch.benefits}</p>
+            <p className="text-xs text-muted-foreground ml-12 mb-1.5">{getActiveDayData().lunch.benefits}</p>
+            <div className="ml-12">
+              <SkinBenefitsButton 
+                day={activeDay} 
+                mealType="lunch" 
+                foods={getActiveDayData().lunch.meal} 
+              />
+            </div>
           </div>
           
           {/* Dinner */}
@@ -421,7 +587,14 @@ const MealPlan = () => {
               </div>
               <RecipeIdeasButton mealType="dinner" day={activeDay} />
             </div>
-            <p className="text-xs text-muted-foreground ml-12">{getActiveDayData().dinner.benefits}</p>
+            <p className="text-xs text-muted-foreground ml-12 mb-1.5">{getActiveDayData().dinner.benefits}</p>
+            <div className="ml-12">
+              <SkinBenefitsButton 
+                day={activeDay} 
+                mealType="dinner" 
+                foods={getActiveDayData().dinner.meal} 
+              />
+            </div>
           </div>
           
           {/* Snacks & Hydration */}
@@ -438,9 +611,23 @@ const MealPlan = () => {
                 <li key={i}>{snack}</li>
               ))}
             </ul>
-            <p className="text-xs bg-blue-50 p-2 rounded-md">
+            <div className="mb-3">
+              <SkinBenefitsButton 
+                day={activeDay} 
+                mealType="snacks" 
+                foods={getActiveDayData().snacks.join(", ")} 
+              />
+            </div>
+            <p className="text-xs bg-blue-50 p-2 rounded-md mb-1">
               <span className="font-medium">Hydration:</span> {getActiveDayData().hydration}
             </p>
+            <div className="ml-1">
+              <SkinBenefitsButton 
+                day={activeDay} 
+                mealType="hydration" 
+                foods={getActiveDayData().hydration} 
+              />
+            </div>
           </div>
         </div>
       )}
