@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import OnboardingTemplate from "@/components/OnboardingTemplate";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 type GenderFormValues = {
   gender: "female" | "male" | "other";
@@ -95,6 +97,13 @@ const Onboarding: React.FC = () => {
               </FormItem>
             )}
           />
+          
+          {/* Preview link to see new user home */}
+          <div className="mt-4 text-center">
+            <Button variant="link" asChild>
+              <Link to="/home-new-user">Preview New User Home</Link>
+            </Button>
+          </div>
         </form>
       </Form>
     </OnboardingTemplate>

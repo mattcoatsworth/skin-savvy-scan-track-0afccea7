@@ -64,6 +64,7 @@ import ProductAITestPage from "@/pages/ProductAITestPage";
 import MealPlan from "@/pages/MealPlan";
 import FYP from "@/pages/FYP";
 import RecipeIdeas from "@/pages/RecipeIdeas";
+import HomeNewUser from "@/pages/HomeNewUser";
 
 // Custom recommendation pages
 import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
@@ -152,6 +153,7 @@ const App = () => (
             {/* Main app routes */}
             <Route element={<AppLayout />}>
               <Route path="/home" element={<Index />} />
+              <Route path="/home-new-user" element={<HomeNewUser />} />
               <Route path="/homescreen" element={React.lazy(() => import('@/pages/HomeScreen/Index'))} />
               <Route path="/skin" element={<History />} />
               <Route path="/fyp" element={<FYP />} />

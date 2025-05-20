@@ -28,7 +28,7 @@ export const ProductsRoutes = () => (
  * 2. Add it to your Routes component:
  *    <Routes>
  *      {ProductsRoutes()}
- *      {/* Other routes */}
+ *      [Other routes]
  *    </Routes>
  * 
  * Or alternatively, if you're manually setting up routes:
@@ -38,6 +38,6 @@ export const ProductsRoutes = () => (
  *   <Route path="/product/:type/:id" element={<ProductDetail />} />
  *   <Route path="/scanned-products" element={<ScannedProducts />} />
  *   <Route path="/trending-products" element={<TrendingProducts />} />
- *   {/* Other routes */}
+ *   [Other routes]
  * </Routes>
  */

@@ -26,7 +26,7 @@ export const FYPRoutes = () => (
  * 2. Add it to your Routes component:
  *    <Routes>
  *      {FYPRoutes()}
- *      {/* Other routes */}
+ *      [Other routes]
  *    </Routes>
  * 
  * Or alternatively, if you're manually setting up routes:
@@ -35,6 +35,6 @@ export const FYPRoutes = () => (
  *   <Route path="/fyp" element={<FYPPage />} />
  *   <Route path="/meal-plan" element={<FYPMealPlan />} />
  *   <Route path="/energy-analysis" element={<EnergyAnalysis />} />
- *   {/* Other routes */}
+ *   [Other routes]
  * </Routes>
  */
