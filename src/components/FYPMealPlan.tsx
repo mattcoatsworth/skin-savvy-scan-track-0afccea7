@@ -81,7 +81,10 @@ const FYPMealPlan = () => {
               ) : "Generate Skin-Healthy Meal Plan"}
             </Button>
             
-            <DisclaimerChatBox className="mt-6" />
+            {/* Fix: Remove the className prop since DisclaimerChatBox doesn't accept it */}
+            <div className="mt-6">
+              <DisclaimerChatBox />
+            </div>
           </div>
         ) : (
           <div className="space-y-6 pt-2">
