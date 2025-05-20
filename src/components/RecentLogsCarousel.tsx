@@ -63,8 +63,8 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Recent Scans</h2>
-        <Link to="/recent-logs" className="text-sm text-skin-black">
-          View all
+        <Link to="/recent-logs" className="text-sm text-skin-black font-medium">
+          View Full Analysis
         </Link>
       </div>
       

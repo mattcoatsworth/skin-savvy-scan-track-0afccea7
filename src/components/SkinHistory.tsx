@@ -63,7 +63,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
         <h2 className="text-xl font-semibold">Weekly Skin Report</h2>
         <Link 
           to="/skin?tab=weekly" 
-          className="text-skin-teal text-sm font-medium flex items-center"
+          className="text-skin-black text-sm font-medium flex items-center"
           onClick={navigateToWeeklyAnalysis}
         >
           View Report <ArrowRight className="h-4 w-4 ml-1" />

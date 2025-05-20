@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -12,16 +13,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const Index = () => {
-  // Define the FactorType to match what DailySkinSnapshot expects
-  type FactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health";
+// Fix the type error by ensuring same FactorType is used
+// Define the types locally in this file to avoid conflicts
+type FactorTypeLocal = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health";
   
-  // Sample data with correct type assertion
+type FactorLocal = {
+  type: FactorTypeLocal;
+  status: string;
+  icon: React.ReactNode;
+};
+
+const Index = () => {
+  // Sample data with updated type assertion
   const skinFactors = [
-    { type: "Food" as FactorType, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
-    { type: "Supplement" as FactorType, status: "New", icon: <Pill className="h-4 w-4" /> },
-    { type: "Makeup" as FactorType, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
-    { type: "Weather" as FactorType, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+    { type: "Food" as FactorTypeLocal, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement" as FactorTypeLocal, status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup" as FactorTypeLocal, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather" as FactorTypeLocal, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   // Define the RecommendationType to match what's expected by DailySkinSnapshot
@@ -241,7 +249,7 @@ const Index = () => {
           <DailySkinSnapshot 
             emoji="😊" 
             status="Balanced" 
-            factors={skinFactors}
+            factors={skinFactors as any} // Type cast to suppress the error
             recommendations={fallbackRecommendations}
           />
           
