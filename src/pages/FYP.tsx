@@ -44,13 +44,13 @@ const FYP = () => {
           <TabsList className="grid grid-cols-2 w-full mb-4 rounded-xl overflow-hidden bg-gray-100">
             <TabsTrigger 
               value="skin-energy" 
-              className="rounded-lg py-3 flex items-center justify-center h-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="rounded-lg flex items-center justify-center h-10 data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
               Skin Energy
             </TabsTrigger>
             <TabsTrigger 
               value="meal-plan" 
-              className="rounded-lg py-3 flex items-center justify-center h-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="rounded-lg flex items-center justify-center h-10 data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
               Meal Plan
             </TabsTrigger>
