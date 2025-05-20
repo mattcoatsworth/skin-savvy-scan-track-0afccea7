@@ -6,6 +6,7 @@ import EnergyAnalysis from "@/components/EnergyAnalysis";
 import BackButton from "@/components/BackButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FYPMealPlan from "@/components/FYPMealPlan";
+import { StyledBadge } from "@/components/ui/styled/Badge";
 
 const FYP = () => {
   // Add scroll to top functionality

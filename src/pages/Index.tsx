@@ -11,6 +11,7 @@ import BottomTemplate from "@/components/BottomTemplate";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { StyledBadge } from "@/components/ui/styled/Badge";
 
 const Index = () => {
   // Sample data
@@ -242,7 +243,7 @@ const Index = () => {
             recommendations={fallbackRecommendations}
           />
           
-          {/* Meal Plan Card */}
+          {/* Meal Plan Card - Updated styling with StyledBadge */}
           <Card className="overflow-hidden border-l-4 border-l-emerald-400">
             <CardContent className="p-4">
               <div className="flex justify-between items-center mb-3">
@@ -281,7 +282,7 @@ const Index = () => {
             </CardContent>
           </Card>
           
-          {/* Skin Energy Card */}
+          {/* Skin Energy Card - Updated styling with StyledBadge */}
           <Card className="overflow-hidden border-l-4 border-l-blue-400">
             <CardContent className="p-4">
               <div className="flex justify-between items-center mb-3">
@@ -298,7 +299,11 @@ const Index = () => {
               
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm">Current Energy Level</p>
-                <p className="font-semibold text-sm text-blue-600">78%</p>
+                <StyledBadge 
+                  value={78}
+                  variant="info"
+                  className="text-sm font-semibold"
+                />
               </div>
               
               <div className="w-full bg-gray-200 rounded-full h-2 mb-4">

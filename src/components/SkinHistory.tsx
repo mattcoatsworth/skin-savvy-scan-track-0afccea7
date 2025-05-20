@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { CircleProgress } from "@/components/ui/circle-progress";
+import { StyledBadge } from "@/components/ui/styled/Badge";
 
 type DayRating = {
   day: string;
@@ -64,19 +64,14 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                 <span className="text-[10px] font-medium">{item.day}</span>
                 <span className="text-[8px] text-muted-foreground">{item.date}</span>
                 
-                <div className="mt-1 mb-0.5 relative">
-                  {/* Circular progress indicator using our new component */}
-                  <CircleProgress
-                    value={item.rating}
-                    size={40}
-                    strokeWidth={4}
-                  >
-                    <div className="text-base font-bold">
-                      {item.rating}
-                    </div>
-                  </CircleProgress>
+                <div className="mt-1 mb-0.5 flex flex-col items-center">
+                  {/* Updated rating display to use StyledBadge */}
+                  <StyledBadge 
+                    value={item.rating} 
+                    className="text-sm font-bold w-10 h-10 flex items-center justify-center"
+                  />
                   
-                  {/* Rating label below the circle */}
+                  {/* Rating label below the badge */}
                   <div className="text-center mt-0.5">
                     <span className="text-[10px] text-gray-500 font-medium">
                       {getRatingLabel(item.rating)}
