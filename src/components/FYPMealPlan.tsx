@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -641,9 +642,7 @@ const FYPMealPlan = () => {
               ) : "Generate Skin-Healthy Meal Plan"}
             </Button>
             
-            <div className="mt-6">
-              <DisclaimerChatBox />
-            </div>
+            {/* Removed DisclaimerChatBox from here */}
           </div>
         ) : (
           <div className="space-y-6 pt-2">
@@ -862,7 +861,7 @@ const FYPMealPlan = () => {
                   </CardContent>
                 </Card>
                 
-                {/* Get Grocery List Button - Added below Expected Results */}
+                {/* Get Grocery List Button */}
                 <Button 
                   onClick={generateGroceryList}
                   disabled={isGeneratingGroceryList}
@@ -919,6 +918,9 @@ const FYPMealPlan = () => {
                     This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
                   </p>
                 </div>
+                
+                {/* Now showing DisclaimerChatBox only after meal plan is generated */}
+                <DisclaimerChatBox />
                 
                 <div className="pt-3">
                   <Button 
