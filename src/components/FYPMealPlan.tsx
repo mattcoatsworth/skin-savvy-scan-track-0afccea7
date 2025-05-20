@@ -703,6 +703,28 @@ const FYPMealPlan = () => {
                 </Card>
                 
                 {/* Expected Results - Now appears below the snacks card */}
+                <Card className="overflow-hidden border border-gray-100">
+                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-emerald-600" />
+                      <h3 className="font-medium text-emerald-800">Expected Results</h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium">Consistency is key</h4>
+                      <div className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full text-xs font-medium">
+                        ~85% Improvement
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Following this personalized meal plan consistently may result in approximately 
+                      85% improvement in your skin health metrics over time. Results may vary based on 
+                      individual factors, consistency, and other lifestyle elements.
+                    </p>
+                  </CardContent>
+                </Card>
+                
                 <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
                   <p className="text-xs text-gray-500 italic">
                     This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
