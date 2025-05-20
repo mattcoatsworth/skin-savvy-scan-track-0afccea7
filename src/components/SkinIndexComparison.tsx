@@ -108,30 +108,29 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
               <ChartContainer className="h-full" config={chartConfig}>
                 <LineChart 
                   data={comparisonData} 
-                  margin={{ top: 20, right: 0, bottom: 5, left: -25 }}
+                  margin={{ top: 20, right: 5, bottom: 5, left: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
                   <XAxis 
                     dataKey="day" 
                     stroke="#94a3b8" 
-                    fontSize={10}
+                    fontSize={8}
                     tickLine={false}
                     axisLine={{ stroke: '#e2e8f0' }}
                     padding={{ left: 0, right: 0 }}
-                    tickMargin={5}
                     interval={0}
-                    tick={{ fontSize: 9 }}
+                    tick={{ fontSize: 8 }}
                   />
                   <YAxis 
                     domain={getValueDomain()} 
                     stroke="#94a3b8" 
-                    fontSize={9}
+                    fontSize={8}
                     tickLine={false}
                     axisLine={{ stroke: '#e2e8f0' }}
                     tickFormatter={(value) => `${value}`}
-                    width={20}
+                    width={15}
                   />
-                  <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 9 }} />
+                  <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 8 }} />
                   <ChartTooltip 
                     content={
                       <ChartTooltipContent 
@@ -146,9 +145,9 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
                     type="monotone" 
                     dataKey="userScore" 
                     stroke="#8B5CF6" 
-                    strokeWidth={2.5} 
-                    dot={{ r: 4, fill: "#8B5CF6", stroke: "white", strokeWidth: 2 }} 
-                    activeDot={{ r: 6, stroke: "white", strokeWidth: 2 }}
+                    strokeWidth={2} 
+                    dot={{ r: 3, fill: "#8B5CF6", stroke: "white", strokeWidth: 1.5 }} 
+                    activeDot={{ r: 5, stroke: "white", strokeWidth: 1.5 }}
                     animationDuration={1000}
                   />
                   <Line 
@@ -156,8 +155,8 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
                     type="monotone" 
                     dataKey="avgScore" 
                     stroke="#0EA5E9" 
-                    strokeWidth={2} 
-                    dot={{ r: 4, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }} 
+                    strokeWidth={1.5} 
+                    dot={{ r: 3, fill: "#0EA5E9", stroke: "white", strokeWidth: 1.5 }} 
                     strokeDasharray="5 5"
                     animationDuration={1500}
                   />
