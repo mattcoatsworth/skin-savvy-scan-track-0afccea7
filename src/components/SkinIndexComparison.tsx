@@ -25,7 +25,7 @@ import {
   ChartTooltipContent 
 } from "@/components/ui/chart";
 
-// Generate mock data
+// Generate mock data for all 7 days of the week
 const generateComparisonData = () => {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   return days.map(day => {
@@ -106,7 +106,10 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
             
             <div className="h-[240px]">
               <ChartContainer className="h-full" config={chartConfig}>
-                <LineChart data={comparisonData} margin={{ top: 20, right: 30, bottom: 5, left: 5 }}>
+                <LineChart 
+                  data={comparisonData} 
+                  margin={{ top: 20, right: 10, bottom: 5, left: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
                   <XAxis 
                     dataKey="day" 
@@ -114,6 +117,8 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
                     fontSize={12}
                     tickLine={false}
                     axisLine={{ stroke: '#e2e8f0' }}
+                    padding={{ left: 10, right: 10 }}
+                    tickMargin={8}
                   />
                   <YAxis 
                     domain={getValueDomain()} 
@@ -122,6 +127,7 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
                     tickLine={false}
                     axisLine={{ stroke: '#e2e8f0' }}
                     tickFormatter={(value) => `${value}`}
+                    width={30}
                   />
                   <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 10 }} />
                   <ChartTooltip 
