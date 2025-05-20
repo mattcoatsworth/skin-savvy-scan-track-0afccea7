@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -717,7 +716,7 @@ const FYPMealPlan = () => {
                   </CardContent>
                 </Card>
                 
-                {/* Expected Results - Now appears below the snacks card */}
+                {/* Expected Results - Only showing when meal plan is generated */}
                 <Card className="overflow-hidden border border-gray-100">
                   <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3">
                     <div className="flex items-center gap-2">
