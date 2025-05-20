@@ -26,7 +26,7 @@ export const SkinRoutes = () => (
  * 2. Add it to your Routes component:
  *    <Routes>
  *      {SkinRoutes()}
- *      {/* Other routes */}
+ *      [Other routes]
  *    </Routes>
  * 
  * Or alternatively, if you're manually setting up routes:
@@ -35,6 +35,6 @@ export const SkinRoutes = () => (
  *   <Route path="/skin" element={<SkinPage />} />
  *   <Route path="/skin-analysis" element={<SkinAnalysis />} />
  *   <Route path="/weekly-skin-analysis" element={<WeeklySkinAnalysis />} />
- *   {/* Other routes */}
+ *   [Other routes]
  * </Routes>
  */

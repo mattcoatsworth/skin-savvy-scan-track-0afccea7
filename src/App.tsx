@@ -120,6 +120,9 @@ const App = () => (
             {/* Redirect root to splash screen */}
             <Route path="/" element={<SplashScreen />} />
             
+            {/* New User Pages navigation */}
+            <Route path="/new-user-pages" element={React.lazy(() => import('./pages/NewUserPages'))} />
+            
             {/* Auth route */}
             <Route path="/auth" element={<SkinAuth />} />
             
@@ -154,6 +157,9 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/home" element={<Index />} />
               <Route path="/home-new-user" element={<HomeNewUser />} />
+              <Route path="/fyp-new-user" element={React.lazy(() => import('./pages/FYPNewUser'))} />
+              <Route path="/skin-new-user" element={React.lazy(() => import('./pages/SkinNewUser'))} />
+              <Route path="/products-new-user" element={React.lazy(() => import('./pages/ProductsNewUser'))} />
               <Route path="/homescreen" element={React.lazy(() => import('@/pages/HomeScreen/Index'))} />
               <Route path="/skin" element={<History />} />
               <Route path="/fyp" element={<FYP />} />
@@ -197,11 +203,8 @@ const App = () => (
               <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
               
               {/* AI Recommendation routes - all possible formats */}
-              {/* Support for /testai suffix */}
               <Route path="/recommendations-detail/:id/testai" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/:type/:id/testai" element={<AIRecommendationDetail />} />
-              
-              {/* Standard AI recommendation formats */}
               <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />
