@@ -265,7 +265,7 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
     if (text) {
       // Find any summary section, or create one from the introduction
       const summaryMatch = text.match(/(?:Overall Analysis|Summary|Interpretation)[\s\S]*?(?=🔮|Traditional|🧬|$)/i);
-      sections.energeticInsights = summaryMatch ? cleanFormatting(summaryMatch[0]) : text.slice(0, 300) + "...";
+      sections.energeticInsights = summaryMatch ? cleanFormatting(summaryMatch[0]) : cleanFormatting(text.slice(0, 300) + "...");
     }
     
     return sections;
