@@ -39,6 +39,18 @@ const FYPMealPlan = () => {
   const [excludeOpen, setExcludeOpen] = useState(false);
   const { toast } = useToast();
 
+  // Load saved meal plan from localStorage on mount
+  useEffect(() => {
+    const savedMealPlan = localStorage.getItem('mealPlan');
+    if (savedMealPlan) {
+      try {
+        setMealPlan(JSON.parse(savedMealPlan));
+      } catch (error) {
+        console.error('Error parsing saved meal plan:', error);
+      }
+    }
+  }, []);
+
   // Filter suggestions based on input
   const filteredIncludeSuggestions = foodSuggestions.filter(food => 
     food.toLowerCase().includes(includeFoodInput.toLowerCase()) &&
