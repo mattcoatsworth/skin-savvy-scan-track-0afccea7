@@ -6,6 +6,7 @@ import { Toaster as SonnerToaster } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import LazyComponentWrapper from "@/components/LazyComponentWrapper";
 
 // Components
 import AppNavigation from "@/components/AppNavigation";
@@ -121,7 +122,14 @@ const App = () => (
             <Route path="/" element={<SplashScreen />} />
             
             {/* New User Pages navigation */}
-            <Route path="/new-user-pages" element={React.lazy(() => import('./pages/NewUserPages'))} />
+            <Route 
+              path="/new-user-pages" 
+              element={
+                <LazyComponentWrapper 
+                  component={React.lazy(() => import('./pages/NewUserPages'))} 
+                />
+              } 
+            />
             
             {/* Auth route */}
             <Route path="/auth" element={<SkinAuth />} />
@@ -157,10 +165,38 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/home" element={<Index />} />
               <Route path="/home-new-user" element={<HomeNewUser />} />
-              <Route path="/fyp-new-user" element={React.lazy(() => import('./pages/FYPNewUser'))} />
-              <Route path="/skin-new-user" element={React.lazy(() => import('./pages/SkinNewUser'))} />
-              <Route path="/products-new-user" element={React.lazy(() => import('./pages/ProductsNewUser'))} />
-              <Route path="/homescreen" element={React.lazy(() => import('@/pages/HomeScreen/Index'))} />
+              <Route 
+                path="/fyp-new-user" 
+                element={
+                  <LazyComponentWrapper 
+                    component={React.lazy(() => import('./pages/FYPNewUser'))} 
+                  />
+                } 
+              />
+              <Route 
+                path="/skin-new-user" 
+                element={
+                  <LazyComponentWrapper 
+                    component={React.lazy(() => import('./pages/SkinNewUser'))} 
+                  />
+                } 
+              />
+              <Route 
+                path="/products-new-user" 
+                element={
+                  <LazyComponentWrapper 
+                    component={React.lazy(() => import('./pages/ProductsNewUser'))} 
+                  />
+                } 
+              />
+              <Route 
+                path="/homescreen" 
+                element={
+                  <LazyComponentWrapper 
+                    component={React.lazy(() => import('@/pages/HomeScreen/Index'))} 
+                  />
+                } 
+              />
               <Route path="/skin" element={<History />} />
               <Route path="/fyp" element={<FYP />} />
               <Route path="/products" element={<Insights />} />
