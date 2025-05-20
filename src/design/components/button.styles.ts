@@ -1,3 +1,4 @@
+
 import { colors } from '../colors';
 import { spacing } from '../spacing';
 import typography from '../typography';
@@ -27,44 +28,29 @@ export const buttonSizeVariants = {
 
 export const buttonColorVariants = {
   primary: {
-    default: `bg-${colors.theme.primary} text-white hover:bg-${colors.theme.primary}Dark`,
-    outline: `border border-${colors.theme.primary} text-${colors.theme.primary} hover:bg-${colors.theme.primary}Light hover:text-white`,
-    ghost: `text-${colors.theme.primary} hover:bg-${colors.theme.primary}Light hover:text-white`,
+    default: `bg-primary text-primary-foreground hover:bg-primary/90`,
+    outline: `border border-primary text-primary hover:bg-primary/10 hover:text-primary`,
+    ghost: `text-primary hover:bg-primary/10 hover:text-primary`,
   },
   secondary: {
-    default: `bg-${colors.theme.secondary} text-white hover:bg-${colors.theme.secondary}Dark`,
-    outline: `border border-${colors.theme.secondary} text-${colors.theme.secondary} hover:bg-${colors.theme.secondary}Light hover:text-white`,
-    ghost: `text-${colors.theme.secondary} hover:bg-${colors.theme.secondary}Light hover:text-white`,
+    default: `bg-secondary text-secondary-foreground hover:bg-secondary/80`,
+    outline: `border border-secondary text-secondary hover:bg-secondary/10 hover:text-secondary`,
+    ghost: `text-secondary hover:bg-secondary/10 hover:text-secondary`,
   },
-  success: {
-    default: `bg-${colors.theme.success} text-white hover:bg-${colors.theme.success}Dark`,
-    outline: `border border-${colors.theme.success} text-${colors.theme.success} hover:bg-${colors.theme.success}Light hover:text-white`,
-    ghost: `text-${colors.theme.success} hover:bg-${colors.theme.success}Light hover:text-white`,
+  accent: {
+    default: `bg-accent text-accent-foreground hover:bg-accent/80`,
+    outline: `border border-accent text-accent-foreground hover:bg-accent/20 hover:text-accent-foreground`,
+    ghost: `text-accent-foreground hover:bg-accent/20 hover:text-accent-foreground`,
   },
-  warning: {
-    default: `bg-${colors.theme.warning} text-white hover:bg-${colors.theme.warning}Dark`,
-    outline: `border border-${colors.theme.warning} text-${colors.theme.warning} hover:bg-${colors.theme.warning}Light hover:text-white`,
-    ghost: `text-${colors.theme.warning} hover:bg-${colors.theme.warning}Light hover:text-white`,
+  destructive: {
+    default: `bg-destructive text-destructive-foreground hover:bg-destructive/90`,
+    outline: `border border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive`,
+    ghost: `text-destructive hover:bg-destructive/10 hover:text-destructive`,
   },
-  error: {
-    default: `bg-${colors.theme.error} text-white hover:bg-${colors.theme.error}Dark`,
-    outline: `border border-${colors.theme.error} text-${colors.theme.error} hover:bg-${colors.theme.error}Light hover:text-white`,
-    ghost: `text-${colors.theme.error} hover:bg-${colors.theme.error}Light hover:text-white`,
-  },
-  info: {
-    default: `bg-${colors.theme.info} text-white hover:bg-${colors.theme.info}Dark`,
-    outline: `border border-${colors.theme.info} text-${colors.theme.info} hover:bg-${colors.theme.info}Light hover:text-white`,
-    ghost: `text-${colors.theme.info} hover:bg-${colors.theme.info}Light hover:text-white`,
-  },
-  light: {
-    default: `bg-${colors.theme.light} text-gray-800 hover:bg-${colors.theme.light}Dark`,
-    outline: `border border-${colors.theme.light} text-${colors.theme.light} hover:bg-${colors.theme.light}Light hover:text-gray-800`,
-    ghost: `text-${colors.theme.light} hover:bg-${colors.theme.light}Light hover:text-gray-800`,
-  },
-  dark: {
-    default: `bg-${colors.theme.dark} text-white hover:bg-${colors.theme.dark}Dark`,
-    outline: `border border-${colors.theme.dark} text-${colors.theme.dark} hover:bg-${colors.theme.dark}Light hover:text-white`,
-    ghost: `text-${colors.theme.dark} hover:bg-${colors.theme.dark}Light hover:text-white`,
+  muted: {
+    default: `bg-muted text-muted-foreground hover:bg-muted/80`,
+    outline: `border border-muted text-muted-foreground hover:bg-muted/10 hover:text-muted-foreground`,
+    ghost: `text-muted-foreground hover:bg-muted/10 hover:text-muted-foreground`,
   },
   white: {
     default: `bg-white text-gray-800 hover:bg-gray-100`,
@@ -75,6 +61,32 @@ export const buttonColorVariants = {
     default: `bg-gray-500 text-white hover:bg-gray-600`,
     outline: `border border-gray-500 text-gray-500 hover:bg-gray-100 hover:text-gray-800`,
     ghost: `text-gray-500 hover:bg-gray-100 hover:text-gray-800`,
+  },
+  // Use theme specific colors for these semantic variants
+  positive: {
+    default: `bg-green-500 text-white hover:bg-green-600`,
+    outline: `border border-green-500 text-green-500 hover:bg-green-50 hover:text-green-600`,
+    ghost: `text-green-500 hover:bg-green-50 hover:text-green-600`,
+  },
+  warning: {
+    default: `bg-amber-500 text-white hover:bg-amber-600`,
+    outline: `border border-amber-500 text-amber-500 hover:bg-amber-50 hover:text-amber-600`,
+    ghost: `text-amber-500 hover:bg-amber-50 hover:text-amber-600`,
+  },
+  danger: {
+    default: `bg-red-500 text-white hover:bg-red-600`,
+    outline: `border border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600`,
+    ghost: `text-red-500 hover:bg-red-50 hover:text-red-600`,
+  },
+  info: {
+    default: `bg-blue-500 text-white hover:bg-blue-600`,
+    outline: `border border-blue-500 text-blue-500 hover:bg-blue-50 hover:text-blue-600`,
+    ghost: `text-blue-500 hover:bg-blue-50 hover:text-blue-600`,
+  },
+  light: {
+    default: `bg-gray-200 text-gray-800 hover:bg-gray-300`,
+    outline: `border border-gray-200 text-gray-200 hover:bg-gray-50 hover:text-gray-300`,
+    ghost: `text-gray-200 hover:bg-gray-50 hover:text-gray-300`,
   },
 };
 
@@ -109,11 +121,11 @@ export const buttonShadowVariants = {
   },
   
   colorful: {
-    default: `shadow-[0_4px_6px_-1px_rgba(${colors.theme.primary},0.1),0_2px_4px_-1px_rgba(${colors.theme.primary},0.06)]`,
-    sm: `shadow-[0_1px_2px_0_rgba(${colors.theme.primary},0.05)]`,
-    lg: `shadow-[0_10px_15px_-3px_rgba(${colors.theme.primary},0.1),0_4px_6px_-2px_rgba(${colors.theme.primary},0.05)]`,
-    xl: `shadow-[0_20px_25px_-5px_rgba(${colors.theme.primary},0.1),0_10px_10px_-5px_rgba(${colors.theme.primary},0.04)]`,
-    inner: `shadow-[inset_0_2px_4px_0_rgba(${colors.theme.primary},0.06)]`,
+    default: "shadow-[0_4px_6px_-1px_rgba(var(--primary),0.1),0_2px_4px_-1px_rgba(var(--primary),0.06)]",
+    sm: "shadow-[0_1px_2px_0_rgba(var(--primary),0.05)]",
+    lg: "shadow-[0_10px_15px_-3px_rgba(var(--primary),0.1),0_4px_6px_-2px_rgba(var(--primary),0.05)]",
+    xl: "shadow-[0_20px_25px_-5px_rgba(var(--primary),0.1),0_10px_10px_-5px_rgba(var(--primary),0.04)]",
+    inner: "shadow-[inset_0_2px_4px_0_rgba(var(--primary),0.06)]",
     none: "shadow-none"
   }
 };
