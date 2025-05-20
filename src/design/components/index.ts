@@ -10,8 +10,8 @@ import {
   buttonShadowVariants,
   buttonVariants
 } from './button.styles';
-import { progressVariants } from './progress.styles';
-import { ratingVariants } from './rating.styles';
+import progressVariants from './progress.styles';
+import ratingVariants from './rating.styles';
 
 /**
  * Usage example:

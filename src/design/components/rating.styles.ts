@@ -5,7 +5,7 @@ import { colors, borders, shadows, typography } from '../index';
  * Rating component styles
  * Used for skin condition ratings and history
  */
-export const ratingStyles = {
+export const ratingVariants = {
   // Rating circle for history display
   circle: {
     width: '2.5rem', // 40px
@@ -138,4 +138,4 @@ export const ratingStyles = {
   }
 };
 
-export default ratingStyles;
+export default ratingVariants;

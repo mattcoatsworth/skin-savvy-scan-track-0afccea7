@@ -5,7 +5,7 @@ import { colors, borders } from '../index';
  * Progress bar component styles
  * Used for ratings, energy levels, and other progress indicators
  */
-export const progressStyles = {
+export const progressVariants = {
   // Base progress bar container
   container: {
     width: '100%',
@@ -86,4 +86,4 @@ export const progressStyles = {
   }
 };
 
-export default progressStyles;
+export default progressVariants;

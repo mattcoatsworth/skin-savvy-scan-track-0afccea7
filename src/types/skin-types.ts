@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 
-export type FactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health";
+export type FactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health" | "Sleep" | "Stress";
   
 export type Factor = {
   type: FactorType;

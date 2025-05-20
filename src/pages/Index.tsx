@@ -9,7 +9,7 @@ import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
 import { useSampleData } from "@/hooks/useSampleData";
-import { Factor } from "@/types/skin-types"; // Import the correct Factor type
+import { Factor } from "@/types/skin-types"; // Import from types folder
 
 const Index = () => {
   // Get all the sample data from our custom hook
@@ -23,8 +23,8 @@ const Index = () => {
     exploreItems
   } = useSampleData();
 
-  // Cast to correct Factor type to fix TypeScript error
-  const typedSkinFactors = skinFactors as unknown as Factor[];
+  // Use Factor from the types import
+  const typedSkinFactors = skinFactors as Factor[];
 
   return (
     <div>

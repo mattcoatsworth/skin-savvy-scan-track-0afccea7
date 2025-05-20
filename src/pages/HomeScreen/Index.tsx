@@ -11,7 +11,7 @@ import BottomTemplate from "@/components/BottomTemplate";
 import MealPlanCard from "@/pages/HomeScreen/MealPlanCard";
 import SkinEnergyCard from "@/pages/HomeScreen/SkinEnergyCard";
 import { useSampleData } from "@/pages/HomeScreen/useSampleData";
-import { Factor } from "@/types/skin-types"; // Import the correct Factor type
+import { Factor } from "@/pages/HomeScreen/skin-types"; // Import from local path
 
 const Index = () => {
   // Get all the sample data from our custom hook
@@ -26,8 +26,8 @@ const Index = () => {
     mealPlanToday
   } = useSampleData();
 
-  // Cast to correct Factor type to fix TypeScript error
-  const typedSkinFactors = skinFactors as unknown as Factor[];
+  // Use Factor from the local import
+  const typedSkinFactors = skinFactors as Factor[];
 
   return (
     <div>
