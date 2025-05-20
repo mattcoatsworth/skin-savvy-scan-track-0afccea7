@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -153,6 +152,7 @@ const App = () => (
             {/* Main app routes */}
             <Route element={<AppLayout />}>
               <Route path="/home" element={<Index />} />
+              <Route path="/homescreen" element={React.lazy(() => import('@/pages/HomeScreen/Index'))} />
               <Route path="/skin" element={<History />} />
               <Route path="/fyp" element={<FYP />} />
               <Route path="/products" element={<Insights />} />
