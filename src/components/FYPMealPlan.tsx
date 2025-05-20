@@ -958,7 +958,7 @@ const FYPMealPlan = () => {
                     <Input 
                       id="weeklyBudget"
                       name="weeklyBudget"
-                      type="number"
+                      type="text"
                       value={foodPreferences.weeklyBudget}
                       onChange={handlePreferenceChange}
                       placeholder="e.g., 100"
