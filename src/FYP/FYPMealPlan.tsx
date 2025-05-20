@@ -1,375 +1,189 @@
-import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Calendar, Utensils, X, Search, MessageSquare, Plus } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import TestAIChatBox from './TestAIChatBox';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import { MealPlanType } from './types';
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  Legend, 
+  ResponsiveContainer,
+  Tooltip,
+  CartesianGrid,
+  ReferenceLine
+} from "recharts";
+import { Info } from "lucide-react";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart";
 
-/**
- * FYP Meal Plan component
- * Shows personalized meal plans optimized for skin health
- */
-const FYPMealPlan: React.FC = () => {
-  const navigate = useNavigate();
+// Generate mock data for all 7 days of the week
+const generateComparisonData = () => {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const [selectedDay, setSelectedDay] = useState<number>(0);
-  const [newPreference, setNewPreference] = useState<string>('');
-  const [avoidItem, setAvoidItem] = useState<string>('');
-  const [preferences, setPreferences] = useState<string[]>([]);
-  const [avoidances, setAvoidances] = useState<string[]>([]);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [mealPlan, setMealPlan] = useState<MealPlanType | null>(null);
+  return days.map(day => {
+    // Generate random scores for user and average values
+    const userScore = Math.floor(Math.random() * (95 - 40) + 40);
+    const avgScore = Math.floor(Math.random() * (85 - 55) + 55);
+    
+    return {
+      day,
+      userScore,
+      avgScore
+    };
+  });
+};
 
-  // Sample meal plan data (in a real app, this would come from an API)
-  const sampleMealPlans: MealPlanType[] = [
-    {
-      breakfast: "Spinach and avocado smoothie with chia seeds",
-      lunch: "Grilled salmon with quinoa and steamed broccoli",
-      dinner: "Lentil soup with sweet potatoes and turmeric",
-      snacks: ["Greek yogurt with berries", "Handful of almonds"],
-      hydration: "Lemon water and green tea throughout the day"
-    },
-    {
-      breakfast: "Overnight oats with blueberries and flaxseeds",
-      lunch: "Mediterranean salad with olive oil and chickpeas",
-      dinner: "Baked cod with roasted vegetables and brown rice",
-      snacks: ["Carrot sticks with hummus", "Apple with almond butter"],
-      hydration: "Cucumber infused water, 2-3 liters"
-    },
-    {
-      breakfast: "Scrambled eggs with spinach and whole grain toast",
-      lunch: "Turkey and avocado wrap with leafy greens",
-      dinner: "Stir-fried vegetables with tofu and brown rice",
-      snacks: ["Mixed nuts", "Kiwi fruit"],
-      hydration: "Herbal teas and filtered water, 2-3 liters"
-    },
-    {
-      breakfast: "Greek yogurt with honey, walnuts and berries",
-      lunch: "Quinoa bowl with roasted vegetables and feta",
-      dinner: "Grilled chicken with sweet potato and green beans",
-      snacks: ["Pear slices", "Sunflower seeds"],
-      hydration: "Hibiscus tea and water, 2-3 liters"
-    },
-    {
-      breakfast: "Avocado toast on whole grain bread with poached egg",
-      lunch: "Lentil salad with bell peppers and olive oil dressing",
-      dinner: "Baked salmon with quinoa and asparagus",
-      snacks: ["Cucumber slices with tzatziki", "Orange slices"],
-      hydration: "Green tea and filtered water, 2-3 liters"
-    },
-    {
-      breakfast: "Smoothie bowl with berries, banana and hemp seeds",
-      lunch: "Grilled vegetable and hummus sandwich",
-      dinner: "Bean and vegetable soup with a side salad",
-      snacks: ["Rice cakes with almond butter", "Grapes"],
-      hydration: "Coconut water and herbal tea, 2-3 liters"
-    },
-    {
-      breakfast: "Whole grain cereal with almond milk and sliced banana",
-      lunch: "Tuna salad with mixed greens and olive oil dressing",
-      dinner: "Vegetable curry with brown rice",
-      snacks: ["Edamame", "Peach"],
-      hydration: "Chamomile tea and filtered water, 2-3 liters"
-    }
-  ];
+type SkinIndexComparisonProps = {
+  className?: string;
+  age?: number;
+  gender?: string;
+};
 
-  // Add a preference
-  const addPreference = () => {
-    if (newPreference.trim() && !preferences.includes(newPreference.trim())) {
-      setPreferences([...preferences, newPreference.trim()]);
-      setNewPreference('');
-      toast.success("Food preference added");
+const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({ 
+  className,
+  age = 30,
+  gender = "female"
+}) => {
+  // In a real app, this would fetch data from an API based on user's age and gender
+  const comparisonData = generateComparisonData();
+  
+  // Define chart colors with enhanced visual appeal
+  const chartConfig = {
+    userScore: {
+      label: "Your Score",
+      color: "#8B5CF6" // Vivid purple
+    },
+    avgScore: {
+      label: `Avg. ${gender}s (${age})`,
+      color: "#0EA5E9" // Ocean blue
     }
+  };
+
+  // Helper function to get value domain from data
+  const getValueDomain = () => {
+    const scores = comparisonData.flatMap(item => [item.userScore, item.avgScore]);
+    const min = Math.max(0, Math.min(...scores) - 10);
+    const max = Math.min(100, Math.max(...scores) + 10);
+    return [min, max];
   };
   
-  // Add an avoidance
-  const addAvoidance = () => {
-    if (avoidItem.trim() && !avoidances.includes(avoidItem.trim())) {
-      setAvoidances([...avoidances, avoidItem.trim()]);
-      setAvoidItem('');
-      toast.success("Food avoidance added");
-    }
-  };
-
-  // Remove a preference
-  const removePreference = (item: string) => {
-    setPreferences(preferences.filter(p => p !== item));
-  };
-  
-  // Remove an avoidance
-  const removeAvoidance = (item: string) => {
-    setAvoidances(avoidances.filter(a => a !== item));
-  };
-
-  // Generate meal plan
-  const generateMealPlan = () => {
-    setIsGenerating(true);
-    
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      // In a real app, this would be an API call that considers preferences and avoidances
-      setMealPlan(sampleMealPlans[selectedDay]);
-      setIsGenerating(false);
-      
-      toast.success("Your skin-healthy meal plan is ready!");
-    }, 1500);
-  };
-
-  // View recipe details (in a real app, this would navigate to a detailed recipe page)
-  const viewRecipe = (mealType: string) => {
-    toast.info(`Viewing ${mealType} recipe...`);
-    // Example navigation to a recipe detail page
-    navigate(`/recipe-ideas/${days[selectedDay].toLowerCase()}/${mealType.toLowerCase()}`);
-  };
-
-  // Generate grocery list
-  const generateGroceryList = () => {
-    toast({
-      description: "Your weekly grocery list is being prepared",
-    });
-    
-    // This would link to a grocery list page in a real app
-    navigate("/grocery-list");
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Day selector */}
-      <Card className="border border-gray-100">
+    <div className={cn("block", className)}>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-xl font-semibold">Skin Index Comparison</h2>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="text-gray-500 hover:text-gray-700 transition-colors">
+              <Info size={18} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-2">
+              <h3 className="font-medium">About this data</h3>
+              <p className="text-sm text-muted-foreground">
+                This chart compares your daily skin scores with the average scores of {gender}s 
+                aged {age}. Data is anonymized and aggregated from our user base.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      
+      <Card className="ios-card overflow-hidden backdrop-blur-sm border border-slate-200 dark:border-slate-800 shadow-md">
         <CardContent className="p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="h-5 w-5 text-teal-500" />
-            <h3 className="text-base font-medium">Weekly Meal Plan</h3>
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-slate-900/50 dark:to-indigo-900/30 -m-5 p-5 pb-2 mb-3 rounded-t-lg">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-2 font-medium">
+              Your skin condition compared to {gender}s of age {age}
+            </p>
+            
+            <div className="h-[240px]">
+              <ChartContainer className="h-full" config={chartConfig}>
+                <LineChart 
+                  data={comparisonData} 
+                  margin={{ top: 20, right: 5, bottom: 5, left: -20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="#94a3b8" 
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={{ stroke: '#e2e8f0' }}
+                    padding={{ left: 0, right: 0 }}
+                    tickMargin={5}
+                    interval={0}
+                    tick={{ fontSize: 10 }}
+                  />
+                  <YAxis 
+                    domain={getValueDomain()} 
+                    stroke="#94a3b8" 
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={{ stroke: '#e2e8f0' }}
+                    tickFormatter={(value) => `${value}`}
+                    width={25}
+                  />
+                  <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 10 }} />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        formatter={(value: number) => [`${value}`, 'Score']}
+                        labelFormatter={(label) => `${label}`}
+                      />
+                    }
+                  />
+                  <Legend verticalAlign="top" height={36} />
+                  <Line 
+                    name="Your Score" 
+                    type="monotone" 
+                    dataKey="userScore" 
+                    stroke="#8B5CF6" 
+                    strokeWidth={2.5} 
+                    dot={{ r: 4, fill: "#8B5CF6", stroke: "white", strokeWidth: 2 }} 
+                    activeDot={{ r: 6, stroke: "white", strokeWidth: 2 }}
+                    animationDuration={1000}
+                  />
+                  <Line 
+                    name={`Avg. ${gender}s (${age})`} 
+                    type="monotone" 
+                    dataKey="avgScore" 
+                    stroke="#0EA5E9" 
+                    strokeWidth={2} 
+                    dot={{ r: 4, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }} 
+                    strokeDasharray="5 5"
+                    animationDuration={1500}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </div>
           </div>
-
-          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-            {days.map((day, index) => (
-              <Button
-                key={day}
-                variant={selectedDay === index ? "default" : "outline"}
-                className={`flex-shrink-0 px-3 ${
-                  selectedDay === index
-                    ? "bg-teal-500 hover:bg-teal-600 text-white"
-                    : "border-gray-200 text-gray-700"
-                }`}
-                onClick={() => setSelectedDay(index)}
-              >
-                {day}
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Food preferences */}
-      <Card className="border border-gray-100">
-        <CardContent className="p-5">
-          <h3 className="text-base font-medium mb-4">Food Preferences</h3>
           
-          <div className="space-y-4">
-            {/* Include these foods */}
-            <div>
-              <label className="text-sm text-gray-500 mb-1 block">Include these foods</label>
-              <div className="flex gap-2 mb-2">
-                <Input
-                  value={newPreference}
-                  onChange={(e) => setNewPreference(e.target.value)}
-                  placeholder="Add foods you prefer..."
-                  className="flex-1"
-                />
-                <Button 
-                  variant="outline"
-                  onClick={addPreference}
-                  className="border-teal-100 bg-teal-50 text-teal-600 hover:bg-teal-100"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mt-2">
-                {preferences.map((item) => (
-                  <div 
-                    key={item} 
-                    className="bg-teal-50 text-teal-700 text-sm px-3 py-1 rounded-full flex items-center"
-                  >
-                    {item}
-                    <button 
-                      onClick={() => removePreference(item)}
-                      className="ml-2 text-teal-500 hover:text-teal-700"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Foods to avoid */}
-            <div>
-              <label className="text-sm text-gray-500 mb-1 block">Foods to avoid</label>
-              <div className="flex gap-2 mb-2">
-                <Input
-                  value={avoidItem}
-                  onChange={(e) => setAvoidItem(e.target.value)}
-                  placeholder="Add foods to avoid..."
-                  className="flex-1"
-                />
-                <Button 
-                  variant="outline"
-                  onClick={addAvoidance}
-                  className="border-red-100 bg-red-50 text-red-600 hover:bg-red-100"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mt-2">
-                {avoidances.map((item) => (
-                  <div 
-                    key={item} 
-                    className="bg-red-50 text-red-700 text-sm px-3 py-1 rounded-full flex items-center"
-                  >
-                    {item}
-                    <button 
-                      onClick={() => removeAvoidance(item)}
-                      className="ml-2 text-red-500 hover:text-red-700"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
+          <div className="flex flex-col md:flex-row items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-xs text-center text-slate-500 dark:text-slate-400">
+              Data represents daily skin score averages over the past week
+            </p>
+            <div className="flex gap-3 mt-2 md:mt-0">
+              <span className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <span className="inline-block w-3 h-3 bg-[#8B5CF6] rounded-full"></span>
+                Your Score
+              </span>
+              <span className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <span className="inline-block w-3 h-3 bg-[#0EA5E9] rounded-full"></span>
+                Average
+              </span>
             </div>
           </div>
-
-          <Button
-            className="w-full mt-4 bg-teal-500 hover:bg-teal-600 text-white"
-            onClick={generateMealPlan}
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <span className="animate-spin mr-2">⏳</span> Generating...
-              </>
-            ) : mealPlan ? (
-              "Regenerate Skin-Healthy Meal Plan"
-            ) : (
-              "Generate Skin-Healthy Meal Plan"
-            )}
-          </Button>
         </CardContent>
       </Card>
-
-      {/* Generated meal plan */}
-      {mealPlan && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold pl-1 flex items-center gap-2">
-            <Utensils className="h-5 w-5 text-teal-500" />
-            <span>{days[selectedDay]}'s Meals</span>
-          </h3>
-
-          {/* Breakfast card */}
-          <Card className="border-l-4 border-l-teal-400 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-medium">Breakfast</h4>
-                  <p className="text-sm text-gray-600 mt-1">{mealPlan.breakfast}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-teal-100 hover:bg-teal-50 text-teal-600"
-                  onClick={() => viewRecipe("Breakfast")}
-                >
-                  <Search className="h-3.5 w-3.5 mr-1" />
-                  View Recipe
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Lunch card */}
-          <Card className="border-l-4 border-l-amber-400 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-medium">Lunch</h4>
-                  <p className="text-sm text-gray-600 mt-1">{mealPlan.lunch}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-amber-100 hover:bg-amber-50 text-amber-600"
-                  onClick={() => viewRecipe("Lunch")}
-                >
-                  <Search className="h-3.5 w-3.5 mr-1" />
-                  View Recipe
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Dinner card */}
-          <Card className="border-l-4 border-l-purple-400 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-medium">Dinner</h4>
-                  <p className="text-sm text-gray-600 mt-1">{mealPlan.dinner}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-purple-100 hover:bg-purple-50 text-purple-600"
-                  onClick={() => viewRecipe("Dinner")}
-                >
-                  <Search className="h-3.5 w-3.5 mr-1" />
-                  View Recipe
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Snacks card - Changed from red to teal color scheme */}
-          <Card className="border-l-4 border-l-teal-400 shadow-sm">
-            <CardContent className="p-4">
-              <h4 className="font-medium">Snacks</h4>
-              <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
-                {mealPlan.snacks.map((snack, index) => (
-                  <li key={index}>{snack}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Hydration card */}
-          <Card className="border-l-4 border-l-sky-400 shadow-sm">
-            <CardContent className="p-4">
-              <h4 className="font-medium">Hydration</h4>
-              <p className="text-sm text-gray-600 mt-1">{mealPlan.hydration}</p>
-            </CardContent>
-          </Card>
-
-          {/* Generate grocery list button */}
-          <Button
-            variant="outline"
-            className="w-full mt-2 gap-2 border-teal-200 text-teal-700 hover:bg-teal-50"
-            onClick={generateGroceryList}
-          >
-            <MessageSquare className="h-4 w-4" />
-            Generate Grocery List
-          </Button>
-        </div>
-      )}
-
-      {/* AI Chat box */}
-      <TestAIChatBox productTitle="Meal Plan" />
     </div>
   );
 };
 
-export default FYPMealPlan;
+export default SkinIndexComparison;
