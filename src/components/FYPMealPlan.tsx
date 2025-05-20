@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -366,6 +367,18 @@ const FYPMealPlan = () => {
   ) => {
     const isExpanded = expandedCards[cardId] || false;
     
+    // Determine the background color for detailed benefits based on the meal type
+    const getBenefitsBgColor = () => {
+      if (title === "Breakfast") {
+        return "bg-amber-50"; // Match the breakfast banner gradient
+      } else if (title === "Lunch") {
+        return "bg-emerald-50"; // Already matching
+      } else if (title === "Dinner") {
+        return "bg-indigo-50"; // Match the dinner banner gradient
+      }
+      return "bg-gray-50"; // Default fallback
+    };
+    
     return (
       <Card className="overflow-hidden border border-gray-100">
         <div className={`${gradientClasses} px-4 py-3`}>
@@ -399,14 +412,16 @@ const FYPMealPlan = () => {
             {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </Button>
           
-          {/* Detailed benefits content */}
+          {/* Detailed benefits content - Updated background colors to match their title banners */}
           {isExpanded && mealData.detailedSkinBenefits && (
-            <div className="mt-3 bg-emerald-50 p-3 rounded-md">
-              <h5 className="font-medium text-sm text-emerald-800 mb-2">Detailed Skin Benefits</h5>
+            <div className={`mt-3 ${getBenefitsBgColor()} p-3 rounded-md`}>
+              <h5 className={`font-medium text-sm ${title === "Breakfast" ? "text-amber-800" : title === "Dinner" ? "text-indigo-800" : "text-emerald-800"} mb-2`}>
+                Detailed Skin Benefits
+              </h5>
               <ul className="text-xs text-gray-700 space-y-2">
                 {mealData.detailedSkinBenefits.map((benefit, i) => (
                   <li key={i} className="flex gap-2">
-                    <div className="min-w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5"></div>
+                    <div className={`min-w-1.5 h-1.5 rounded-full ${title === "Breakfast" ? "bg-amber-400" : title === "Dinner" ? "bg-indigo-400" : "bg-emerald-400"} mt-1.5`}></div>
                     <span>{benefit}</span>
                   </li>
                 ))}
