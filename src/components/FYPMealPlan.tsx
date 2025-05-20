@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -582,17 +581,69 @@ const FYPMealPlan = () => {
                 )}
                 
                 {/* Drinks Section */}
-                <div className="overflow-hidden border border-gray-100 rounded-lg">
+                <Card className="overflow-hidden border border-gray-100">
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <CupSoda className="h-4 w-4 text-blue-600" />
                       <h3 className="font-medium text-blue-800">Hydrating Drinks</h3>
                     </div>
                   </div>
-                  <div className="space-y-4 p-4">
-                    {activeDayMealPlan.drinks.map((drink, index) => renderDrinkCard(drink, index))}
+                  <div className="p-4 space-y-4">
+                    {activeDayMealPlan.drinks.map((drink, index) => {
+                      const cardId = `${activeDay}-drink-${index}`;
+                      const isExpanded = expandedCards[cardId] || false;
+                      
+                      return (
+                        <Card key={index} className="overflow-hidden border border-gray-100">
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <CupSoda size={18} className="text-blue-500" />
+                              <h4 className="font-semibold text-gray-800">{drink.title}</h4>
+                            </div>
+                            
+                            <p className="text-sm text-gray-600">{drink.description}</p>
+                            
+                            <div className="mt-3">
+                              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                                Hydrating
+                              </Badge>
+                            </div>
+                            
+                            <div className="mt-3 text-xs text-gray-700 italic">
+                              {drink.skinBenefits}
+                            </div>
+                            
+                            {/* Detailed benefits button */}
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => toggleDetailedBenefits(cardId)}
+                              className="mt-3 text-blue-600 hover:text-blue-800 p-0 h-auto flex items-center gap-1"
+                            >
+                              <span>Detailed Skin Benefits</span>
+                              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </Button>
+                            
+                            {/* Detailed benefits content */}
+                            {isExpanded && drink.detailedSkinBenefits && (
+                              <div className="mt-3 bg-blue-50 p-3 rounded-md">
+                                <h5 className="font-medium text-sm text-blue-800 mb-2">Detailed Skin Benefits</h5>
+                                <ul className="text-xs text-gray-700 space-y-2">
+                                  {drink.detailedSkinBenefits.map((benefit, i) => (
+                                    <li key={i} className="flex gap-2">
+                                      <div className="min-w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5"></div>
+                                      <span>{benefit}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
-                </div>
+                </Card>
                 
                 {/* Snacks */}
                 <Card className="overflow-hidden border border-gray-100">
