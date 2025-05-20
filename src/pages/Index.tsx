@@ -1,3 +1,4 @@
+
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -15,10 +16,10 @@ import { Button } from "@/components/ui/button";
 const Index = () => {
   // Sample data
   const skinFactors = [
-    { type: "Food" as const, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
-    { type: "Supplement" as const, status: "New", icon: <Pill className="h-4 w-4" /> },
-    { type: "Makeup" as const, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
-    { type: "Weather" as const, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+    { type: "Food", status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement", status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup", status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather", status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   // Define the RecommendationType to match what's expected by DailySkinSnapshot
