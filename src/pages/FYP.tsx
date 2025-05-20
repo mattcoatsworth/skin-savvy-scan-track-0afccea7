@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import EnergyAnalysis from "@/components/EnergyAnalysis";
 import BackButton from "@/components/BackButton";
@@ -25,16 +24,6 @@ const FYP = () => {
       </header>
       
       <main className="space-y-6">
-        <Card>
-          <CardContent className="p-4">
-            <h2 className="text-lg font-semibold mb-2">Your FYP</h2>
-            <p className="text-sm text-muted-foreground">
-              This is your personalized "For You Page" with content tailored to your preferences 
-              and skin health goals. Check back regularly for updates!
-            </p>
-          </CardContent>
-        </Card>
-        
         {/* Tab Navigation */}
         <Tabs 
           defaultValue="skin-energy" 
