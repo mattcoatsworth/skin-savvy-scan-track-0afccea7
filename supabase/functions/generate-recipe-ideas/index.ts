@@ -24,12 +24,12 @@ serve(async (req) => {
     
     // Add food preferences if provided
     if (preferences) {
-      if (preferences.includeFoods && preferences.includeFoods.trim()) {
-        prompt += ` Please include these foods if possible: ${preferences.includeFoods}.`;
+      if (preferences.includeFoods && preferences.includeFoods.length > 0) {
+        prompt += ` Please include these foods if possible: ${preferences.includeFoods.join(', ')}.`;
       }
       
-      if (preferences.avoidFoods && preferences.avoidFoods.trim()) {
-        prompt += ` Avoid these foods: ${preferences.avoidFoods}.`;
+      if (preferences.avoidFoods && preferences.avoidFoods.length > 0) {
+        prompt += ` Avoid these foods: ${preferences.avoidFoods.join(', ')}.`;
       }
       
       if (preferences.weeklyBudget && preferences.weeklyBudget.trim()) {
