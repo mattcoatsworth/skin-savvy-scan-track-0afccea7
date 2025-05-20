@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -14,12 +13,15 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  // Sample data
+  // Define the FactorType to match what DailySkinSnapshot expects
+  type FactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health";
+  
+  // Sample data with correct type assertion
   const skinFactors = [
-    { type: "Food", status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
-    { type: "Supplement", status: "New", icon: <Pill className="h-4 w-4" /> },
-    { type: "Makeup", status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
-    { type: "Weather", status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+    { type: "Food" as FactorType, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement" as FactorType, status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup" as FactorType, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather" as FactorType, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   // Define the RecommendationType to match what's expected by DailySkinSnapshot
