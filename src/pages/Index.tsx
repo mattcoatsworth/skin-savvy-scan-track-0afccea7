@@ -8,9 +8,8 @@ import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
-import MealPlanCard from "@/components/MealPlanCard";
-import SkinEnergyCard from "@/components/SkinEnergyCard";
 import { useSampleData } from "@/hooks/useSampleData";
+import { Factor } from "@/types/skin-types"; // Import the correct Factor type
 
 const Index = () => {
   // Get all the sample data from our custom hook
@@ -21,9 +20,11 @@ const Index = () => {
     recentLogs,
     insights,
     suggestedActions,
-    exploreItems,
-    mealPlanToday
+    exploreItems
   } = useSampleData();
+
+  // Cast to correct Factor type to fix TypeScript error
+  const typedSkinFactors = skinFactors as unknown as Factor[];
 
   return (
     <div>
@@ -47,15 +48,9 @@ const Index = () => {
           <DailySkinSnapshot 
             emoji="😊" 
             status="Balanced" 
-            factors={skinFactors} 
+            factors={typedSkinFactors} 
             recommendations={fallbackRecommendations}
           />
-          
-          {/* Meal Plan Card */}
-          <MealPlanCard mealPlan={mealPlanToday} />
-          
-          {/* Skin Energy Card */}
-          <SkinEnergyCard />
           
           <RecentLogsCarousel logs={recentLogs} />
           

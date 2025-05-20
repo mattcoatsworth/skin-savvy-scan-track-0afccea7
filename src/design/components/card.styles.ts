@@ -1,105 +1,70 @@
+import { colors } from '../colors';
+import { spacing } from '../spacing';
+import typography from '../typography';
 
-import { colors, borders, shadows, spacing } from '../index';
-
-/**
- * Card component styles
- * These styles match the existing card styling in the application
- */
-export const cardStyles = {
-  base: {
-    backgroundColor: colors.theme.card,
-    borderRadius: borders.radius.xl,
-    border: borders.card,
-    boxShadow: shadows.ios.card,
-    padding: spacing.components.card.paddingX,
-    overflow: 'hidden',
+export const cardVariants = {
+  default: "rounded-lg border bg-card text-card-foreground shadow-sm",
+  primary: "rounded-lg border-2 border-primary bg-card text-card-foreground shadow-md",
+  secondary: "rounded-lg border-2 border-secondary bg-card text-card-foreground shadow-md",
+  success: "rounded-lg border-2 border-success bg-card text-card-foreground shadow-md",
+  warning: "rounded-lg border-2 border-warning bg-card text-card-foreground shadow-md",
+  error: "rounded-lg border-2 border-error bg-card text-card-foreground shadow-md",
+  info: "rounded-lg border-2 border-info bg-card text-card-foreground shadow-md",
+  
+  elevated: {
+    default: "rounded-lg border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200",
+    primary: "rounded-lg border-2 border-primary bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200",
+    secondary: "rounded-lg border-2 border-secondary bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200",
+    success: "rounded-lg border-2 border-success bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200",
+    warning: "rounded-lg border-2 border-warning bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200",
+    error: "rounded-lg border-2 border-error bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200",
+    info: "rounded-lg border-2 border-info bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-200"
   },
   
-  // Card with left border highlight
-  highlighted: {
-    borderLeftWidth: borders.width.thick,
-    borderLeftStyle: borders.style.solid,
-    variants: {
-      health: {
-        borderLeftColor: colors.cardHighlight.health,
-      },
-      energy: {
-        borderLeftColor: colors.cardHighlight.energy,
-      },
-      warning: {
-        borderLeftColor: colors.cardHighlight.warning,
-      },
-      error: {
-        borderLeftColor: colors.cardHighlight.error,
-      },
-      neutral: {
-        borderLeftColor: colors.cardHighlight.neutral,
-      },
-    }
-  },
-  
-  // Card transitions and hover effects
   interactive: {
-    transition: 'box-shadow 0.2s ease, transform 0.2s ease',
-    hover: {
-      boxShadow: shadows.ios.elevated,
-      transform: 'scale(1.01)',
+    default: "rounded-lg border bg-card text-card-foreground hover:bg-muted transition-colors duration-200",
+    primary: "rounded-lg border-2 border-primary bg-card text-card-foreground hover:bg-primary/10 transition-colors duration-200",
+    secondary: "rounded-lg border-2 border-secondary bg-card text-card-foreground hover:bg-secondary/10 transition-colors duration-200",
+    success: "rounded-lg border-2 border-success bg-card text-card-foreground hover:bg-success/10 transition-colors duration-200",
+    warning: "rounded-lg border-2 border-warning bg-card text-card-foreground hover:bg-warning/10 transition-colors duration-200",
+    error: "rounded-lg border-2 border-error bg-card text-card-foreground hover:bg-error/10 transition-colors duration-200",
+    info: "rounded-lg border-2 border-info bg-card text-card-foreground hover:bg-info/10 transition-colors duration-200"
+  },
+  
+  shadowed: {
+    default: "rounded-lg border bg-card text-card-foreground shadow-md",
+    primary: "rounded-lg border-2 border-primary bg-card text-card-foreground shadow-md",
+    secondary: "rounded-lg border-2 border-secondary bg-card text-card-foreground shadow-md",
+    success: "rounded-lg border-2 border-success bg-card text-card-foreground shadow-md",
+    warning: "rounded-lg border-2 border-warning bg-card text-card-foreground shadow-md",
+    error: "rounded-lg border-2 border-error bg-card text-card-foreground shadow-md",
+    info: "rounded-lg border-2 border-info bg-card text-card-foreground shadow-md"
+  },
+  
+  glass: "rounded-lg border border-border/50 bg-card/50 backdrop-blur-md text-card-foreground",
+  
+  dashed: "rounded-lg border-2 border-dashed border-border bg-card text-card-foreground",
+  
+  gradient: {
+    default: "rounded-lg border bg-gradient-to-r from-primary to-secondary text-card-foreground shadow-md",
+    primary: "rounded-lg border bg-gradient-to-r from-primary to-primary-foreground text-card-foreground shadow-md",
+    secondary: "rounded-lg border bg-gradient-to-r from-secondary to-secondary-foreground text-card-foreground shadow-md",
+    success: "rounded-lg border bg-gradient-to-r from-success to-success-foreground text-card-foreground shadow-md",
+    warning: "rounded-lg border bg-gradient-to-r from-warning to-warning-foreground text-card-foreground shadow-md",
+    error: "rounded-lg border bg-gradient-to-r from-error to-error-foreground text-card-foreground shadow-md",
+    info: "rounded-lg border bg-gradient-to-r from-info to-info-foreground text-card-foreground shadow-md"
+  },
+  
+  skinSavvy: {
+    default: "relative overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm",
+    sm: "relative overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm",
+    lg: "relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-md",
+    xl: "relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-lg",
+    outline: "relative overflow-hidden rounded-lg border-2 border-primary bg-white dark:bg-slate-950",
+    ghost: "relative overflow-hidden rounded-lg bg-transparent shadow-none",
+    header: {
+      padding: typography.variants.bodySmall.fontSize, // "0.875rem"
+      fontSize: typography.variants.h3.fontSize, // "1.25rem"
     },
-    active: {
-      transform: 'scale(0.99)',
-    }
-  },
-  
-  // Card parts
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.components.card.header.marginBottom,
-  },
-  
-  title: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: spacing.components.iconText.gap,
-    fontWeight: typography.fontWeight.medium,
-    fontSize: typography.fontSize.base,
-  },
-  
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: spacing.components.card.content.gap,
-  },
-  
-  footer: {
-    marginTop: spacing.components.card.footer.marginTop,
-    paddingTop: spacing.components.card.footer.paddingTop,
-    borderTop: borders.components.card.divider,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  
-  // Card icon
-  icon: {
-    size: '1.25rem', // 20px
-    marginRight: '0.5rem', // 8px
-  },
-  
-  // Tailwind classes for quick reference
-  tailwind: {
-    base: 'bg-card rounded-xl border shadow-sm overflow-hidden',
-    highlighted: 'border-l-4',
-    header: 'flex justify-between items-center mb-3',
-    title: 'flex items-center gap-2 font-medium text-base',
-    content: 'space-y-2',
-    footer: 'mt-3 pt-3 border-t border-gray-100 flex items-center justify-between',
-    icon: {
-      default: 'h-5 w-5',
-      small: 'h-4 w-4'
-    }
   }
 };
-
-export default cardStyles;
