@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -336,8 +335,8 @@ const FYPMealPlan: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Snacks card */}
-          <Card className="border-l-4 border-l-blue-400 shadow-sm">
+          {/* Snacks card - Changed from red to teal color scheme */}
+          <Card className="border-l-4 border-l-teal-400 shadow-sm">
             <CardContent className="p-4">
               <h4 className="font-medium">Snacks</h4>
               <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
