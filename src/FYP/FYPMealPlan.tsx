@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -122,11 +121,10 @@ const FYPMealPlan: React.FC<MealPlanProps> = ({ className }) => {
       {/* AI Chat for meal plan suggestions */}
       <div className="mt-6">
         <TestAIChatBox 
-          defaultMessages={[{
+          initialMessages={[{
             role: "assistant",
             content: "Need help with your meal plan? Ask me about ingredient substitutions, nutritional benefits, or recipe ideas!"
           }]}
-          assistantTyping={false}
         />
       </div>
     </div>
