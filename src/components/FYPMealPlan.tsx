@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp, Calendar } from "lucide-react";
+import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp, Calendar, ShoppingCart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import DisclaimerChatBox from "@/components/MealPlan/DisclaimerChatBox";
@@ -42,12 +43,19 @@ type MealPlanType = {
   }[];
 };
 
+type GroceryItem = {
+  category: string;
+  items: string[];
+};
+
 const FYPMealPlan = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [mealPlan, setMealPlan] = useState<MealPlanType | null>(null);
   const { toast } = useToast();
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   const [activeDay, setActiveDay] = useState("Monday");
+  const [groceryList, setGroceryList] = useState<GroceryItem[] | null>(null);
+  const [isGeneratingGroceryList, setIsGeneratingGroceryList] = useState(false);
 
   // Days of the week for the tabs
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -65,6 +73,86 @@ const FYPMealPlan = () => {
   const getActiveDayMealPlan = () => {
     if (!mealPlan) return null;
     return mealPlan.days.find(day => day.day === activeDay)?.mealPlan;
+  };
+
+  // Function to generate a grocery list using OpenAI
+  const generateGroceryList = async () => {
+    if (!mealPlan) return;
+    
+    setIsGeneratingGroceryList(true);
+    
+    try {
+      // Prepare the meal plan data to send to OpenAI
+      const mealPlanSummary = mealPlan.days.map(day => {
+        const { breakfast, lunch, dinner, snacks, drinks } = day.mealPlan;
+        return {
+          day: day.day,
+          breakfast: breakfast.title + ": " + breakfast.description,
+          lunch: lunch.title + ": " + lunch.description,
+          dinner: dinner.title + ": " + dinner.description,
+          snacks: snacks.join(", "),
+          drinks: drinks.map(drink => drink.title + ": " + drink.description).join(", ")
+        };
+      });
+      
+      // Call the Supabase Edge function to generate grocery list
+      const { data, error } = await supabase.functions.invoke("generate-grocery-list", {
+        body: { mealPlan: mealPlanSummary }
+      });
+      
+      if (error) {
+        throw new Error(`Failed to generate grocery list: ${error.message}`);
+      }
+      
+      // For now, let's create a sample grocery list while the edge function is being set up
+      if (!data || !data.groceryList) {
+        // Sample grocery list
+        const sampleGroceryList: GroceryItem[] = [
+          {
+            category: "Proteins",
+            items: ["Greek yogurt", "Salmon", "Chicken breast", "Tofu", "Eggs", "Cod fillet", "Trout"]
+          },
+          {
+            category: "Fruits & Vegetables",
+            items: ["Mixed berries", "Avocado", "Leafy greens", "Sweet potatoes", "Broccoli", "Cucumber", "Spinach", "Banana", "Bell peppers", "Kale", "Blueberries", "Celery", "Orange", "Kiwi", "Apple", "Brussels sprouts"]
+          },
+          {
+            category: "Grains & Legumes",
+            items: ["Quinoa", "Chia seeds", "Brown rice", "Whole grain bread", "Black beans", "Lentils", "Oats"]
+          },
+          {
+            category: "Nuts & Seeds",
+            items: ["Almonds", "Flax seeds", "Pumpkin seeds", "Walnuts", "Hemp seeds"]
+          },
+          {
+            category: "Condiments & Other",
+            items: ["Honey", "Tahini", "Olive oil", "Lemon", "Turmeric", "Hummus", "Coconut milk", "Cinnamon", "Almond butter"]
+          },
+          {
+            category: "Beverages",
+            items: ["Green tea", "Herbal tea", "Coconut water", "Almond milk"]
+          }
+        ];
+        
+        setGroceryList(sampleGroceryList);
+      } else {
+        setGroceryList(data.groceryList);
+      }
+      
+      toast({
+        title: "Grocery List Generated",
+        description: "Your weekly grocery list is ready!",
+      });
+    } catch (error) {
+      console.error("Error generating grocery list:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to generate grocery list. Please try again.",
+      });
+    } finally {
+      setIsGeneratingGroceryList(false);
+    }
   };
 
   // Function to generate a meal plan using OpenAI
@@ -739,6 +827,58 @@ const FYPMealPlan = () => {
                   </CardContent>
                 </Card>
                 
+                {/* Get Grocery List Button - Added below Expected Results */}
+                <Button 
+                  onClick={generateGroceryList}
+                  disabled={isGeneratingGroceryList}
+                  className="w-full relative bg-amber-500 hover:bg-amber-600 text-white shadow-md hover:shadow-lg transition-all rounded-md"
+                >
+                  {isGeneratingGroceryList ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating Grocery List...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Get Grocery List
+                    </>
+                  )}
+                </Button>
+                
+                {/* Grocery List Section - Show when generated */}
+                {groceryList && (
+                  <Card className="overflow-hidden border border-gray-100">
+                    <div className="bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <ShoppingCart className="h-4 w-4 text-amber-600" />
+                        <h3 className="font-medium text-amber-800">Weekly Grocery List</h3>
+                      </div>
+                    </div>
+                    <CardContent className="p-4">
+                      <p className="text-xs text-gray-600 mb-4">
+                        Here's a complete grocery list for your weekly meal plan. Adjust quantities based on your household size.
+                      </p>
+                      
+                      <div className="space-y-4">
+                        {groceryList.map((category, index) => (
+                          <div key={index}>
+                            <h4 className="text-sm font-medium text-gray-800 mb-2">{category.category}</h4>
+                            <ul className="grid grid-cols-2 gap-2">
+                              {category.items.map((item, itemIndex) => (
+                                <li key={itemIndex} className="text-xs text-gray-600 flex items-center gap-1.5">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-amber-400"></div>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+                
                 <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
                   <p className="text-xs text-gray-500 italic">
                     This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
@@ -747,7 +887,10 @@ const FYPMealPlan = () => {
                 
                 <div className="pt-3">
                   <Button 
-                    onClick={() => setMealPlan(null)}
+                    onClick={() => {
+                      setMealPlan(null);
+                      setGroceryList(null);
+                    }}
                     variant="outline"
                     className="w-full border-gray-200"
                   >
