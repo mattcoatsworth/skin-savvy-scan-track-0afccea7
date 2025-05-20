@@ -346,15 +346,15 @@ const FYPMealPlan = () => {
               "dinner"
             )}
             
-            {/* Drinks Section - Updated to match other sections */}
-            <div>
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-3 rounded-t-lg">
+            {/* Drinks Section - Fixed to remove the space between header and cards */}
+            <div className="overflow-hidden border border-gray-100 rounded-lg">
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-3">
                 <div className="flex items-center gap-2">
                   <CupSoda className="h-4 w-4 text-blue-600" />
                   <h3 className="font-medium text-blue-800">Hydrating Drinks</h3>
                 </div>
               </div>
-              <div className="space-y-4 pt-4">
+              <div className="space-y-4 p-4">
                 {mealPlan.drinks.map((drink, index) => renderDrinkCard(drink, index))}
               </div>
             </div>
@@ -416,6 +416,13 @@ const FYPMealPlan = () => {
               </CardContent>
             </Card>
             
+            {/* Expected Results - Now appears below the snacks card */}
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+              <p className="text-xs text-gray-500 italic">
+                This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
+              </p>
+            </div>
+            
             <div className="pt-3">
               <Button 
                 onClick={() => setMealPlan(null)}
@@ -424,12 +431,6 @@ const FYPMealPlan = () => {
               >
                 Generate New Plan
               </Button>
-            </div>
-            
-            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <p className="text-xs text-gray-500 italic">
-                This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
-              </p>
             </div>
           </div>
         )}
