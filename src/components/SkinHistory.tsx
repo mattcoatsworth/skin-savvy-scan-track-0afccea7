@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { CircleProgress } from "@/components/ui/circle-progress";
 
 type DayRating = {
   day: string;
@@ -72,7 +71,7 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
       </div>
       
       <Card 
-        className="ios-card border-l-4 border-l-blue-400 hover:shadow-md transition-all cursor-pointer" 
+        className="ios-card hover:shadow-md transition-all cursor-pointer" 
         onClick={navigateToWeeklyAnalysis}
       >
         <CardContent className="p-4">

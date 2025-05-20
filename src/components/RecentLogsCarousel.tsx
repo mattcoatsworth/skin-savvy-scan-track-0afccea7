@@ -78,7 +78,7 @@ const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className
                 state={{ log }}
                 className="min-w-[260px] flex-shrink-0"
               >
-                <Card className="ios-card border-l-4 border-l-blue-400 animate-fade-in hover:shadow-md transition-all">
+                <Card className="ios-card animate-fade-in hover:shadow-md transition-all">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
