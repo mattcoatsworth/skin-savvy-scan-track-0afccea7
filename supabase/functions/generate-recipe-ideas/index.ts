@@ -24,15 +24,15 @@ serve(async (req) => {
     
     // Add food preferences if provided
     if (preferences) {
-      if (preferences.includeFoods) {
+      if (preferences.includeFoods && preferences.includeFoods.trim()) {
         prompt += ` Please include these foods if possible: ${preferences.includeFoods}.`;
       }
       
-      if (preferences.avoidFoods) {
+      if (preferences.avoidFoods && preferences.avoidFoods.trim()) {
         prompt += ` Avoid these foods: ${preferences.avoidFoods}.`;
       }
       
-      if (preferences.weeklyBudget) {
+      if (preferences.weeklyBudget && preferences.weeklyBudget.trim()) {
         prompt += ` Keep in mind a weekly budget of ${preferences.weeklyBudget}.`;
       }
     }

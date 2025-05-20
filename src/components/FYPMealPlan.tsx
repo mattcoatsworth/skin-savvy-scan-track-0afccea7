@@ -4,12 +4,29 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp, Calendar, ShoppingCart, Carrot } from "lucide-react";
+import { 
+  Loader2, 
+  Utensils, 
+  Apple, 
+  Coffee, 
+  CupSoda, 
+  ChevronDown, 
+  ChevronUp, 
+  Calendar, 
+  ShoppingCart, 
+  Carrot,
+  Search,
+  Plus,
+  Scan
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import DisclaimerChatBox from "@/components/MealPlan/DisclaimerChatBox";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFactorSearch } from "@/hooks/useFactorSearch";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type MealType = {
   title: string;
@@ -69,11 +86,52 @@ const FYPMealPlan = () => {
   const [groceryList, setGroceryList] = useState<GroceryItem[] | null>(null);
   const [isGeneratingGroceryList, setIsGeneratingGroceryList] = useState(false);
   
-  // New state for food preferences
+  // State for food preferences with arrays to track selected items
   const [foodPreferences, setFoodPreferences] = useState<FoodPreferences>({
     includeFoods: "",
     avoidFoods: "",
     weeklyBudget: ""
+  });
+
+  // Track selected foods as arrays
+  const [includedFoods, setIncludedFoods] = useState<string[]>([]);
+  const [avoidedFoods, setAvoidedFoods] = useState<string[]>([]);
+
+  // Common food items for suggestions
+  const commonIncludeFoods = [
+    "Avocado", "Salmon", "Berries", "Greek yogurt", "Spinach", "Nuts", "Olive oil", 
+    "Sweet potatoes", "Eggs", "Quinoa", "Lentils", "Green tea", "Turmeric"
+  ];
+
+  const commonAvoidFoods = [
+    "Dairy", "Gluten", "Processed sugar", "Alcohol", "Fried foods", "Soy", 
+    "Shellfish", "Caffeine", "Peanuts", "Tree nuts", "Eggs", "Wheat"
+  ];
+
+  // Search functionality for include foods
+  const {
+    searchValue: includeSearchValue,
+    searchOpen: includeSearchOpen,
+    filteredOptions: filteredIncludeFoods,
+    setSearchOpen: setIncludeSearchOpen,
+    handleSearchChange: handleIncludeSearchChange,
+    resetSearch: resetIncludeSearch
+  } = useFactorSearch({
+    category: "include",
+    defaultOptions: commonIncludeFoods
+  });
+
+  // Search functionality for avoid foods
+  const {
+    searchValue: avoidSearchValue,
+    searchOpen: avoidSearchOpen,
+    filteredOptions: filteredAvoidFoods,
+    setSearchOpen: setAvoidSearchOpen,
+    handleSearchChange: handleAvoidSearchChange,
+    resetSearch: resetAvoidSearch
+  } = useFactorSearch({
+    category: "avoid",
+    defaultOptions: commonAvoidFoods
   });
 
   // Load saved meal plan, grocery list and preferences from localStorage on component mount
@@ -87,7 +145,6 @@ const FYPMealPlan = () => {
         setMealPlan(JSON.parse(savedMealPlan));
       } catch (error) {
         console.error("Error parsing saved meal plan:", error);
-        // If there's an error parsing, remove the invalid data
         localStorage.removeItem(STORAGE_KEY);
       }
     }
@@ -103,7 +160,16 @@ const FYPMealPlan = () => {
 
     if (savedPreferences) {
       try {
-        setFoodPreferences(JSON.parse(savedPreferences));
+        const prefs = JSON.parse(savedPreferences);
+        setFoodPreferences(prefs);
+        
+        // Parse any saved includes/avoids from the string format
+        if (prefs.includeFoods) {
+          setIncludedFoods(prefs.includeFoods.split(', ').filter(Boolean));
+        }
+        if (prefs.avoidFoods) {
+          setAvoidedFoods(prefs.avoidFoods.split(', ').filter(Boolean));
+        }
       } catch (error) {
         console.error("Error parsing saved preferences:", error);
         localStorage.removeItem(PREFERENCES_KEY);
@@ -118,12 +184,86 @@ const FYPMealPlan = () => {
   // Handle input changes for food preferences
   const handlePreferenceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
     setFoodPreferences(prev => {
       const updated = { ...prev, [name]: value };
       // Save to localStorage whenever preferences change
       localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
       return updated;
     });
+  };
+
+  // Add included food
+  const addIncludedFood = (food: string) => {
+    if (food && !includedFoods.includes(food)) {
+      const newIncludedFoods = [...includedFoods, food];
+      setIncludedFoods(newIncludedFoods);
+      
+      // Update preferences string
+      const includeFoodsString = newIncludedFoods.join(', ');
+      setFoodPreferences(prev => {
+        const updated = { ...prev, includeFoods: includeFoodsString };
+        localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
+        return updated;
+      });
+      
+      resetIncludeSearch();
+    }
+  };
+
+  // Remove included food
+  const removeIncludedFood = (food: string) => {
+    const newIncludedFoods = includedFoods.filter(item => item !== food);
+    setIncludedFoods(newIncludedFoods);
+    
+    // Update preferences string
+    const includeFoodsString = newIncludedFoods.join(', ');
+    setFoodPreferences(prev => {
+      const updated = { ...prev, includeFoods: includeFoodsString };
+      localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Add avoided food
+  const addAvoidedFood = (food: string) => {
+    if (food && !avoidedFoods.includes(food)) {
+      const newAvoidedFoods = [...avoidedFoods, food];
+      setAvoidedFoods(newAvoidedFoods);
+      
+      // Update preferences string
+      const avoidFoodsString = newAvoidedFoods.join(', ');
+      setFoodPreferences(prev => {
+        const updated = { ...prev, avoidFoods: avoidFoodsString };
+        localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
+        return updated;
+      });
+      
+      resetAvoidSearch();
+    }
+  };
+
+  // Remove avoided food
+  const removeAvoidedFood = (food: string) => {
+    const newAvoidedFoods = avoidedFoods.filter(item => item !== food);
+    setAvoidedFoods(newAvoidedFoods);
+    
+    // Update preferences string
+    const avoidFoodsString = newAvoidedFoods.join(', ');
+    setFoodPreferences(prev => {
+      const updated = { ...prev, avoidFoods: avoidFoodsString };
+      localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Mock function for scan button - would be integrated with camera functionality
+  const handleScanFood = (type: 'include' | 'avoid') => {
+    toast({
+      title: "Scanning",
+      description: `Scan a ${type === 'include' ? 'food to include' : 'food to avoid'}`,
+    });
+    // In a real implementation, this would open the camera and scan a product
   };
 
   // Toggle detailed benefits visibility
@@ -655,6 +795,110 @@ const FYPMealPlan = () => {
 
   const activeDayMealPlan = getActiveDayMealPlan();
 
+  // Render food preference search and selection component
+  const renderFoodPreferencesSection = (
+    type: 'include' | 'avoid',
+    searchValue: string,
+    searchOpen: boolean,
+    setSearchOpen: (open: boolean) => void,
+    handleSearchChange: (value: string) => void,
+    filteredOptions: string[],
+    selectedItems: string[],
+    addItem: (item: string) => void,
+    removeItem: (item: string) => void
+  ) => {
+    const title = type === 'include' ? 'Include these foods if possible (optional)' : 'Foods to avoid (optional)';
+    const placeholder = type === 'include' ? 'e.g., avocado, berries...' : 'e.g., dairy, gluten...';
+    
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor={`${type}Foods`} className="text-sm text-gray-700">
+            {title}
+          </Label>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="h-8 px-2 text-xs border-gray-200"
+            onClick={() => handleScanFood(type)}
+          >
+            <Scan className="h-3.5 w-3.5 mr-1" />
+            Scan
+          </Button>
+        </div>
+        
+        {/* Selected items */}
+        {selectedItems.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {selectedItems.map(item => (
+              <Badge 
+                key={item} 
+                variant="secondary"
+                className="px-2 py-1 bg-gray-100 hover:bg-gray-200 cursor-pointer"
+                onClick={() => removeItem(item)}
+              >
+                {item} &times;
+              </Badge>
+            ))}
+          </div>
+        )}
+        
+        {/* Search input with dropdown */}
+        <div className="relative">
+          <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+            <PopoverTrigger asChild>
+              <div className="flex items-center border rounded-md focus-within:ring-1 focus-within:ring-emerald-300 focus-within:border-emerald-300">
+                <Search className="h-4 w-4 text-gray-400 ml-2" />
+                <Input
+                  className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 py-1"
+                  placeholder={placeholder}
+                  value={searchValue}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onFocus={() => setSearchOpen(true)}
+                />
+                {searchValue && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    type="button"
+                    className="h-7 w-7 p-0 mr-1 rounded-full hover:bg-emerald-50"
+                    onClick={() => addItem(searchValue)}
+                  >
+                    <Plus className="h-4 w-4 text-emerald-600" />
+                  </Button>
+                )}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-[calc(100vw-4rem)] sm:w-72" align="start">
+              <Command className="rounded-lg border shadow-md">
+                <CommandList>
+                  <CommandGroup heading="Suggestions">
+                    {filteredOptions.length === 0 ? (
+                      <CommandEmpty>No results found.</CommandEmpty>
+                    ) : (
+                      filteredOptions.map(option => (
+                        <CommandItem 
+                          key={option}
+                          onSelect={() => {
+                            addItem(option);
+                            setSearchOpen(false);
+                          }}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
+                          {option}
+                        </CommandItem>
+                      ))
+                    )}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-6 overflow-hidden border-gray-100 shadow-md">
       <CardContent className="p-5 space-y-5">
@@ -681,33 +925,31 @@ const FYPMealPlan = () => {
                   </div>
                 </div>
                 <CardContent className="p-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="includeFoods" className="text-sm text-gray-700">
-                      Include these foods if possible:
-                    </Label>
-                    <Input 
-                      id="includeFoods"
-                      name="includeFoods"
-                      value={foodPreferences.includeFoods}
-                      onChange={handlePreferenceChange}
-                      placeholder="e.g., avocado, berries, salmon"
-                      className="bg-background"
-                    />
-                  </div>
+                  {/* Include Foods Search */}
+                  {renderFoodPreferencesSection(
+                    'include',
+                    includeSearchValue,
+                    includeSearchOpen,
+                    setIncludeSearchOpen,
+                    handleIncludeSearchChange,
+                    filteredIncludeFoods,
+                    includedFoods,
+                    addIncludedFood,
+                    removeIncludedFood
+                  )}
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="avoidFoods" className="text-sm text-gray-700">
-                      Foods to avoid:
-                    </Label>
-                    <Input 
-                      id="avoidFoods"
-                      name="avoidFoods"
-                      value={foodPreferences.avoidFoods}
-                      onChange={handlePreferenceChange}
-                      placeholder="e.g., dairy, gluten, nuts"
-                      className="bg-background"
-                    />
-                  </div>
+                  {/* Avoid Foods Search */}
+                  {renderFoodPreferencesSection(
+                    'avoid',
+                    avoidSearchValue,
+                    avoidSearchOpen,
+                    setAvoidSearchOpen,
+                    handleAvoidSearchChange,
+                    filteredAvoidFoods,
+                    avoidedFoods,
+                    addAvoidedFood,
+                    removeAvoidedFood
+                  )}
                   
                   <div className="space-y-2">
                     <Label htmlFor="weeklyBudget" className="text-sm text-gray-700">
