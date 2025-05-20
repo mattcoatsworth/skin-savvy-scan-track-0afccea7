@@ -605,6 +605,7 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
             {/* Chat section for follow-up questions */}
             <div className="mt-8">
               <TestAIChatBox 
+                productTitle="Energy Analysis"
                 initialMessages={[{
                   role: "assistant",
                   content: "Do you have any questions about your energy analysis or healing plan? I'm here to help!"

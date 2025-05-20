@@ -55,14 +55,14 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle, initialMess
     }
     
     // Energy analysis specific suggestions
-    if (initialMessages?.[0]?.content?.includes("energy analysis")) {
+    if (productTitle?.includes("Energy Analysis") || initialMessages?.[0]?.content?.includes("energy analysis")) {
       return [
-        "Explain chakra healing more?",
-        "How to balance my energy?",
-        "Foods for skin energy?",
-        "Daily rituals for healing?",
-        "Meditation for my condition?",
-        "Herbs for my skin type?"
+        "How does TCM connect to skin?",
+        "What are chakras exactly?",
+        "Explain metaphysical healing",
+        "How long before I see results?",
+        "Herbs for my skin type?",
+        "Foods for skin energy balance"
       ];
     }
     
@@ -80,7 +80,7 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle, initialMess
   const suggestions = getSuggestions();
 
   // Get initial message from assistant if available
-  const initialMessage = initialMessages.find(msg => msg.role === "assistant")?.content;
+  const initialMessage = initialMessages?.find(msg => msg.role === "assistant")?.content;
 
   return (
     <div className="mt-6 mb-10">
@@ -150,7 +150,9 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle, initialMess
           <div className="mt-2 text-xs text-muted-foreground">
             {productTitle?.includes("Meal Plan") 
               ? "Ask our AI anything about this meal plan or your nutritional needs"
-              : "Ask our AI anything about this recommendation or your skin health"}
+              : productTitle?.includes("Energy Analysis")
+                ? "Ask our AI anything about your energy analysis or holistic healing"
+                : "Ask our AI anything about this recommendation or your skin health"}
           </div>
         </CardContent>
       </Card>

@@ -3,23 +3,38 @@
  * Component style exports for consistent styling across the application
  */
 
-export { default as cardStyles } from './card.styles';
-export { default as buttonStyles } from './button.styles';
-export { default as progressStyles } from './progress.styles';
-export { default as ratingStyles } from './rating.styles';
+import { cardVariants } from './card.styles';
+import { 
+  buttonColorVariants,
+  buttonSizeVariants,
+  buttonShadowVariants,
+  buttonVariants
+} from './button.styles';
+import { progressVariants } from './progress.styles';
+import { ratingVariants } from './rating.styles';
 
 /**
  * Usage example:
  * 
  * ```
- * import { cardStyles } from '@/design/components';
+ * import { cardVariants } from '@/design/components';
  * 
  * // Access card styling properties
- * console.log(cardStyles.header);
+ * console.log(cardVariants.header);
  * 
  * // Access Tailwind classes for quick use
- * <div className={cardStyles.tailwind.header}>
+ * <div className={cardVariants.tailwind.header}>
  *   Card Header
  * </div>
  * ```
  */
+
+export {
+  cardVariants,
+  buttonColorVariants,
+  buttonSizeVariants,
+  buttonShadowVariants,
+  buttonVariants,
+  progressVariants,
+  ratingVariants
+};
