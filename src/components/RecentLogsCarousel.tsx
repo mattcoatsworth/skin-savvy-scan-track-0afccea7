@@ -1,130 +1,142 @@
-import React, { useRef, useState, useEffect } from "react";
+
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { StyledBadge } from "@/components/ui/styled/Badge";
 
-type LogStatus = "positive" | "negative" | "neutral";
-
-type Log = {
+type RecentLogType = {
   title: string;
-  status: LogStatus;
+  status: "positive" | "negative" | "neutral";
   description: string;
-  rating: number;
-  id: string;
+  rating?: number;
+  id?: string; // Add optional id for specific log identification
+  linkTo?: string; // Add optional linkTo for custom navigation
 };
 
 type RecentLogsCarouselProps = {
-  logs: Log[];
+  logs: RecentLogType[];
   className?: string;
 };
 
+// Determine progress color based on rating
+const getProgressColor = (rating: number) => {
+  if (rating >= 70) return "#4ADE80"; // Green for good ratings
+  if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
+  return "#F87171"; // Red for poor ratings
+};
+
+// Get the lighter background color for the circle
+const getBackgroundColor = (rating: number) => {
+  if (rating >= 70) return "#E6F8EA"; // Light green
+  if (rating >= 40) return "#FEF7CD"; // Light yellow
+  return "#FFDEE2"; // Light red
+};
+
+// Determine label based on rating
+const getRatingLabel = (rating: number) => {
+  if (rating >= 80) return "Great";
+  if (rating >= 60) return "Good";
+  if (rating >= 40) return "OK";
+  if (rating >= 20) return "Fair";
+  return "Poor";
+};
+
 const RecentLogsCarousel: React.FC<RecentLogsCarouselProps> = ({ logs, className }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [maxScroll, setMaxScroll] = useState(0);
-  
-  useEffect(() => {
-    const updateMaxScroll = () => {
-      if (scrollRef.current) {
-        const element = scrollRef.current;
-        setMaxScroll(element.scrollWidth - element.clientWidth);
-      }
-    };
+  // Function to determine where each log should link to
+  const getLogLink = (log: RecentLogType) => {
+    // If a custom link is provided, use it
+    if (log.linkTo) {
+      return log.linkTo;
+    }
     
-    updateMaxScroll();
-    window.addEventListener("resize", updateMaxScroll);
+    // If an ID is provided, link to a specific log detail page
+    if (log.id) {
+      return `/recent-logs/${log.id}`;
+    }
     
-    return () => window.removeEventListener("resize", updateMaxScroll);
-  }, []);
-  
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: -200,
-        behavior: 'smooth'
-      });
-    }
+    // Default to the recent logs page
+    return "/recent-logs";
   };
-  
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: 200,
-        behavior: 'smooth'
-      });
-    }
-  };
-  
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      setScrollPosition(scrollRef.current.scrollLeft);
-    }
-  };
-  
+
   return (
     <div className={cn("ios-section", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Recent Scans</h2>
-        <Link 
-          to="/recent-logs" 
-          className="text-skin-teal text-sm font-medium flex items-center"
-        >
-          View All <ArrowRight className="h-4 w-4 ml-1" />
+        <Link to="/recent-logs" className="text-sm text-skin-black">
+          View all
         </Link>
       </div>
       
       <div className="relative">
-        <button 
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-1 rounded-full bg-white shadow-md border border-gray-100"
-          disabled={scrollPosition <= 0}
-          style={{ opacity: scrollPosition <= 0 ? 0 : 1 }}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        
-        <div 
-          className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide scroll-smooth"
-          ref={scrollRef}
-          onScroll={handleScroll}
-        >
-          {logs.map((log, index) => (
-            <Link to={`/recent-log/${log.id}`} key={index}>
-              <Card className="ios-card min-w-[240px] hover:shadow-md transition-all">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-medium text-base">{log.title}</h3>
-                    
-                    {/* Updated to use StyledBadge */}
-                    <StyledBadge 
-                      value={log.rating}
-                      variant={
-                        log.status === 'positive' ? 'success' : 
-                        log.status === 'negative' ? 'destructive' : 'info'
-                      }
-                      className="ml-2"
-                    />
-                  </div>
-                  
-                  <p className="text-sm text-muted-foreground">
-                    {log.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-        
-        <button 
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-1 rounded-full bg-white shadow-md border border-gray-100"
-          disabled={scrollPosition >= maxScroll}
-          style={{ opacity: scrollPosition >= maxScroll ? 0 : 1 }}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+        <ScrollArea className="w-full pb-4">
+          <div className="flex space-x-4 px-1">
+            {logs.map((log, index) => (
+              <Link 
+                key={index} 
+                to={getLogLink(log)} 
+                state={{ log }}
+                className="min-w-[260px] flex-shrink-0"
+              >
+                <Card className="ios-card animate-fade-in hover:shadow-md transition-all">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium mb-1">{log.title}</h3>
+                        <div className="text-sm text-muted-foreground">
+                          <div className="flex items-start">
+                            <div>
+                              {log.description}
+                              <br />
+                              <span className="text-xs">{log.description.includes("days") ? "" : "3 days"}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {log.rating !== undefined && (
+                        <div className="flex flex-col items-center">
+                          <div className="relative w-12 h-12 flex items-center justify-center">
+                            {/* Background circle */}
+                            <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                              <path
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke={getBackgroundColor(log.rating)}
+                                strokeWidth="4"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            
+                            {/* Foreground circle - the actual progress */}
+                            <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
+                              <path
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke={getProgressColor(log.rating)}
+                                strokeWidth="4"
+                                strokeDasharray={`${log.rating}, 100`}
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            
+                            {/* Rating number in the center */}
+                            <div className="text-sm font-semibold">
+                              {log.rating}
+                            </div>
+                          </div>
+                          <span className="text-xs mt-1 text-muted-foreground">
+                            {getRatingLabel(log.rating)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
     </div>
   );
