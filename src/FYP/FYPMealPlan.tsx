@@ -128,7 +128,6 @@ const FYPMealPlan: React.FC = () => {
   // Generate grocery list
   const generateGroceryList = () => {
     toast({
-      title: "Generating grocery list",
       description: "Your weekly grocery list is being prepared",
     });
     

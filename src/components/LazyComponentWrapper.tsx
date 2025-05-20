@@ -2,13 +2,14 @@
 import React, { Suspense } from 'react';
 
 interface LazyWrapperProps {
-  component: React.LazyExoticComponent<() => JSX.Element>;
+  component: React.LazyExoticComponent<React.ComponentType<any>>;
+  className?: string;
 }
 
-const LazyComponentWrapper: React.FC<LazyWrapperProps> = ({ component: Component }) => {
+const LazyComponentWrapper: React.FC<LazyWrapperProps> = ({ component: Component, className }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Component />
+      <Component className={className} />
     </Suspense>
   );
 };
