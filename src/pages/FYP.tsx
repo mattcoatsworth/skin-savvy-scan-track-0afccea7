@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import EnergyAnalysis from "@/components/EnergyAnalysis";
+import BackButton from "@/components/BackButton";
 
 const FYP = () => {
   // Add scroll to top functionality
@@ -10,9 +11,12 @@ const FYP = () => {
   
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold">For You</h1>
-        <p className="text-muted-foreground">Personalized recommendations</p>
+      <header className="mb-6 flex items-center">
+        <BackButton />
+        <div>
+          <h1 className="text-2xl font-bold">For You</h1>
+          <p className="text-muted-foreground">Personalized recommendations</p>
+        </div>
       </header>
       
       <main className="space-y-6">
