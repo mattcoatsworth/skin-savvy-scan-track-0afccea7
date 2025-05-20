@@ -30,6 +30,7 @@ type MealPlanType = {
   lunch: MealType;
   dinner: MealType;
   snacks: string[];
+  snackBenefits?: string[];
   drinks: DrinkType[];
 };
 
@@ -111,6 +112,12 @@ const FYPMealPlan = () => {
           ]
         },
         snacks: ["Green tea with lemon", "Handful of walnuts", "Sliced cucumber with hummus"],
+        snackBenefits: [
+          "Walnuts contain essential fatty acids that help maintain skin elasticity",
+          "Green tea is rich in polyphenols that protect against UV damage and reduce inflammation",
+          "Cucumbers provide hydration and silica that supports skin structure",
+          "Hummus contains vitamin E and zinc that help with skin repair and protection"
+        ],
         drinks: [
           {
             title: "Hydrating Cucumber Mint Water",
@@ -339,18 +346,20 @@ const FYPMealPlan = () => {
               "dinner"
             )}
             
-            {/* Drinks Section */}
-            <div className="pt-2">
-              <h3 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
-                <CupSoda className="h-4 w-4 text-blue-600" />
-                <span>Hydrating Drinks</span>
-              </h3>
-              <div className="space-y-4">
+            {/* Drinks Section - Updated to match other sections */}
+            <div>
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-3 rounded-t-lg">
+                <div className="flex items-center gap-2">
+                  <CupSoda className="h-4 w-4 text-blue-600" />
+                  <h3 className="font-medium text-blue-800">Hydrating Drinks</h3>
+                </div>
+              </div>
+              <div className="space-y-4 pt-4">
                 {mealPlan.drinks.map((drink, index) => renderDrinkCard(drink, index))}
               </div>
             </div>
             
-            {/* Snacks */}
+            {/* Snacks - Updated with Detailed Skin Benefits */}
             <Card className="overflow-hidden border border-gray-100">
               <div className="bg-gradient-to-r from-rose-50 to-pink-50 px-4 py-3">
                 <div className="flex items-center gap-2">
@@ -367,6 +376,43 @@ const FYPMealPlan = () => {
                     </li>
                   ))}
                 </ul>
+                
+                {/* Added Detailed Skin Benefits for Snacks */}
+                <div className="mt-3">
+                  <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
+                    Skin-Friendly
+                  </Badge>
+                </div>
+                
+                <div className="mt-3 text-xs text-gray-700 italic">
+                  Healthy snacks provide essential nutrients for skin throughout the day
+                </div>
+                
+                {/* Detailed benefits button */}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => toggleDetailedBenefits("snacks")}
+                  className="mt-3 text-rose-600 hover:text-rose-800 p-0 h-auto flex items-center gap-1"
+                >
+                  <span>Detailed Skin Benefits</span>
+                  {expandedCards["snacks"] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </Button>
+                
+                {/* Detailed benefits content */}
+                {expandedCards["snacks"] && mealPlan.snackBenefits && (
+                  <div className="mt-3 bg-rose-50 p-3 rounded-md">
+                    <h5 className="font-medium text-sm text-rose-800 mb-2">Detailed Skin Benefits</h5>
+                    <ul className="text-xs text-gray-700 space-y-2">
+                      {mealPlan.snackBenefits.map((benefit, i) => (
+                        <li key={i} className="flex gap-2">
+                          <div className="min-w-1.5 h-1.5 rounded-full bg-rose-400 mt-1.5"></div>
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </CardContent>
             </Card>
             
