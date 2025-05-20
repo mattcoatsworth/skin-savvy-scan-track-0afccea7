@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import DisclaimerChatBox from "@/components/MealPlan/DisclaimerChatBox";
 import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type MealType = {
   title: string;
@@ -25,7 +26,7 @@ type DrinkType = {
   detailedSkinBenefits?: string[];
 };
 
-type MealPlanType = {
+type DayMealPlanType = {
   breakfast: MealType;
   lunch: MealType;
   dinner: MealType;
@@ -34,11 +35,24 @@ type MealPlanType = {
   drinks: DrinkType[];
 };
 
+type MealPlanType = {
+  skinFocus: string;
+  days: { 
+    day: string;
+    mealPlan: DayMealPlanType 
+  }[];
+};
+
 const FYPMealPlan = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [mealPlan, setMealPlan] = useState<MealPlanType | null>(null);
   const { toast } = useToast();
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+  const [activeDay, setActiveDay] = useState("Monday");
+
+  // Days of the week for the tabs
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const dayAbbreviations = ["M", "T", "W", "T", "F", "S", "S"];
 
   // Toggle detailed benefits visibility
   const toggleDetailedBenefits = (cardId: string) => {
@@ -46,6 +60,12 @@ const FYPMealPlan = () => {
       ...prev,
       [cardId]: !prev[cardId]
     }));
+  };
+
+  // Get the active day's meal plan
+  const getActiveDayMealPlan = () => {
+    if (!mealPlan) return null;
+    return mealPlan.days.find(day => day.day === activeDay)?.mealPlan;
   };
 
   // Function to generate a meal plan using OpenAI
@@ -73,8 +93,8 @@ const FYPMealPlan = () => {
         return;
       }
       
-      // Transform the API response to our meal plan format
-      const generatedPlan: MealPlanType = {
+      // Transform the API response to our meal plan format with 7 days
+      const sampleMealPlan: DayMealPlanType = {
         breakfast: {
           title: "Antioxidant Breakfast Bowl",
           description: "Greek yogurt with fresh berries, honey, and chia seeds",
@@ -146,7 +166,180 @@ const FYPMealPlan = () => {
         ]
       };
       
-      setMealPlan(generatedPlan);
+      // Create variations for each day of the week
+      const generatedMealPlan: MealPlanType = {
+        skinFocus: "Hydration and anti-inflammation",
+        days: [
+          { day: "Monday", mealPlan: sampleMealPlan },
+          { 
+            day: "Tuesday", 
+            mealPlan: {
+              ...sampleMealPlan,
+              breakfast: {
+                title: "Berry Chia Pudding",
+                description: "Chia seeds soaked in almond milk with mixed berries and almonds",
+                benefits: ["Omega-3 fatty acids", "Antioxidants", "Plant protein"],
+                skinBenefits: "Supports collagen production and skin hydration",
+                detailedSkinBenefits: [
+                  "Chia seeds are rich in omega-3 fatty acids that reduce skin inflammation",
+                  "Berries contain antioxidants that fight free radical damage to skin cells",
+                  "Almond milk provides vitamin E that protects skin from UV damage",
+                  "The combination helps maintain skin moisture and elasticity"
+                ]
+              },
+              lunch: {
+                title: "Avocado Chickpea Salad",
+                description: "Spinach salad with avocado, chickpeas, cherry tomatoes and lemon dressing",
+                benefits: ["Healthy fats", "Plant protein", "Vitamin C"],
+                skinBenefits: "Provides essential fatty acids and antioxidants for skin repair",
+                detailedSkinBenefits: [
+                  "Avocado contains healthy fats that support skin barrier function",
+                  "Chickpeas provide zinc that aids in skin healing and repair",
+                  "Spinach delivers vitamins A and C that promote cell turnover",
+                  "Lemon adds vitamin C that's essential for collagen synthesis"
+                ]
+              }
+            } 
+          },
+          { 
+            day: "Wednesday", 
+            mealPlan: {
+              ...sampleMealPlan,
+              dinner: {
+                title: "Turmeric Ginger Vegetable Stir-Fry",
+                description: "Colorful vegetables with turmeric, ginger, and tofu in coconut oil",
+                benefits: ["Anti-inflammatory", "Antioxidant-rich", "Plant protein"],
+                skinBenefits: "Reduces inflammation and boosts skin cell regeneration",
+                detailedSkinBenefits: [
+                  "Turmeric contains curcumin that reduces skin inflammation and redness",
+                  "Ginger improves circulation for better nutrient delivery to skin cells",
+                  "Colorful vegetables provide a range of antioxidants that protect against skin damage",
+                  "Tofu supplies protein needed for skin repair and renewal"
+                ]
+              },
+              drinks: [
+                {
+                  title: "Lemon Ginger Infusion",
+                  description: "Fresh lemon and ginger slices in warm water",
+                  benefits: ["Digestive aid", "Detoxifying", "Immune-boosting"],
+                  skinBenefits: "Supports liver function for clearer skin",
+                  detailedSkinBenefits: [
+                    "Lemon helps detoxify the liver, which can reduce skin breakouts",
+                    "Ginger improves digestion, reducing inflammation that can affect skin",
+                    "The combination supports the body's natural detoxification processes",
+                    "Regular consumption may help reduce skin conditions tied to poor digestion"
+                  ]
+                },
+                sampleMealPlan.drinks[1]
+              ]
+            } 
+          },
+          { 
+            day: "Thursday", 
+            mealPlan: {
+              ...sampleMealPlan,
+              breakfast: {
+                title: "Spinach Avocado Smoothie Bowl",
+                description: "Spinach, avocado, banana smoothie topped with hemp seeds and berries",
+                benefits: ["Iron-rich", "Healthy fats", "Potassium"],
+                skinBenefits: "Supplies vitamins and minerals essential for skin health",
+                detailedSkinBenefits: [
+                  "Spinach provides iron and vitamin K that improve skin tone and texture",
+                  "Avocado offers vitamin E and healthy fats that maintain skin moisture",
+                  "Hemp seeds contain omega-3 and omega-6 fatty acids that reduce inflammation",
+                  "The combination supports overall skin radiance and health"
+                ]
+              },
+              snacks: ["Brazil nuts", "Apple with cinnamon", "Cucumber with tzatziki"]
+            } 
+          },
+          { 
+            day: "Friday", 
+            mealPlan: {
+              ...sampleMealPlan,
+              lunch: {
+                title: "Wild Rice and Roasted Vegetable Bowl",
+                description: "Wild rice with roasted sweet potatoes, broccoli, and pumpkin seeds",
+                benefits: ["Complex carbs", "Fiber-rich", "Selenium from seeds"],
+                skinBenefits: "Provides minerals and antioxidants for skin repair",
+                detailedSkinBenefits: [
+                  "Wild rice contains antioxidants that help protect skin from environmental damage",
+                  "Sweet potatoes are rich in beta-carotene that promotes skin cell turnover",
+                  "Pumpkin seeds provide zinc and selenium that support skin healing",
+                  "The complex carbohydrates help maintain steady energy without triggering inflammation"
+                ]
+              }
+            } 
+          },
+          { 
+            day: "Saturday", 
+            mealPlan: {
+              ...sampleMealPlan,
+              dinner: {
+                title: "Mediterranean Herb-Baked Cod",
+                description: "Cod fillet baked with herbs, lemon, and olive oil with steamed vegetables",
+                benefits: ["Lean protein", "Omega-3 fatty acids", "Vitamin-rich"],
+                skinBenefits: "Provides protein and nutrients for skin repair and regeneration",
+                detailedSkinBenefits: [
+                  "Cod is a source of high-quality protein essential for skin repair",
+                  "The fish contains selenium that helps protect skin cells from damage",
+                  "Olive oil delivers polyphenols and vitamin E that have anti-aging benefits",
+                  "Mediterranean herbs provide antioxidants that fight skin inflammation"
+                ]
+              },
+              drinks: [
+                {
+                  title: "Pomegranate Green Tea",
+                  description: "Green tea with fresh pomegranate juice",
+                  benefits: ["Antioxidant-packed", "Anti-inflammatory", "Detoxifying"],
+                  skinBenefits: "Rich in polyphenols that protect against premature aging",
+                  detailedSkinBenefits: [
+                    "Pomegranate contains punicalagins that have potent antioxidant properties",
+                    "Green tea catechins help reduce sebum production and inflammation",
+                    "The combination helps protect collagen from breaking down",
+                    "Regular consumption may help improve skin texture and reduce fine lines"
+                  ]
+                },
+                sampleMealPlan.drinks[0]
+              ]
+            } 
+          },
+          { 
+            day: "Sunday", 
+            mealPlan: {
+              ...sampleMealPlan,
+              breakfast: {
+                title: "Omega-Rich Overnight Oats",
+                description: "Oats soaked in almond milk with flaxseeds, blueberries and walnuts",
+                benefits: ["Fiber-rich", "Omega-3 fatty acids", "Slow-release energy"],
+                skinBenefits: "Supports gut health and provides antioxidants for skin protection",
+                detailedSkinBenefits: [
+                  "Oats contain beta-glucans that soothe irritated skin from within",
+                  "Flaxseeds are rich in lignans and omega-3s that reduce inflammation",
+                  "Blueberries provide antioxidants that protect against skin-damaging free radicals",
+                  "The fiber content supports gut health, which is linked to clearer skin"
+                ]
+              },
+              lunch: {
+                title: "Rainbow Veggie Bowl with Tahini",
+                description: "Colorful roasted vegetables with quinoa and creamy tahini dressing",
+                benefits: ["Vitamin variety", "Healthy fats", "Complete protein"],
+                skinBenefits: "Provides a spectrum of nutrients for comprehensive skin support",
+                detailedSkinBenefits: [
+                  "Multiple colored vegetables provide a range of phytonutrients for skin protection",
+                  "Tahini contains selenium and zinc that support skin regeneration",
+                  "Quinoa offers complete protein needed for skin structure and repair",
+                  "The combination helps maintain skin elasticity and radiance"
+                ]
+              }
+            } 
+          }
+        ]
+      };
+      
+      setMealPlan(generatedMealPlan);
+      setActiveDay("Monday"); // Reset to Monday when a new plan is generated
+      
       toast({
         title: "Meal Plan Generated",
         description: "Your personalized skin-health meal plan is ready",
@@ -281,6 +474,8 @@ const FYPMealPlan = () => {
     );
   };
 
+  const activeDayMealPlan = getActiveDayMealPlan();
+
   return (
     <Card className="mb-6 overflow-hidden border-gray-100 shadow-md">
       <CardContent className="p-5 space-y-5">
@@ -316,122 +511,164 @@ const FYPMealPlan = () => {
           </div>
         ) : (
           <div className="space-y-6 pt-2">
-            {/* Breakfast */}
-            {renderMealCard(
-              "Breakfast", 
-              mealPlan.breakfast, 
-              <Coffee className="h-4 w-4 text-amber-600" />,
-              "bg-gradient-to-r from-amber-50 to-orange-50",
-              "text-amber-800",
-              "breakfast"
-            )}
-            
-            {/* Lunch */}
-            {renderMealCard(
-              "Lunch", 
-              mealPlan.lunch, 
-              <Utensils className="h-4 w-4 text-emerald-600" />,
-              "bg-gradient-to-r from-emerald-50 to-teal-50",
-              "text-emerald-800",
-              "lunch"
-            )}
-            
-            {/* Dinner */}
-            {renderMealCard(
-              "Dinner", 
-              mealPlan.dinner, 
-              <Utensils className="h-4 w-4 text-indigo-600" />,
-              "bg-gradient-to-r from-indigo-50 to-purple-50",
-              "text-indigo-800",
-              "dinner"
-            )}
-            
-            {/* Drinks Section - Fixed to remove the space between header and cards */}
-            <div className="overflow-hidden border border-gray-100 rounded-lg">
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-3">
+            {/* Weekly Overview with Day Tabs */}
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-100">
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <CupSoda className="h-4 w-4 text-blue-600" />
-                  <h3 className="font-medium text-blue-800">Hydrating Drinks</h3>
+                  <Calendar className="h-4 w-4 text-emerald-600" />
+                  <h3 className="font-medium text-emerald-800">Weekly Plan</h3>
                 </div>
               </div>
-              <div className="space-y-4 p-4">
-                {mealPlan.drinks.map((drink, index) => renderDrinkCard(drink, index))}
+              <div className="p-4">
+                <p className="text-xs text-gray-600 mb-3">
+                  Select a day to view your personalized skin-healthy meals for each day of the week.
+                </p>
+                
+                <Tabs 
+                  defaultValue="Monday" 
+                  value={activeDay}
+                  onValueChange={setActiveDay}
+                  className="w-full"
+                >
+                  <TabsList className="grid grid-cols-7 w-full mb-2 bg-gray-100 p-1 rounded-xl">
+                    {daysOfWeek.map((day, i) => (
+                      <TabsTrigger 
+                        key={day} 
+                        value={day}
+                        className="text-xs py-1 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg"
+                      >
+                        {dayAbbreviations[i]}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </Tabs>
+                
+                <div className="mt-2 text-xs font-medium text-emerald-600">
+                  {activeDay}
+                </div>
               </div>
             </div>
             
-            {/* Snacks - Updated with Detailed Skin Benefits */}
-            <Card className="overflow-hidden border border-gray-100">
-              <div className="bg-gradient-to-r from-rose-50 to-pink-50 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Apple className="h-4 w-4 text-rose-600" />
-                  <h3 className="font-medium text-rose-800">Snacks</h3>
+            {activeDayMealPlan && (
+              <>
+                {/* Breakfast */}
+                {renderMealCard(
+                  "Breakfast", 
+                  activeDayMealPlan.breakfast, 
+                  <Coffee className="h-4 w-4 text-amber-600" />,
+                  "bg-gradient-to-r from-amber-50 to-orange-50",
+                  "text-amber-800",
+                  `${activeDay}-breakfast`
+                )}
+                
+                {/* Lunch */}
+                {renderMealCard(
+                  "Lunch", 
+                  activeDayMealPlan.lunch, 
+                  <Utensils className="h-4 w-4 text-emerald-600" />,
+                  "bg-gradient-to-r from-emerald-50 to-teal-50",
+                  "text-emerald-800",
+                  `${activeDay}-lunch`
+                )}
+                
+                {/* Dinner */}
+                {renderMealCard(
+                  "Dinner", 
+                  activeDayMealPlan.dinner, 
+                  <Utensils className="h-4 w-4 text-indigo-600" />,
+                  "bg-gradient-to-r from-indigo-50 to-purple-50",
+                  "text-indigo-800",
+                  `${activeDay}-dinner`
+                )}
+                
+                {/* Drinks Section */}
+                <div className="overflow-hidden border border-gray-100 rounded-lg">
+                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <CupSoda className="h-4 w-4 text-blue-600" />
+                      <h3 className="font-medium text-blue-800">Hydrating Drinks</h3>
+                    </div>
+                  </div>
+                  <div className="space-y-4 p-4">
+                    {activeDayMealPlan.drinks.map((drink, index) => renderDrinkCard(drink, index))}
+                  </div>
                 </div>
-              </div>
-              <CardContent className="p-4">
-                <ul className="space-y-2">
-                  {mealPlan.snacks.map((snack: string, index: number) => (
-                    <li key={index} className="text-sm flex items-center gap-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-gray-400"></div>
-                      {snack}
-                    </li>
-                  ))}
-                </ul>
                 
-                {/* Added Detailed Skin Benefits for Snacks */}
-                <div className="mt-3">
-                  <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
-                    Skin-Friendly
-                  </Badge>
-                </div>
-                
-                <div className="mt-3 text-xs text-gray-700 italic">
-                  Healthy snacks provide essential nutrients for skin throughout the day
-                </div>
-                
-                {/* Detailed benefits button */}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => toggleDetailedBenefits("snacks")}
-                  className="mt-3 text-rose-600 hover:text-rose-800 p-0 h-auto flex items-center gap-1"
-                >
-                  <span>Detailed Skin Benefits</span>
-                  {expandedCards["snacks"] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </Button>
-                
-                {/* Detailed benefits content */}
-                {expandedCards["snacks"] && mealPlan.snackBenefits && (
-                  <div className="mt-3 bg-rose-50 p-3 rounded-md">
-                    <h5 className="font-medium text-sm text-rose-800 mb-2">Detailed Skin Benefits</h5>
-                    <ul className="text-xs text-gray-700 space-y-2">
-                      {mealPlan.snackBenefits.map((benefit, i) => (
-                        <li key={i} className="flex gap-2">
-                          <div className="min-w-1.5 h-1.5 rounded-full bg-rose-400 mt-1.5"></div>
-                          <span>{benefit}</span>
+                {/* Snacks */}
+                <Card className="overflow-hidden border border-gray-100">
+                  <div className="bg-gradient-to-r from-rose-50 to-pink-50 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Apple className="h-4 w-4 text-rose-600" />
+                      <h3 className="font-medium text-rose-800">Snacks</h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <ul className="space-y-2">
+                      {activeDayMealPlan.snacks.map((snack: string, index: number) => (
+                        <li key={index} className="text-sm flex items-center gap-2">
+                          <div className="h-1.5 w-1.5 rounded-full bg-gray-400"></div>
+                          {snack}
                         </li>
                       ))}
                     </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-            
-            {/* Expected Results - Now appears below the snacks card */}
-            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <p className="text-xs text-gray-500 italic">
-                This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
-              </p>
-            </div>
-            
-            <div className="pt-3">
-              <Button 
-                onClick={() => setMealPlan(null)}
-                variant="outline"
-                className="w-full border-gray-200"
-              >
-                Generate New Plan
-              </Button>
-            </div>
+                    
+                    {/* Added Detailed Skin Benefits for Snacks */}
+                    <div className="mt-3">
+                      <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
+                        Skin-Friendly
+                      </Badge>
+                    </div>
+                    
+                    <div className="mt-3 text-xs text-gray-700 italic">
+                      Healthy snacks provide essential nutrients for skin throughout the day
+                    </div>
+                    
+                    {/* Detailed benefits button */}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => toggleDetailedBenefits(`${activeDay}-snacks`)}
+                      className="mt-3 text-rose-600 hover:text-rose-800 p-0 h-auto flex items-center gap-1"
+                    >
+                      <span>Detailed Skin Benefits</span>
+                      {expandedCards[`${activeDay}-snacks`] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </Button>
+                    
+                    {/* Detailed benefits content */}
+                    {expandedCards[`${activeDay}-snacks`] && activeDayMealPlan.snackBenefits && (
+                      <div className="mt-3 bg-rose-50 p-3 rounded-md">
+                        <h5 className="font-medium text-sm text-rose-800 mb-2">Detailed Skin Benefits</h5>
+                        <ul className="text-xs text-gray-700 space-y-2">
+                          {activeDayMealPlan.snackBenefits.map((benefit, i) => (
+                            <li key={i} className="flex gap-2">
+                              <div className="min-w-1.5 h-1.5 rounded-full bg-rose-400 mt-1.5"></div>
+                              <span>{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                {/* Expected Results - Now appears below the snacks card */}
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 italic">
+                    This meal plan is personalized based on your skin needs. Consistency is key for seeing results in your skin health.
+                  </p>
+                </div>
+                
+                <div className="pt-3">
+                  <Button 
+                    onClick={() => setMealPlan(null)}
+                    variant="outline"
+                    className="w-full border-gray-200"
+                  >
+                    Generate New Plan
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </CardContent>
