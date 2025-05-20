@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
 import RecentLogsCarousel from "@/components/RecentLogsCarousel";
@@ -72,9 +73,6 @@ const Index = () => {
       linkTo: "/recommendations-detail/zinc"
     },
   ];
-
-  // We no longer need to define static recommendations here as they'll be dynamically generated
-  // by the DailySkinSnapshot component using the useSkinAdvice hook
 
   // Get current date and the past 7 days
   const getDayName = (date: Date) => {
@@ -221,8 +219,6 @@ const Index = () => {
         <div className="mb-6">
           <ScanButton />
         </div>
-        
-        {/* Today's Selfies section removed */}
         
         <div className="space-y-6">
           <DailySkinSnapshot 

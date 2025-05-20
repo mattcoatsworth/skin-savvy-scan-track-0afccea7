@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 type ActionType = {
   text: string;
@@ -19,8 +19,6 @@ type SuggestedActionsProps = {
 };
 
 const SuggestedActions: React.FC<SuggestedActionsProps> = ({ actions, className }) => {
-  const navigate = useNavigate();
-  
   // Function to determine where each action should link to
   const getActionLink = (action: ActionType) => {
     // If this is a supplement-related action, link directly to the supplement page
