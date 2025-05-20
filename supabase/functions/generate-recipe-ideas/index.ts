@@ -1,8 +1,10 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { OpenAI } from "https://esm.sh/openai@4.28.0";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const openai = new OpenAI({
+  apiKey: Deno.env.get("OPENAI_API_KEY"),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,317 +18,59 @@ serve(async (req) => {
   }
 
   try {
-    const { mealName, mealType, day, onlyBenefits } = await req.json();
+    const { mealName, mealType, day, preferences } = await req.json();
 
-    if (!mealName || !mealType || !day) {
-      return new Response(
-        JSON.stringify({ error: "Missing required parameters" }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Choose the appropriate prompt based on the request type
-    let prompt;
-    if (onlyBenefits) {
-      prompt = generateSkinBenefitsPrompt(mealName, mealType);
-    } else {
-      prompt = generateRecipePrompt(mealName, mealType, day);
-    }
-
-    console.log("Sending request to OpenAI with prompt:", prompt);
-
-    // Call OpenAI API to generate recipe ideas or skin benefits
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { 
-            role: 'system', 
-            content: onlyBenefits 
-              ? 'You are a nutritionist specialized in skin health. Provide detailed information about how specific foods benefit skin health.'
-              : 'You are a nutritionist specialized in skin health. Provide detailed recipe ideas for skin-friendly meals, including ingredients, steps, and skin benefits.'
-          },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenAI API error: ${JSON.stringify(error)}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices[0].message.content;
-
-    console.log("OpenAI response content:", content);
-
-    // Parse the response based on request type
-    if (onlyBenefits) {
-      const parsedBenefits = parseBenefitsResponse(content, mealName);
-      return new Response(
-        JSON.stringify(parsedBenefits),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    } else {
-      const parsedRecipes = parseRecipeResponse(content, mealName);
-      console.log("Parsed recipes:", JSON.stringify(parsedRecipes));
-      return new Response(
-        JSON.stringify(parsedRecipes),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-  } catch (error) {
-    console.error('Error generating content:', error);
+    let prompt = `Generate a detailed, nutritious ${mealType} recipe idea called "${mealName}" for ${day}.`;
     
-    return new Response(
-      JSON.stringify({ 
-        error: 'Failed to generate content', 
-        details: error.message,
-        fallback: {
-          recipes: [
-            {
-              name: "Fallback Recipe",
-              prepTime: "30 minutes",
-              difficulty: "Medium",
-              ingredients: ["Sample ingredient 1", "Sample ingredient 2"],
-              instructions: ["Sample step 1", "Sample step 2"]
-            },
-            {
-              name: "Another Fallback Recipe",
-              prepTime: "20 minutes",
-              difficulty: "Easy",
-              ingredients: ["Sample ingredient 1", "Sample ingredient 2"],
-              instructions: ["Sample step 1", "Sample step 2"]
-            }
-          ],
-          nutritionInfo: {
-            summary: "Fallback nutrition information",
-            benefits: ["Fallback benefit 1", "Fallback benefit 2"]
-          }
-        }
-      }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    // Add food preferences if provided
+    if (preferences) {
+      if (preferences.includeFoods) {
+        prompt += ` Please include these foods if possible: ${preferences.includeFoods}.`;
       }
-    );
-  }
-});
+      
+      if (preferences.avoidFoods) {
+        prompt += ` Avoid these foods: ${preferences.avoidFoods}.`;
+      }
+      
+      if (preferences.weeklyBudget) {
+        prompt += ` Keep in mind a weekly budget of ${preferences.weeklyBudget}.`;
+      }
+    }
 
-function generateRecipePrompt(mealName: string, mealType: string, day: string) {
-  let mealContext = "";
-  
-  if (mealType === "breakfast") {
-    mealContext = "a healthy, skin-nourishing breakfast";
-  } else if (mealType === "lunch") {
-    mealContext = "a nutritious lunch that supports skin health";
-  } else if (mealType === "dinner") {
-    mealContext = "a skin-friendly dinner";
-  } else if (mealType === "snacks") {
-    mealContext = "healthy snacks that benefit skin health";
-  } else if (mealType === "hydration") {
-    mealContext = "hydrating beverages that improve skin health";
-  }
+    prompt += ` Focus on skin health, include nutritional benefits, and structure the response with these sections: 
+    1. Recipe name 
+    2. Ingredients list 
+    3. Preparation steps 
+    4. Skin health benefits
+    5. Nutritional highlights`;
 
-  return `
-    I'm looking for 2 detailed recipe ideas based on "${mealName}" for ${mealContext} on ${day}.
-
-    For each recipe, include:
-    1. A creative recipe name
-    2. Preparation time and difficulty level
-    3. List of ingredients with quantities
-    4. Step-by-step instructions (5-7 steps)
-    5. Key nutritional benefits for skin health
-
-    After the recipes, add a "Nutrition Information" section with:
-    1. A brief summary of how these recipes benefit skin health
-    2. 3-5 specific skin benefits from key ingredients
-
-    Format the response in JSON with this structure:
-    {
-      "recipes": [
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
         {
-          "name": "Recipe name",
-          "prepTime": "Preparation time",
-          "difficulty": "Easy/Medium/Hard",
-          "ingredients": ["ingredient 1", "ingredient 2", ...],
-          "instructions": ["step 1", "step 2", ...]
+          role: "system",
+          content: "You are a nutritionist and chef specializing in skin-healthy recipes. Provide detailed, evidence-backed recipe ideas that support skin health."
         },
         {
-          "name": "Recipe name",
-          "prepTime": "Preparation time",
-          "difficulty": "Easy/Medium/Hard",
-          "ingredients": ["ingredient 1", "ingredient 2", ...],
-          "instructions": ["step 1", "step 2", ...]
+          role: "user",
+          content: prompt
         }
       ],
-      "nutritionInfo": {
-        "summary": "Summary text",
-        "benefits": ["benefit 1", "benefit 2", ...]
-      }
-    }
-  `;
-}
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
 
-function generateSkinBenefitsPrompt(mealName: string, mealType: string) {
-  return `
-    Analyze the following foods/drinks from ${mealType}: "${mealName}"
+    const recipeIdea = response.choices[0].message.content;
 
-    For each distinct food or ingredient mentioned, provide specific skin health benefits.
-    Focus on:
-    1. How each ingredient benefits the skin
-    2. Key nutrients that impact skin health
-    3. How they may address specific skin concerns
-
-    Format the response as a JSON array of benefit descriptions, with one detailed sentence per item:
-    [
-      "Food item: Specific benefit and mechanism relevant to skin health",
-      "Food item: Specific benefit and mechanism relevant to skin health",
-      ...
-    ]
-
-    Keep each benefit description concise but informative. Include 5-8 items in total.
-  `;
-}
-
-function parseRecipeResponse(content: string, fallbackMealName: string) {
-  try {
-    console.log("Parsing recipe response:", content);
-
-    // Try to parse the response as JSON directly
-    // Extract JSON from the response
-    const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || 
-                      content.match(/\{[\s\S]*\}/);
-
-    let parsedData;
-    
-    if (jsonMatch) {
-      const jsonString = jsonMatch[0].replace(/```json|```/g, '').trim();
-      console.log("Extracted JSON string:", jsonString);
-      parsedData = JSON.parse(jsonString);
-    } else {
-      console.log("No JSON found in response, using fallback");
-      // If unable to parse JSON, return a fallback structure
-      return {
-        recipes: [
-          {
-            name: `${fallbackMealName} - Recipe 1`,
-            prepTime: "30 minutes",
-            difficulty: "Medium",
-            ingredients: ["Ingredient information not available"],
-            instructions: ["Recipe details could not be generated. Please try again."]
-          },
-          {
-            name: `${fallbackMealName} - Recipe 2`,
-            prepTime: "30 minutes",
-            difficulty: "Medium",
-            ingredients: ["Ingredient information not available"],
-            instructions: ["Recipe details could not be generated. Please try again."]
-          }
-        ],
-        nutritionInfo: {
-          summary: "Nutrition information could not be generated.",
-          benefits: [
-            "Benefits information not available. Please try again."
-          ]
-        }
-      };
-    }
-
-    // Validate that the parsed data has the expected structure
-    if (!parsedData.recipes || !Array.isArray(parsedData.recipes) || !parsedData.nutritionInfo) {
-      console.log("Parsed data missing required fields, using fallback");
-      return {
-        recipes: [
-          {
-            name: `${fallbackMealName} - Recipe 1`,
-            prepTime: "30 minutes", 
-            difficulty: "Medium",
-            ingredients: ["Ingredient information not available"],
-            instructions: ["Recipe details could not be generated. Please try again."]
-          }
-        ],
-        nutritionInfo: {
-          summary: "Nutrition information could not be generated.",
-          benefits: ["Benefits information not available. Please try again."]
-        }
-      };
-    }
-
-    return parsedData;
+    return new Response(JSON.stringify({ recipeIdea }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    });
   } catch (error) {
-    console.error("Error parsing recipe response:", error);
-    
-    // Return fallback data
-    return {
-      recipes: [
-        {
-          name: `${fallbackMealName} - Recipe 1`,
-          prepTime: "30 minutes",
-          difficulty: "Medium",
-          ingredients: ["Ingredient information not available"],
-          instructions: ["Recipe details could not be generated. Please try again."]
-        }
-      ],
-      nutritionInfo: {
-        summary: "Nutrition information could not be generated.",
-        benefits: [
-          "Benefits information not available. Please try again."
-        ]
-      }
-    };
+    console.error('Error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    });
   }
-}
-
-function parseBenefitsResponse(content: string, fallbackMealName: string) {
-  try {
-    // Try to extract JSON array from the response
-    const jsonMatch = content.match(/\[[\s\S]*?\]/);
-    
-    let benefits;
-    
-    if (jsonMatch) {
-      benefits = JSON.parse(jsonMatch[0]);
-      
-      // Ensure it's an array with at least one item
-      if (!Array.isArray(benefits) || benefits.length === 0) {
-        throw new Error("Parsed content is not a valid benefits array");
-      }
-    } else {
-      // If no JSON array found, try to extract bullet points or paragraphs
-      const lines = content.split(/\n+/);
-      benefits = lines
-        .filter(line => line.trim().startsWith('-') || line.trim().startsWith('•') || line.trim().length > 15)
-        .map(line => line.trim().replace(/^[-•]\s*/, ''))
-        .filter(line => line.length > 0)
-        .slice(0, 8); // Limit to 8 items
-        
-      if (benefits.length === 0) {
-        throw new Error("Could not extract benefits from the response");
-      }
-    }
-    
-    return { benefits };
-  } catch (error) {
-    console.error("Error parsing benefits response:", error);
-    
-    // Return fallback data
-    return {
-      benefits: [
-        `${fallbackMealName} contains nutrients that support healthy skin`,
-        "Rich in antioxidants that protect skin cells from damage",
-        "Provides hydration which is essential for skin elasticity",
-        "Contains vitamins that promote collagen production",
-        "May help reduce inflammation associated with skin conditions"
-      ]
-    };
-  }
-}
+});

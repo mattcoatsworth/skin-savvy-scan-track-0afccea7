@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp, Calendar, ShoppingCart } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2, Utensils, Apple, Coffee, CupSoda, ChevronDown, ChevronUp, Calendar, ShoppingCart, Carrot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import DisclaimerChatBox from "@/components/MealPlan/DisclaimerChatBox";
@@ -48,8 +49,16 @@ type GroceryItem = {
   items: string[];
 };
 
+// New type for food preferences
+type FoodPreferences = {
+  includeFoods: string;
+  avoidFoods: string;
+  weeklyBudget: string;
+};
+
 const STORAGE_KEY = "fyp_meal_plan";
 const GROCERY_LIST_KEY = "fyp_grocery_list";
+const PREFERENCES_KEY = "fyp_meal_preferences";
 
 const FYPMealPlan = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -59,11 +68,19 @@ const FYPMealPlan = () => {
   const [activeDay, setActiveDay] = useState("Monday");
   const [groceryList, setGroceryList] = useState<GroceryItem[] | null>(null);
   const [isGeneratingGroceryList, setIsGeneratingGroceryList] = useState(false);
+  
+  // New state for food preferences
+  const [foodPreferences, setFoodPreferences] = useState<FoodPreferences>({
+    includeFoods: "",
+    avoidFoods: "",
+    weeklyBudget: ""
+  });
 
-  // Load saved meal plan and grocery list from localStorage on component mount
+  // Load saved meal plan, grocery list and preferences from localStorage on component mount
   useEffect(() => {
     const savedMealPlan = localStorage.getItem(STORAGE_KEY);
     const savedGroceryList = localStorage.getItem(GROCERY_LIST_KEY);
+    const savedPreferences = localStorage.getItem(PREFERENCES_KEY);
     
     if (savedMealPlan) {
       try {
@@ -83,11 +100,31 @@ const FYPMealPlan = () => {
         localStorage.removeItem(GROCERY_LIST_KEY);
       }
     }
+
+    if (savedPreferences) {
+      try {
+        setFoodPreferences(JSON.parse(savedPreferences));
+      } catch (error) {
+        console.error("Error parsing saved preferences:", error);
+        localStorage.removeItem(PREFERENCES_KEY);
+      }
+    }
   }, []);
 
   // Days of the week for the tabs
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const dayAbbreviations = ["M", "T", "W", "T", "F", "S", "S"];
+
+  // Handle input changes for food preferences
+  const handlePreferenceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFoodPreferences(prev => {
+      const updated = { ...prev, [name]: value };
+      // Save to localStorage whenever preferences change
+      localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   // Toggle detailed benefits visibility
   const toggleDetailedBenefits = (cardId: string) => {
@@ -191,12 +228,17 @@ const FYPMealPlan = () => {
     setIsGenerating(true);
     
     try {
-      // Call the Supabase Edge function to generate meal plan
+      // Call the Supabase Edge function to generate meal plan with preferences
       const { data, error } = await supabase.functions.invoke("generate-recipe-ideas", {
         body: {
           mealName: "skin-healthy daily meal plan",
           mealType: "full day",
-          day: "today"
+          day: "today",
+          preferences: {
+            includeFoods: foodPreferences.includeFoods,
+            avoidFoods: foodPreferences.avoidFoods,
+            weeklyBudget: foodPreferences.weeklyBudget
+          }
         }
       });
       
@@ -628,7 +670,63 @@ const FYPMealPlan = () => {
         </p>
         
         {!mealPlan ? (
-          <div className="pt-4">
+          <div className="pt-4 space-y-6">
+            {/* Food Preference Inputs Section */}
+            <div className="space-y-5">
+              <Card className="overflow-hidden border border-gray-100">
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Carrot className="h-4 w-4 text-amber-600" />
+                    <h3 className="font-medium text-amber-800">Food Preferences</h3>
+                  </div>
+                </div>
+                <CardContent className="p-4 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="includeFoods" className="text-sm text-gray-700">
+                      Include these foods if possible:
+                    </Label>
+                    <Input 
+                      id="includeFoods"
+                      name="includeFoods"
+                      value={foodPreferences.includeFoods}
+                      onChange={handlePreferenceChange}
+                      placeholder="e.g., avocado, berries, salmon"
+                      className="bg-background"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="avoidFoods" className="text-sm text-gray-700">
+                      Foods to avoid:
+                    </Label>
+                    <Input 
+                      id="avoidFoods"
+                      name="avoidFoods"
+                      value={foodPreferences.avoidFoods}
+                      onChange={handlePreferenceChange}
+                      placeholder="e.g., dairy, gluten, nuts"
+                      className="bg-background"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="weeklyBudget" className="text-sm text-gray-700">
+                      Weekly budget (optional):
+                    </Label>
+                    <Input 
+                      id="weeklyBudget"
+                      name="weeklyBudget"
+                      type="number"
+                      value={foodPreferences.weeklyBudget}
+                      onChange={handlePreferenceChange}
+                      placeholder="e.g., 100"
+                      className="bg-background"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             <Button 
               onClick={generateMealPlan}
               disabled={isGenerating}
@@ -641,8 +739,6 @@ const FYPMealPlan = () => {
                 </>
               ) : "Generate Skin-Healthy Meal Plan"}
             </Button>
-            
-            {/* Removed DisclaimerChatBox from here */}
           </div>
         ) : (
           <div className="space-y-6 pt-2">
