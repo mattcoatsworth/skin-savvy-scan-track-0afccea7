@@ -1,4 +1,3 @@
-
 import React from "react";
 import DailySkinSnapshot from "@/components/DailySkinSnapshot";
 import ScanButton from "@/components/ScanButton";
@@ -7,8 +6,11 @@ import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
-import { Salad, Pill, Palette, CloudSun } from "lucide-react";
+import { Salad, Pill, Palette, CloudSun, CalendarDays, Activity } from "lucide-react";
 import BottomTemplate from "@/components/BottomTemplate";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   // Sample data
@@ -83,7 +85,10 @@ const Index = () => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  // Get today's date in readable format
   const today = new Date();
+  const todayFormatted = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  
   const skinHistory = Array(7).fill(null).map((_, i) => {
     const date = new Date();
     date.setDate(today.getDate() - (6 - i));
@@ -202,6 +207,15 @@ const Index = () => {
     },
   ];
 
+  // Sample meal plan data
+  const mealPlanToday = {
+    breakfast: "Avocado toast with poached eggs",
+    lunch: "Salmon salad with mixed greens",
+    dinner: "Grilled chicken with roasted vegetables",
+    snacks: ["Greek yogurt with berries", "Handful of almonds"],
+    hydration: "2.5L water with lemon slices"
+  };
+
   return (
     <div>
       {/* Simplified header with smaller Skin Savvy text */}
@@ -227,6 +241,86 @@ const Index = () => {
             factors={skinFactors}
             recommendations={fallbackRecommendations}
           />
+          
+          {/* Meal Plan Card */}
+          <Card className="overflow-hidden border-l-4 border-l-emerald-400">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2">
+                  <Salad className="h-5 w-5 text-emerald-500" />
+                  <h3 className="font-medium text-base">Today's Meal Plan</h3>
+                </div>
+                <Link to="/fyp">
+                  <Button variant="ghost" size="sm" className="text-xs">
+                    View Full Plan
+                  </Button>
+                </Link>
+              </div>
+              
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Breakfast</p>
+                  <p className="text-sm">{mealPlanToday.breakfast}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Lunch</p>
+                  <p className="text-sm">{mealPlanToday.lunch}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Dinner</p>
+                  <p className="text-sm">{mealPlanToday.dinner}</p>
+                </div>
+              </div>
+
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-emerald-600">Optimized for skin health</p>
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Skin Energy Card */}
+          <Card className="overflow-hidden border-l-4 border-l-blue-400">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-blue-500" />
+                  <h3 className="font-medium text-base">Skin Energy</h3>
+                </div>
+                <Link to="/fyp">
+                  <Button variant="ghost" size="sm" className="text-xs">
+                    View Details
+                  </Button>
+                </Link>
+              </div>
+              
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm">Current Energy Level</p>
+                <p className="font-semibold text-sm text-blue-600">78%</p>
+              </div>
+              
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: "78%" }}></div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-muted-foreground">Hydration</p>
+                  <p className="text-xs font-medium">Good</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-muted-foreground">Nutrients</p>
+                  <p className="text-xs font-medium">Excellent</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-muted-foreground">Sleep</p>
+                  <p className="text-xs font-medium">Needs improvement</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
           <RecentLogsCarousel logs={recentLogs} />
           
