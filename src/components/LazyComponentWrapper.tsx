@@ -2,7 +2,7 @@
 import React, { Suspense } from 'react';
 
 interface LazyWrapperProps {
-  component: React.LazyExoticComponent<() => JSX.Element>;
+  component: React.LazyExoticComponent<React.ComponentType<any>>;
 }
 
 const LazyComponentWrapper: React.FC<LazyWrapperProps> = ({ component: Component }) => {
