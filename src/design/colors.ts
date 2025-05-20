@@ -61,11 +61,11 @@ export const colors = {
       sand: 'hsl(var(--summer-sand))',
       stone: 'hsl(var(--summer-stone))',
       steel: 'hsl(var(--summer-steel))',
-      navy: 'hsl(var(--summer-navy))', // Updated masculine navigation color to be less prominent
-      brightBlue: 'hsl(var(--summer-bright-blue))', // Bright blue for indicators
-      recBg: 'hsl(var(--summer-rec-bg))', // New background for recommendations
-      plusButton: 'hsl(var(--summer-plus-button))', // New color for plus button hover
-      navText: 'hsl(var(--summer-nav-text))' // Gray for navigation text
+      navy: 'hsl(var(--summer-navy))',
+      brightBlue: 'hsl(var(--summer-bright-blue))',
+      recBg: 'hsl(var(--summer-rec-bg))',
+      plusButton: 'hsl(var(--summer-plus-button))',
+      navText: 'hsl(var(--summer-nav-text))'
     }
   },
 
@@ -85,8 +85,35 @@ export const colors = {
     warm: 'linear-gradient(111.4deg, rgba(238,113,113,1) 1%, rgba(246,215,148,1) 58%)',
     // Spring theme gradient 
     spring: 'linear-gradient(120deg, #FF6B01 0%, #FFC170 100%)',
-    // Summer theme gradient - updated to match new colors
+    // Summer theme gradient
     summer: 'linear-gradient(120deg, #66B3D9 0%, #8CD2BE 100%)'
+  },
+  
+  // Rating colors based on score
+  rating: {
+    excellent: '#4ADE80', // Green for 80+
+    good: '#22C55E',      // Lower green for 60-80
+    average: '#FACC15',   // Yellow for 40-60
+    fair: '#FB923C',      // Orange for 20-40
+    poor: '#F87171'       // Red for <20
+  },
+  
+  // Rating background colors
+  ratingBg: {
+    excellent: '#ECFDF5', // Light green bg for 80+
+    good: '#F0FDF4',      // Lower light green bg for 60-80
+    average: '#FEFCE8',   // Light yellow bg for 40-60
+    fair: '#FFF7ED',      // Light orange bg for 20-40
+    poor: '#FEF2F2'       // Light red bg for <20
+  },
+  
+  // Card highlight border colors
+  cardHighlight: {
+    health: '#4ADE80',     // Green for health/nutrition
+    energy: '#6BB9FF',     // Blue for energy/hydration
+    warning: '#FFC170',    // Amber for warning/alerts
+    error: '#FF4559',      // Red for errors
+    neutral: '#94A3B8'     // Slate for neutral information
   }
 };
 

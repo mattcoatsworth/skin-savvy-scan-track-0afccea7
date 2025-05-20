@@ -49,15 +49,56 @@ export const typography = {
     wide: '0.025em'
   },
 
-  // Usage examples
+  // Usage examples - predefined typography combinations
   styles: {
-    heading1: 'text-3xl font-bold text-skin-black tracking-tight',
-    heading2: 'text-2xl font-semibold text-skin-black',
-    heading3: 'text-xl font-medium text-skin-black',
+    // Headings
+    h1: 'text-3xl font-bold text-skin-black tracking-tight',
+    h2: 'text-2xl font-semibold text-skin-black',
+    h3: 'text-xl font-medium text-skin-black',
+    h4: 'text-lg font-medium text-skin-black',
+    
+    // Body text
     body: 'text-base text-skin-black',
+    bodySmall: 'text-sm text-skin-black',
     bodyMuted: 'text-base text-muted-foreground',
+    
+    // Special text
     small: 'text-sm text-muted-foreground',
-    link: 'text-blue-600 hover:underline cursor-pointer'
+    tiny: 'text-xs text-muted-foreground',
+    label: 'text-xs font-medium text-muted-foreground',
+    link: 'text-blue-600 hover:underline cursor-pointer',
+    
+    // Card specific
+    cardTitle: 'font-medium text-base',
+    cardLabel: 'text-xs text-muted-foreground',
+    cardValue: 'text-sm',
+    cardFooter: 'text-xs text-muted-foreground'
+  },
+  
+  // Component specific text
+  components: {
+    // Card typography
+    card: {
+      title: 'font-medium text-base',
+      header: 'flex justify-between items-center mb-3',
+      label: 'text-xs text-muted-foreground mb-1',
+      value: 'text-sm',
+      footer: 'mt-3 pt-3 border-t border-gray-100',
+      footerText: 'text-xs'
+    },
+    
+    // Button typography
+    button: {
+      primary: 'font-medium',
+      secondary: 'font-medium',
+      ghost: 'text-xs'
+    },
+    
+    // Rating typography
+    rating: {
+      value: 'text-2xl font-semibold',
+      label: 'text-xs font-medium'
+    }
   }
 };
 

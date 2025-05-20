@@ -40,24 +40,27 @@ export const spacing = {
   // Layout spacing
   layout: {
     page: {
-      padding: '2rem', // 32px
-      maxWidth: '1280px'
+      padding: '1rem', // 16px
+      maxWidth: '640px',
+      bottomMargin: '5rem' // Space for fixed elements at bottom
     },
     section: {
-      margin: '2rem', // 32px
-      padding: '1.5rem' // 24px
+      margin: '1.5rem', // 24px
+      padding: '1.5rem', // 24px
+      gap: '1.5rem' // 24px
     },
     card: {
-      padding: '1.25rem', // 20px
-      gap: '1rem' // 16px
+      padding: '1rem', // 16px
+      gap: '0.5rem', // 8px
+      marginBottom: '1.5rem' // 24px between cards
     }
   },
   
   // Component specific spacing
   components: {
     button: {
-      paddingX: '1.5rem', // 24px
-      paddingY: '0.75rem', // 12px
+      paddingX: '1rem', // 16px
+      paddingY: '0.5rem', // 8px
       gap: '0.5rem' // 8px
     },
     input: {
@@ -65,20 +68,26 @@ export const spacing = {
       paddingY: '0.5rem' // 8px
     },
     card: {
-      paddingX: '1.5rem', // 24px
-      paddingY: '1.25rem' // 20px
+      paddingX: '1rem', // 16px
+      paddingY: '1rem', // 16px
+      header: {
+        marginBottom: '0.75rem' // 12px
+      },
+      content: {
+        gap: '0.5rem' // 8px
+      },
+      footer: {
+        marginTop: '0.75rem', // 12px
+        paddingTop: '0.75rem' // 12px
+      },
+      borderLeft: '0.25rem' // 4px for colored left borders
     },
-    modal: {
-      padding: '1.5rem' // 24px
+    iconText: {
+      gap: '0.5rem' // 8px between icon and text
     },
-    chatInput: {
-      paddingTop: '1.5rem', // 24px
-      paddingBottom: '4rem', // 64px
-      background: 'bg-slate-50',
-      shadow: 'shadow-sm'
-    },
-    pageContent: {
-      bottomMargin: '0' // Removing bottom margin as ChatInput will handle spacing
+    ratingCard: {
+      daySize: '2.5rem', // 40px for the day circle
+      gap: '0.5rem' // 8px between days
     }
   }
 };
