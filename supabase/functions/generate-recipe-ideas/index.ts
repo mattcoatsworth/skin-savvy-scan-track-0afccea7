@@ -18,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { mealName, mealType, day, preferences } = await req.json();
+    const { mealName, mealType, day, preferences, onlyBenefits } = await req.json();
 
     let prompt = `Generate a detailed, nutritious ${mealType} recipe idea called "${mealName}" for ${day}.`;
     
