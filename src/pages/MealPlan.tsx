@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, RefreshCw, ChefHat, Utensils, Apple, ShoppingCart, List, ListCheck, AlertTriangle, DollarSign, BookOpen, Plus, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import TestAIChatBox from '@/components/TestAIChatBox';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { supabase } from '@/integrations/supabase/client';
+
+// Storage key for meal plan data
+const MEAL_PLAN_STORAGE_KEY = "meal_plan_data";
 
 const MealPlan = () => {
   const [loading, setLoading] = useState(false);
@@ -126,6 +128,18 @@ const MealPlan = () => {
       setLoadingBenefits(prev => ({ ...prev, [benefitsKey]: false }));
     }
   };
+
+  // Load meal plan from localStorage on component mount
+  useEffect(() => {
+    const savedMealPlan = localStorage.getItem(MEAL_PLAN_STORAGE_KEY);
+    if (savedMealPlan) {
+      try {
+        setMealPlan(JSON.parse(savedMealPlan));
+      } catch (error) {
+        console.error('Error parsing saved meal plan:', error);
+      }
+    }
+  }, []);
 
   const generateMealPlan = async () => {
     setLoading(true);
@@ -268,7 +282,9 @@ const MealPlan = () => {
           ] : null
         };
         
-        // Store the meal plan in localStorage for use in the RecipeIdeas page
+        // Store the meal plan in localStorage
+        localStorage.setItem(MEAL_PLAN_STORAGE_KEY, JSON.stringify(dummyData));
+        // Also store it for the RecipeIdeas page (keep this line for compatibility)
         localStorage.setItem('mealPlan', JSON.stringify(dummyData));
         
         setMealPlan(dummyData);

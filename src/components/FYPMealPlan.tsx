@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,6 +47,9 @@ type GroceryItem = {
   items: string[];
 };
 
+const STORAGE_KEY = "fyp_meal_plan";
+const GROCERY_LIST_KEY = "fyp_grocery_list";
+
 const FYPMealPlan = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [mealPlan, setMealPlan] = useState<MealPlanType | null>(null);
@@ -56,6 +58,31 @@ const FYPMealPlan = () => {
   const [activeDay, setActiveDay] = useState("Monday");
   const [groceryList, setGroceryList] = useState<GroceryItem[] | null>(null);
   const [isGeneratingGroceryList, setIsGeneratingGroceryList] = useState(false);
+
+  // Load saved meal plan and grocery list from localStorage on component mount
+  useEffect(() => {
+    const savedMealPlan = localStorage.getItem(STORAGE_KEY);
+    const savedGroceryList = localStorage.getItem(GROCERY_LIST_KEY);
+    
+    if (savedMealPlan) {
+      try {
+        setMealPlan(JSON.parse(savedMealPlan));
+      } catch (error) {
+        console.error("Error parsing saved meal plan:", error);
+        // If there's an error parsing, remove the invalid data
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+    
+    if (savedGroceryList) {
+      try {
+        setGroceryList(JSON.parse(savedGroceryList));
+      } catch (error) {
+        console.error("Error parsing saved grocery list:", error);
+        localStorage.removeItem(GROCERY_LIST_KEY);
+      }
+    }
+  }, []);
 
   // Days of the week for the tabs
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -104,9 +131,13 @@ const FYPMealPlan = () => {
         throw new Error(`Failed to generate grocery list: ${error.message}`);
       }
       
-      // For now, let's create a sample grocery list while the edge function is being set up
-      if (!data || !data.groceryList) {
-        // Sample grocery list
+      // Save the grocery list
+      if (data && data.groceryList) {
+        setGroceryList(data.groceryList);
+        // Save to localStorage for persistence
+        localStorage.setItem(GROCERY_LIST_KEY, JSON.stringify(data.groceryList));
+      } else {
+        // Fallback logic can stay the same
         const sampleGroceryList: GroceryItem[] = [
           {
             category: "Proteins",
@@ -135,8 +166,7 @@ const FYPMealPlan = () => {
         ];
         
         setGroceryList(sampleGroceryList);
-      } else {
-        setGroceryList(data.groceryList);
+        localStorage.setItem(GROCERY_LIST_KEY, JSON.stringify(sampleGroceryList));
       }
       
       toast({
@@ -426,6 +456,11 @@ const FYPMealPlan = () => {
       
       setMealPlan(generatedMealPlan);
       setActiveDay("Monday"); // Reset to Monday when a new plan is generated
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(generatedMealPlan));
+      
+      // Clear any existing grocery list when generating a new meal plan
+      setGroceryList(null);
+      localStorage.removeItem(GROCERY_LIST_KEY);
       
       toast({
         title: "Meal Plan Generated",
