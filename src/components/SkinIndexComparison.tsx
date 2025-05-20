@@ -108,7 +108,7 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
               <ChartContainer className="h-full" config={chartConfig}>
                 <LineChart 
                   data={comparisonData} 
-                  margin={{ top: 20, right: 25, bottom: 5, left: 0 }}
+                  margin={{ top: 20, right: 10, bottom: 5, left: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
                   <XAxis 
@@ -117,7 +117,7 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
                     fontSize={12}
                     tickLine={false}
                     axisLine={{ stroke: '#e2e8f0' }}
-                    padding={{ left: 25, right: 25 }}
+                    padding={{ left: 5, right: 5 }}
                     tickMargin={8}
                     interval={0}
                   />
@@ -128,7 +128,7 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
                     tickLine={false}
                     axisLine={{ stroke: '#e2e8f0' }}
                     tickFormatter={(value) => `${value}`}
-                    width={45}
+                    width={30}
                   />
                   <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 10 }} />
                   <ChartTooltip 

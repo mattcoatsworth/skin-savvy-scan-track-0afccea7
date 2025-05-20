@@ -2,10 +2,13 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 
-// This component will display product analysis data
-const ProductsAnalysis: React.FC = () => {
+interface ProductsAnalysisProps {
+  className?: string;
+}
+
+const ProductsAnalysis: React.FC<ProductsAnalysisProps> = ({ className }) => {
   return (
-    <div>
+    <div className={className}>
       <h2 className="text-xl font-semibold mb-4">Product Analysis</h2>
       <Card>
         <CardContent className="p-4">
