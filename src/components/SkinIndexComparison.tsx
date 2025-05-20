@@ -9,7 +9,9 @@ import {
   YAxis, 
   Legend, 
   ResponsiveContainer,
-  Tooltip 
+  Tooltip,
+  CartesianGrid,
+  ReferenceLine
 } from "recharts";
 import { Info } from "lucide-react";
 import { 
@@ -17,6 +19,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart";
 
 // Generate mock data
 const generateComparisonData = () => {
@@ -48,13 +55,33 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
   // In a real app, this would fetch data from an API based on user's age and gender
   const comparisonData = generateComparisonData();
   
+  // Define chart colors with enhanced visual appeal
+  const chartConfig = {
+    userScore: {
+      label: "Your Score",
+      color: "#8B5CF6" // Vivid purple
+    },
+    avgScore: {
+      label: `Avg. ${gender}s (${age})`,
+      color: "#0EA5E9" // Ocean blue
+    }
+  };
+
+  // Helper function to get value domain from data
+  const getValueDomain = () => {
+    const scores = comparisonData.flatMap(item => [item.userScore, item.avgScore]);
+    const min = Math.max(0, Math.min(...scores) - 10);
+    const max = Math.min(100, Math.max(...scores) + 10);
+    return [min, max];
+  };
+  
   return (
     <div className={cn("block", className)}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-semibold">Skin Index Comparison</h2>
         <Popover>
           <PopoverTrigger asChild>
-            <button className="text-gray-500">
+            <button className="text-gray-500 hover:text-gray-700 transition-colors">
               <Info size={18} />
             </button>
           </PopoverTrigger>
@@ -70,47 +97,82 @@ const SkinIndexComparison: React.FC<SkinIndexComparisonProps> = ({
         </Popover>
       </div>
       
-      <Card className="ios-card">
-        <CardContent className="p-4">
-          <p className="text-sm text-muted-foreground mb-3">
-            Your skin condition compared to {gender}s of age {age}
-          </p>
-          
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={comparisonData} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
-                <XAxis dataKey="day" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip 
-                  formatter={(value) => [`${value}`, 'Score']}
-                  labelFormatter={(label) => `${label}`}
-                />
-                <Legend />
-                <Line 
-                  name="Your Score" 
-                  type="monotone" 
-                  dataKey="userScore" 
-                  stroke="#8884d8" 
-                  strokeWidth={2} 
-                  dot={{ r: 4 }} 
-                  activeDot={{ r: 6 }} 
-                />
-                <Line 
-                  name={`Avg. ${gender}s (${age})`} 
-                  type="monotone" 
-                  dataKey="avgScore" 
-                  stroke="#82ca9d" 
-                  strokeWidth={2} 
-                  dot={{ r: 4 }} 
-                  strokeDasharray="5 5" 
-                />
-              </LineChart>
-            </ResponsiveContainer>
+      <Card className="ios-card overflow-hidden backdrop-blur-sm border border-slate-200 dark:border-slate-800 shadow-md">
+        <CardContent className="p-5">
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-slate-900/50 dark:to-indigo-900/30 -m-5 p-5 pb-2 mb-3 rounded-t-lg">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-2 font-medium">
+              Your skin condition compared to {gender}s of age {age}
+            </p>
+            
+            <div className="h-[240px]">
+              <ChartContainer className="h-full" config={chartConfig}>
+                <LineChart data={comparisonData} margin={{ top: 20, right: 30, bottom: 5, left: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="#94a3b8" 
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={{ stroke: '#e2e8f0' }}
+                  />
+                  <YAxis 
+                    domain={getValueDomain()} 
+                    stroke="#94a3b8" 
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={{ stroke: '#e2e8f0' }}
+                    tickFormatter={(value) => `${value}`}
+                  />
+                  <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 10 }} />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        formatter={(value: number) => [`${value}`, 'Score']}
+                        labelFormatter={(label) => `${label}`}
+                      />
+                    }
+                  />
+                  <Legend verticalAlign="top" height={36} />
+                  <Line 
+                    name="Your Score" 
+                    type="monotone" 
+                    dataKey="userScore" 
+                    stroke="#8B5CF6" 
+                    strokeWidth={2.5} 
+                    dot={{ r: 4, fill: "#8B5CF6", stroke: "white", strokeWidth: 2 }} 
+                    activeDot={{ r: 6, stroke: "white", strokeWidth: 2 }}
+                    animationDuration={1000}
+                  />
+                  <Line 
+                    name={`Avg. ${gender}s (${age})`} 
+                    type="monotone" 
+                    dataKey="avgScore" 
+                    stroke="#0EA5E9" 
+                    strokeWidth={2} 
+                    dot={{ r: 4, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }} 
+                    strokeDasharray="5 5"
+                    animationDuration={1500}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </div>
           </div>
           
-          <p className="text-xs text-center text-muted-foreground mt-2">
-            Data represents daily skin score averages over the past week
-          </p>
+          <div className="flex flex-col md:flex-row items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-xs text-center text-slate-500 dark:text-slate-400">
+              Data represents daily skin score averages over the past week
+            </p>
+            <div className="flex gap-3 mt-2 md:mt-0">
+              <span className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <span className="inline-block w-3 h-3 bg-[#8B5CF6] rounded-full"></span>
+                Your Score
+              </span>
+              <span className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <span className="inline-block w-3 h-3 bg-[#0EA5E9] rounded-full"></span>
+                Average
+              </span>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
