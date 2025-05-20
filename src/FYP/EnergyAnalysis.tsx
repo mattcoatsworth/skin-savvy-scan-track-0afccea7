@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Image as ImageIcon, Zap, MessageSquare } from "lucide-react";
+import { Loader2, Image as ImageIcon, Zap, MessageSquare, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TestAIChatBox from "./TestAIChatBox";
 
 interface EnergyAnalysisProps {
   className?: string;
@@ -15,11 +17,10 @@ interface EnergyAnalysisProps {
 
 interface AnalysisData {
   fullAnalysis: string;
-  traditionalChineseMedicine: string;
-  chakraTheory: string;
-  metaphysicalSymbolism: string;
-  holisticRemedies: string;
-  suggestedFoods: string;
+  traditionalChineseMedicine?: string;
+  chakraTheory?: string;
+  holisticApproaches?: string;
+  energeticInsights?: string;
 }
 
 /**
@@ -208,7 +209,15 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
       }
       
       // Process the full analysis text
-      setAnalysis(data.analysis);
+      const fullAnalysisText = data.analysis.fullAnalysis;
+      
+      // Parse the full analysis text to extract different sections
+      const parsedAnalysis = parseAnalysisText(fullAnalysisText);
+      
+      setAnalysis({
+        fullAnalysis: fullAnalysisText,
+        ...parsedAnalysis
+      });
       
       toast({
         title: "Energy Analysis Complete",
@@ -228,19 +237,66 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
       setIsAnalyzing(false);
     }
   };
+  
+  // Function to parse the analysis text into different sections
+  const parseAnalysisText = (text: string): Partial<AnalysisData> => {
+    // Create an object to store the different sections
+    const sections: Partial<AnalysisData> = {};
+    
+    // Look for Traditional Chinese Medicine section
+    const tcmMatch = text.match(/(?:Traditional Chinese Medicine|TCM)[\s\S]*?(?=🌀|Chakra|💫|$)/i);
+    if (tcmMatch) {
+      sections.traditionalChineseMedicine = cleanFormatting(tcmMatch[0]);
+    }
+    
+    // Look for Chakra Theory section
+    const chakraMatch = text.match(/(?:Chakra Theory|Chakra Analysis|Chakra Energy)[\s\S]*?(?=🧘‍♀️|Holistic|⚡|$)/i);
+    if (chakraMatch) {
+      sections.chakraTheory = cleanFormatting(chakraMatch[0]);
+    }
+    
+    // Look for Holistic Approaches section
+    const holisticMatch = text.match(/(?:Holistic Approaches|Holistic Remedies|Holistic Healing)[\s\S]*?(?=🔮|Energetic|🌿|$)/i);
+    if (holisticMatch) {
+      sections.holisticApproaches = cleanFormatting(holisticMatch[0]);
+    }
+    
+    // Get the overall insights by excluding the known sections or taking a summary
+    if (text) {
+      // Find any summary section, or create one from the introduction
+      const summaryMatch = text.match(/(?:Overall Analysis|Summary|Interpretation)[\s\S]*?(?=🔮|Traditional|🧬|$)/i);
+      sections.energeticInsights = summaryMatch ? cleanFormatting(summaryMatch[0]) : text.slice(0, 300) + "...";
+    }
+    
+    return sections;
+  };
+  
+  // Clean formatting from text (remove markdown artifacts)
+  const cleanFormatting = (text: string): string => {
+    // Replace markdown headings with plain text
+    let cleaned = text.replace(/#+\s+/g, '');
+    
+    // Replace markdown bold with plain text
+    cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '$1');
+    
+    // Replace markdown italic with plain text
+    cleaned = cleaned.replace(/\*(.*?)\*/g, '$1');
+    
+    // Preserve emojis but remove excessive whitespace
+    cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+    
+    return cleaned.trim();
+  };
 
-  // Format the analysis text to enhance display of emojis and structure
+  // Format the analysis text to enhance display
   const formatAnalysisText = (text: string | undefined) => {
     if (!text) return null;
     
-    // First, preserve line breaks but convert double line breaks to HTML breaks
-    let formattedText = text.replace(/\n\n/g, '<br/><br/>');
-    
-    // Make emojis stand out more
-    formattedText = formattedText.replace(/🔮|🧬|🌫️|🔥|🌿|🧘‍♀️|⚡|🌊|💫|🌀/g, '<span class="text-xl">$&</span>');
-    
-    // Make headings slightly larger and bolder
-    formattedText = formattedText.replace(/^(.*?\:)/gm, '<strong class="text-md">$1</strong>');
+    // Format paragraphs
+    const formattedText = text
+      .split('\n\n')
+      .map(para => `<p class="mb-3">${para}</p>`)
+      .join('');
     
     return { __html: formattedText };
   };
@@ -348,39 +404,128 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
           <div className="mt-6 space-y-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Your Energetic Analysis</h3>
             
-            <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
-              <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3.5 rounded-t-lg">
-                <h3 className="text-md font-medium text-white flex items-center gap-2.5">
-                  <div className="h-6 w-6 rounded-full bg-gradient-to-br from-purple-300 to-indigo-500 flex items-center justify-center text-white shadow-sm">
-                    <Zap className="h-3 w-3" />
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid grid-cols-4 mb-4">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="tcm">TCM</TabsTrigger>
+                <TabsTrigger value="chakra">Chakra</TabsTrigger>
+                <TabsTrigger value="holistic">Holistic</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview">
+                <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
+                  <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-3.5 rounded-t-lg">
+                    <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+                      <div className="h-6 w-6 rounded-full bg-gradient-to-br from-purple-300 to-indigo-500 flex items-center justify-center text-white shadow-sm">
+                        <Zap className="h-3 w-3" />
+                      </div>
+                      Overall Energetic Insights
+                    </h3>
                   </div>
-                  Holistic Skin Analysis
-                </h3>
-              </div>
-              <CardContent className="p-5 bg-white">
-                <div className="prose prose-sm text-gray-800 leading-relaxed">
-                  {analysis.fullAnalysis ? (
-                    <div dangerouslySetInnerHTML={formatAnalysisText(analysis.fullAnalysis)} />
-                  ) : (
-                    <p>No analysis available.</p>
-                  )}
-                </div>
-                
-                {!showHealingPlan && analysis.fullAnalysis && analysis.fullAnalysis.toLowerCase().includes("7-day") && (
-                  <div className="mt-8">
-                    <Button
-                      onClick={handleShowHealingPlan}
-                      className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md hover:shadow-lg transition-all rounded-md"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Yes, I want a 7-day ritual healing plan
-                    </Button>
+                  <CardContent className="p-5 bg-white">
+                    <div className="prose prose-sm text-gray-800 leading-relaxed">
+                      {analysis.energeticInsights ? (
+                        <div dangerouslySetInnerHTML={formatAnalysisText(analysis.energeticInsights)} />
+                      ) : (
+                        <p>No overall analysis available.</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="tcm">
+                <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
+                  <div className="bg-gradient-to-r from-red-500 to-orange-500 px-4 py-3.5 rounded-t-lg">
+                    <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+                      <div className="h-6 w-6 rounded-full bg-gradient-to-br from-red-300 to-orange-400 flex items-center justify-center text-white shadow-sm">
+                        <span className="text-xs">易</span>
+                      </div>
+                      Traditional Chinese Medicine
+                    </h3>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                  <CardContent className="p-5 bg-white">
+                    <div className="prose prose-sm text-gray-800 leading-relaxed">
+                      {analysis.traditionalChineseMedicine ? (
+                        <div dangerouslySetInnerHTML={formatAnalysisText(analysis.traditionalChineseMedicine)} />
+                      ) : (
+                        <p>No TCM analysis available.</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="chakra">
+                <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
+                  <div className="bg-gradient-to-r from-blue-500 to-teal-500 px-4 py-3.5 rounded-t-lg">
+                    <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+                      <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-300 to-teal-400 flex items-center justify-center text-white shadow-sm">
+                        <span className="text-xs">⦿</span>
+                      </div>
+                      Chakra Theory
+                    </h3>
+                  </div>
+                  <CardContent className="p-5 bg-white">
+                    <div className="prose prose-sm text-gray-800 leading-relaxed">
+                      {analysis.chakraTheory ? (
+                        <div dangerouslySetInnerHTML={formatAnalysisText(analysis.chakraTheory)} />
+                      ) : (
+                        <p>No chakra analysis available.</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="holistic">
+                <Card className="mb-4 overflow-hidden shadow-md border border-gray-100">
+                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3.5 rounded-t-lg">
+                    <h3 className="text-md font-medium text-white flex items-center gap-2.5">
+                      <div className="h-6 w-6 rounded-full bg-gradient-to-br from-green-300 to-emerald-400 flex items-center justify-center text-white shadow-sm">
+                        <span className="text-xs">❀</span>
+                      </div>
+                      Holistic Approaches
+                    </h3>
+                  </div>
+                  <CardContent className="p-5 bg-white">
+                    <div className="prose prose-sm text-gray-800 leading-relaxed">
+                      {analysis.holisticApproaches ? (
+                        <div dangerouslySetInnerHTML={formatAnalysisText(analysis.holisticApproaches)} />
+                      ) : (
+                        <p>No holistic approaches available.</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
             
-            {showHealingPlan && (
+            {!showHealingPlan ? (
+              <div className="mt-8 p-5 bg-white border border-gray-100 rounded-lg shadow-sm">
+                <h4 className="font-medium text-lg mb-3 flex items-center gap-2 text-purple-800">
+                  <MessageSquare className="h-5 w-5" />
+                  Follow Up
+                </h4>
+                <p className="text-gray-700 mb-5">Would you like a personalized 7-day ritual plan that blends metaphysical healing with gentle physical practices? 🌼✨</p>
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={handleShowHealingPlan}
+                    className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-md"
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Yes, I want a ritual plan
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="flex-1 border-gray-200" 
+                    onClick={() => setShowHealingPlan(false)}
+                  >
+                    No, thanks
+                  </Button>
+                </div>
+              </div>
+            ) : (
               <Collapsible className="mb-4">
                 <Card className="overflow-hidden shadow-md border border-gray-100">
                   <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-3.5 rounded-t-lg">
@@ -457,7 +602,17 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
               </Collapsible>
             )}
             
-            <div className="bg-white px-4 py-3 border border-gray-100 rounded-lg mt-4">
+            {/* Chat section for follow-up questions */}
+            <div className="mt-8">
+              <TestAIChatBox 
+                initialMessages={[{
+                  role: "assistant",
+                  content: "Do you have any questions about your energy analysis or healing plan? I'm here to help!"
+                }]}
+              />
+            </div>
+            
+            <div className="bg-white px-5 py-4 border border-gray-100 rounded-lg mt-4">
               <p className="text-xs text-gray-500 italic">
                 This analysis is based on holistic principles and is for personal insight only, not medical advice.
               </p>

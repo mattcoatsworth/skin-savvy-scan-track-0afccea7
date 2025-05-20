@@ -7,15 +7,21 @@ import { Send, MessageSquare, ChevronRight, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
 interface TestAIChatBoxProps {
   productTitle?: string;
+  initialMessages?: Message[];
 }
 
 /**
  * Test AI Chat Box component
  * Allows users to ask questions and receive AI-generated responses
  */
-const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle }) => {
+const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle, initialMessages = [] }) => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   
@@ -48,6 +54,18 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle }) => {
       ];
     }
     
+    // Energy analysis specific suggestions
+    if (initialMessages?.[0]?.content?.includes("energy analysis")) {
+      return [
+        "Explain chakra healing more?",
+        "How to balance my energy?",
+        "Foods for skin energy?",
+        "Daily rituals for healing?",
+        "Meditation for my condition?",
+        "Herbs for my skin type?"
+      ];
+    }
+    
     // Default suggestions
     return [
       "Tell me more about this",
@@ -61,8 +79,23 @@ const TestAIChatBox: React.FC<TestAIChatBoxProps> = ({ productTitle }) => {
 
   const suggestions = getSuggestions();
 
+  // Get initial message from assistant if available
+  const initialMessage = initialMessages.find(msg => msg.role === "assistant")?.content;
+
   return (
-    <div className="mt-8 mb-20">
+    <div className="mt-6 mb-10">
+      {/* Display initial assistant message if any */}
+      {initialMessage && (
+        <div className="mb-4 bg-gray-50 rounded-lg p-4 border border-gray-100">
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
+              <MessageSquare className="h-4 w-4" />
+            </div>
+            <div className="text-sm text-gray-700">{initialMessage}</div>
+          </div>
+        </div>
+      )}
+      
       {/* Quick suggestions with scroll indicators */}
       <div className="relative mb-3">
         {/* Left scroll indicator */}
