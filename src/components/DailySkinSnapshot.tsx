@@ -6,16 +6,13 @@ import { Smile, Droplet, Utensils, Pill, Circle, Activity, ChevronRight } from "
 import { useSkinAdvice } from "@/hooks/useSkinAdvice";
 import { useAIDetailCache } from "@/hooks/useAIDetailCache";
 import { toast } from "@/hooks/use-toast";
-
-type FactorType = "Food" | "Supplement" | "Makeup" | "Weather";
+import { FactorType, RecommendationType } from "@/types/skin-types";
 
 type Factor = {
   type: FactorType;
   status: string;
   icon: React.ReactNode;
 };
-
-type RecommendationType = "skincare" | "food" | "supplements" | "makeup" | "lifestyle";
 
 type Recommendation = {
   type: RecommendationType;

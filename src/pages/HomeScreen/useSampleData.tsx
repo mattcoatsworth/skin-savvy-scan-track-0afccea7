@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import { generateSkinHistoryData } from "@/pages/HomeScreen/skin-utils";
 import { 
+  FactorType,
   Factor, 
   RecommendationType,
   RecentLogType, 
