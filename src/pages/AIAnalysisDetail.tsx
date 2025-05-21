@@ -196,16 +196,50 @@ const AIAnalysisDetail = () => {
         
         // Build a title for the prompt
         const displayType = analysisTypeDisplayMap[recommendationType.toLowerCase()] || recommendationType;
-        const baseTitle = `${displayType} ${recommendationNumber}`;
+        
+        // Create a cache key that's unique to this specific type and id
+        const uniqueCacheKey = `${recommendationType}-${recommendationNumber}`;
+        console.log("Using unique cache key:", uniqueCacheKey);
+        
+        // Special handling for different types to create unique content
+        let baseTitle = "";
+        let promptContext = "";
+        
+        switch(recommendationType.toLowerCase()) {
+          case 'action':
+            baseTitle = `Recommended Action for Skin Health: ${recommendationNumber}`;
+            promptContext = "This is a recommended action for improving skin health based on the user's skin logs and habits.";
+            break;
+          case 'factor':
+            baseTitle = `Contributing Factor to Skin Condition: ${recommendationNumber}`;
+            promptContext = "This is a factor that has been identified as contributing to the user's current skin condition.";
+            break;
+          case 'observation':
+            baseTitle = `Key Observation About Skin Health: ${recommendationNumber}`;
+            promptContext = "This is an important observation about the user's skin health patterns and trends.";
+            break;
+          case 'timeline':
+            baseTitle = `Timeline Insight for Skin Progress: ${recommendationNumber}`;
+            promptContext = "This provides insights about the user's skin health timeline and expected progress.";
+            break;
+          case 'concern':
+            baseTitle = `Potential Skin Health Concern: ${recommendationNumber}`;
+            promptContext = "This highlights a potential concern regarding the user's skin health that should be addressed.";
+            break;
+          default:
+            baseTitle = `${displayType} ${recommendationNumber}`;
+            promptContext = "This is an analysis of the user's skin health data.";
+        }
         
         console.log("Generating content with base title:", baseTitle);
+        console.log("Prompt context:", promptContext);
         
-        // Generate content immediately
-        const generatedContent = await generateNewContent(baseTitle);
+        // Generate content immediately with the specialized prompt context
+        const generatedContent = await generateNewContent(baseTitle, promptContext);
         if (generatedContent) {
           setContent(generatedContent);
           
-          // Cache for future use
+          // Cache for future use with the unique key
           await cacheDetailContent(recommendationType, recommendationNumber, generatedContent);
           
           try {
@@ -227,7 +261,7 @@ const AIAnalysisDetail = () => {
   }, [type, id, fullId, location.state]);
 
   // Function to generate content when not found in cache
-  const generateNewContent = async (baseTitle: string): Promise<AnalysisContent | null> => {
+  const generateNewContent = async (baseTitle: string, promptContext: string = ""): Promise<AnalysisContent | null> => {
     try {
       // First set temporary content for UI responsiveness
       const tempContent: AnalysisContent = {
@@ -255,10 +289,17 @@ const AIAnalysisDetail = () => {
         contentType = "concern";
       }
       
+      // Generate an ID-specific seed to ensure content is different for each item
+      const uniqueSeed = `${recommendationType}-${recommendationNumber}-${Date.now()}`;
+      
       // Generate detailed content using AI
       const detailPrompt = `
         Create detailed information about the skin analysis topic: "${baseTitle}".
         This is a ${contentType} from a skin health analysis.
+        ${promptContext ? promptContext + "\n" : ""}
+        
+        Make this content unique (don't repeat content you may have generated for other similar requests).
+        Use this unique identifier to guide your response and ensure it's specific: ${uniqueSeed}
         
         Please provide:
         1. A clear title for this ${contentType} (just the key concept, 3-7 words)

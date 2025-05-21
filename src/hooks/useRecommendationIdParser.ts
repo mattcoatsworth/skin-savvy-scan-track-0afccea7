@@ -64,12 +64,15 @@ export const useRecommendationIdParser = () => {
         }
       }
       
-      // For URLs like /recommendations-detail/ai-timeline-1
+      // For URLs like /recommendations-detail/ai-action-8 or /recommendations-detail/ai-factor-4
       if (normalizedId.startsWith("ai-")) {
-        const parts = normalizedId.substring(3).split('-');
+        const typePart = normalizedId.substring(3); // Remove "ai-" prefix
+        const parts = typePart.split('-');
+        
         if (parts.length >= 2) {
           recommendationType = parts[0];
           recommendationNumber = parts.slice(1).join('-');
+          console.log(`Parsed ai- prefixed format: type=${recommendationType}, number=${recommendationNumber}`);
         } else if (parts.length === 1) {
           // Handle case like "ai-timeline" (no number)
           recommendationType = parts[0];
