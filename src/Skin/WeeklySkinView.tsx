@@ -2,10 +2,13 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, TrendingUp, Droplet, Crown, Clock, Thermometer } from "lucide-react";
 import { Link } from "react-router-dom";
 import TrendChart from "@/components/TrendChart";
 import { WeeklySkinData } from "./types";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 
 // Sample data for weekly skin health
 const sampleWeeklyData: WeeklySkinData = {
@@ -66,11 +69,59 @@ const WeeklySkinView: React.FC = () => {
   
   // Check if this is the current week
   const isCurrentWeek = currentWeekIndex === 0;
+
+  // Helper function for rating backgrounds
+  const getRatingBgColor = (rating: number) => {
+    if (rating >= 80) return "bg-gradient-to-br from-emerald-50 to-green-50";
+    if (rating >= 60) return "bg-gradient-to-br from-lime-50 to-emerald-50";
+    if (rating >= 40) return "bg-gradient-to-br from-amber-50 to-yellow-50";
+    if (rating >= 20) return "bg-gradient-to-br from-orange-50 to-amber-50";
+    return "bg-gradient-to-br from-red-50 to-orange-50";
+  };
+  
+  // Helper function for rating text colors
+  const getRatingTextColor = (rating: number) => {
+    if (rating >= 80) return "text-emerald-600";
+    if (rating >= 60) return "text-lime-600";
+    if (rating >= 40) return "text-amber-600";
+    if (rating >= 20) return "text-orange-600";
+    return "text-red-600";
+  };
+  
+  // Get indicator color for progress
+  const getIndicatorColor = (value: number) => {
+    if (value >= 80) return "bg-emerald-500";
+    if (value >= 60) return "bg-lime-500";
+    if (value >= 40) return "bg-amber-500";
+    if (value >= 20) return "bg-orange-500";
+    return "bg-red-500";
+  };
   
   return (
     <div className="space-y-6">
-      {/* Week Selector */}
-      <Card className="ios-card">
+      {/* Header with Info Popover */}
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold">Weekly Skin Report</h2>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="text-gray-500 hover:text-gray-700 transition-colors">
+              <Info size={18} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-2">
+              <h3 className="font-medium">About your weekly skin report</h3>
+              <p className="text-sm text-muted-foreground">
+                This report analyzes your skin data for the week and provides insights
+                on trends, progress, and factors that influence your skin health.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      
+      {/* Week Selector - Styled similar to meal plan */}
+      <Card className="overflow-hidden border-l-4 border-blue-400">
         <CardContent className="p-4">
           <div className="flex justify-between items-center">
             <button 
@@ -100,74 +151,103 @@ const WeeklySkinView: React.FC = () => {
         </CardContent>
       </Card>
       
-      {/* Weekly Overview */}
-      <div>
-        <Card className="ios-card">
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between items-end mb-1">
-                  <span className="text-3xl font-bold">{sampleWeeklyData.overallScore}</span>
-                  {sampleWeeklyData.previousWeekScore && (
-                    <span className="text-green-600 text-sm">+{sampleWeeklyData.overallScore - sampleWeeklyData.previousWeekScore} from last week</span>
-                  )}
-                </div>
-                <Progress value={sampleWeeklyData.overallScore} className="h-2" />
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground mb-3">Weekly Trend</p>
-                <TrendChart data={sampleWeeklyData.weeklyTrend} height={100} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* Weekly Insights */}
-      <div>
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-xl font-semibold">Weekly Insights</h2>
-          <Link 
-            to="/weekly-skin-analysis"
-            className="text-blue-500 text-sm hover:underline"
-          >
-            See Full Analysis
-          </Link>
+      {/* Weekly Overview - Styled with gradients similar to meal plan */}
+      <Card className="overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-blue-600" />
+            <h3 className="font-medium text-blue-800">Weekly Skin Score</h3>
+          </div>
         </div>
-        
-        <Card className="ios-card">
-          <CardContent className="p-4 space-y-3">
-            {/* Skin Parameters */}
-            {sampleWeeklyData.skinParameters.map((param, index) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">{param.name}</span>
-                  <span className="text-sm text-green-600">
-                    +{param.current - param.previous}%
+        <CardContent className="p-4">
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between items-end mb-1">
+                <span className="text-3xl font-bold">{sampleWeeklyData.overallScore}</span>
+                {sampleWeeklyData.previousWeekScore && (
+                  <span className={`text-sm ${sampleWeeklyData.overallScore > sampleWeeklyData.previousWeekScore ? 'text-green-600' : 'text-red-600'}`}>
+                    {sampleWeeklyData.overallScore > sampleWeeklyData.previousWeekScore ? '+' : ''}
+                    {sampleWeeklyData.overallScore - sampleWeeklyData.previousWeekScore} from last week
                   </span>
-                </div>
-                <Progress value={param.current} className="h-2" />
+                )}
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <Progress 
+                value={sampleWeeklyData.overallScore} 
+                className="h-2" 
+                indicatorClassName={getIndicatorColor(sampleWeeklyData.overallScore)} 
+              />
+            </div>
+            
+            <div>
+              <p className="text-sm text-muted-foreground mb-3">Weekly Trend</p>
+              <TrendChart data={sampleWeeklyData.weeklyTrend} height={100} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Skin Parameters - Styled with icons like meal plan */}
+      <div>
+        <h2 className="text-xl font-semibold mb-3">Skin Parameters</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {sampleWeeklyData.skinParameters.map((param, index) => {
+            // Select icon based on parameter name
+            const getIcon = (name: string) => {
+              switch(name.toLowerCase()) {
+                case 'hydration': return <Droplet className="h-4 w-4 text-blue-500" />;
+                case 'elasticity': return <Crown className="h-4 w-4 text-purple-500" />;
+                case 'oil control': return <Thermometer className="h-4 w-4 text-amber-500" />;
+                case 'texture': return <Clock className="h-4 w-4 text-green-500" />;
+                default: return <Info className="h-4 w-4 text-gray-500" />;
+              }
+            };
+
+            return (
+              <Card key={index} className={cn("overflow-hidden", index % 4 === 0 ? "border-l-4 border-blue-400" : 
+                                              index % 4 === 1 ? "border-l-4 border-purple-400" :
+                                              index % 4 === 2 ? "border-l-4 border-amber-400" :
+                                              "border-l-4 border-green-400")}>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    {getIcon(param.name)}
+                    <h3 className="font-medium">{param.name}</h3>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">{param.current}%</span>
+                      <span className="text-sm text-green-600">
+                        +{param.current - param.previous}%
+                      </span>
+                    </div>
+                    <Progress 
+                      value={param.current} 
+                      className="h-2" 
+                      indicatorClassName={getIndicatorColor(param.current)} 
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
       
-      {/* Key Factors */}
+      {/* Key Factors - Styled with colorful borders and cards */}
       <div>
         <h2 className="text-xl font-semibold mb-3">Key Factors</h2>
         
         <div className="space-y-4">
           {/* Positive Factors */}
-          <Card className="ios-card">
+          <Card className="overflow-hidden border-l-4 border-green-400">
             <CardContent className="p-4">
               <h3 className="font-medium text-green-600 mb-2">Positive Impact</h3>
               <ul className="space-y-2">
                 {sampleWeeklyData.positiveFactors.map((factor, index) => (
-                  <li key={index} className="flex justify-between text-sm">
+                  <li key={index} className="flex justify-between items-center text-sm">
                     <span>{factor.name}</span>
-                    <span className="font-medium text-green-600">{factor.impact}</span>
+                    <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200">{factor.impact}</Badge>
                   </li>
                 ))}
               </ul>
@@ -175,14 +255,14 @@ const WeeklySkinView: React.FC = () => {
           </Card>
           
           {/* Negative Factors */}
-          <Card className="ios-card">
+          <Card className="overflow-hidden border-l-4 border-red-400">
             <CardContent className="p-4">
               <h3 className="font-medium text-red-600 mb-2">Negative Impact</h3>
               <ul className="space-y-2">
                 {sampleWeeklyData.negativeFactors.map((factor, index) => (
-                  <li key={index} className="flex justify-between text-sm">
+                  <li key={index} className="flex justify-between items-center text-sm">
                     <span>{factor.name}</span>
-                    <span className="font-medium text-red-600">{factor.impact}</span>
+                    <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">{factor.impact}</Badge>
                   </li>
                 ))}
               </ul>
@@ -191,12 +271,35 @@ const WeeklySkinView: React.FC = () => {
         </div>
       </div>
       
-      {/* View More Link */}
+      {/* Daily Scores with enhanced styling */}
+      <div>
+        <h2 className="text-xl font-semibold mb-3">Daily Scores</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {sampleWeeklyData.dailyScores.map((day, index) => (
+            <Card key={index} className="overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-medium">{day.day}</h3>
+                    <p className="text-xs text-muted-foreground">{day.date}</p>
+                    <p className="text-sm mt-1">{day.note}</p>
+                  </div>
+                  <div className={cn("rounded-full w-12 h-12 flex items-center justify-center", getRatingBgColor(day.score))}>
+                    <span className={cn("font-medium", getRatingTextColor(day.score))}>{day.score}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+      
+      {/* View More Link - Styled like in the meal plan */}
       <Link 
-        to="/skin-analysis"
-        className="block bg-slate-100 hover:bg-slate-200 transition-colors p-4 rounded-lg text-center"
+        to="/weekly-skin-analysis"
+        className="block bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-colors p-4 rounded-lg text-center"
       >
-        View Full Skin Analysis
+        View Full Weekly Analysis
       </Link>
     </div>
   );
