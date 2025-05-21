@@ -29,7 +29,7 @@ const StreakCard: React.FC<StreakCardProps> = ({ streak, lastLog = "Today" }) =>
   };
 
   return (
-    <Card className="overflow-hidden border-l-4 border-l-teal-400 mb-6">
+    <Card className="overflow-hidden border-l-4 border-l-violet-400 mb-6">
       <CardContent className="p-4">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
@@ -44,8 +44,8 @@ const StreakCard: React.FC<StreakCardProps> = ({ streak, lastLog = "Today" }) =>
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="flex-shrink-0 bg-gradient-to-br from-teal-100 to-cyan-100 w-16 h-16 rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-teal-600">{streak}</span>
+          <div className="flex-shrink-0 bg-gradient-to-br from-violet-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center">
+            <span className="text-2xl font-bold text-violet-600">{streak}</span>
           </div>
           <div>
             <p className="text-sm font-medium">{getStreakMessage(streak)}</p>
@@ -55,7 +55,7 @@ const StreakCard: React.FC<StreakCardProps> = ({ streak, lastLog = "Today" }) =>
 
         <div className="mt-3 pt-3 border-t border-gray-100">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-teal-600">Keep the streak going!</p>
+            <p className="text-xs text-violet-600">Keep the streak going!</p>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
