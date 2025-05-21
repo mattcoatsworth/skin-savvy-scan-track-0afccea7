@@ -5,6 +5,7 @@ import { Calendar, Info, Smile } from "lucide-react";
 import { Link } from "react-router-dom";
 import FactorsList from "./FactorsList";
 import { DaySkinData, SkinFactor } from "./types";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 // Sample data for the daily skin condition
 const sampleDailySkinData = {
@@ -59,28 +60,33 @@ const DailySkinView: React.FC = () => {
               <h2 className="font-medium">Calendar</h2>
             </div>
             
-            {/* Calendar visualization */}
+            {/* Calendar visualization - Updated with circular rating display */}
             <div className="grid grid-cols-7 gap-2">
               {sampleDailySkinData.calendarDates.map((date, index) => (
                 <button
                   key={index}
                   className={`flex flex-col items-center justify-center aspect-square rounded-md p-2
-                             ${date.hasEntry 
-                               ? `bg-${date.rating >= 70 ? 'green' : date.rating >= 40 ? 'yellow' : 'red'}-100` 
-                               : 'bg-gray-100'} 
                              ${selectedDate === date.day ? 'ring-2 ring-blue-500' : ''}`}
                   onClick={() => setSelectedDate(date.day)}
                 >
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 mb-1">
                     {new Date(date.day).getDate()}
                   </span>
-                  {date.hasEntry && (
-                    <span 
-                      className={`w-2 h-2 mt-1 rounded-full
-                               ${date.rating >= 70 ? 'bg-green-500' : 
-                                 date.rating >= 40 ? 'bg-yellow-500' : 
-                                 'bg-red-500'}`}
-                    ></span>
+                  
+                  {date.hasEntry ? (
+                    <div 
+                      className="w-6 h-6 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: getRatingBgColor(date.rating) }}
+                    >
+                      <span 
+                        className="text-xs font-semibold"
+                        style={{ color: getRatingColor(date.rating) }}
+                      >
+                        {date.rating}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="w-6 h-6 bg-gray-100 rounded-full"></div>
                   )}
                 </button>
               ))}
@@ -96,15 +102,38 @@ const DailySkinView: React.FC = () => {
             {hasLoggedEntry ? (
               // Logged skin condition view
               <Link to={`/day-log/${selectedDate}`}>
-                <div className="flex items-center mb-4">
-                  <Smile className="text-4xl mr-3" />
-                  <div>
-                    <h2 className="font-medium text-lg">
-                      {isToday ? "Today's" : "Selected Day's"} Skin
-                    </h2>
-                    <p className="text-xl font-semibold">
-                      {sampleDailySkinData.today.condition}
-                    </p>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center">
+                    <Smile className="text-4xl mr-3" />
+                    <div>
+                      <h2 className="font-medium text-lg">
+                        {isToday ? "Today's" : "Selected Day's"} Skin
+                      </h2>
+                      <p className="text-xl font-semibold">
+                        {sampleDailySkinData.today.condition}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Updated Rating Circle to match Weekly Skin Report */}
+                  <div className="flex flex-col items-center">
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: getRatingBgColor(sampleDailySkinData.today.score) }}
+                    >
+                      <span 
+                        className="text-lg font-semibold"
+                        style={{ color: getRatingColor(sampleDailySkinData.today.score) }}
+                      >
+                        {sampleDailySkinData.today.score}
+                      </span>
+                    </div>
+                    <span 
+                      className="text-xs mt-1 font-medium"
+                      style={{ color: getRatingColor(sampleDailySkinData.today.score) }}
+                    >
+                      {getRatingLabel(sampleDailySkinData.today.score)}
+                    </span>
                   </div>
                 </div>
                 
