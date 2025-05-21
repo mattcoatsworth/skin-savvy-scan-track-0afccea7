@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 type DayRating = {
   day: string;
@@ -14,32 +15,6 @@ type DayRating = {
 type SkinHistoryProps = {
   ratings: DayRating[];
   className?: string;
-};
-
-const getRatingLabel = (rating: number) => {
-  if (rating >= 80) return "Great";
-  if (rating >= 60) return "Good";
-  if (rating >= 40) return "OK";
-  if (rating >= 20) return "Fair";
-  return "Poor";
-};
-
-// Get color based on rating
-const getRatingColor = (rating: number) => {
-  if (rating >= 80) return "#4ADE80"; // Green for good ratings
-  if (rating >= 60) return "#22C55E"; // Lower green
-  if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
-  if (rating >= 20) return "#FB923C"; // Orange for fair
-  return "#F87171"; // Red for poor ratings
-};
-
-// Get background color for the rating
-const getRatingBgColor = (rating: number) => {
-  if (rating >= 80) return "#ECFDF5"; // Light green bg
-  if (rating >= 60) return "#F0FDF4"; // Lower light green bg
-  if (rating >= 40) return "#FEFCE8"; // Light yellow bg
-  if (rating >= 20) return "#FFF7ED"; // Light orange bg
-  return "#FEF2F2"; // Light red bg
 };
 
 const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
@@ -81,10 +56,10 @@ const SkinHistory: React.FC<SkinHistoryProps> = ({ ratings, className }) => {
                 <span className="text-xs font-medium">{item.day}</span>
                 <span className="text-[10px] text-muted-foreground">{item.date}</span>
                 
-                <div className="mt-2 mb-1 relative">
+                <div className="mt-2 mb-1">
                   {/* Rating circle with updated design */}
                   <div 
-                    className="relative w-10 h-10 flex items-center justify-center rounded-full"
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: getRatingBgColor(item.rating) }}
                   >
                     {/* Rating number */}

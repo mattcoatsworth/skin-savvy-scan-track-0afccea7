@@ -11,6 +11,7 @@ import { useAIContentCache } from "@/hooks/useAIContentCache";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import Disclaimer from "@/components/Disclaimer";
 import { Badge } from "@/components/ui/badge";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 const WeeklySkinAnalysis = () => {
   useScrollToTop();
@@ -197,7 +198,7 @@ const WeeklySkinAnalysis = () => {
         </Card>
       </div>
       
-      {/* 2. Daily Scores */}
+      {/* 2. Daily Scores - Updated with circular rating display */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Daily Scores</h2>
         <div className="space-y-3">
@@ -209,7 +210,26 @@ const WeeklySkinAnalysis = () => {
                     <h3 className="font-medium">{day.day}</h3>
                     <p className="text-sm text-muted-foreground">{day.note}</p>
                   </div>
-                  <div className="text-lg font-semibold">{day.score}</div>
+                  <div className="flex flex-col items-center">
+                    {/* Updated Rating Circle to match Weekly Skin Report */}
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: getRatingBgColor(day.score) }}
+                    >
+                      <span 
+                        className="text-lg font-semibold"
+                        style={{ color: getRatingColor(day.score) }}
+                      >
+                        {day.score}
+                      </span>
+                    </div>
+                    <span 
+                      className="text-xs mt-1 font-medium"
+                      style={{ color: getRatingColor(day.score) }}
+                    >
+                      {getRatingLabel(day.score)}
+                    </span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
