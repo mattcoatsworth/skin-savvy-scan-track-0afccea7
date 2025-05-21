@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -14,7 +15,10 @@ import {
   YAxis, 
   CartesianGrid, 
   ResponsiveContainer,
-  ReferenceLine
+  ReferenceLine,
+  Tooltip,
+  Area,
+  AreaChart
 } from "recharts";
 import {
   ChartContainer,
@@ -116,6 +120,19 @@ const WeeklySkinView: React.FC = () => {
       color: "#8B5CF6" // Vivid purple - matching SkinIndexComparison
     }
   };
+
+  // Custom tooltip component for the chart
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip bg-white p-3 rounded-lg shadow-lg border border-slate-200">
+          <p className="font-medium text-slate-800">{`${label}`}</p>
+          <p className="text-violet-600 font-medium">{`Score: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
   
   return (
     <div className="space-y-6">
@@ -198,16 +215,22 @@ const WeeklySkinView: React.FC = () => {
               />
             </div>
             
-            {/* Enhanced Weekly Trend Chart - Styled to match SkinIndexComparison */}
+            {/* Enhanced Weekly Trend Chart - Completely redesigned to match SkinIndexComparison */}
             <div>
               <p className="text-sm text-muted-foreground mb-3">Weekly Trend</p>
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-slate-900/50 dark:to-indigo-900/30 -mx-2 p-4 rounded-lg">
-                <div className="h-[180px]">
-                  <ChartContainer className="h-full" config={chartConfig}>
-                    <LineChart 
-                      data={sampleWeeklyData.weeklyTrend} 
-                      margin={{ top: 10, right: 5, bottom: 10, left: 10 }}
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-slate-900/50 dark:to-indigo-900/30 rounded-lg overflow-hidden">
+                <div className="h-[220px] p-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart 
+                      data={sampleWeeklyData.weeklyTrend}
+                      margin={{ top: 20, right: 10, bottom: 20, left: 10 }}
                     >
+                      <defs>
+                        <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
                       <XAxis 
                         dataKey="date" 
@@ -215,7 +238,7 @@ const WeeklySkinView: React.FC = () => {
                         fontSize={10}
                         tickLine={false}
                         axisLine={{ stroke: '#e2e8f0' }}
-                        padding={{ left: 5, right: 5 }}
+                        padding={{ left: 10, right: 10 }}
                         interval={0}
                       />
                       <YAxis 
@@ -227,51 +250,80 @@ const WeeklySkinView: React.FC = () => {
                         tickFormatter={(value) => `${value}`}
                         width={25}
                       />
-                      <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 8 }} />
-                      <ChartTooltip 
-                        content={
-                          <ChartTooltipContent 
-                            formatter={(value: number) => [`${value}`, 'Score']}
-                            labelFormatter={(label) => `${label}`}
-                          />
-                        }
+                      <Tooltip content={<CustomTooltip />} />
+                      <ReferenceLine 
+                        y={70} 
+                        stroke="#94a3b8" 
+                        strokeDasharray="3 3" 
+                        label={{ 
+                          value: 'Good', 
+                          position: 'right', 
+                          fill: '#94a3b8', 
+                          fontSize: 10 
+                        }} 
                       />
-                      <Line 
-                        name="Skin Score" 
+                      <Area 
                         type="monotone" 
                         dataKey="value" 
                         stroke="#8B5CF6" 
-                        strokeWidth={2} 
-                        dot={{ r: 4, fill: "#8B5CF6", stroke: "white", strokeWidth: 1.5 }} 
-                        activeDot={{ r: 6, stroke: "white", strokeWidth: 1.5 }}
-                        animationDuration={1000}
+                        fillOpacity={1}
+                        fill="url(#colorScore)"
+                        strokeWidth={2}
+                        activeDot={{ 
+                          r: 6, 
+                          stroke: "white", 
+                          strokeWidth: 2, 
+                          fill: "#8B5CF6" 
+                        }}
                       />
-                    </LineChart>
-                  </ChartContainer>
+                      <Line 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#8B5CF6" 
+                        strokeWidth={3}
+                        dot={{ 
+                          r: 5, 
+                          fill: "#8B5CF6", 
+                          stroke: "white", 
+                          strokeWidth: 2 
+                        }}
+                        activeDot={{ 
+                          r: 7, 
+                          stroke: "white", 
+                          strokeWidth: 2, 
+                          fill: "#8B5CF6" 
+                        }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
 
-                <div className="flex items-center justify-end mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  <div className="flex gap-3">
-                    <span className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                {/* Legend */}
+                <div className="flex items-center justify-between p-3 bg-white bg-opacity-50 border-t border-slate-100">
+                  <div className="flex gap-2 text-xs text-slate-700">
+                    <span className="flex items-center gap-1">
                       <span className="inline-block w-3 h-3 bg-[#8B5CF6] rounded-full"></span>
                       Skin Score
                     </span>
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Showing 7-day trend
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Daily Score Summary - Enhanced Visual Display */}
-            <div className="mt-4">
+            <div className="mt-6">
               <p className="text-sm text-muted-foreground mb-3">Daily Scores</p>
               <div className="flex items-center justify-between space-x-1">
                 {sampleWeeklyData.weeklyTrend.map((day, index) => (
                   <div key={index} className="flex flex-col items-center">
                     <span className="text-xs font-medium mb-1">{day.date}</span>
                     <div 
-                      className={cn("w-8 h-8 flex items-center justify-center rounded-full mb-1", getRatingBgColor(day.value))}
+                      className={cn("w-10 h-10 flex items-center justify-center rounded-full mb-1", getRatingBgColor(day.value))}
                     >
-                      <span className={cn("text-xs font-medium", getRatingTextColor(day.value))}>
+                      <span className={cn("text-sm font-medium", getRatingTextColor(day.value))}>
                         {day.value}
                       </span>
                     </div>
