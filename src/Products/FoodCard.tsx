@@ -43,36 +43,22 @@ const FoodCard: React.FC<FoodCardProps> = ({ food, personalizedRating = null }) 
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="relative w-10 h-10 flex items-center justify-center">
-              {/* Background circle */}
-              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                <path
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none"
-                  stroke={getRatingBgColor(displayRating)}
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-              </svg>
-              
-              {/* Foreground circle - the actual progress */}
-              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                <path
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none"
-                  stroke={getRatingColor(displayRating)}
-                  strokeWidth="4"
-                  strokeDasharray={`${displayRating}, 100`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              
-              {/* Rating number in the center */}
-              <div className="text-xs font-semibold">
+            {/* Updated Rating Circle to match Weekly Skin Report */}
+            <div 
+              className="w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: getRatingBgColor(displayRating) }}
+            >
+              <span 
+                className="text-lg font-semibold"
+                style={{ color: getRatingColor(displayRating) }}
+              >
                 {displayRating}
-              </div>
+              </span>
             </div>
-            <span className="text-xs mt-1 text-muted-foreground">
+            <span 
+              className="text-xs mt-1 font-medium"
+              style={{ color: getRatingColor(displayRating) }}
+            >
               {personalizedRating !== null ? "For You" : getRatingLabel(displayRating)}
             </span>
           </div>

@@ -5,18 +5,22 @@ import { Product } from './types';
  * Gets the color for product rating
  */
 export const getRatingColor = (rating: number): string => {
-  if (rating >= 70) return "#4ADE80";
-  if (rating >= 40) return "#FACC15";
-  return "#F87171";
+  if (rating >= 80) return "#4ADE80"; // Green for good ratings
+  if (rating >= 60) return "#22C55E"; // Lower green
+  if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
+  if (rating >= 20) return "#FB923C"; // Orange for fair
+  return "#F87171"; // Red for poor ratings
 };
 
 /**
  * Gets the background color for product rating
  */
 export const getRatingBgColor = (rating: number): string => {
-  if (rating >= 70) return "#E6F8EA";
-  if (rating >= 40) return "#FEF7CD";
-  return "#FFDEE2";
+  if (rating >= 80) return "#ECFDF5"; // Light green bg
+  if (rating >= 60) return "#F0FDF4"; // Lower light green bg
+  if (rating >= 40) return "#FEFCE8"; // Light yellow bg
+  if (rating >= 20) return "#FFF7ED"; // Light orange bg
+  return "#FEF2F2"; // Light red bg
 };
 
 /**

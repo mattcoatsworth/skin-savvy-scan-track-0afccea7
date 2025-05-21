@@ -22,6 +22,33 @@ interface ProductCardProps {
   type: "food" | "skincare";
 }
 
+// Get color based on rating
+const getRatingColor = (rating: number) => {
+  if (rating >= 80) return "#4ADE80"; // Green for good ratings
+  if (rating >= 60) return "#22C55E"; // Lower green
+  if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
+  if (rating >= 20) return "#FB923C"; // Orange for fair
+  return "#F87171"; // Red for poor ratings
+};
+
+// Get background color for the rating
+const getRatingBgColor = (rating: number) => {
+  if (rating >= 80) return "#ECFDF5"; // Light green bg
+  if (rating >= 60) return "#F0FDF4"; // Lower light green bg
+  if (rating >= 40) return "#FEFCE8"; // Light yellow bg
+  if (rating >= 20) return "#FFF7ED"; // Light orange bg
+  return "#FEF2F2"; // Light red bg
+};
+
+// Get rating label based on rating
+const getRatingLabel = (rating: number) => {
+  if (rating >= 80) return "Great";
+  if (rating >= 60) return "Good";
+  if (rating >= 40) return "OK";
+  if (rating >= 20) return "Fair";
+  return "Poor";
+};
+
 const ProductCard = ({ product, type }: ProductCardProps) => {
   const location = useLocation();
   const [personalizedRating, setPersonalizedRating] = useState<number | null>(null);
@@ -73,29 +100,6 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
     fetchPersonalizedRating();
   }, [product.id, type]);
   
-  // Determine label based on rating
-  const getRatingLabel = (rating: number) => {
-    if (rating >= 80) return "Great";
-    if (rating >= 60) return "Good";
-    if (rating >= 40) return "OK";
-    if (rating >= 20) return "Fair";
-    return "Poor";
-  };
-  
-  // Determine progress color based on rating
-  const getProgressColor = (rating: number) => {
-    if (rating >= 70) return "#4ADE80";
-    if (rating >= 40) return "#FACC15";
-    return "#F87171";
-  };
-
-  // Get the lighter background color for the circle
-  const getBackgroundColor = (rating: number) => {
-    if (rating >= 70) return "#E6F8EA";
-    if (rating >= 40) return "#FEF7CD";
-    return "#FFDEE2";
-  };
-
   // Get rating to display (use personalized if available)
   const displayRating = personalizedRating !== null ? personalizedRating : product.rating;
 
@@ -125,36 +129,22 @@ const ProductCard = ({ product, type }: ProductCardProps) => {
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="relative w-10 h-10 flex items-center justify-center">
-              {/* Background circle */}
-              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                <path
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none"
-                  stroke={getBackgroundColor(displayRating)}
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-              </svg>
-              
-              {/* Foreground circle - the actual progress */}
-              <svg className="w-10 h-10 absolute" viewBox="0 0 36 36">
-                <path
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none"
-                  stroke={getProgressColor(displayRating)}
-                  strokeWidth="4"
-                  strokeDasharray={`${displayRating}, 100`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              
-              {/* Rating number in the center */}
-              <div className="text-xs font-semibold">
+            {/* Updated Rating Circle to match Weekly Skin Report */}
+            <div 
+              className="w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: getRatingBgColor(displayRating) }}
+            >
+              <span 
+                className="text-lg font-semibold"
+                style={{ color: getRatingColor(displayRating) }}
+              >
                 {isLoading ? "..." : displayRating}
-              </div>
+              </span>
             </div>
-            <span className="text-xs mt-1 text-muted-foreground">
+            <span 
+              className="text-xs mt-1 font-medium"
+              style={{ color: getRatingColor(displayRating) }}
+            >
               {personalizedRating !== null ? "For You" : getRatingLabel(displayRating)}
             </span>
           </div>
