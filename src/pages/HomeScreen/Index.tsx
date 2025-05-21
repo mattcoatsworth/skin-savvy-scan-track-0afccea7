@@ -48,8 +48,8 @@ const Index = () => {
           <DailySkinSnapshot 
             emoji="😊" 
             status="Balanced" 
-            factors={skinFactors as unknown as Factor[]} 
-            recommendations={fallbackRecommendations as unknown as Recommendation[]}
+            factors={skinFactors} 
+            recommendations={fallbackRecommendations}
           />
           
           {/* Meal Plan Card */}

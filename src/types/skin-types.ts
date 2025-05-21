@@ -1,6 +1,7 @@
 
 import { ReactNode } from "react";
 
+// Make sure FactorType matches what's used in the DailySkinSnapshot component
 export type FactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health" | "Sleep" | "Stress";
   
 export type Factor = {
