@@ -1,67 +1,73 @@
+
 import { ReactNode } from "react";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import { generateSkinHistoryData } from "@/utils/skin-utils";
 import { 
   Factor, 
   Recommendation,
-  FactorType
+  FactorType,
+  RecommendationType,
+  RecentLogType,
+  InsightType,
+  SuggestedActionType,
+  ExploreItemType
 } from "@/types/skin-types";
 
 export function useSampleData() {
   // Sample data with type assertions
   const skinFactors: Factor[] = [
-    { type: "Food" as FactorType, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
-    { type: "Supplement" as FactorType, status: "New", icon: <Pill className="h-4 w-4" /> },
-    { type: "Makeup" as FactorType, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
-    { type: "Weather" as FactorType, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+    { type: "Food", status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement", status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup", status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather", status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   // Add fallback static recommendations
   const fallbackRecommendations = [
     { 
-      type: "skincare", 
+      type: "skincare" as RecommendationType, 
       text: "Use gentle cleanser", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/gentle-cleanser" 
     },
     { 
-      type: "food", 
+      type: "food" as RecommendationType, 
       text: "Limit dairy intake", 
       icon: <Salad className="h-4 w-4" />,
       linkTo: "/recommendations-detail/limit-dairy"
     },
     { 
-      type: "lifestyle", 
+      type: "lifestyle" as RecommendationType, 
       text: "Practice meditation", 
       icon: <CloudSun className="h-4 w-4" />,
       linkTo: "/recommendations-detail/meditation"
     },
     { 
-      type: "skincare", 
+      type: "skincare" as RecommendationType, 
       text: "Try vitamin C serum", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/vitamin-c-serum/testai" 
     },
     { 
-      type: "food", 
+      type: "food" as RecommendationType, 
       text: "Add antioxidant foods", 
       icon: <Salad className="h-4 w-4" />,
       linkTo: "/recommendations-detail/antioxidants/testai"
     },
     { 
-      type: "lifestyle", 
+      type: "lifestyle" as RecommendationType, 
       text: "Morning hydration", 
       icon: <CloudSun className="h-4 w-4" />,
       linkTo: "/recommendations-detail/hydration/testai"
     },
     { 
-      type: "skincare", 
+      type: "skincare" as RecommendationType, 
       text: "SPF reapplication", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/spf/testai" 
     },
     { 
-      type: "supplements", 
+      type: "supplements" as RecommendationType, 
       text: "Add zinc", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/zinc"
@@ -75,7 +81,7 @@ export function useSampleData() {
   const skinHistory = generateSkinHistoryData();
 
   // Updated sample data with diverse scan types for the RecentLogsCarousel
-  const recentLogs = [
+  const recentLogs: RecentLogType[] = [
     {
       title: "Face Scan Analysis",
       status: "positive",
@@ -106,7 +112,7 @@ export function useSampleData() {
     }
   ];
 
-  const insights = [
+  const insights: InsightType[] = [
     {
       title: "Collagen supplements",
       description: "Improved skin elasticity after 2 weeks",
@@ -134,7 +140,7 @@ export function useSampleData() {
   ];
 
   // Update suggested actions to use proper type
-  const suggestedActions = [
+  const suggestedActions: SuggestedActionType[] = [
     { 
       text: "Try logging your water intake today",
       linkTo: "/day-log/today", // Link directly to today's log
@@ -159,7 +165,7 @@ export function useSampleData() {
     },
   ];
 
-  const exploreItems = [
+  const exploreItems: ExploreItemType[] = [
     { 
       title: "Skin Tips for Your Skin Type", 
       subtitle: "Personalized advice",

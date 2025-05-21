@@ -1,7 +1,17 @@
+
 import { ReactNode } from "react";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import { generateSkinHistoryData } from "@/pages/HomeScreen/skin-utils";
-import { FactorType, Factor } from "@/pages/HomeScreen/skin-types";
+import { 
+  FactorType, 
+  Factor, 
+  RecentLogType, 
+  InsightType,
+  SuggestedActionType,
+  ExploreItemType,
+  MealPlanType,
+  RecommendationType
+} from "@/types/skin-types";
 
 export function useSampleData() {
   // Sample data with type assertions
@@ -15,49 +25,49 @@ export function useSampleData() {
   // Add fallback static recommendations
   const fallbackRecommendations = [
     { 
-      type: "skincare", 
+      type: "skincare" as RecommendationType, 
       text: "Use gentle cleanser", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/gentle-cleanser" 
     },
     { 
-      type: "food", 
+      type: "food" as RecommendationType, 
       text: "Limit dairy intake", 
       icon: <Salad className="h-4 w-4" />,
       linkTo: "/recommendations-detail/limit-dairy"
     },
     { 
-      type: "lifestyle", 
+      type: "lifestyle" as RecommendationType, 
       text: "Practice meditation", 
       icon: <CloudSun className="h-4 w-4" />,
       linkTo: "/recommendations-detail/meditation"
     },
     { 
-      type: "skincare", 
+      type: "skincare" as RecommendationType, 
       text: "Try vitamin C serum", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/vitamin-c-serum/testai" 
     },
     { 
-      type: "food", 
+      type: "food" as RecommendationType, 
       text: "Add antioxidant foods", 
       icon: <Salad className="h-4 w-4" />,
       linkTo: "/recommendations-detail/antioxidants/testai"
     },
     { 
-      type: "lifestyle", 
+      type: "lifestyle" as RecommendationType, 
       text: "Morning hydration", 
       icon: <CloudSun className="h-4 w-4" />,
       linkTo: "/recommendations-detail/hydration/testai"
     },
     { 
-      type: "skincare", 
+      type: "skincare" as RecommendationType, 
       text: "SPF reapplication", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/spf/testai" 
     },
     { 
-      type: "supplements", 
+      type: "supplements" as RecommendationType, 
       text: "Add zinc", 
       icon: <Pill className="h-4 w-4" />,
       linkTo: "/recommendations-detail/zinc"
