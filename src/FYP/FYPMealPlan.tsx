@@ -333,6 +333,37 @@ const FYPMealPlan: React.FC<MealPlanProps> = ({ className }) => {
             </Accordion>
           )}
 
+          {/* Dynamic Expected Results Card */}
+          {mealPlan.expectedResults && (
+            <Card className="overflow-hidden border border-gray-100">
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Info className="h-4 w-4 text-emerald-600" />
+                  <h3 className="font-medium text-emerald-800">Expected Results</h3>
+                </div>
+              </div>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-medium">
+                    {mealPlan.expectedResults.timeframe}
+                  </h4>
+                  <div className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full text-xs font-medium">
+                    ~{mealPlan.expectedResults.percentageImprovement} Improvement
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mb-2">
+                  {mealPlan.expectedResults.improvements}
+                </p>
+                <div className="mt-3">
+                  <h5 className="text-xs font-medium text-gray-700 mb-1">Enhancing factors:</h5>
+                  <p className="text-xs text-gray-600">
+                    {mealPlan.expectedResults.lifestyleFactors}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
           {/* Budget info if provided */}
           {weeklyBudget && (
             <Card className="overflow-hidden">

@@ -101,6 +101,13 @@ serve(async (req) => {
       userPrompt += ` Keep in mind a weekly grocery budget of ${weeklyBudget}.`;
     }
     
+    // Add section for expected results
+    userPrompt += ` Also include an "expectedResults" section that explains:
+    1. What improvements in skin health the user can expect from following this meal plan
+    2. A realistic percentage of improvement they might see
+    3. How long it may take to see results
+    4. Any lifestyle factors that might enhance the effectiveness of the meal plan`;
+    
     userPrompt += ` For each meal and snack, include a brief explanation of how it benefits skin health.
     Structure your response in JSON format with this structure:
     {
@@ -124,7 +131,13 @@ serve(async (req) => {
           "snacks": ["Snack 1", "Snack 2"],
           "hydration": "Hydration recommendation"
         }
-      ]
+      ],
+      "expectedResults": {
+        "improvements": "Description of expected skin improvements",
+        "percentageImprovement": "Estimated percentage improvement (e.g., '85%')",
+        "timeframe": "Expected timeframe to see results (e.g., '2-4 weeks')",
+        "lifestyleFactors": "Additional lifestyle factors that enhance results"
+      }
     }
     Include all seven days of the week.`;
     
