@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -70,16 +69,16 @@ const WeeklySkinView: React.FC = () => {
   // Check if this is the current week
   const isCurrentWeek = currentWeekIndex === 0;
 
-  // Helper function for rating backgrounds
+  // Helper function for rating backgrounds - updated for consistency with FYP
   const getRatingBgColor = (rating: number) => {
-    if (rating >= 80) return "bg-gradient-to-br from-emerald-50 to-green-50";
-    if (rating >= 60) return "bg-gradient-to-br from-lime-50 to-emerald-50";
-    if (rating >= 40) return "bg-gradient-to-br from-amber-50 to-yellow-50";
-    if (rating >= 20) return "bg-gradient-to-br from-orange-50 to-amber-50";
-    return "bg-gradient-to-br from-red-50 to-orange-50";
+    if (rating >= 80) return "bg-emerald-50";
+    if (rating >= 60) return "bg-lime-50";
+    if (rating >= 40) return "bg-amber-50";
+    if (rating >= 20) return "bg-orange-50";
+    return "bg-red-50";
   };
   
-  // Helper function for rating text colors
+  // Helper function for rating text colors - updated for consistency
   const getRatingTextColor = (rating: number) => {
     if (rating >= 80) return "text-emerald-600";
     if (rating >= 60) return "text-lime-600";
@@ -88,7 +87,7 @@ const WeeklySkinView: React.FC = () => {
     return "text-red-600";
   };
   
-  // Get indicator color for progress
+  // Get indicator color for progress - updated for consistency
   const getIndicatorColor = (value: number) => {
     if (value >= 80) return "bg-emerald-500";
     if (value >= 60) return "bg-lime-500";
@@ -99,7 +98,7 @@ const WeeklySkinView: React.FC = () => {
   
   return (
     <div className="space-y-6">
-      {/* Header with Info Popover */}
+      {/* Header with Info Popover - Styled like FYP */}
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold">Weekly Skin Report</h2>
         <Popover>
@@ -120,7 +119,7 @@ const WeeklySkinView: React.FC = () => {
         </Popover>
       </div>
       
-      {/* Week Selector - Styled similar to meal plan */}
+      {/* Week Selector - Styled to match FYP meal plan */}
       <Card className="overflow-hidden border-l-4 border-blue-400">
         <CardContent className="p-4">
           <div className="flex justify-between items-center">
@@ -151,7 +150,7 @@ const WeeklySkinView: React.FC = () => {
         </CardContent>
       </Card>
       
-      {/* Weekly Overview - Styled with gradients similar to meal plan */}
+      {/* Weekly Overview - Styled with gradients like FYP */}
       <Card className="overflow-hidden">
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3">
           <div className="flex items-center gap-2">
@@ -186,12 +185,18 @@ const WeeklySkinView: React.FC = () => {
         </CardContent>
       </Card>
       
-      {/* Skin Parameters - Styled with icons like meal plan */}
+      {/* Skin Parameters - Styled with colored borders like FYP */}
       <div>
         <h2 className="text-xl font-semibold mb-3">Skin Parameters</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {sampleWeeklyData.skinParameters.map((param, index) => {
+            // Select border color based on parameter type
+            const borderColor = index % 4 === 0 ? "border-blue-400" : 
+                              index % 4 === 1 ? "border-purple-400" :
+                              index % 4 === 2 ? "border-amber-400" :
+                              "border-green-400";
+            
             // Select icon based on parameter name
             const getIcon = (name: string) => {
               switch(name.toLowerCase()) {
@@ -204,10 +209,7 @@ const WeeklySkinView: React.FC = () => {
             };
 
             return (
-              <Card key={index} className={cn("overflow-hidden", index % 4 === 0 ? "border-l-4 border-blue-400" : 
-                                              index % 4 === 1 ? "border-l-4 border-purple-400" :
-                                              index % 4 === 2 ? "border-l-4 border-amber-400" :
-                                              "border-l-4 border-green-400")}>
+              <Card key={index} className={`overflow-hidden border-l-4 ${borderColor}`}>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
                     {getIcon(param.name)}
@@ -234,7 +236,7 @@ const WeeklySkinView: React.FC = () => {
         </div>
       </div>
       
-      {/* Key Factors - Styled with colorful borders and cards */}
+      {/* Key Factors - Styled with colorful cards like FYP */}
       <div>
         <h2 className="text-xl font-semibold mb-3">Key Factors</h2>
         
@@ -271,7 +273,7 @@ const WeeklySkinView: React.FC = () => {
         </div>
       </div>
       
-      {/* Daily Scores with enhanced styling */}
+      {/* Daily Scores - Enhanced styling to match FYP cards */}
       <div>
         <h2 className="text-xl font-semibold mb-3">Daily Scores</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
