@@ -10,6 +10,7 @@ import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
 import MealPlanCard from "@/pages/HomeScreen/MealPlanCard";
 import SkinEnergyCard from "@/pages/HomeScreen/SkinEnergyCard";
+import StreakCard from "@/components/StreakCard";
 import { useSampleData } from "@/pages/HomeScreen/useSampleData";
 import type { Factor, Recommendation } from "@/types/skin-types";
 
@@ -26,6 +27,9 @@ const Index = () => {
     mealPlanToday
   } = useSampleData();
 
+  // Calculate streak from skin history (for demo purposes)
+  const currentStreak = skinHistory.filter(day => day.rating > 0).length;
+
   return (
     <div>
       {/* Simplified header with smaller Skin Savvy text */}
@@ -38,6 +42,9 @@ const Index = () => {
         <div className="mb-6">
           <SkinHistory ratings={skinHistory} />
         </div>
+        
+        {/* Streak Card */}
+        <StreakCard streak={currentStreak} />
         
         {/* ScanButton in its own div with proper spacing */}
         <div className="mb-6">

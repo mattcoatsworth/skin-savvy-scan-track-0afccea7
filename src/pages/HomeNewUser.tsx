@@ -5,7 +5,7 @@ import ScanButton from "@/components/ScanButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Salad, Activity, Camera, CloudSun, Info, Clock, Sparkles } from "lucide-react";
+import { Salad, Activity, Camera, CloudSun, Info, Clock, Sparkles, FlameIcon } from "lucide-react";
 import EmptySkinHistory from "@/components/EmptySkinHistory";
 import EmptyRecentLogsCarousel from "@/components/EmptyRecentLogsCarousel";
 import EmptyInsightsTrends from "@/components/EmptyInsightsTrends";
@@ -25,6 +25,40 @@ const HomeNewUser = () => {
         <div className="mb-6">
           <EmptySkinHistory />
         </div>
+        
+        {/* Empty Streak Card */}
+        <Card className="overflow-hidden border-l-4 border-l-violet-400 mb-6">
+          <CardContent className="p-4">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <FlameIcon className="h-5 w-5 text-amber-500" />
+                <h3 className="font-medium text-base">Skin Log Streak</h3>
+              </div>
+              <Link to="/skin">
+                <Button variant="ghost" size="sm" className="text-xs">
+                  View History
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 bg-gradient-to-br from-violet-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-violet-600">0</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Start your streak today!</p>
+                <p className="text-xs text-muted-foreground mt-1">No logs yet</p>
+              </div>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-violet-600">Log your skin condition to start your streak!</p>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         
         {/* ScanButton */}
         <div className="mb-6">
