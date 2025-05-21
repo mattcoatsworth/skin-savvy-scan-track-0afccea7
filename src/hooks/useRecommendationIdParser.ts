@@ -12,6 +12,7 @@ export const useRecommendationIdParser = () => {
    * - timeline/1
    * - ai/timeline/1
    * - /testai suffix
+   * - observation/1
    * 
    * @param fullId The full ID string from the URL
    * @returns Object containing recommendationType and recommendationNumber
@@ -35,6 +36,19 @@ export const useRecommendationIdParser = () => {
       // Handle URL encoded slashes (convert to standard format)
       const normalizedId = idWithoutTestAi.replace(/%2F/g, '/');
       
+      // For direct paths like /observation/1
+      if (normalizedId.includes('/')) {
+        const parts = normalizedId.split('/').filter(Boolean); // Filter removes empty strings
+        if (parts.length >= 2) {
+          recommendationType = parts[0];
+          recommendationNumber = parts[1];
+          return { recommendationType, recommendationNumber };
+        } else if (parts.length === 1) {
+          recommendationType = parts[0];
+          return { recommendationType, recommendationNumber };
+        }
+      }
+      
       // For URLs like /recommendations-detail/ai-timeline-1
       if (normalizedId.startsWith("ai-")) {
         const parts = normalizedId.substring(3).split('-');
@@ -53,12 +67,6 @@ export const useRecommendationIdParser = () => {
         recommendationType = parts[0];
         recommendationNumber = parts.slice(1).join('-');
       } 
-      // For URLs like /recommendations-detail/timeline/1
-      else if (normalizedId.includes('/')) {
-        const parts = normalizedId.split('/');
-        recommendationType = parts[0];
-        recommendationNumber = parts[1] || "1";
-      }
       // Handle case where the URL is just "ai"
       else if (normalizedId === "ai") {
         recommendationType = "ai";
@@ -115,7 +123,16 @@ export const useRecommendationIdParser = () => {
       
       // Try the full ID as a last resort (with different splits)
       { type: fullId.split('-')[0] || 'recommendation', id: fullId.split('-').slice(1).join('-') || recommendationNumber },
-      { type: fullId, id: "1" } // Use full ID as type with default number
+      { type: fullId, id: "1" }, // Use full ID as type with default number
+      
+      // Add format for paths with slashes
+      { type: fullId.split('/')[0] || 'recommendation', id: fullId.split('/')[1] || recommendationNumber },
+      
+      // Special handling for common types
+      { type: "observation", id: recommendationNumber },
+      { type: "action", id: recommendationNumber },
+      { type: "factor", id: recommendationNumber },
+      { type: "timeline", id: recommendationNumber }
     ].filter(Boolean); // Filter out nulls
     
     // Filter out invalid variants and log

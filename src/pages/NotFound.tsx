@@ -1,5 +1,10 @@
-import { useLocation } from "react-router-dom";
+
+import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import BackButton from "@/components/BackButton";
+import AppNavigation from "@/components/AppNavigation";
 
 const NotFound = () => {
   const location = useLocation();
@@ -11,15 +16,53 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
+  // Check if this is a recommendation detail page that wasn't found
+  const isRecommendationDetail = location.pathname.includes("/recommendations-detail/");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="bg-slate-50 min-h-screen pb-20">
+      <div className="max-w-md mx-auto px-4 py-6">
+        <header className="mb-6">
+          <BackButton />
+          <h1 className="text-2xl font-bold">Page Not Found</h1>
+        </header>
+        
+        <Card>
+          <CardContent className="p-6">
+            <p className="text-lg mb-4">
+              {isRecommendationDetail 
+                ? "Sorry, we couldn't find this recommendation."
+                : "The page you're looking for doesn't exist."}
+            </p>
+            
+            <p className="text-sm mb-6 text-gray-600">
+              {isRecommendationDetail 
+                ? "This recommendation may have been generated previously but is no longer available."
+                : `The path "${location.pathname}" was not found.`}
+            </p>
+            
+            <div className="flex flex-col space-y-3">
+              <Button 
+                onClick={() => window.history.back()}
+                className="w-full"
+              >
+                Return to Previous Page
+              </Button>
+              
+              <Link to="/skin">
+                <Button 
+                  variant="outline"
+                  className="w-full"
+                >
+                  Go to Skin Analysis
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+      
+      <AppNavigation />
     </div>
   );
 };

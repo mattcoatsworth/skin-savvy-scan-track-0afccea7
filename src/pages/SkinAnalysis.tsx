@@ -263,10 +263,17 @@ const SkinAnalysis = () => {
             const title = hasColon ? item.split(":")[0].trim() : `${config.labelPrefix} ${index + 1}`;
             const details = hasColon ? item.split(":").slice(1).join(":").trim() : item;
             
+            // Create a URL-friendly ID from the title
+            const urlFriendlyTitle = title
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, '-') // Replace non-alphanumeric with hyphens
+              .replace(/-+/g, '-')         // Replace multiple hyphens with single one
+              .replace(/^-|-$/g, '');      // Remove leading/trailing hyphens
+              
             return {
               text: item, // Keep the full text for processing
               type: config.type,
-              linkTo: `/recommendations-detail/ai-${config.type}-${index + 1}`
+              linkTo: `/recommendations-detail/${config.type}/${index + 1}` // More URL-friendly format
             };
           })
         });
@@ -276,12 +283,19 @@ const SkinAnalysis = () => {
         const title = hasColon ? content.split(":")[0].trim() : `${config.labelPrefix} 1`;
         const details = hasColon ? content.split(":").slice(1).join(":").trim() : content;
         
+        // Create a URL-friendly ID from the title
+        const urlFriendlyTitle = title
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+          
         aiSections.push({
           title: config.title,
           items: [{
             text: content,
             type: config.type,
-            linkTo: `/recommendations-detail/ai-${config.type}`
+            linkTo: `/recommendations-detail/${config.type}/1` // More URL-friendly format
           }]
         });
       }
@@ -331,8 +345,6 @@ const SkinAnalysis = () => {
         }
         
         // IMPORTANT: After generating AI advice, pre-generate detail pages for each item
-        // This is the key part that ensures detail pages are created as soon as cards are created,
-        // not when the user clicks on them
         const aiSections = processAIResponse(advice.sections || {});
         const detailsToGenerate: Array<{type: string; id: string; text: string; contextData?: any}> = [];
         
@@ -340,16 +352,16 @@ const SkinAnalysis = () => {
         aiSections.forEach(section => {
           section.items.forEach((item, index) => {
             // Extract the type and id from the linkTo URL
-            const match = item.linkTo.match(/\/recommendations-detail\/ai-([^-]+)-(\d+)/);
-            if (match) {
-              const [_, type, id] = match;
-              detailsToGenerate.push({
-                type,
-                id,
-                text: item.text,
-                contextData: { skinFactors, weeklyTrendData }
-              });
-            }
+            const urlParts = item.linkTo.split('/');
+            const type = urlParts[urlParts.length - 2] || item.type;
+            const id = urlParts[urlParts.length - 1] || `${index + 1}`;
+            
+            detailsToGenerate.push({
+              type,
+              id,
+              text: item.text,
+              contextData: { skinFactors, weeklyTrendData }
+            });
           });
         });
         
@@ -562,7 +574,12 @@ const SkinAnalysis = () => {
                           const details = hasColon ? item.text.split(":").slice(1).join(":").trim() : item.text;
 
                           return (
-                            <Link to={item.linkTo} key={itemIdx} className="block">
+                            <Link 
+                              to={item.linkTo} 
+                              key={itemIdx} 
+                              className="block"
+                              state={{ recommendation: { text: item.text } }}
+                            >
                               <Card className="ios-card hover:shadow-md transition-all">
                                 <CardContent className="p-4">
                                   <div>
