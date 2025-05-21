@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Calendar, Droplet, Minus, Plus } from "lucide-react";
@@ -12,6 +13,7 @@ import ViewScoringMethod from "@/components/ViewScoringMethod";
 import BackButton from "@/components/BackButton";
 import useScrollToTop from "@/hooks/useScrollToTop";
 import SelfieCarousel from "@/components/SelfieCarousel";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 // Define types for the page
 type Factor = {
@@ -19,29 +21,6 @@ type Factor = {
   impact: "positive" | "negative" | "neutral";
   description: string;
   rating?: number;
-};
-
-// Determine progress color based on rating
-const getProgressColor = (rating: number) => {
-  if (rating >= 70) return "#4ADE80"; // Green for good ratings
-  if (rating >= 40) return "#FACC15"; // Yellow for medium ratings
-  return "#F87171"; // Red for poor ratings
-};
-
-// Get the lighter background color for the circle
-const getBackgroundColor = (rating: number) => {
-  if (rating >= 70) return "#E6F8EA"; // Light green
-  if (rating >= 40) return "#FEF7CD"; // Light yellow
-  return "#FFDEE2"; // Light red
-};
-
-// Determine label based on rating
-const getRatingLabel = (rating: number) => {
-  if (rating >= 80) return "Great";
-  if (rating >= 60) return "Good";
-  if (rating >= 40) return "OK";
-  if (rating >= 20) return "Fair";
-  return "Poor";
 };
 
 // Get water intake rating feedback
@@ -287,36 +266,22 @@ const DayLogDetail = () => {
               </div>
               
               <div className="flex flex-col items-center">
-                <div className="relative w-14 h-14 flex items-center justify-center">
-                  {/* Background circle */}
-                  <svg className="w-14 h-14 absolute" viewBox="0 0 36 36">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke={getBackgroundColor(rating)}
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  
-                  {/* Foreground circle - the actual progress */}
-                  <svg className="w-14 h-14 absolute" viewBox="0 0 36 36">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke={getProgressColor(rating)}
-                      strokeWidth="4"
-                      strokeDasharray={`${rating}, 100`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  
-                  {/* Rating number in the center */}
-                  <div className="text-base font-semibold">
+                {/* Updated Rating Circle to match Weekly Skin Report */}
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: getRatingBgColor(rating) }}
+                >
+                  <span 
+                    className="text-lg font-semibold"
+                    style={{ color: getRatingColor(rating) }}
+                  >
                     {rating}
-                  </div>
+                  </span>
                 </div>
-                <span className="text-xs mt-1 text-muted-foreground">
+                <span 
+                  className="text-xs mt-1 font-medium"
+                  style={{ color: getRatingColor(rating) }}
+                >
                   {getRatingLabel(rating)}
                 </span>
               </div>
@@ -470,33 +435,22 @@ const DayLogDetail = () => {
                     
                     {factor.rating !== undefined && (
                       <div className="flex flex-col items-center">
-                        <div className="relative w-12 h-12 flex items-center justify-center">
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(factor.rating)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(factor.rating)}
-                              strokeWidth="4"
-                              strokeDasharray={`${factor.rating}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <div className="text-sm font-semibold">
+                        {/* Updated Rating Circle to match Weekly Skin Report */}
+                        <div 
+                          className="w-12 h-12 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: getRatingBgColor(factor.rating) }}
+                        >
+                          <span 
+                            className="text-lg font-semibold"
+                            style={{ color: getRatingColor(factor.rating) }}
+                          >
                             {factor.rating}
-                          </div>
+                          </span>
                         </div>
-                        <span className="text-xs mt-1 text-muted-foreground">
+                        <span 
+                          className="text-xs mt-1 font-medium"
+                          style={{ color: getRatingColor(factor.rating) }}
+                        >
                           {getRatingLabel(factor.rating)}
                         </span>
                       </div>
@@ -525,33 +479,22 @@ const DayLogDetail = () => {
                     
                     {factor.rating !== undefined && (
                       <div className="flex flex-col items-center">
-                        <div className="relative w-12 h-12 flex items-center justify-center">
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(factor.rating)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(factor.rating)}
-                              strokeWidth="4"
-                              strokeDasharray={`${factor.rating}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <div className="text-sm font-semibold">
+                        {/* Updated Rating Circle to match Weekly Skin Report */}
+                        <div 
+                          className="w-12 h-12 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: getRatingBgColor(factor.rating) }}
+                        >
+                          <span 
+                            className="text-lg font-semibold"
+                            style={{ color: getRatingColor(factor.rating) }}
+                          >
                             {factor.rating}
-                          </div>
+                          </span>
                         </div>
-                        <span className="text-xs mt-1 text-muted-foreground">
+                        <span 
+                          className="text-xs mt-1 font-medium"
+                          style={{ color: getRatingColor(factor.rating) }}
+                        >
                           {getRatingLabel(factor.rating)}
                         </span>
                       </div>
@@ -580,33 +523,22 @@ const DayLogDetail = () => {
                     
                     {factor.rating !== undefined && (
                       <div className="flex flex-col items-center">
-                        <div className="relative w-12 h-12 flex items-center justify-center">
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getBackgroundColor(factor.rating)}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <svg className="w-12 h-12 absolute" viewBox="0 0 36 36">
-                            <path
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                              fill="none"
-                              stroke={getProgressColor(factor.rating)}
-                              strokeWidth="4"
-                              strokeDasharray={`${factor.rating}, 100`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          
-                          <div className="text-sm font-semibold">
+                        {/* Updated Rating Circle to match Weekly Skin Report */}
+                        <div 
+                          className="w-12 h-12 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: getRatingBgColor(factor.rating) }}
+                        >
+                          <span 
+                            className="text-lg font-semibold"
+                            style={{ color: getRatingColor(factor.rating) }}
+                          >
                             {factor.rating}
-                          </div>
+                          </span>
                         </div>
-                        <span className="text-xs mt-1 text-muted-foreground">
+                        <span 
+                          className="text-xs mt-1 font-medium"
+                          style={{ color: getRatingColor(factor.rating) }}
+                        >
                           {getRatingLabel(factor.rating)}
                         </span>
                       </div>

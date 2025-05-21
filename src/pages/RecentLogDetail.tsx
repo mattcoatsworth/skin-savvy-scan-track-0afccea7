@@ -5,6 +5,7 @@ import BackButton from "@/components/BackButton";
 import { Progress } from "@/components/ui/progress";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
 import { Calendar, Activity, Clock, BadgeInfo, ArrowRight } from "lucide-react";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 type LogType = {
   title: string;
@@ -200,32 +201,6 @@ const RecentLogDetail = () => {
     }
   }, [location, logId, navigate]);
 
-  // Helper functions for status text and ratings
-  const getStatusText = (status: LogType['status']) => {
-    switch (status) {
-      case "positive":
-        return "Positive Effect";
-      case "negative":
-        return "Negative Effect";
-      case "neutral":
-        return "Neutral Effect";
-    }
-  };
-
-  const getProgressColor = (rating: number) => {
-    if (rating >= 70) return "bg-green-500";
-    if (rating >= 40) return "bg-amber-500";
-    return "bg-red-500";
-  };
-
-  const getRatingLabel = (rating: number) => {
-    if (rating >= 80) return "Great";
-    if (rating >= 60) return "Good";
-    if (rating >= 40) return "OK";
-    if (rating >= 20) return "Fair";
-    return "Poor";
-  };
-
   if (!log) {
     return (
       <div className="flex justify-center items-center h-48">
@@ -249,7 +224,7 @@ const RecentLogDetail = () => {
             <CardContent className="p-6">
               <div className="mb-4">
                 <div>
-                  <h2 className="text-xl font-semibold">{getStatusText(log.status)}</h2>
+                  <h2 className="text-xl font-semibold">{log.status === "positive" ? "Positive Effect" : log.status === "negative" ? "Negative Effect" : "Neutral Effect"}</h2>
                   <p className="text-muted-foreground">{log.description}</p>
                 </div>
               </div>
@@ -286,21 +261,42 @@ const RecentLogDetail = () => {
 
               {log.rating !== undefined && (
                 <div className="mb-6">
-                  <div className="flex items-center mb-1">
+                  <div className="flex items-center mb-3">
                     <Activity className="h-5 w-5 mr-2 text-muted-foreground" />
                     <h3 className="text-base font-medium">Effect Rating</h3>
                   </div>
-                  <div className="flex items-center">
-                    <div className="flex-1 mr-4">
+                  <div className="flex items-center justify-between">
+                    {/* Updated Rating Circle to match Weekly Skin Report */}
+                    <div className="flex flex-col items-center">
+                      <div 
+                        className="w-16 h-16 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: getRatingBgColor(log.rating) }}
+                      >
+                        <span 
+                          className="text-2xl font-semibold"
+                          style={{ color: getRatingColor(log.rating) }}
+                        >
+                          {log.rating}
+                        </span>
+                      </div>
+                      <span 
+                        className="text-sm mt-1 font-medium"
+                        style={{ color: getRatingColor(log.rating) }}
+                      >
+                        {getRatingLabel(log.rating)}
+                      </span>
+                    </div>
+                    
+                    {/* Keep the progress bar for visual reference */}
+                    <div className="flex-1 ml-4">
                       <Progress 
                         value={log.rating} 
                         className="h-3 bg-gray-100" 
-                        indicatorClassName={getProgressColor(log.rating)} 
+                        indicatorClassName={`bg-${log.rating >= 70 ? 'green' : log.rating >= 40 ? 'amber' : 'red'}-500`} 
                       />
+                      <p className="text-xs text-right text-muted-foreground mt-1">Rating out of 100</p>
                     </div>
-                    <div className="text-base font-semibold">{log.rating}/100</div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(log.rating)}</p>
                 </div>
               )}
 

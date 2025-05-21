@@ -5,6 +5,7 @@ import BackButton from "@/components/BackButton";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ViewScoringMethod from "@/components/ViewScoringMethod";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 type LogType = {
   id: string;
@@ -15,15 +16,6 @@ type LogType = {
   details?: string;
   rating?: number;
   category: "product" | "daily" | "other";
-};
-
-// Determine label based on rating
-const getRatingLabel = (rating: number) => {
-  if (rating >= 80) return "Great";
-  if (rating >= 60) return "Good";
-  if (rating >= 40) return "OK";
-  if (rating >= 20) return "Fair";
-  return "Poor";
 };
 
 const RecentLogs = () => {
@@ -138,10 +130,22 @@ const RecentLogs = () => {
                     
                     {log.rating !== undefined && (
                       <div className="flex flex-col items-center">
-                        <div className="text-base font-semibold">
-                          {log.rating}
+                        {/* Updated Rating Circle to match Weekly Skin Report */}
+                        <div 
+                          className="w-12 h-12 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: getRatingBgColor(log.rating) }}
+                        >
+                          <span 
+                            className="text-lg font-semibold"
+                            style={{ color: getRatingColor(log.rating) }}
+                          >
+                            {log.rating}
+                          </span>
                         </div>
-                        <span className="text-xs text-muted-foreground">
+                        <span 
+                          className="text-xs mt-1 font-medium"
+                          style={{ color: getRatingColor(log.rating) }}
+                        >
                           {getRatingLabel(log.rating)}
                         </span>
                       </div>
