@@ -321,13 +321,17 @@ const AIAnalysisDetail = () => {
       const response = await getAdvice(detailPrompt);
       
       if (response && response.sections) {
+        const recommendations = Array.isArray(response.sections["Recommendations"]) 
+          ? response.sections["Recommendations"] as string[]
+          : typeof response.sections["Recommendations"] === 'string'
+            ? [response.sections["Recommendations"] as string]
+            : tempContent.recommendations;
+            
         return {
           title: response.sections["Title"] as string || baseTitle,
           overview: response.sections["Overview"] as string || tempContent.overview,
           details: response.sections["Details"] as string || tempContent.details,
-          recommendations: Array.isArray(response.sections["Recommendations"]) 
-            ? response.sections["Recommendations"] as string[] 
-            : tempContent.recommendations,
+          recommendations: recommendations,
           impact: response.sections["Impact"] as string || tempContent.impact,
           disclaimer: response.sections["Disclaimer"] as string || tempContent.disclaimer
         };

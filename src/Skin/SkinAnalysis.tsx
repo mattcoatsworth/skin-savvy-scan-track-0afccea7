@@ -356,7 +356,10 @@ const SkinAnalysis: React.FC = () => {
                     
                     {recs.map((recommendation, index) => (
                       <div key={index} className="mb-3">
-                        <Link to={recommendation.linkTo}>
+                        <Link 
+                          to={recommendation.linkTo}
+                          state={{ analysis: { text: recommendation.text, type: recommendation.type } }}
+                        >
                           <Card className="ios-card hover:shadow-md transition-all">
                             <CardContent className="p-4">
                               <div className="flex items-start">
@@ -398,20 +401,26 @@ const SkinAnalysis: React.FC = () => {
               <h2 className="text-xl font-semibold mb-3">Detected Patterns</h2>
               <div className="space-y-3">
                 {aiAnalysis.detectedPatterns.map((pattern, index) => (
-                  <Card key={index} className="ios-card">
-                    <CardContent className="p-4">
-                      <div className="bg-slate-50 p-3 rounded-lg">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-slate-500">{pattern.category}</span>
-                          <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded">
-                            {pattern.correlation}% correlation
-                          </span>
+                  <Link 
+                    key={index} 
+                    to={`/ai-analysis/pattern/${index + 1}`}
+                    state={{ analysis: { text: pattern.title, details: pattern.description } }}
+                  >
+                    <Card className="ios-card hover:shadow-md transition-all">
+                      <CardContent className="p-4">
+                        <div className="bg-slate-50 p-3 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-slate-500">{pattern.category}</span>
+                            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded">
+                              {pattern.correlation}% correlation
+                            </span>
+                          </div>
+                          <h4 className="font-medium my-1">{pattern.title}</h4>
+                          <p className="text-sm text-muted-foreground">{pattern.description}</p>
                         </div>
-                        <h4 className="font-medium my-1">{pattern.title}</h4>
-                        <p className="text-sm text-muted-foreground">{pattern.description}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -423,19 +432,25 @@ const SkinAnalysis: React.FC = () => {
                 <CardContent className="p-4">
                   <div className="space-y-3">
                     {aiAnalysis.focusAreas.map((area, index) => (
-                      <div key={index} className="flex items-start space-x-3">
-                        <div className={`mt-1 w-2 h-2 rounded-full ${
-                          area.priority === 'primary' ? 'bg-green-500' : 
-                          area.priority === 'secondary' ? 'bg-blue-500' : 'bg-purple-500'
-                        }`}></div>
-                        <div>
-                          <h4 className="font-medium">{area.title}</h4>
-                          <p className="text-sm text-muted-foreground">{area.description}</p>
-                          <span className="text-xs bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">
-                            {area.type}
-                          </span>
+                      <Link
+                        key={index}
+                        to={`/ai-analysis/focus/${index + 1}`}
+                        state={{ analysis: { text: area.title, details: area.description } }}
+                      >
+                        <div className="flex items-start space-x-3 cursor-pointer p-2 rounded-md hover:bg-gray-50">
+                          <div className={`mt-1 w-2 h-2 rounded-full ${
+                            area.priority === 'primary' ? 'bg-green-500' : 
+                            area.priority === 'secondary' ? 'bg-blue-500' : 'bg-purple-500'
+                          }`}></div>
+                          <div>
+                            <h4 className="font-medium">{area.title}</h4>
+                            <p className="text-sm text-muted-foreground">{area.description}</p>
+                            <span className="text-xs bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">
+                              {area.type}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </CardContent>
@@ -451,7 +466,7 @@ const SkinAnalysis: React.FC = () => {
                     {Object.entries(aiAnalysis.metrics).map(([key, value]) => (
                       <div key={key} className="bg-slate-50 p-3 rounded-lg">
                         <p className="text-xs text-slate-500 capitalize">{key}</p>
-                        <p className={`text-lg font-medium ${value.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-lg font-medium ${value.toString().startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
                           {value}
                         </p>
                       </div>
@@ -466,24 +481,30 @@ const SkinAnalysis: React.FC = () => {
               <h2 className="text-xl font-semibold mb-3">Weekly Challenges</h2>
               <div className="space-y-3">
                 {aiAnalysis.challenges.map((challenge, index) => (
-                  <Card key={index} className="ios-card">
-                    <CardContent className="p-4">
-                      <div className="bg-slate-50 p-3 rounded-lg">
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center space-x-2">
-                            <h4 className="font-medium">{challenge.title}</h4>
-                            <span className={getCategoryBadgeClass()}>
-                              {challenge.category}
+                  <Link
+                    key={index}
+                    to={`/ai-analysis/challenge/${index + 1}`}
+                    state={{ analysis: { text: challenge.title, details: challenge.description } }}
+                  >
+                    <Card className="ios-card hover:shadow-md transition-all">
+                      <CardContent className="p-4">
+                        <div className="bg-slate-50 p-3 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center space-x-2">
+                              <h4 className="font-medium">{challenge.title}</h4>
+                              <span className={getCategoryBadgeClass()}>
+                                {challenge.category}
+                              </span>
+                            </div>
+                            <span className={getDifficultyBadgeClass(challenge.difficulty)}>
+                              {challenge.difficulty}
                             </span>
                           </div>
-                          <span className={getDifficultyBadgeClass(challenge.difficulty)}>
-                            {challenge.difficulty}
-                          </span>
+                          <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>

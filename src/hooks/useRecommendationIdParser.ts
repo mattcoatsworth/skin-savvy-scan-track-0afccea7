@@ -160,7 +160,7 @@ export const useRecommendationIdParser = () => {
     const validVariants = variants.filter(variant => variant && variant.type && variant.id);
     console.log("Generated variants for lookup:", validVariants);
     
-    return validVariants;
+    return validVariants as Array<{type: string, id: string}>;
   };
   
   return {
