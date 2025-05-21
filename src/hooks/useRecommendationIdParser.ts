@@ -15,6 +15,7 @@ export const useRecommendationIdParser = () => {
    * - observation/1
    * - ai-analysis/factor/1
    * - ai-analysis/observation/1
+   * - /ai-analysis/factor/1
    * 
    * @param fullId The full ID string from the URL
    * @returns Object containing recommendationType and recommendationNumber
@@ -38,9 +39,10 @@ export const useRecommendationIdParser = () => {
       // Handle URL encoded slashes (convert to standard format)
       const normalizedId = idWithoutTestAi.replace(/%2F/g, '/');
       
-      // Handle new ai-analysis format: ai-analysis/type/number
-      if (normalizedId.startsWith('ai-analysis/')) {
-        const parts = normalizedId.substring(12).split('/');
+      // Handle new ai-analysis format: ai-analysis/type/number or /ai-analysis/type/number
+      if (normalizedId.includes('ai-analysis/') || normalizedId.includes('/ai-analysis/')) {
+        const cleanPath = normalizedId.replace(/^\//, '').replace(/^ai-analysis\//, '');
+        const parts = cleanPath.split('/');
         if (parts.length >= 2) {
           recommendationType = parts[0];
           recommendationNumber = parts[1];

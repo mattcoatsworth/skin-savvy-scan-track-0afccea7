@@ -239,20 +239,23 @@ const App = () => (
               <Route path="/recommendations-detail/zinc" element={<Zinc />} />
               <Route path="/recommendations-detail/gentle-cleanser" element={<GentleCleanser />} />
               
-              {/* AI Recommendation routes - all possible formats */}
+              {/* Add the new AI Analysis route */}
+              <Route path="/ai-analysis/:type/:id" element={<AIAnalysisDetail />} />
+              
+              {/* Recommendation detail routes - updated to use AIAnalysisDetail for consistency */}
               <Route path="/recommendations-detail/:id/testai" element={<AIRecommendationDetail />} />
               <Route path="/recommendations-detail/:type/:id/testai" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-action-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-factor-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-observation-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-timeline-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai/:type/:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/ai-:type-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/:type-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/:type/:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/action-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/factor-:id" element={<AIRecommendationDetail />} />
-              <Route path="/recommendations-detail/*" element={<AIRecommendationDetail />} />
+              <Route path="/recommendations-detail/ai-action-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/ai-factor-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/ai-observation-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/ai-timeline-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/ai/:type/:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/ai-:type-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/:type-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/:type/:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/action-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/factor-:id" element={<AIAnalysisDetail />} />
+              <Route path="/recommendations-detail/*" element={<AIAnalysisDetail />} />
               
               <Route path="/supplement/:id" element={<SupplementDetail />} />
             </Route>

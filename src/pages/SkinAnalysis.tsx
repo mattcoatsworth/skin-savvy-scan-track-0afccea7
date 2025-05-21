@@ -263,6 +263,7 @@ const SkinAnalysis = () => {
             const title = hasColon ? item.split(":")[0].trim() : `${config.labelPrefix} ${index + 1}`;
             const details = hasColon ? item.split(":").slice(1).join(":").trim() : item;
             
+            // Updated URL format - use /ai-analysis/ path
             return {
               text: item, // Keep the full text for processing
               type: config.type,
@@ -564,7 +565,7 @@ const SkinAnalysis = () => {
                               to={item.linkTo} 
                               key={itemIdx} 
                               className="block"
-                              state={{ recommendation: { text: item.text } }}
+                              state={{ analysis: { text: item.text, type: item.type, id: `${itemIdx + 1}` } }}
                             >
                               <Card className="ios-card hover:shadow-md transition-all">
                                 <CardContent className="p-4">

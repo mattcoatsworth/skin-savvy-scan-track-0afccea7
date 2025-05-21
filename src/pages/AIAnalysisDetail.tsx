@@ -66,7 +66,7 @@ const AIAnalysisDetail = () => {
   });
   
   const { getAdvice } = useSkinAdvice({ 
-    adviceType: "analysis",
+    adviceType: "recommendation", // Fix: Changed from "analysis" to "recommendation" to match allowed types
     model: "gpt-4o-mini" 
   });
   
