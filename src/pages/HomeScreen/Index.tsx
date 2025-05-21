@@ -11,6 +11,7 @@ import BottomTemplate from "@/components/BottomTemplate";
 import MealPlanCard from "@/pages/HomeScreen/MealPlanCard";
 import SkinEnergyCard from "@/pages/HomeScreen/SkinEnergyCard";
 import { useSampleData } from "@/pages/HomeScreen/useSampleData";
+// Import types from the main types file
 import { Factor, Recommendation } from "@/types/skin-types";
 
 const Index = () => {

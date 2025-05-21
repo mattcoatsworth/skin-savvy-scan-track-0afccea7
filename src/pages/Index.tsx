@@ -9,6 +9,7 @@ import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
 import { useSampleData } from "@/hooks/useSampleData";
+// Import types from the main types file
 import { Factor, Recommendation } from "@/types/skin-types";
 
 const Index = () => {

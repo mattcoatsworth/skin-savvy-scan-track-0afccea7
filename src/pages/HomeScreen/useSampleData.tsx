@@ -3,14 +3,13 @@ import { ReactNode } from "react";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import { generateSkinHistoryData } from "@/pages/HomeScreen/skin-utils";
 import { 
-  FactorType, 
   Factor, 
+  RecommendationType,
   RecentLogType, 
   InsightType,
   SuggestedActionType,
   ExploreItemType,
-  MealPlanType,
-  RecommendationType
+  MealPlanType
 } from "@/types/skin-types";
 
 export function useSampleData() {
