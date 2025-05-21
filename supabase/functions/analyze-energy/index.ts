@@ -80,14 +80,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a holistic skin analysis expert who understands the energetic, metaphysical, and traditional medicine connections between skin conditions and overall wellbeing. Structure your responses clearly with sections for Traditional Chinese Medicine (TCM), Chakra Theory, Holistic Approaches, and Overall Insights. Avoid using markdown formatting like #, ##, or * characters. Your tone should be compassionate, insightful and empowering. Always end with a follow-up question asking if they would like a 7-day ritual healing plan."
+            content: "You are a holistic skin analysis expert who understands the energetic, metaphysical, and traditional medicine connections between skin conditions and overall wellbeing. Structure your responses clearly with distinct labeled sections for Traditional Chinese Medicine (TCM), Chakra Theory, Holistic Approaches, and Overall Insights. Avoid using markdown formatting like #, ##, or * characters. Your tone should be compassionate, insightful and empowering. Always end with a follow-up question asking if they would like a 7-day ritual healing plan."
           },
           {
             role: "user",
             content: [
               { 
                 type: "text", 
-                text: "Using Traditional Chinese Medicine, chakra theory, and metaphysical symbolism, provide an energetic interpretation of the skin zones and breakout locations visible in this image. Focus on both TCM organ associations and chakra energy connections. Format your response with clear sections for TCM Analysis, Chakra Theory, Holistic Approaches, and Overall Insights. Include emojis for key sections, include metaphysical interpretations, and suggest holistic healing approaches. This is for self-reflection and holistic insight only, not a medical diagnosis. End with asking if I'd like a 7-day ritual plan that blends metaphysical healing with gentle physical practices."
+                text: "Using Traditional Chinese Medicine, chakra theory, and metaphysical symbolism, provide an energetic interpretation of the skin zones and breakout locations visible in this image. Focus on both TCM organ associations and chakra energy connections. Format your response with clearly labeled sections for Traditional Chinese Medicine (TCM), Chakra Theory, Holistic Approaches, and Overall Insights. Include emojis for key sections, include metaphysical interpretations, and suggest holistic healing approaches. This is for self-reflection and holistic insight only, not a medical diagnosis. End with asking if I'd like a 7-day ritual plan that blends metaphysical healing with gentle physical practices."
               },
               {
                 type: "image_url",
@@ -118,14 +118,23 @@ serve(async (req) => {
       throw new Error("The AI was unable to analyze this image.");
     }
     
-    // Create analysis content object
+    // Extract sections from the content
+    const tcmSection = extractSection(content, "Traditional Chinese Medicine");
+    const chakraSection = extractSection(content, "Chakra Theory");
+    const holisticSection = extractSection(content, "Holistic Approaches");
+    const insightsSection = extractSection(content, "Overall Insights");
+    
+    // Find the follow-up question about the 7-day ritual plan
+    const followUpQuestion = extractFollowUpQuestion(content);
+    
+    // Create analysis content object with structured sections
     const analysisContent = {
       fullAnalysis: content,
-      traditionalChineseMedicine: "See full analysis above",
-      chakraTheory: "See full analysis above",
-      metaphysicalSymbolism: "See full analysis above",
-      holisticRemedies: "See full analysis above",
-      suggestedFoods: "See full analysis above"
+      traditionalChineseMedicine: tcmSection || "No TCM analysis available.",
+      chakraTheory: chakraSection || "No chakra analysis available.",
+      holisticApproaches: holisticSection || "No holistic approaches available.",
+      energeticInsights: insightsSection || "No overall insights available.",
+      followUpQuestion: followUpQuestion || "Would you like a personalized 7-day ritual plan that blends metaphysical healing with gentle physical practices? 🌼✨"
     };
 
     return new Response(
@@ -158,3 +167,48 @@ serve(async (req) => {
     );
   }
 });
+
+// Helper function to extract a specific section from the content
+function extractSection(content: string, sectionName: string): string | null {
+  // Look for the section with multiple possible header formats
+  const regex = new RegExp(`(?:${sectionName}|${sectionName.toUpperCase()}|${sectionName.toLowerCase()})(?:\\s*\\(.*?\\))?[:\\s]+(.*?)(?=(?:Traditional Chinese Medicine|TCM|CHAKRA|Chakra Theory|HOLISTIC|Holistic Approaches|OVERALL|Overall Insights|Would you like)|$)`, 'is');
+  
+  const match = content.match(regex);
+  if (match && match[1]) {
+    return cleanFormatting(match[1].trim());
+  }
+  
+  return null;
+}
+
+// Helper function to extract the follow-up question
+function extractFollowUpQuestion(content: string): string | null {
+  const regex = /Would you like .*?(?:\?|$)/i;
+  const match = content.match(regex);
+  
+  if (match) {
+    return cleanFormatting(match[0].trim());
+  }
+  
+  return null;
+}
+
+// Helper function to clean formatting from text
+function cleanFormatting(text: string): string {
+  // Replace markdown headings with plain text
+  let cleaned = text.replace(/#+\s+/g, '');
+  
+  // Replace markdown bold with plain text
+  cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '$1');
+  
+  // Replace markdown italic with plain text
+  cleaned = cleaned.replace(/\*(.*?)\*/g, '$1');
+  
+  // Preserve emojis but remove excessive whitespace
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+  
+  // Fix double line breaks
+  cleaned = cleaned.replace(/\n\n+/g, '\n\n');
+  
+  return cleaned.trim();
+}
