@@ -9,7 +9,7 @@ import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
 import { useSampleData } from "@/hooks/useSampleData";
-import { Factor, Recommendation } from "@/components/DailySkinSnapshot";
+import type { Factor, Recommendation } from "@/types/skin-types";
 
 const Index = () => {
   // Get all the sample data from our custom hook

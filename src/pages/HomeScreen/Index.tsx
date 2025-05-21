@@ -11,7 +11,7 @@ import BottomTemplate from "@/components/BottomTemplate";
 import MealPlanCard from "@/pages/HomeScreen/MealPlanCard";
 import SkinEnergyCard from "@/pages/HomeScreen/SkinEnergyCard";
 import { useSampleData } from "@/pages/HomeScreen/useSampleData";
-import { Factor, Recommendation } from "@/components/DailySkinSnapshot";
+import type { Factor, Recommendation } from "@/types/skin-types";
 
 const Index = () => {
   // Get all the sample data from our custom hook

@@ -1,6 +1,6 @@
 
 // Re-export specific types from the main types file
-import { 
+import type { 
   Factor,
   Recommendation,
   FactorType,
@@ -14,7 +14,7 @@ import {
 } from "@/types/skin-types";
 
 // Re-export all types
-export {
+export type {
   Factor,
   Recommendation,
   FactorType,
