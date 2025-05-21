@@ -9,6 +9,8 @@ import ExploreSection from "@/components/ExploreSection";
 import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
 import { useSampleData } from "@/hooks/useSampleData";
+// Import Factor and Recommendation from types/skin-types
+import { Factor, Recommendation } from "@/types/skin-types";
 
 const Index = () => {
   // Get all the sample data from our custom hook
@@ -44,8 +46,8 @@ const Index = () => {
           <DailySkinSnapshot 
             emoji="😊" 
             status="Balanced" 
-            factors={skinFactors} 
-            recommendations={fallbackRecommendations}
+            factors={skinFactors as Factor[]} 
+            recommendations={fallbackRecommendations as Recommendation[]}
           />
           
           <RecentLogsCarousel logs={recentLogs} />
