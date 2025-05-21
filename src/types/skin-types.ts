@@ -66,8 +66,8 @@ export type MealPlanType = {
   hydration: string;
 };
 
-// Create a unified SkinFactorType that matches both definitions
-export {
+// Re-export types from Skin/types.ts with explicit type exports
+export type { 
   SkinFactorType,
   SkinFactor,
   DaySkinData,
