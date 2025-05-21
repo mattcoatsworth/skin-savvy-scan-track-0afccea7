@@ -1,13 +1,27 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, Info, TrendingUp, Droplet, Crown, Clock, Thermometer } from "lucide-react";
 import { Link } from "react-router-dom";
-import TrendChart from "@/components/TrendChart";
-import { WeeklySkinData } from "./types";
+import { WeeklySkinData } from "@/Skin/types";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  ResponsiveContainer,
+  ReferenceLine
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@/components/ui/chart";
 
 // Sample data for weekly skin health
 const sampleWeeklyData: WeeklySkinData = {
@@ -95,6 +109,14 @@ const WeeklySkinView: React.FC = () => {
     if (value >= 20) return "bg-orange-500";
     return "bg-red-500";
   };
+
+  // Define chart colors with enhanced visual appeal - matching SkinIndexComparison
+  const chartConfig = {
+    skinScore: {
+      label: "Skin Score",
+      color: "#8B5CF6" // Vivid purple - matching SkinIndexComparison
+    }
+  };
   
   return (
     <div className="space-y-6">
@@ -150,7 +172,7 @@ const WeeklySkinView: React.FC = () => {
         </CardContent>
       </Card>
       
-      {/* Weekly Overview - Styled with gradients like FYP */}
+      {/* Weekly Overview - Enhanced with improved chart styling */}
       <Card className="overflow-hidden">
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3">
           <div className="flex items-center gap-2">
@@ -177,9 +199,92 @@ const WeeklySkinView: React.FC = () => {
               />
             </div>
             
+            {/* Enhanced Weekly Trend Chart - Styled to match SkinIndexComparison */}
             <div>
               <p className="text-sm text-muted-foreground mb-3">Weekly Trend</p>
-              <TrendChart data={sampleWeeklyData.weeklyTrend} height={100} />
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-slate-900/50 dark:to-indigo-900/30 -mx-2 p-4 rounded-lg">
+                <div className="h-[180px]">
+                  <ChartContainer className="h-full" config={chartConfig}>
+                    <LineChart 
+                      data={sampleWeeklyData.weeklyTrend} 
+                      margin={{ top: 10, right: 5, bottom: 10, left: 10 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke="#94a3b8" 
+                        fontSize={10}
+                        tickLine={false}
+                        axisLine={{ stroke: '#e2e8f0' }}
+                        padding={{ left: 5, right: 5 }}
+                        interval={0}
+                      />
+                      <YAxis 
+                        domain={[0, 100]} 
+                        stroke="#94a3b8" 
+                        fontSize={10}
+                        tickLine={false}
+                        axisLine={{ stroke: '#e2e8f0' }}
+                        tickFormatter={(value) => `${value}`}
+                        width={25}
+                      />
+                      <ReferenceLine y={70} stroke="#94a3b8" strokeDasharray="3 3" label={{ value: 'Good', position: 'right', fill: '#94a3b8', fontSize: 8 }} />
+                      <ChartTooltip 
+                        content={
+                          <ChartTooltipContent 
+                            formatter={(value: number) => [`${value}`, 'Score']}
+                            labelFormatter={(label) => `${label}`}
+                          />
+                        }
+                      />
+                      <Line 
+                        name="Skin Score" 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#8B5CF6" 
+                        strokeWidth={2} 
+                        dot={{ r: 4, fill: "#8B5CF6", stroke: "white", strokeWidth: 1.5 }} 
+                        activeDot={{ r: 6, stroke: "white", strokeWidth: 1.5 }}
+                        animationDuration={1000}
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                </div>
+
+                <div className="flex items-center justify-end mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex gap-3">
+                    <span className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                      <span className="inline-block w-3 h-3 bg-[#8B5CF6] rounded-full"></span>
+                      Skin Score
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Daily Score Summary - Enhanced Visual Display */}
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-3">Daily Scores</p>
+              <div className="flex items-center justify-between space-x-1">
+                {sampleWeeklyData.weeklyTrend.map((day, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <span className="text-xs font-medium mb-1">{day.date}</span>
+                    <div 
+                      className={cn("w-8 h-8 flex items-center justify-center rounded-full mb-1", getRatingBgColor(day.value))}
+                    >
+                      <span className={cn("text-xs font-medium", getRatingTextColor(day.value))}>
+                        {day.value}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground">
+                      {day.value >= 80 ? "Great" : 
+                       day.value >= 60 ? "Good" : 
+                       day.value >= 40 ? "Ok" : 
+                       day.value >= 20 ? "Fair" : "Poor"}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </CardContent>

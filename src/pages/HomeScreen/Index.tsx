@@ -11,8 +11,6 @@ import BottomTemplate from "@/components/BottomTemplate";
 import MealPlanCard from "@/pages/HomeScreen/MealPlanCard";
 import SkinEnergyCard from "@/pages/HomeScreen/SkinEnergyCard";
 import { useSampleData } from "@/pages/HomeScreen/useSampleData";
-// Import types from the main types file
-import { Factor, Recommendation } from "@/types/skin-types";
 
 const Index = () => {
   // Get all the sample data from our custom hook
@@ -49,8 +47,8 @@ const Index = () => {
           <DailySkinSnapshot 
             emoji="😊" 
             status="Balanced" 
-            factors={skinFactors as Factor[]} 
-            recommendations={fallbackRecommendations as Recommendation[]}
+            factors={skinFactors} 
+            recommendations={fallbackRecommendations}
           />
           
           {/* Meal Plan Card */}
