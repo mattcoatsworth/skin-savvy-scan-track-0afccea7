@@ -1,29 +1,23 @@
-
 import { ReactNode } from "react";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import { generateSkinHistoryData } from "@/utils/skin-utils";
-import type { 
+import { 
   Factor, 
-  RecommendationType,
-  Recommendation, 
-  RecentLogType,
-  InsightType,
-  SuggestedActionType,
-  ExploreItemType,
-  MealPlanType
+  Recommendation,
+  FactorType
 } from "@/types/skin-types";
 
 export function useSampleData() {
   // Sample data with type assertions
   const skinFactors: Factor[] = [
-    { type: "Food", status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
-    { type: "Supplement", status: "New", icon: <Pill className="h-4 w-4" /> },
-    { type: "Makeup", status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
-    { type: "Weather", status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+    { type: "Food" as FactorType, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement" as FactorType, status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup" as FactorType, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather" as FactorType, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   // Add fallback static recommendations
-  const fallbackRecommendations: Recommendation[] = [
+  const fallbackRecommendations = [
     { 
       type: "skincare", 
       text: "Use gentle cleanser", 
@@ -81,7 +75,7 @@ export function useSampleData() {
   const skinHistory = generateSkinHistoryData();
 
   // Updated sample data with diverse scan types for the RecentLogsCarousel
-  const recentLogs: RecentLogType[] = [
+  const recentLogs = [
     {
       title: "Face Scan Analysis",
       status: "positive",
@@ -112,7 +106,7 @@ export function useSampleData() {
     }
   ];
 
-  const insights: InsightType[] = [
+  const insights = [
     {
       title: "Collagen supplements",
       description: "Improved skin elasticity after 2 weeks",
@@ -140,7 +134,7 @@ export function useSampleData() {
   ];
 
   // Update suggested actions to use proper type
-  const suggestedActions: SuggestedActionType[] = [
+  const suggestedActions = [
     { 
       text: "Try logging your water intake today",
       linkTo: "/day-log/today", // Link directly to today's log
@@ -165,7 +159,7 @@ export function useSampleData() {
     },
   ];
 
-  const exploreItems: ExploreItemType[] = [
+  const exploreItems = [
     { 
       title: "Skin Tips for Your Skin Type", 
       subtitle: "Personalized advice",
@@ -186,15 +180,6 @@ export function useSampleData() {
     },
   ];
 
-  // Sample meal plan data
-  const mealPlanToday: MealPlanType = {
-    breakfast: "Avocado toast with poached eggs",
-    lunch: "Salmon salad with mixed greens",
-    dinner: "Grilled chicken with roasted vegetables",
-    snacks: ["Greek yogurt with berries", "Handful of almonds"],
-    hydration: "2.5L water with lemon slices"
-  };
-
   return {
     skinFactors,
     fallbackRecommendations,
@@ -203,7 +188,6 @@ export function useSampleData() {
     recentLogs,
     insights,
     suggestedActions,
-    exploreItems,
-    mealPlanToday
+    exploreItems
   };
 }

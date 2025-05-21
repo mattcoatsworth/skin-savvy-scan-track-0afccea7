@@ -1,30 +1,19 @@
-
 import { ReactNode } from "react";
 import { Salad, Pill, Palette, CloudSun } from "lucide-react";
 import { generateSkinHistoryData } from "@/pages/HomeScreen/skin-utils";
-import type { 
-  Factor, 
-  RecommendationType,
-  Recommendation, 
-  RecentLogType,
-  InsightType,
-  SuggestedActionType,
-  ExploreItemType,
-  MealPlanType,
-  FactorType
-} from "@/pages/HomeScreen/skin-types";
+import { FactorType, Factor } from "@/pages/HomeScreen/skin-types";
 
 export function useSampleData() {
   // Sample data with type assertions
   const skinFactors: Factor[] = [
-    { type: "Food" as FactorType, status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
-    { type: "Supplement" as FactorType, status: "New", icon: <Pill className="h-4 w-4" /> },
-    { type: "Makeup" as FactorType, status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
-    { type: "Weather" as FactorType, status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
+    { type: "Food", status: "Hydrating", icon: <Salad className="h-4 w-4" /> },
+    { type: "Supplement", status: "New", icon: <Pill className="h-4 w-4" /> },
+    { type: "Makeup", status: "Same as usual", icon: <Palette className="h-4 w-4" /> },
+    { type: "Weather", status: "Dry + Cold", icon: <CloudSun className="h-4 w-4" /> },
   ];
 
   // Add fallback static recommendations
-  const fallbackRecommendations: Recommendation[] = [
+  const fallbackRecommendations = [
     { 
       type: "skincare", 
       text: "Use gentle cleanser", 

@@ -23,9 +23,6 @@ const Index = () => {
     exploreItems
   } = useSampleData();
 
-  // Use Factor from the types import
-  const typedSkinFactors = skinFactors as Factor[];
-
   return (
     <div>
       {/* Simplified header with smaller Skin Savvy text */}
@@ -48,7 +45,7 @@ const Index = () => {
           <DailySkinSnapshot 
             emoji="😊" 
             status="Balanced" 
-            factors={typedSkinFactors} 
+            factors={skinFactors} 
             recommendations={fallbackRecommendations}
           />
           

@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 
 export type SkinFactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health" | "Sleep" | "Stress";
