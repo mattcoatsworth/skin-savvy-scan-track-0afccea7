@@ -263,17 +263,10 @@ const SkinAnalysis = () => {
             const title = hasColon ? item.split(":")[0].trim() : `${config.labelPrefix} ${index + 1}`;
             const details = hasColon ? item.split(":").slice(1).join(":").trim() : item;
             
-            // Create a URL-friendly ID from the title
-            const urlFriendlyTitle = title
-              .toLowerCase()
-              .replace(/[^a-z0-9]/g, '-') // Replace non-alphanumeric with hyphens
-              .replace(/-+/g, '-')         // Replace multiple hyphens with single one
-              .replace(/^-|-$/g, '');      // Remove leading/trailing hyphens
-              
             return {
               text: item, // Keep the full text for processing
               type: config.type,
-              linkTo: `/recommendations-detail/${config.type}/${index + 1}` // More URL-friendly format
+              linkTo: `/ai-analysis/${config.type}/${index + 1}` // New URL format
             };
           })
         });
@@ -283,19 +276,12 @@ const SkinAnalysis = () => {
         const title = hasColon ? content.split(":")[0].trim() : `${config.labelPrefix} 1`;
         const details = hasColon ? content.split(":").slice(1).join(":").trim() : content;
         
-        // Create a URL-friendly ID from the title
-        const urlFriendlyTitle = title
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '');
-          
         aiSections.push({
           title: config.title,
           items: [{
             text: content,
             type: config.type,
-            linkTo: `/recommendations-detail/${config.type}/1` // More URL-friendly format
+            linkTo: `/ai-analysis/${config.type}/1` // New URL format
           }]
         });
       }

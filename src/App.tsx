@@ -66,6 +66,7 @@ import MealPlan from "@/pages/MealPlan";
 import FYP from "@/pages/FYP";
 import RecipeIdeas from "@/pages/RecipeIdeas";
 import HomeNewUser from "@/pages/HomeNewUser";
+import AIAnalysisDetail from "./pages/AIAnalysisDetail";
 
 // Custom recommendation pages
 import GentleCleanser from "@/pages/RecommendationsDetail/GentleCleanser";
@@ -231,7 +232,7 @@ const App = () => (
               <Route path="/correlations-detail" element={<CorrelationsDetail />} />
               
               {/* Static recommendation detail pages */}
-              <Route path="/recommendations-detail/:id" element={<RecommendationsDetail />} />
+              <Route path="/recommendations-detail/:id" element={<AIAnalysisDetail />} />
               <Route path="/recommendations-detail/limit-dairy" element={<LimitDairy />} />
               <Route path="/recommendations-detail/vitamin-c-serum" element={<VitaminCSerum />} />
               <Route path="/recommendations-detail/meditation" element={<Meditation />} />

@@ -13,6 +13,8 @@ export const useRecommendationIdParser = () => {
    * - ai/timeline/1
    * - /testai suffix
    * - observation/1
+   * - ai-analysis/factor/1
+   * - ai-analysis/observation/1
    * 
    * @param fullId The full ID string from the URL
    * @returns Object containing recommendationType and recommendationNumber
@@ -35,6 +37,17 @@ export const useRecommendationIdParser = () => {
       
       // Handle URL encoded slashes (convert to standard format)
       const normalizedId = idWithoutTestAi.replace(/%2F/g, '/');
+      
+      // Handle new ai-analysis format: ai-analysis/type/number
+      if (normalizedId.startsWith('ai-analysis/')) {
+        const parts = normalizedId.substring(12).split('/');
+        if (parts.length >= 2) {
+          recommendationType = parts[0];
+          recommendationNumber = parts[1];
+          console.log(`Parsed ai-analysis format: type=${recommendationType}, number=${recommendationNumber}`);
+          return { recommendationType, recommendationNumber };
+        }
+      }
       
       // For direct paths like /observation/1
       if (normalizedId.includes('/')) {
@@ -116,6 +129,9 @@ export const useRecommendationIdParser = () => {
       recommendationType.startsWith('ai-') 
         ? { type: recommendationType.substring(3), id: recommendationNumber } 
         : null,
+      
+      // New ai-analysis format
+      { type: "ai-analysis", id: `${recommendationType}/${recommendationNumber}` },
       
       // Handle potential alternative formats
       { type: "ai", id: recommendationType }, // For cases where the type itself is the ID

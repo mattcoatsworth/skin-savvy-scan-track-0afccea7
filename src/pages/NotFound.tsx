@@ -16,8 +16,9 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
-  // Check if this is a recommendation detail page that wasn't found
+  // Check if this is a recommendation detail or ai analysis page that wasn't found
   const isRecommendationDetail = location.pathname.includes("/recommendations-detail/");
+  const isAiAnalysis = location.pathname.includes("/ai-analysis/");
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -30,14 +31,14 @@ const NotFound = () => {
         <Card>
           <CardContent className="p-6">
             <p className="text-lg mb-4">
-              {isRecommendationDetail 
-                ? "Sorry, we couldn't find this recommendation."
+              {isRecommendationDetail || isAiAnalysis
+                ? "Sorry, we couldn't find this analysis."
                 : "The page you're looking for doesn't exist."}
             </p>
             
             <p className="text-sm mb-6 text-gray-600">
-              {isRecommendationDetail 
-                ? "This recommendation may have been generated previously but is no longer available."
+              {isRecommendationDetail || isAiAnalysis
+                ? "This analysis may have been generated previously but is no longer available."
                 : `The path "${location.pathname}" was not found.`}
             </p>
             
