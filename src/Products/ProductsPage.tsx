@@ -9,7 +9,13 @@ interface ProductsPageProps {
 
 const ProductsPage = () => {
   return (
-    <div>
+    <div className="space-y-6">
+      <header className="mb-4">
+        <h1 className="text-2xl font-bold">Products</h1>
+        <p className="text-muted-foreground">Track your product usage and analyze their impact</p>
+      </header>
+      
+      {/* Products Analysis Section */}
       <ProductsAnalysis className="mb-6" />
     </div>
   );

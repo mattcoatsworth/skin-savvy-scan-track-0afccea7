@@ -66,42 +66,19 @@ export type MealPlanType = {
   hydration: string;
 };
 
-// Add the same types defined in Skin/types.ts to ensure compatibility
-export type SkinFactorType = "Food" | "Supplement" | "Makeup" | "Weather" | "Lifestyle" | "Environment" | "Skincare" | "Health" | "Sleep" | "Stress";
-
-export type SkinFactor = {
-  type: SkinFactorType;
-  status: string;
-  iconName: string;
-  details?: string;
-};
-
-export type DaySkinData = {
-  day: string;
-  date: string;
-  score: number;
-  note?: string;
-};
-
-export type SkinParameter = {
-  name: string;
-  current: number;
-  previous: number;
-};
-
-export type ImpactFactor = {
-  name: string;
-  impact: string;
-};
-
-export type WeeklySkinData = {
-  weekStartDate: string;
-  weekEndDate: string;
-  overallScore: number;
-  previousWeekScore?: number;
-  dailyScores: DaySkinData[];
-  skinParameters: SkinParameter[];
-  positiveFactors: ImpactFactor[];
-  negativeFactors: ImpactFactor[];
-  weeklyTrend: { date: string; value: number }[];
-};
+// Create a unified SkinFactorType that matches both definitions
+export {
+  SkinFactorType,
+  SkinFactor,
+  DaySkinData,
+  SkinParameter,
+  ImpactFactor,
+  WeeklySkinData,
+  AIPattern,
+  AIFocusArea,
+  AIMetrics,
+  AIChallenge,
+  AIAnalysis,
+  RecommendationItem,
+  SkinViewType
+} from '@/Skin/types';
