@@ -28,11 +28,14 @@ const ZincSupplementPage = () => {
           </div>
         </header>
 
-        {/* Overview Section */}
-        <Card className="ios-card mb-6">
+        {/* Overview Section - Updated Design */}
+        <Card className="ios-card mb-6 overflow-hidden">
+          <div className="h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
           <CardContent className="p-6">
             <div className="flex items-start mb-4">
-              <div className="text-2xl mr-3">🟢</div>
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-md mr-4 flex-shrink-0">
+                <Zap className="h-5 w-5 text-white" />
+              </div>
               <div>
                 <h2 className="text-xl font-semibold">Oil Balance Support</h2>
                 <p className="text-muted-foreground">May help regulate your oil production</p>
@@ -42,9 +45,18 @@ const ZincSupplementPage = () => {
             <div className="mb-4">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-sm font-medium">Potential Benefit</span>
-                <span className="text-sm font-medium">{benefitScore}%</span>
+                <span className="text-sm font-medium text-emerald-600">{benefitScore}%</span>
               </div>
-              <Progress value={benefitScore} className="h-3" indicatorClassName={`bg-green-500`} />
+              <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${benefitScore}%` }}
+                ></div>
+              </div>
+              <div className="w-full flex justify-between mt-1">
+                <span className="text-xs text-gray-400">Lower</span>
+                <span className="text-xs text-gray-400">Higher</span>
+              </div>
             </div>
             
             <div className="mb-4">
