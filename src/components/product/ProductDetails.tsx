@@ -2,7 +2,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, Salad, AlertCircle, Apple, LeafyGreen, Carrot, BarChart2 } from "lucide-react";
+import { 
+  CheckCircle2, 
+  Salad, 
+  AlertCircle, 
+  Apple, 
+  LeafyGreen, 
+  Carrot,
+  BarChart2, 
+  Heart,
+  Leaf,
+  Zap,
+  Droplet,
+  Shield,
+  Utensils,
+  Heart as HeartIcon
+} from "lucide-react";
 
 interface ProductDetailsProps {
   isLoading: boolean;
@@ -26,20 +41,64 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
     switch (title.toLowerCase()) {
       case "key benefits":
       case "brief summary":
-        return CheckCircle2;
+        return Heart;
       case "nutrition facts":
-        return Salad;
+        return Utensils;
       case "potential concerns":
         return AlertCircle;
       case "vitamins & minerals":
         return LeafyGreen;
       case "health benefits":
-        return Apple;
+        return Zap;
       case "dietary considerations":
         return BarChart2;
+      case "skin benefits":
+        return Leaf;
+      case "heart health":
+        return HeartIcon;
+      case "digestive health":
+        return Shield;
+      case "hydration":
+        return Droplet;
       default:
         return Carrot;
     }
+  };
+
+  // Get a section-appropriate gradient color
+  const getSectionGradient = (index: number) => {
+    const gradients = [
+      "from-emerald-400 to-teal-500",      // Green/teal
+      "from-blue-400 to-indigo-500",       // Blue/indigo
+      "from-amber-400 to-orange-500",      // Amber/orange
+      "from-pink-400 to-rose-500",         // Pink/rose
+      "from-violet-400 to-purple-500",     // Violet/purple
+      "from-cyan-400 to-sky-500",          // Cyan/sky
+      "from-lime-400 to-green-500",        // Lime/green
+      "from-fuchsia-400 to-pink-500",      // Fuchsia/pink
+      "from-yellow-400 to-amber-500",      // Yellow/amber
+      "from-red-400 to-rose-500",          // Red/rose
+    ];
+
+    return gradients[index % gradients.length];
+  };
+
+  // Get a section-appropriate translucent gradient color
+  const getSectionLightGradient = (index: number) => {
+    const gradients = [
+      "from-emerald-400/40 to-teal-500/40",
+      "from-blue-400/40 to-indigo-500/40",
+      "from-amber-400/40 to-orange-500/40",
+      "from-pink-400/40 to-rose-500/40",
+      "from-violet-400/40 to-purple-500/40",
+      "from-cyan-400/40 to-sky-500/40",
+      "from-lime-400/40 to-green-500/40",
+      "from-fuchsia-400/40 to-pink-500/40",
+      "from-yellow-400/40 to-amber-500/40",
+      "from-red-400/40 to-rose-500/40",
+    ];
+
+    return gradients[index % gradients.length];
   };
 
   return (
@@ -60,10 +119,13 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
           <div className="space-y-4">
             {detailsSections.map((section, idx) => {
               const SectionIcon = getSectionIcon(section.title);
+              const sectionGradient = getSectionGradient(idx);
+              const lightGradient = getSectionLightGradient(idx);
+              
               return (
                 <div key={idx} className="ai-section">
                   <div className="flex items-center mb-3">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm mr-3">
+                    <div className={`h-8 w-8 rounded-full bg-gradient-to-br ${sectionGradient} flex items-center justify-center shadow-sm mr-3`}>
                       <SectionIcon className="h-4 w-4 text-white" />
                     </div>
                     <h3 className="text-lg font-medium">{section.title === "Brief Summary" ? "Key Benefits" : section.title}</h3>
@@ -73,7 +135,7 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
                     {section.items.map((item: any, itemIdx: number) => (
                       <Link to={item.linkTo} key={itemIdx} className="block">
                         <Card className="ios-card mb-4 hover:shadow-md transition-shadow overflow-hidden">
-                          <div className="h-0.5 bg-gradient-to-r from-emerald-400/40 to-teal-500/40"></div>
+                          <div className={`h-0.5 bg-gradient-to-r ${lightGradient}`}></div>
                           <CardContent className="p-4 flex items-center justify-between">
                             <div>
                               <h3 className="font-medium text-base">
@@ -87,8 +149,8 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
                                   : item.text}
                               </p>
                             </div>
-                            <div className="h-8 w-8 bg-slate-50 rounded-full flex items-center justify-center flex-shrink-0">
-                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            <div className={`h-8 w-8 bg-slate-50 rounded-full flex items-center justify-center flex-shrink-0`}>
+                              <CheckCircle2 className={`h-4 w-4 text-${sectionGradient.split('-')[1].split(' ')[0]}`} />
                             </div>
                           </CardContent>
                         </Card>
