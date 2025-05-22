@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Sparkles, Sun, Smile } from "lucide-react";
 import { animations } from "@/design";
-import { Sparkles } from "lucide-react";
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -15,29 +15,37 @@ const SplashScreen: React.FC = () => {
     // Automatically navigate to onboarding after 3 seconds
     const timer = setTimeout(() => {
       navigate("/onboarding");
-    }, 3000);
+    }, 3200);
 
     // Clean up timer if component unmounts
     return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white to-purple-50 overflow-hidden">
-      {/* Background elements */}
+    <div className="flex flex-col items-center justify-center min-h-screen overflow-hidden">
+      {/* Vibrant gradient background */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
+        style={{
+          backgroundSize: "200% 200%",
+          animation: "gradient-animation 8s ease infinite",
+        }}
+      />
+      
+      {/* Animated floating bubbles */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Animated circles in background */}
-        {[...Array(6)].map((_, i) => (
+        {[...Array(10)].map((_, i) => (
           <div
             key={i}
-            className={`absolute rounded-full bg-primary/10 
-              ${i % 2 === 0 ? 'animate-[pulse_4s_ease-in-out_infinite]' : 'animate-[pulse_5s_ease-in-out_infinite]'}`}
+            className="absolute rounded-full bg-white/30 backdrop-blur-sm"
             style={{
-              width: `${Math.random() * 200 + 50}px`,
-              height: `${Math.random() * 200 + 50}px`,
+              width: `${Math.random() * 100 + 30}px`,
+              height: `${Math.random() * 100 + 30}px`,
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              opacity: 0.4,
+              animation: `float ${Math.random() * 8 + 8}s ease-in-out infinite alternate`,
               animationDelay: `${i * 0.5}s`,
+              boxShadow: "inset 0 0 20px rgba(255,255,255,0.6), 0 0 15px rgba(255,255,255,0.3)",
             }}
           />
         ))}
@@ -47,40 +55,44 @@ const SplashScreen: React.FC = () => {
       <div className={`relative z-10 transform transition-all duration-1000 ${
         animate ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
       }`}>
+        {/* Logo and title container */}
         <div className="flex flex-col items-center">
-          {/* Logo with pulsing glow */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse transform scale-125"></div>
-            <div className="w-24 h-24 bg-gradient-to-br from-primary to-purple-700 rounded-full flex items-center justify-center mb-6 shadow-lg relative z-10 animate-[bounce_2s_ease-in-out_infinite]">
-              <span className="text-white text-3xl font-bold">SS</span>
+          {/* Logo with enhanced animations */}
+          <div className="relative mb-8">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-purple-400/40 blur-xl animate-pulse"></div>
+            
+            <div className="w-28 h-28 bg-gradient-to-br from-primary/90 to-purple-500 rounded-full flex items-center justify-center relative z-10 shadow-lg">
+              <span className="text-white text-4xl font-bold">SS</span>
               
-              {/* Sparkle icon animations */}
+              {/* Sun animation in top right */}
+              <div className="absolute -top-1 -right-2 animate-spin-slow">
+                <Sun className="text-yellow-300 w-8 h-8" />
+              </div>
+              
+              {/* Sparkles animations */}
               <Sparkles 
-                className="absolute -top-3 -right-1 w-6 h-6 text-yellow-300 animate-[fade-in_0.5s_ease-out_forwards,pulse_2s_ease-in-out_infinite]" 
-                style={{ animationDelay: '0.8s' }}
+                className="absolute -top-6 -left-4 w-6 h-6 text-yellow-300 animate-bounce" 
+                style={{ animationDuration: "2s", animationDelay: "0.1s" }}
               />
               <Sparkles 
-                className="absolute -bottom-2 -left-1 w-5 h-5 text-yellow-300 animate-[fade-in_0.5s_ease-out_forwards,pulse_2.5s_ease-in-out_infinite]" 
-                style={{ animationDelay: '1.2s' }}
+                className="absolute -bottom-4 right-0 w-5 h-5 text-yellow-300 animate-bounce" 
+                style={{ animationDuration: "2.3s", animationDelay: "0.3s" }}
               />
             </div>
           </div>
           
-          {/* App Name with staggered letter animation */}
+          {/* App name with staggered animation */}
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-700 mb-3">
-            {/* Individual letters with staggered animations */}
+            {/* Animated letters with staggered reveal */}
             {"Skin Savvy".split('').map((letter, index) => (
               <span
                 key={index}
-                className="inline-block transition-all duration-300 transform"
+                className="inline-block"
                 style={{
-                  animationName: 'fade-in',
-                  animationDuration: '0.5s',
-                  animationFillMode: 'forwards',
-                  animationTimingFunction: 'ease-out',
-                  animationDelay: `${0.5 + index * 0.07}s`,
+                  animation: "bounce-in 0.5s forwards",
+                  animationDelay: `${0.5 + index * 0.08}s`,
                   opacity: 0,
-                  transform: 'translateY(10px)',
+                  transform: "translateY(20px)",
                 }}
               >
                 {letter === ' ' ? '\u00A0' : letter}
@@ -88,22 +100,23 @@ const SplashScreen: React.FC = () => {
             ))}
           </h1>
           
-          {/* Tagline with reveal animation */}
-          <p 
-            className="text-muted-foreground text-center opacity-0"
+          {/* Tagline with reveal animation and smile icon */}
+          <div 
+            className="flex items-center gap-2 text-muted-foreground opacity-0"
             style={{ 
-              animation: 'fade-in 0.8s ease-out 1.5s forwards'
+              animation: 'fade-in-up 0.8s ease-out 1.5s forwards'
             }}
           >
-            Your personalized skin care journey
-          </p>
+            <p>Your personalized skin care journey</p>
+            <Smile className="w-4 h-4 text-primary animate-bounce" style={{ animationDuration: "2s", animationDelay: "2s" }} />
+          </div>
           
-          {/* Thin progress line showing loading progress */}
-          <div className="w-60 h-0.5 bg-gray-100 rounded-full mt-10 overflow-hidden">
+          {/* Improved progress bar */}
+          <div className="w-64 h-1.5 bg-gray-100 rounded-full mt-12 overflow-hidden">
             <div 
-              className="h-full bg-primary transition-all duration-3000 ease-in-out origin-left"
+              className="h-full bg-gradient-to-r from-primary/70 via-primary to-purple-500 rounded-full"
               style={{
-                animation: 'progress-bar 2.5s ease-in-out forwards',
+                animation: 'progress-bar 2.8s ease-in-out forwards',
                 width: '0%',
               }}
             ></div>
@@ -114,12 +127,28 @@ const SplashScreen: React.FC = () => {
       {/* Add keyframes for animations using standard style tag */}
       <style>
         {`
+          @keyframes gradient-animation { 
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+          }
+
+          @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(5px) rotate(-5deg); }
+          }
+          
           @keyframes progress-bar {
             0% { width: 0%; }
+            15% { width: 5%; }
+            30% { width: 15%; }
+            50% { width: 40%; }
+            75% { width: 80%; }
             100% { width: 100%; }
           }
 
-          @keyframes fade-in {
+          @keyframes fade-in-up {
             0% { 
               opacity: 0;
               transform: translateY(10px);
@@ -128,6 +157,30 @@ const SplashScreen: React.FC = () => {
               opacity: 1;
               transform: translateY(0);
             }
+          }
+
+          @keyframes bounce-in {
+            0% { 
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            50% { 
+              opacity: 0.5;
+              transform: translateY(-8px);
+            }
+            100% { 
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+
+          .animate-spin-slow {
+            animation: spin-slow 6s linear infinite;
           }
         `}
       </style>
