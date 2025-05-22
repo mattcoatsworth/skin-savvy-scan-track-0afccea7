@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Calendar, Plus } from "lucide-react";
+import { Calendar, Plus, Zap } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const EmptyHeroSection = () => {
@@ -14,7 +14,7 @@ const EmptyHeroSection = () => {
           {/* Header with Profile and Title */}
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+              <Avatar className="h-8 w-8 border-2 border-white shadow-sm">
                 <AvatarImage src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" />
                 <AvatarFallback>SK</AvatarFallback>
               </Avatar>
@@ -49,22 +49,28 @@ const EmptyHeroSection = () => {
             </div>
           </div>
           
-          {/* Empty Skin Care Streak Section */}
+          {/* Empty Skin Care Streak Section - Updated layout */}
           <div className="pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 bg-gradient-to-br from-violet-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-violet-600">0</span>
-              </div>
-              <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-violet-600" />
                 <h3 className="font-medium text-base">Skin Care Streak</h3>
-                <p className="text-sm font-medium">Start your streak today!</p>
-                <p className="text-xs text-muted-foreground mt-1">No logs yet</p>
               </div>
               <Link to="/skin">
                 <Button variant="ghost" size="sm" className="text-xs">
                   View History
                 </Button>
               </Link>
+            </div>
+            
+            <div className="flex items-center mt-2">
+              <div className="flex-shrink-0 bg-gradient-to-br from-violet-100 to-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mr-3">
+                <span className="text-xl font-bold text-violet-600">0</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Start your streak today!</p>
+                <p className="text-xs text-muted-foreground">No logs yet</p>
+              </div>
             </div>
           </div>
         </CardContent>
