@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { BadgeInfo, Calendar, Activity, MessageSquare } from "lucide-react";
+import { BadgeInfo, Calendar, Activity, MessageSquare, Zap } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 
@@ -43,13 +43,17 @@ const ProductOverview = ({ isLoading, product, type, aiContent, askAiAboutProduc
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Overview</h2>
       </div>
-      <Card>
+      <Card className="ios-card overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
         <CardContent className="p-6">
           {isLoading ? (
             <LoadingIndicator />
           ) : (
             <div>
-              <div className="flex items-center mb-4">
+              <div className="flex items-start mb-4">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-md mr-4 flex-shrink-0">
+                  <Zap className="h-5 w-5 text-white" />
+                </div>
                 <div>
                   <h2 className="text-xl font-semibold">{product.impact} Effect</h2>
                   <p className="text-muted-foreground">{product.description}</p>
@@ -82,13 +86,18 @@ const ProductOverview = ({ isLoading, product, type, aiContent, askAiAboutProduc
                   </div>
                   <div className="flex items-center">
                     <div className="flex-1 mr-4">
-                      <Progress 
-                        value={product.rating} 
-                        className="h-3 bg-gray-100" 
-                        indicatorClassName={getProgressColor(product.rating)} 
-                      />
+                      <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${product.rating}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="text-base font-semibold">{product.rating}/100</div>
+                    <div className="text-base font-semibold text-emerald-600">{product.rating}/100</div>
+                  </div>
+                  <div className="w-full flex justify-between mt-1">
+                    <span className="text-xs text-gray-400">Lower</span>
+                    <span className="text-xs text-gray-400">Higher</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">{getRatingLabel(product.rating)}</p>
                 </div>
