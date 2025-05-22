@@ -68,9 +68,19 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
 
   // Get a section-appropriate gradient color
   const getSectionGradient = (index: number, title: string) => {
-    // Check for "Contributing Factors" or "Potential Concerns" to use yellow instead of red
-    if (title.toLowerCase() === "contributing factors" || title.toLowerCase() === "potential concerns") {
-      return "from-amber-400 to-yellow-500"; // Yellow gradient instead of red
+    // Special handling for specific sections
+    if (title.toLowerCase() === "contributing factors") {
+      return "from-blue-400 to-indigo-500"; // Blue gradient for Contributing Factors
+    }
+    
+    if (title.toLowerCase() === "potential concerns") {
+      return "from-amber-400 to-yellow-500"; // Keep yellow for Potential Concerns
+    }
+    
+    if (title.toLowerCase() === "recommended actions" || 
+        title.toLowerCase() === "key benefits" || 
+        title.toLowerCase() === "brief summary") {
+      return "from-emerald-400 to-teal-500"; // Green/teal for Recommended Actions, Key Benefits and Brief Summary
     }
     
     const gradients = [
@@ -91,9 +101,19 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
 
   // Get a section-appropriate translucent gradient color
   const getSectionLightGradient = (index: number, title: string) => {
-    // Check for "Contributing Factors" or "Potential Concerns" to use yellow instead of red
-    if (title.toLowerCase() === "contributing factors" || title.toLowerCase() === "potential concerns") {
-      return "from-amber-400/40 to-yellow-500/40"; // Yellow translucent gradient instead of red
+    // Special handling for specific sections
+    if (title.toLowerCase() === "contributing factors") {
+      return "from-blue-400/40 to-indigo-500/40"; // Blue translucent gradient for Contributing Factors
+    }
+    
+    if (title.toLowerCase() === "potential concerns") {
+      return "from-amber-400/40 to-yellow-500/40"; // Keep yellow for Potential Concerns
+    }
+    
+    if (title.toLowerCase() === "recommended actions" || 
+        title.toLowerCase() === "key benefits" || 
+        title.toLowerCase() === "brief summary") {
+      return "from-emerald-400/40 to-teal-500/40"; // Green/teal translucent for Recommended Actions, Key Benefits and Brief Summary
     }
     
     const gradients = [
