@@ -6,9 +6,8 @@ import RecentLogsCarousel from "@/components/RecentLogsCarousel";
 import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
-import SkinHistory from "@/components/SkinHistory";
+import HeroSection from "@/components/HeroSection";
 import BottomTemplate from "@/components/BottomTemplate";
-import StreakCard from "@/components/StreakCard";
 import { useSampleData } from "@/hooks/useSampleData";
 import type { Factor, Recommendation } from "@/types/skin-types";
 
@@ -29,20 +28,13 @@ const Index = () => {
 
   return (
     <div>
-      {/* Simplified header with smaller Skin Savvy text */}
-      <header className="mb-4">
-        <h1 className="text-xl font-bold">Skin Savvy</h1>
-      </header>
+      {/* New Hero Section combining weekly skin report and streak */}
+      <HeroSection 
+        ratings={skinHistory}
+        streak={currentStreak}
+      />
       
       <main>
-        {/* Skin History at the top with proper spacing */}
-        <div className="mb-6">
-          <SkinHistory ratings={skinHistory} />
-        </div>
-        
-        {/* Streak Card */}
-        <StreakCard streak={currentStreak} />
-        
         {/* ScanButton in its own div with proper spacing */}
         <div className="mb-6">
           <ScanButton />
@@ -67,7 +59,7 @@ const Index = () => {
       </main>
 
       {/* Add BottomTemplate to the home page */}
-      <BottomTemplate pageTitle="Skin Savvy" />
+      <BottomTemplate pageTitle="Home" />
     </div>
   );
 };
