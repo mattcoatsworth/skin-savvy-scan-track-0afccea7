@@ -6,11 +6,10 @@ import RecentLogsCarousel from "@/components/RecentLogsCarousel";
 import InsightsTrends from "@/components/InsightsTrends";
 import SuggestedActions from "@/components/SuggestedActions";
 import ExploreSection from "@/components/ExploreSection";
-import SkinHistory from "@/components/SkinHistory";
 import BottomTemplate from "@/components/BottomTemplate";
-import StreakCard from "@/components/StreakCard";
 import { useSampleData } from "@/hooks/useSampleData";
 import type { Factor, Recommendation } from "@/types/skin-types";
+import HeroSection from "@/components/HeroSection";
 
 const Index = () => {
   // Get all the sample data from our custom hook
@@ -24,24 +23,24 @@ const Index = () => {
     exploreItems
   } = useSampleData();
 
-  // Calculate streak from skin history (for demo purposes)
-  const currentStreak = skinHistory.filter(day => day.rating > 0).length;
-
   return (
     <div>
-      {/* Simplified header with smaller Skin Savvy text */}
-      <header className="mb-4">
-        <h1 className="text-xl font-bold">Skin Savvy</h1>
+      {/* Header with profile picture */}
+      <header className="mb-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center overflow-hidden mr-2 border-2 border-white shadow-sm">
+            {/* This could be replaced with an actual profile image */}
+            <span className="text-white text-lg font-bold">JS</span>
+          </div>
+        </div>
+        <h2 className="text-lg">May 22</h2>
       </header>
       
       <main>
-        {/* Skin History at the top with proper spacing */}
+        {/* New Hero Section that combines Skin History and Streak */}
         <div className="mb-6">
-          <SkinHistory ratings={skinHistory} />
+          <HeroSection skinHistory={skinHistory} />
         </div>
-        
-        {/* Streak Card */}
-        <StreakCard streak={currentStreak} />
         
         {/* ScanButton in its own div with proper spacing */}
         <div className="mb-6">
