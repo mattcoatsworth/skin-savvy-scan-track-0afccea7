@@ -5,7 +5,8 @@ import ScanButton from "@/components/ScanButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Salad, Activity, Camera, CloudSun, Info, Clock, Sparkles, FlameIcon, CalendarDays, ChevronRight } from "lucide-react";
+import { Salad, Activity, Camera, CloudSun, Info, Clock, Sparkles, FlameIcon } from "lucide-react";
+import EmptySkinHistory from "@/components/EmptySkinHistory";
 import EmptyRecentLogsCarousel from "@/components/EmptyRecentLogsCarousel";
 import EmptyInsightsTrends from "@/components/EmptyInsightsTrends";
 import EmptySuggestedActions from "@/components/EmptySuggestedActions";
@@ -14,83 +15,46 @@ import EmptyExploreSection from "@/components/EmptyExploreSection";
 const HomeNewUser = () => {
   return (
     <div>
-      {/* Header with profile placeholder */}
-      <header className="mb-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-gray-300 to-gray-400 flex items-center justify-center overflow-hidden mr-2 border-2 border-white shadow-sm">
-            <span className="text-white text-lg font-bold">?</span>
-          </div>
-        </div>
-        <h2 className="text-lg">May 22</h2>
+      {/* Simple header */}
+      <header className="mb-4">
+        <h1 className="text-xl font-bold">Skin Savvy</h1>
       </header>
       
       <main>
-        {/* Empty Hero Section */}
-        <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-b from-blue-50 to-white mb-6">
-          <CardContent className="p-0">
-            {/* Calendar Week View */}
-            <div className="p-4 pb-2">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium text-base text-gray-700">Weekly Report</h3>
-                <Button variant="ghost" size="sm" className="text-xs p-0 h-auto flex items-center" disabled>
-                  View Full Report
-                  <ChevronRight className="h-3 w-3 ml-0.5" />
+        {/* Empty Skin History */}
+        <div className="mb-6">
+          <EmptySkinHistory />
+        </div>
+        
+        {/* Empty Streak Card */}
+        <Card className="overflow-hidden border-l-4 border-l-violet-400 mb-6">
+          <CardContent className="p-4">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <FlameIcon className="h-5 w-5 text-amber-500" />
+                <h3 className="font-medium text-base">Skin Log Streak</h3>
+              </div>
+              <Link to="/skin">
+                <Button variant="ghost" size="sm" className="text-xs">
+                  View History
                 </Button>
-              </div>
-              
-              <div className="flex justify-between mb-4">
-                <div className="grid grid-cols-7 gap-1 w-full">
-                  {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
-                    <div key={i} className="text-center text-xs text-gray-500">
-                      {day}
-                    </div>
-                  ))}
-                  {Array(7).fill(0).map((_, i) => (
-                    <div 
-                      key={`rating-${i}`} 
-                      className="flex justify-center"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-xs text-gray-500 font-medium">
-                          {i + 15}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </Link>
             </div>
             
-            {/* Divider */}
-            <div className="h-px bg-gray-100 mx-4"></div>
-            
-            {/* Skin Care Streak Section */}
-            <div className="p-4 pt-3">
-              <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 bg-gradient-to-br from-violet-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center">
-                  <span className="text-2xl font-bold text-violet-600">0</span>
-                </div>
-                <div>
-                  <h3 className="font-medium text-base">Skin Care Streak</h3>
-                  <p className="text-sm text-muted-foreground">Start your streak today!</p>
-                  
-                  <div className="mt-1 flex items-center text-xs text-violet-600">
-                    <p>Log your skin condition to start!</p>
-                    <CalendarDays className="h-3 w-3 ml-1 text-muted-foreground" />
-                  </div>
-                </div>
-                
-                <div className="ml-auto">
-                  <Button 
-                    size="sm" 
-                    className="bg-gradient-to-r from-violet-500 to-purple-500 text-white"
-                    asChild
-                  >
-                    <Link to="/log-skin-condition">
-                      Log Today
-                    </Link>
-                  </Button>
-                </div>
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 bg-gradient-to-br from-violet-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-violet-600">0</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Start your streak today!</p>
+                <p className="text-xs text-muted-foreground mt-1">No logs yet</p>
+              </div>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-violet-600">Log your skin condition to start your streak!</p>
+                <Clock className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
           </CardContent>
