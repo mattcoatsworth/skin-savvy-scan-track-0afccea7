@@ -45,6 +45,7 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
       case "nutrition facts":
         return Utensils;
       case "potential concerns":
+      case "contributing factors":
         return AlertCircle;
       case "vitamins & minerals":
         return LeafyGreen;
@@ -66,7 +67,12 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
   };
 
   // Get a section-appropriate gradient color
-  const getSectionGradient = (index: number) => {
+  const getSectionGradient = (index: number, title: string) => {
+    // Check for "Contributing Factors" or "Potential Concerns" to use yellow instead of red
+    if (title.toLowerCase() === "contributing factors" || title.toLowerCase() === "potential concerns") {
+      return "from-amber-400 to-yellow-500"; // Yellow gradient instead of red
+    }
+    
     const gradients = [
       "from-emerald-400 to-teal-500",      // Green/teal
       "from-blue-400 to-indigo-500",       // Blue/indigo
@@ -77,14 +83,19 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
       "from-lime-400 to-green-500",        // Lime/green
       "from-fuchsia-400 to-pink-500",      // Fuchsia/pink
       "from-yellow-400 to-amber-500",      // Yellow/amber
-      "from-red-400 to-rose-500",          // Red/rose
+      "from-amber-400 to-yellow-500",      // Amber/yellow (replacing red)
     ];
 
     return gradients[index % gradients.length];
   };
 
   // Get a section-appropriate translucent gradient color
-  const getSectionLightGradient = (index: number) => {
+  const getSectionLightGradient = (index: number, title: string) => {
+    // Check for "Contributing Factors" or "Potential Concerns" to use yellow instead of red
+    if (title.toLowerCase() === "contributing factors" || title.toLowerCase() === "potential concerns") {
+      return "from-amber-400/40 to-yellow-500/40"; // Yellow translucent gradient instead of red
+    }
+    
     const gradients = [
       "from-emerald-400/40 to-teal-500/40",
       "from-blue-400/40 to-indigo-500/40",
@@ -95,7 +106,7 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
       "from-lime-400/40 to-green-500/40",
       "from-fuchsia-400/40 to-pink-500/40",
       "from-yellow-400/40 to-amber-500/40",
-      "from-red-400/40 to-rose-500/40",
+      "from-amber-400/40 to-yellow-500/40", // Amber/yellow translucent (replacing red)
     ];
 
     return gradients[index % gradients.length];
@@ -119,8 +130,8 @@ const ProductDetails = ({ isLoading, detailsSections, aiContent }: ProductDetail
           <div className="space-y-4">
             {detailsSections.map((section, idx) => {
               const SectionIcon = getSectionIcon(section.title);
-              const sectionGradient = getSectionGradient(idx);
-              const lightGradient = getSectionLightGradient(idx);
+              const sectionGradient = getSectionGradient(idx, section.title);
+              const lightGradient = getSectionLightGradient(idx, section.title);
               
               return (
                 <div key={idx} className="ai-section">
