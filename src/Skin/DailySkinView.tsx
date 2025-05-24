@@ -6,7 +6,7 @@ import { Calendar, Info, Smile, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 import FactorsList from "./FactorsList";
 import { DaySkinData, SkinFactor } from "./types";
-import { getRatingColor, getRatingBgColor, getRatingLabel, getRatingTextColor } from "@/utils/skin-utils";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 import { Button } from "@/components/ui/button";
 
 // Sample data for the daily skin condition
@@ -146,7 +146,6 @@ const DailySkinView: React.FC = () => {
                     <Progress 
                       value={sampleDailySkinData.today.score} 
                       className="h-3 bg-gray-100" 
-                      indicatorClassName={getRatingColor(sampleDailySkinData.today.score)} 
                     />
                   </div>
                   <div className="text-base font-semibold">{sampleDailySkinData.today.score}/100</div>

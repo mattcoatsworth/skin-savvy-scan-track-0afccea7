@@ -156,11 +156,17 @@ const EnergyAnalysis: React.FC<EnergyAnalysisProps> = ({ className }) => {
       // Generate a unique request ID to prevent caching
       const requestId = uuidv4();
 
+      // Call the Supabase Function for analysis with API key header
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || null;
+
       // Call the Supabase Function for analysis
       const response = await fetch('https://jgfsyayitqlelvtjresx.supabase.co/functions/v1/analyze-energy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnZnN5YXlpdHFsZWx2dGpyZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4OTcyMzMsImV4cCI6MjA2MjQ3MzIzM30.DUEdiSMKwd8BSZsNMK_EHMJK_RDo-LAo7YEP_4rGo7E'
         },
         body: JSON.stringify({ 
           image: processedImage,
