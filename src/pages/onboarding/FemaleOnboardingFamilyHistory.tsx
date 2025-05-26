@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RadioGroup } from "@/components/ui/radio-group";
@@ -117,7 +116,7 @@ const FemaleOnboardingFamilyHistory: React.FC = () => {
                     ].map((option) => (
                       <div 
                         key={option.value}
-                        className={`flex items-center space-x-3 rounded-xl border p-4 cursor-pointer ${
+                        className={`flex items-center space-x-3 rounded-lg border p-4 cursor-pointer ${
                           field.value === option.value ? "border-primary bg-primary/5" : "border-input"
                         }`}
                         onClick={() => field.onChange(option.value)}

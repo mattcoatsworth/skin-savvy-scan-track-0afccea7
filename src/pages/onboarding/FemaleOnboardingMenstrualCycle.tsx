@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -134,7 +133,7 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
                       <div
                         key={item.id}
                         onClick={() => field.onChange(item.id)}
-                        className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+                        className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors ${
                           field.value === item.id 
                             ? "bg-primary/10 border-primary border" 
                             : "bg-background border border-input hover:bg-accent/50"

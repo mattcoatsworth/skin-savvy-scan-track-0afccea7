@@ -59,7 +59,7 @@ const FemaleOnboardingSkinType: React.FC = () => {
                       <div 
                         key={type.value}
                         onClick={() => field.onChange(type.value)}
-                        className={`flex flex-col space-y-1 rounded-xl p-4 cursor-pointer transition-colors ${
+                        className={`flex flex-col space-y-1 rounded-lg p-4 cursor-pointer transition-colors ${
                           field.value === type.value 
                             ? "bg-primary/10 border-primary border" 
                             : "bg-background border border-input hover:bg-accent/50"

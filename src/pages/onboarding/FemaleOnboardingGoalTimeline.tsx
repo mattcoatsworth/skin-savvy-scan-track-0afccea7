@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -60,7 +59,7 @@ const FemaleOnboardingGoalTimeline: React.FC = () => {
                       <div 
                         key={option.value}
                         onClick={() => field.onChange(option.value)}
-                        className={`flex items-center px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+                        className={`flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors ${
                           field.value === option.value 
                             ? "bg-primary/10 border-primary border" 
                             : "bg-background border border-input hover:bg-accent/50"

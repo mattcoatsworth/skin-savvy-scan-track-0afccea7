@@ -57,7 +57,7 @@ const FemaleOnboardingPreviousApps: React.FC = () => {
           ].map((option) => (
             <button
               key={option.value}
-              className={`w-full p-4 rounded-xl text-left border transition-colors ${
+              className={`w-full p-4 rounded-lg text-left border transition-colors ${
                 selection === option.value
                   ? "border-primary bg-primary/5"
                   : "border-input bg-background"
