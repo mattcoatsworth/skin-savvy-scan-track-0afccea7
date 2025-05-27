@@ -18,7 +18,7 @@ const SkinPage: React.FC = () => {
   // Add scroll to top functionality
   useScrollToTop();
   
-  // State to track the active tab
+  // State to track the active tab - updated to include monthly
   const [activeView, setActiveView] = useState<SkinViewType>("daily");
   
   return (
@@ -27,7 +27,7 @@ const SkinPage: React.FC = () => {
         <header className="mb-6 flex items-center">
           <BackButton />
           <div>
-            <h1 className="text-2xl font-bold">Skin</h1>
+            <h1 className="text-2xl font-bold">Skin Analysis</h1>
             <p className="text-muted-foreground">Track your skin condition</p>
           </div>
         </header>

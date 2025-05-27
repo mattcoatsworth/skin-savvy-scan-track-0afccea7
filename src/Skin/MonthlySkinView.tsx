@@ -29,7 +29,13 @@ const sampleMonthlyData = {
     day: i + 1,
     score: Math.floor(Math.random() * 100),
     hasEntry: Math.random() > 0.2 // 80% chance of having data
-  }))
+  })),
+  weeklyScores: [
+    { week: "Week 1", score: 65, improvement: "+5" },
+    { week: "Week 2", score: 72, improvement: "+7" },
+    { week: "Week 3", score: 80, improvement: "+8" },
+    { week: "Week 4", score: 85, improvement: "+5" }
+  ]
 };
 
 const MonthlySkinView: React.FC = () => {
@@ -99,10 +105,10 @@ const MonthlySkinView: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-      
-      {/* Monthly Calendar */}
+
+      {/* Skin Health Monthly Calendar */}
       <div>
-        <h2 className="text-xl font-semibold mb-3">Monthly Overview</h2>
+        <h2 className="text-xl font-semibold mb-3">Skin Health</h2>
         <Card className="ios-card">
           <CardContent className="p-4">
             <div className="grid grid-cols-7 gap-1 mb-2">
@@ -119,7 +125,7 @@ const MonthlySkinView: React.FC = () => {
                 <div key={`offset-${i}`} className="aspect-square"></div>
               ))}
               
-              {/* Calendar days */}
+              {/* Calendar days with skin ratings */}
               {sampleMonthlyData.calendarData.map((day, i) => (
                 <button
                   key={i}
@@ -162,6 +168,25 @@ const MonthlySkinView: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Weekly Score Cards */}
+      <div>
+        <h2 className="text-xl font-semibold mb-3">Weekly Score Cards</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {sampleMonthlyData.weeklyScores.map((week, index) => (
+            <Card key={index} className="ios-card">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <h3 className="font-medium text-sm">{week.week}</h3>
+                  <div className="text-2xl font-bold mt-2">{week.score}</div>
+                  <div className="text-xs text-green-600 mt-1">{week.improvement}</div>
+                  <Progress value={week.score} className="h-1.5 mt-2" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
       
       {/* Monthly Stats */}
       <div>
@@ -183,10 +208,10 @@ const MonthlySkinView: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
-      {/* Monthly Insights */}
+
+      {/* Monthly Pattern Analysis */}
       <div>
-        <h2 className="text-xl font-semibold mb-3">Monthly Insights</h2>
+        <h2 className="text-xl font-semibold mb-3">Monthly Pattern Analysis</h2>
         
         <div className="space-y-4">
           {/* Positive Factors */}

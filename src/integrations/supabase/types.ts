@@ -1174,6 +1174,99 @@ export type Database = {
           },
         ]
       }
+      user_profiles: {
+        Row: {
+          birth_date: string | null
+          created_at: string | null
+          current_products: string[] | null
+          current_products_other: string | null
+          cycle_type: string | null
+          family_has_skin_issues: boolean | null
+          family_history: string[] | null
+          family_history_other: string | null
+          family_skin_issues_details: string | null
+          food_allergies: string[] | null
+          food_allergies_other: string | null
+          gender: string | null
+          goal_timeline: string | null
+          id: string
+          last_period_date: string | null
+          menstrual_cycle: string | null
+          onboarding_completed: boolean | null
+          onboarding_completed_at: string | null
+          routine_effectiveness: number | null
+          skin_concerns: string[] | null
+          skin_goals: string[] | null
+          skin_type: string | null
+          skincare_allergies: string[] | null
+          skincare_allergies_other: string | null
+          subscription_plan: string | null
+          updated_at: string | null
+          user_id: string | null
+          wants_referral_link: boolean | null
+        }
+        Insert: {
+          birth_date?: string | null
+          created_at?: string | null
+          current_products?: string[] | null
+          current_products_other?: string | null
+          cycle_type?: string | null
+          family_has_skin_issues?: boolean | null
+          family_history?: string[] | null
+          family_history_other?: string | null
+          family_skin_issues_details?: string | null
+          food_allergies?: string[] | null
+          food_allergies_other?: string | null
+          gender?: string | null
+          goal_timeline?: string | null
+          id?: string
+          last_period_date?: string | null
+          menstrual_cycle?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_completed_at?: string | null
+          routine_effectiveness?: number | null
+          skin_concerns?: string[] | null
+          skin_goals?: string[] | null
+          skin_type?: string | null
+          skincare_allergies?: string[] | null
+          skincare_allergies_other?: string | null
+          subscription_plan?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          wants_referral_link?: boolean | null
+        }
+        Update: {
+          birth_date?: string | null
+          created_at?: string | null
+          current_products?: string[] | null
+          current_products_other?: string | null
+          cycle_type?: string | null
+          family_has_skin_issues?: boolean | null
+          family_history?: string[] | null
+          family_history_other?: string | null
+          family_skin_issues_details?: string | null
+          food_allergies?: string[] | null
+          food_allergies_other?: string | null
+          gender?: string | null
+          goal_timeline?: string | null
+          id?: string
+          last_period_date?: string | null
+          menstrual_cycle?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_completed_at?: string | null
+          routine_effectiveness?: number | null
+          skin_concerns?: string[] | null
+          skin_goals?: string[] | null
+          skin_type?: string | null
+          skincare_allergies?: string[] | null
+          skincare_allergies_other?: string | null
+          subscription_plan?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          wants_referral_link?: boolean | null
+        }
+        Relationships: []
+      }
       user_recommendation_mappings: {
         Row: {
           created_at: string | null
