@@ -104,7 +104,7 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
-                          <span>Select the first day of your last period (optional)</span>
+                          <span>Select the first day of your last period</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
