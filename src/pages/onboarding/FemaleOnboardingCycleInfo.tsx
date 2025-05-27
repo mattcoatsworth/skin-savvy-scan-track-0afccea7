@@ -82,6 +82,55 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
     >
       <Form {...form}>
         <form className="space-y-6">
+          {/* When does your cycle start - Calendar dropdown */}
+          <FormField
+            control={form.control}
+            name="lastPeriodDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <div className="mb-2">
+                  <Label>When does your cycle start? (Optional)</Label>
+                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal rounded-lg",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Select the first day of your last period (optional)</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date(new Date().setMonth(new Date().getMonth() - 3))
+                      }
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                <div className="text-sm text-muted-foreground mt-1">
+                  This helps us track your cycle more accurately.
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {/* What type of cycle do you have */}
           <div className="mb-2">
             <Label>What type of cycle do you have?</Label>
           </div>
@@ -141,55 +190,6 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
                       ))}
                     </div>
                   </FormControl>
-                </FormItem>
-              )}
-            />
-          )}
-
-          {(selectedCycleType === "regular" || selectedCycleType === "irregular") && (
-            <FormField
-              control={form.control}
-              name="lastPeriodDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <div className="mb-2">
-                    <Label>When was the first day of your last period? (Optional)</Label>
-                  </div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal rounded-lg",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Select date (optional)</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date(new Date().setMonth(new Date().getMonth() - 3))
-                        }
-                        initialFocus
-                        className="p-3 pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    This helps us track your cycle more accurately.
-                  </div>
                 </FormItem>
               )}
             />
