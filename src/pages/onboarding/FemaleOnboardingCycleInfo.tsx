@@ -74,7 +74,7 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
   return (
     <OnboardingTemplate
       title="Tell us about your menstrual cycle"
-      description="This helps us understand your hormonal patterns and provide better recommendations."
+      description="This helps us track your cycle more accurately so we can understand your skin conditions more accurately."
       currentStep={6}
       totalSteps={13}
       onNext={handleNext}
@@ -123,9 +123,6 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
                     />
                   </PopoverContent>
                 </Popover>
-                <div className="text-sm text-muted-foreground mt-1">
-                  This helps us track your cycle more accurately.
-                </div>
               </FormItem>
             )}
           />
