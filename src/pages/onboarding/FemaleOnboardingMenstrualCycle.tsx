@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -85,7 +86,7 @@ const FemaleOnboardingMenstrualCycle: React.FC = () => {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full pl-3 text-left font-normal",
+                          "w-full pl-3 text-left font-normal rounded-lg",
                           !field.value && "text-muted-foreground"
                         )}
                       >
