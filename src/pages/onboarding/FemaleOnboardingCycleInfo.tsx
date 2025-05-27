@@ -80,14 +80,14 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
       nextDisabled={!form.watch("cycleType")}
     >
       <Form {...form}>
-        <form className="space-y-6">
+        <form className="space-y-6 mt-8">
           {/* When does your cycle start - Calendar dropdown */}
           <FormField
             control={form.control}
             name="lastPeriodDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <div className="mb-2">
+                <div className="mb-1">
                   <Label>When does your cycle start? (Optional)</Label>
                 </div>
                 <div className="text-sm text-muted-foreground mb-3">
