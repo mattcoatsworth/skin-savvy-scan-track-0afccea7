@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
@@ -25,6 +25,7 @@ const cycleTypes = [
   { id: "menopausal", label: "Menopausal/Post-menopausal", description: "No periods for 12+ months" },
   { id: "pregnant", label: "Pregnant/Post-partum", description: "Currently pregnant or recently gave birth" },
   { id: "other", label: "Other", description: "None of the above apply" },
+  { id: "not-applicable", label: "Not applicable", description: "Does not apply to me" },
 ];
 
 const cycleLengths = [
@@ -45,15 +46,6 @@ const FemaleOnboardingCycleInfo: React.FC = () => {
       cycleLength: undefined,
     },
   });
-
-  // Check if the user is male and skip this step
-  useEffect(() => {
-    const userGender = localStorage.getItem("userGender");
-    if (userGender === "male") {
-      // If male user, skip this step and go to food allergies
-      navigate("/onboarding/female/food-allergies");
-    }
-  }, [navigate]);
 
   const selectedCycleType = form.watch("cycleType");
 
