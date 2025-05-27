@@ -21,6 +21,7 @@ import FemaleOnboardingSkinType from "@/pages/onboarding/FemaleOnboardingSkinTyp
 import FemaleOnboardingSkinConcerns from "@/pages/onboarding/FemaleOnboardingSkinConcerns";
 import FemaleOnboardingSkinGoals from "@/pages/onboarding/FemaleOnboardingSkinGoals";
 import FemaleOnboardingMenstrualCycle from "@/pages/onboarding/FemaleOnboardingMenstrualCycle";
+import FemaleOnboardingCycleInfo from "@/pages/onboarding/FemaleOnboardingCycleInfo";
 import FemaleOnboardingFoodAllergies from "@/pages/onboarding/FemaleOnboardingFoodAllergies";
 import FemaleOnboardingProductAllergies from "@/pages/onboarding/FemaleOnboardingProductAllergies";
 import FemaleOnboardingGoalTimeline from "@/pages/onboarding/FemaleOnboardingGoalTimeline";
@@ -151,6 +152,7 @@ const App = () => (
               <Route path="/onboarding/female/skin-concerns" element={<FemaleOnboardingSkinConcerns />} />
               <Route path="/onboarding/female/skin-goals" element={<FemaleOnboardingSkinGoals />} />
               <Route path="/onboarding/female/menstrual-cycle" element={<FemaleOnboardingMenstrualCycle />} />
+              <Route path="/onboarding/female/cycle-info" element={<FemaleOnboardingCycleInfo />} />
               <Route path="/onboarding/female/food-allergies" element={<FemaleOnboardingFoodAllergies />} />
               <Route path="/onboarding/female/product-allergies" element={<FemaleOnboardingProductAllergies />} />
               <Route path="/onboarding/female/goal-timeline" element={<FemaleOnboardingGoalTimeline />} />
