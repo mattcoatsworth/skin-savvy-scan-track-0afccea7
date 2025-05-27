@@ -1,11 +1,11 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import { Progress } from "@/components/ui/progress";
 import TrendChart from "@/components/TrendChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useScrollToTop from "@/hooks/useScrollToTop";
+import { getRatingColor, getRatingBgColor, getRatingLabel } from "@/utils/skin-utils";
 
 type FactorType = {
   name: string;
@@ -22,6 +22,31 @@ const MonthlyAnalysisDetail = () => {
   // Apply the scroll to top hook
   useScrollToTop();
   
+  // State for selected day in calendar
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  
+  // Sample calendar data for May 2025
+  const calendarData = Array.from({ length: 31 }, (_, i) => ({
+    day: i + 1,
+    score: Math.floor(Math.random() * 100),
+    hasEntry: Math.random() > 0.2 // 80% chance of having data
+  }));
+  
+  // Get day summary data
+  const getDaySummary = (day: number) => {
+    const dayData = calendarData.find(d => d.day === day);
+    if (!dayData || !dayData.hasEntry) return null;
+    
+    return {
+      score: dayData.score,
+      status: getRatingLabel(dayData.score),
+      color: getRatingColor(dayData.score)
+    };
+  };
+  
+  // Selected day summary
+  const selectedDaySummary = selectedDay ? getDaySummary(selectedDay) : null;
+
   // Sample data for the monthly analysis
   const positiveFactors: FactorType[] = [
     {
@@ -119,6 +144,99 @@ const MonthlyAnalysisDetail = () => {
         <BackButton />
         <h1 className="text-2xl font-bold">Monthly Analysis</h1>
       </header>
+      
+      {/* Monthly Calendar Section */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">May 2025 Skin Calendar</h2>
+        <Card>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
+                <div key={i} className="text-center text-xs font-medium py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-7 gap-1">
+              {/* Offset for the first day of the month (May 1st starts on Thursday) */}
+              {Array.from({ length: 3 }, (_, i) => (
+                <div key={`offset-${i}`} className="aspect-square"></div>
+              ))}
+              
+              {/* Calendar days with skin ratings */}
+              {calendarData.map((day, i) => (
+                <button
+                  key={i}
+                  className={`flex items-center justify-center aspect-square rounded-md text-xs font-medium
+                            ${day.hasEntry 
+                              ? '' 
+                              : 'bg-gray-100 text-gray-400'} 
+                            ${selectedDay === day.day ? 'ring-2 ring-blue-500' : ''}
+                            ${day.hasEntry ? 'hover:opacity-80 transition-opacity' : ''}`}
+                  style={day.hasEntry ? { 
+                    backgroundColor: getRatingBgColor(day.score),
+                    color: getRatingColor(day.score)
+                  } : {}}
+                  onClick={() => day.hasEntry ? setSelectedDay(day.day) : null}
+                  disabled={!day.hasEntry}
+                >
+                  {day.day}
+                </button>
+              ))}
+            </div>
+            
+            {/* Selected day summary */}
+            {selectedDay && selectedDaySummary && (
+              <div className="mt-4 p-3 bg-slate-50 rounded-md">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">May {selectedDay}, 2025</span>
+                  <span 
+                    className="px-2 py-0.5 text-xs rounded-full font-medium"
+                    style={{ 
+                      backgroundColor: `${selectedDaySummary.color}20`, 
+                      color: selectedDaySummary.color 
+                    }}
+                  >
+                    {selectedDaySummary.status}
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm">Skin Score</span>
+                    <span className="text-sm font-medium">{selectedDaySummary.score}</span>
+                  </div>
+                  <Progress value={selectedDaySummary.score} className="h-1.5" />
+                </div>
+              </div>
+            )}
+            
+            {/* Legend */}
+            <div className="mt-4 flex justify-center space-x-4 text-xs">
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: getRatingBgColor(85) }}></div>
+                <span>Great</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: getRatingBgColor(65) }}></div>
+                <span>Good</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: getRatingBgColor(45) }}></div>
+                <span>OK</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: getRatingBgColor(25) }}></div>
+                <span>Poor</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded bg-gray-100"></div>
+                <span>No data</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       
       <div className="mb-6">
         <Card className="mb-6">
